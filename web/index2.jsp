@@ -1,0 +1,61 @@
+ 
+<%@page import="java.util.HashMap"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
+
+<%
+    StoreInfo storeInfo = Database.getStoreInfo("1");
+    ArrayList<SiteTemplateResource> templateResources = Database.getTemplateReourcesByType("main");
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8;" />
+        <meta name="keywords" content="Mighty USA,  Mighty Viper, Enterprise Machine Tools" />
+        <meta name="description" content="Best Enterprise Machine Tool Manufacture, great prices!" />
+        <title><%= storeInfo.getStoreName() %> Home Page</title>
+
+        <% for(int i = 0; i < templateResources.size(); i++) 
+        { 
+            if(templateResources.get(i).getResourceType().equals("link")) 
+            {
+        %>
+                <link href="<%= templateResources.get(i).getResourceUrl() %>" rel="stylesheet" type="text/css" />
+        <% 
+            } 
+            else if(templateResources.get(i).getResourceType().equals("script"))
+            {
+        %>
+                <script src="<%= templateResources.get(i).getResourceUrl() %>" type="text/javascript"></script>                    
+         <% } %>
+     <% } %>    
+
+        <%@include file="analytics.jsp" %> 
+        <script type="text/javascript">
+            //build menu with DIV Id="myslidemenu" on page:
+            droplinemenu.buildmenu("mydroplinemenu");
+
+            $(document).ready(function()
+            {
+                $('#coin-slider').coinslider({width: 919, height: 298, navigation: true, delay: 4000});
+            });
+        </script>
+    </head>
+    <body>
+        <div id="wrapper">            
+            <%@include file="index_header.jsp" %> 
+            <div id="topbarRightSide"></div>
+            <div id="contentRightSide">
+                <div id="left" style="padding:10px 10px 20px 20px; width:650px">  
+                    <%= Database.getPageContentByName("HomePage")%>
+                </div>
+                <div id="right">
+                    <%@include file="toolbar.jsp" %>                    
+                </div>
+            </div>    
+            <div id="bottomRightSide"></div>            
+            <%@include file="index_footer.jsp"%>
+        </div>
+    </body>
+</html>

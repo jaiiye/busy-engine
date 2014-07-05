@@ -1,0 +1,54 @@
+.scrollgeneric {
+	FONT-SIZE: 1px; LEFT: 0px; LINE-HEIGHT: 1px; POSITION: absolute; TOP: 0px
+}
+.vscrollerbase {
+	WIDTH: 15px
+}
+.vscrollerbar {
+	WIDTH: 15px
+}
+.hscrollerbase {
+	HEIGHT: 15px
+}
+.hscrollerbar {
+	HEIGHT: 15px
+}
+.vscrollerbar {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; Z-INDEX: 2; PADDING-BOTTOM: 5px; PADDING-TOP: 5px
+}
+.hscrollerbar {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; Z-INDEX: 2; PADDING-BOTTOM: 5px; PADDING-TOP: 5px
+}
+.vscrollerbarbeg {
+	BACKGROUND: url(../images/vscroller.png) 0px -10px; WIDTH: 15px
+}
+.vscrollerbarend {
+	BACKGROUND: url(../images/vscroller.png); WIDTH: 15px; HEIGHT: 10px
+}
+.hscrollerbarbeg {
+	BACKGROUND: url(../images/hscroller.png) -10px 0px; HEIGHT: 15px
+}
+.hscrollerbarend {
+	BACKGROUND: url(../images/hscroller.png); WIDTH: 10px; HEIGHT: 15px
+}
+.vscrollerbase {
+	BACKGROUND-IMAGE: url(../images/scrollbaseback.png); BACKGROUND-COLOR: #d1ddcb
+}
+.hscrollerbase {
+	BACKGROUND-IMAGE: url(../images/scrollbaseback.png); BACKGROUND-COLOR: #d1ddcb
+}
+.hscrollerbasebeg {
+	BACKGROUND: url(../images/scrollbases.png) no-repeat -22px 0px; HEIGHT: 15px
+}
+.hscrollerbaseend {
+	BACKGROUND: url(../images/scrollbases.png) no-repeat; WIDTH: 7px; HEIGHT: 15px
+}
+.vscrollerbasebeg {
+	BACKGROUND: url(../images/scrollbases.png) no-repeat -7px -8px; WIDTH: 15px
+}
+.vscrollerbaseend {
+	BACKGROUND: url(../images/scrollbases.png) no-repeat -7px 0px; WIDTH: 15px; HEIGHT: 7px
+}
+.scrollerjogbox {
+	RIGHT: 0px; BACKGROUND: url(../images/scrolljog.png) white 50% 50%; LEFT: auto; WIDTH: 15px; BOTTOM: 0px; TOP: auto; HEIGHT: 15px
+}

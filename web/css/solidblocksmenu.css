@@ -1,0 +1,41 @@
+.solidblockmenu UL {
+	BORDER-RIGHT: #887700 0px solid; PADDING-RIGHT: 0px; BORDER-TOP: #887700 1px solid; PADDING-LEFT: 0px; BACKGROUND: url(../images/blockdefault_blue.gif) black repeat-x center center; FLOAT: left; PADDING-BOTTOM: 0px; MARGIN: 0px; FONT: bold 13px Arial; BORDER-LEFT: #887700 0px solid; WIDTH: 100%; PADDING-TOP: 0px; BORDER-BOTTOM: #887700 1px solid
+}
+.solidblockmenu LI {
+	DISPLAY: inline
+}
+.solidblockmenu LI A {
+	BORDER-RIGHT: white 1px solid;
+	PADDING-RIGHT: 8px;
+	PADDING-LEFT: 8px;
+	FLOAT: left;
+	PADDING-BOTTOM: 5px;
+	COLOR: white;
+	PADDING-TOP: 5px;
+	TEXT-DECORATION: none;
+	text-transform: uppercase;
+}
+.solidblockmenu LI A:visited {
+	COLOR: white
+}
+.solidblockmenu LI A:hover {
+	BACKGROUND: url(../images/blockactive_blue.gif) repeat-x center center;
+	COLOR: white;
+	text-transform: uppercase;
+	TEXT-DECORATION: none;
+}
+.solidblockmenu LI A.current {
+	BACKGROUND: url(../images/blockactive_blue.gif) repeat-x center center; COLOR: white
+}
+.tabcontainer {
+	CLEAR: left; WIDTH: 95%; HEIGHT: 1.0em
+}
+*:first-child + HTML .ieclass {
+	MARGIN-TOP: -1em
+}
+* HTML .ieclass {
+	MARGIN-TOP: -1em
+}
+.tabcontent {
+	DISPLAY: none; COLOR: #cccccc
+}

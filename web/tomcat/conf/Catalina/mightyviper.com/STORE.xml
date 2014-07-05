@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/STORE">
+  <Resource auth="Container" autoReconnect="true" driverClassName="com.mysql.jdbc.Driver" initialSize="5" logAbandoned="false" maxActive="20" maxIdle="15" maxWait="10000" 
+            minIdle="2" name="jdbc/dataSource" removeAbandoned="true" removeAbandonedTimeout="60" testOnBorrow="true" type="javax.sql.DataSource" 
+            url="jdbc:mysql://localhost/mighty81_busystore" username="mighty81_admin" password="mighty2020" validationQuery="select count(*) from paypal"/>
+</Context>

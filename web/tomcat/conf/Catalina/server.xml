@@ -1,0 +1,51 @@
+<Server port="9232" shutdown="SHUTDOWN">
+
+  <!-- Comment these entries out to disable JMX MBeans support used for the administration web application -->
+  <Listener className="org.apache.catalina.core.JasperListener" />
+  <Listener className="org.apache.catalina.mbeans.ServerLifecycleListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+
+  <!-- Global JNDI resources -->
+  <GlobalNamingResources>
+
+    <!-- Editable user database that can also be used by UserDatabaseRealm to authenticate users -->
+    <Resource name="UserDatabase" auth="Container" type="org.apache.catalina.UserDatabase"
+       description="User database" pathname="conf/tomcat-users.xml"
+           factory="org.apache.catalina.users.MemoryUserDatabaseFactory" />
+  </GlobalNamingResources>
+
+  <!-- Define the Tomcat Stand-Alone Service -->
+  <Service name="Catalina">
+
+    <!-- Define an AJP 1.3 Connector on port 8009 -->
+    <Connector address="127.0.0.1" port="9732" enableLookups="false" protocol="AJP/1.3" 
+               connectionTimeout="30000" maxThreads="50" minSpareThreads="1" maxSpareThreads="3" />
+
+    <Engine name="Catalina" defaultHost="mightyviper.com">
+
+      <Realm className="org.apache.catalina.realm.UserDatabaseRealm" resourceName="UserDatabase"/>
+
+
+      <Host name="mightyviper.com" appBase="/home/mighty81/public_html/" unpackWARs="true" autoDeploy="true"
+            xmlValidation="false" xmlNamespaceAware="false">
+         <Alias>www.mightyviper.com</Alias>
+         <!-- Uncomment the line below to make public_html folder to be docBase for the ROOT context -->
+         <Context path="" reloadable="true" docBase="/home/mighty81/public_html/STORE" />
+				  
+         <Context path="/manager" docBase="/usr/local/tomcat/users/mighty81/tomcat/webapps/manager"
+                  privileged="true" antiResourceLocking="false" antiJARLocking="false" reloadable="true" />
+				  
+				  				  		
+		 <Realm className="org.apache.catalina.realm.JDBCRealm" debug="99"
+             driverName="com.mysql.jdbc.Driver"
+             connectionURL="jdbc:mysql://localhost/mighty81_busystore?user=mighty81_admin&amp;password=mighty2020"
+             userTable="user" userNameCol="UserName" userCredCol="UserPassword"
+             userRoleTable="user_roles" roleNameCol="role_name"/>
+			 
+      </Host>
+
+    </Engine>
+
+  </Service>
+
+</Server>

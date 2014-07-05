@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/STORE">
+  <Resource name="jdbc/dataSource" 
+            auth="Container" 
+            autoReconnect="true"             
+            factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"            
+            
+            type="javax.sql.DataSource" 
+            driverClassName="com.mysql.jdbc.Driver" 
+            url="jdbc:mysql://localhost/busystore" 
+            username="root" 
+            password="85291012" 
+            validationQuery="select 1"
+                        
+            testOnBorrow="true"             
+            maxWait="10000"             
+            minIdle="10"
+            maxIdle="20"  
+            maxActive="50"
+            initialSize="5"
+            
+            logAbandoned="true" 
+            removeAbandoned="true" 
+            removeAbandonedTimeout="60"    
+            timeBetweenEvictionRunsMillis="34000"
+            minEvictableIdleTimeMillis="55000"
+            validationInterval="34"        
+            />
+</Context>
