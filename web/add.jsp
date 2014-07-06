@@ -66,31 +66,6 @@ if(request.getParameter("fn").equals("vote"))
 }
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
-if(request.getParameter("fn").equals("BlogPost"))
-{
-        try
-        { 
-                String s = "";
-
-                s += "(postId, CommentDate, CommentTitle,CommentBody, UserId) VALUES ('" + 
-                request.getParameter("postId") + "','" + request.getParameter("PostCommentDate") + "','" 
-                + request.getParameter("PostCommentTitle") + "','"+  
-                Database.encodeHTML(request.getParameter("PostCommentBody")) + "','"+  request.getParameter("UserId")  
-                + "')";	
-
-                System.out.println(s);
-                Database.addBlogPostComment(s);
-
-                response.sendRedirect("blog.jsp");
-        }
-        catch (Exception e) 
-        {
-                e.printStackTrace();
-                response.sendError(500);
-        }
-}
-//-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
 if (request.getParameter("fn").equals("newUser"))
 {
     String msg = "<br />";
