@@ -1,8 +1,7 @@
 
 package com.transitionsoft;
 
-import com.busy.dao.Address;
-import com.busy.dao.DashboardInfo;
+import com.busy.entity.Address;
 import static com.transitionsoft.BasicConnection.connection;
 import static com.transitionsoft.BasicConnection.rs;
 import static com.transitionsoft.BasicConnection.statement;
@@ -1184,41 +1183,48 @@ public class Database extends BasicConnection
     }
     
     
-    public static DashboardInfo getDashboardInfo()
-    {
-        DashboardInfo info = new DashboardInfo();
-        
-        try
-        {           
-            runQuery("SELECT count(*) FROM user;");         while(rs.next()) {  info.setUserCount(rs.getInt(1));     }  
-            
-            rs = statement.executeQuery("SELECT count(*) FROM blog_post;");       while(rs.next()) {  info.setBlogPostCount(rs.getInt(1)); }            
-            rs = statement.executeQuery("SELECT count(*) FROM item;");            while(rs.next()) {  info.setItemCount(rs.getInt(1));     }            
-            rs = statement.executeQuery("SELECT count(*) FROM busystore.order;"); while(rs.next()) {  info.setOrderCount(rs.getInt(1));    }            
-            rs = statement.executeQuery("SELECT count(*) FROM site_file;");       while(rs.next()) {  info.setFileCount(rs.getInt(1));     }            
-            rs = statement.executeQuery("SELECT count(*) FROM image;");           while(rs.next()) {  info.setImageCount(rs.getInt(1));    }            
-            rs = statement.executeQuery("SELECT count(*) FROM blog;");            while(rs.next()) {  info.setBlogCount(rs.getInt(1));     }            
-            rs = statement.executeQuery("SELECT count(*) FROM comment;");      while(rs.next()) {  info.setCommentCount(rs.getInt(1));  }            
-            rs = statement.executeQuery("SELECT count(*) FROM info;");         while(rs.next()) {  info.setPageCount(rs.getInt(1));     }            
-            rs = statement.executeQuery("SELECT count(*) FROM form;");         while(rs.next()) {  info.setFormCount(rs.getInt(1));     }            
-            rs = statement.executeQuery("SELECT count(*) FROM slider;");       while(rs.next()) {  info.setSliderCount(rs.getInt(1));   }            
-            rs = statement.executeQuery("SELECT count(*) FROM item_brand;");   while(rs.next()) {  info.setBrandCount(rs.getInt(1));    }            
-            rs = statement.executeQuery("SELECT count(*) FROM category;");     while(rs.next()) {  info.setCategoryCount(rs.getInt(1)); }            
-            rs = statement.executeQuery("SELECT count(*) FROM item_option;");  while(rs.next()) {  info.setItemCount(rs.getInt(1));     } 
-            
-            rs = statement.executeQuery("SELECT * FROM user_action ORDER BY ActionDate DESC LIMIT 50 OFFSET 0;");                        
-            while(rs.next()) {  info.getActivities().add(new com.busy.dao.UserAction(rs.getInt(1), rs.getInt(2), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(rs.getString(3)),rs.getInt(4),rs.getString(5)));  }            
-        }
-        catch (Exception ex)
-        {
-            System.out.println("getDashboardInfo error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-        return info;
-    }    
+//    public static DashboardInfo getDashboardInfo()
+//    {
+//        DashboardInfo info = new DashboardInfo();
+//        
+//        try
+//        {   
+//            runQuery("SELECT * FROM dashboard;");         
+//            while(rs.next()) 
+//            {  
+//                info.setUserCount(rs.getInt(2));
+//                info.setBlogPostCount(rs.getInt(3));
+//                info.setItemCount(rs.getInt(4));
+//                info.setOrderCount(rs.getInt(5));
+//                info.setFileCount(rs.getInt(6));
+//                info.setImageCount(rs.getInt(7));
+//                info.setBlogCount(rs.getInt(8));
+//                info.setCommentCount(rs.getInt(9));
+//                info.setPageCount(rs.getInt(10));
+//                info.setFormCount(rs.getInt(11));
+//                info.setSliderCount(rs.getInt(12));
+//                info.setBrandCount(rs.getInt(13)); 
+//                info.setCategoryCount(rs.getInt(14));
+//                info.setItemCount(rs.getInt(15));    
+//            }  
+//            
+//            rs = statement.executeQuery("SELECT * FROM user_action ORDER BY Date DESC LIMIT 50 OFFSET 0;");                        
+//            while(rs.next()) 
+//            {  
+//                com.busy.entity.UserAction u = new com.busy.entity.UserAction(rs.getInt(1), rs.getDate(2),rs.getString(3),rs.getInt(4),rs.getInt(5));
+//                info.getActivities().add(u);  
+//            } 
+//        }
+//        catch (Exception ex)
+//        {
+//            System.out.println("getDashboardInfo error: " + ex.getMessage());
+//        }
+//        finally
+//        {
+//            closeConnection();
+//        }
+//        return info;
+//    }    
     
     public static ArrayList<Category> getAllCategories()
     {
@@ -1288,28 +1294,28 @@ public class Database extends BasicConnection
         return forms;
     }
     
-    public static ArrayList<SiteTemplate> getAllSiteTemplates()
-    {
-        ArrayList<SiteTemplate> siteTemplates = new ArrayList<SiteTemplate>();
-        try
-        {
-            getAllRecordsByTableName("site_template");
-            while(rs.next())
-            {
-                SiteTemplate newSiteTemplate = new SiteTemplate(Integer.parseInt(rs.getString(1)),rs.getString(2),rs.getString(3),rs.getString(4));                
-                siteTemplates.add(newSiteTemplate);
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("getAllSiteTemplates error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-        return siteTemplates;
-    }
+//    public static ArrayList<SiteTemplate> getAllSiteTemplates()
+//    {
+//        ArrayList<SiteTemplate> siteTemplates = new ArrayList<SiteTemplate>();
+//        try
+//        {
+//            getAllRecordsByTableName("site_template");
+//            while(rs.next())
+//            {
+//                SiteTemplate newSiteTemplate = new SiteTemplate(Integer.parseInt(rs.getString(1)),rs.getString(2),rs.getString(3),rs.getString(4));                
+//                siteTemplates.add(newSiteTemplate);
+//            }
+//        }
+//        catch (Exception ex)
+//        {
+//            System.out.println("getAllSiteTemplates error: " + ex.getMessage());
+//        }
+//        finally
+//        {
+//            closeConnection();
+//        }
+//        return siteTemplates;
+//    }
     
     public static ArrayList<Slider> getAllSliders()
     {
@@ -1385,27 +1391,27 @@ public class Database extends BasicConnection
     
     
     
-    public static ArrayList<SiteTemplateUrl> getTemplateResources(int templateId)
-    {
-        ArrayList<SiteTemplateUrl> resources = new ArrayList<SiteTemplateUrl>();
-        try
-        {
-            runQuery("SELECT * FROM site_template_url WHERE SiteTemplateId=" + templateId + ";");
-            while(rs.next())
-            {
-                resources.add(new SiteTemplateUrl(Integer.parseInt(rs.getString(1)),rs.getString(2),rs.getString(3),rs.getString(4)));
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("getTemplateResources error: " + ex.getMessage() + " for id: " + templateId);
-        }
-        finally
-        {
-            closeConnection();
-        }
-        return resources;
-    }
+//    public static ArrayList<SiteTemplateUrl> getTemplateResources(int templateId)
+//    {
+//        ArrayList<SiteTemplateUrl> resources = new ArrayList<SiteTemplateUrl>();
+//        try
+//        {
+//            runQuery("SELECT * FROM site_template_url WHERE SiteTemplateId=" + templateId + ";");
+//            while(rs.next())
+//            {
+//                resources.add(new SiteTemplateUrl(Integer.parseInt(rs.getString(1)),rs.getString(2),rs.getString(3),rs.getString(4)));
+//            }
+//        }
+//        catch (Exception ex)
+//        {
+//            System.out.println("getTemplateResources error: " + ex.getMessage() + " for id: " + templateId);
+//        }
+//        finally
+//        {
+//            closeConnection();
+//        }
+//        return resources;
+//    }
     
     public static Slider getSlider(String id)
     {
@@ -1795,57 +1801,57 @@ public class Database extends BasicConnection
         return roles.toString();
     }
 
-    public static ArrayList<Customer> getAllCustomers()
-    {
-        ArrayList<Customer> customers = new ArrayList<Customer>();
-        try
-        {
-            runQuery("SELECT * FROM customer cu, contact co, address ad WHERE cu.ContactId = co.ContactId AND cu.AddressId = ad.AddressId");
-
-            while(rs.next())
-            {
-                Address address = new Address(Integer.valueOf(rs.getString(2)),rs.getString(16),rs.getString(17),rs.getString(18),rs.getString(19),rs.getString(20),rs.getString(21),rs.getString(22), Integer.valueOf(rs.getString(23)));                
-                Contact contact = new Contact(Integer.valueOf(rs.getString(3)),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13));                
-                customers.add(new Customer(Integer.valueOf(rs.getString(1)), contact, address));
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("getAllCustomers error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-
-        return customers;
-    }
-    
-    public static Customer getCustomer(String userName)
-    {
-        Customer c = null;
-        try
-        {
-            runQuery("SELECT * FROM customer cu, contact co, address ad WHERE cu.ContactId = co.ContactId AND cu.AddressId = ad.AddressId AND cu.userid in (select BrandId from `user` where UserName = '" + userName + "' );");
-
-            while(rs.next())
-            {
-                Address address = new Address(Integer.valueOf(rs.getString(2)),rs.getString(16),rs.getString(17),rs.getString(18),rs.getString(19),rs.getString(20),rs.getString(21),rs.getString(22), Integer.valueOf(rs.getString(23)));
-                Contact contact = new Contact(Integer.valueOf(rs.getString(3)),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13));
-                c = new Customer(Integer.valueOf(rs.getString(1)), contact, address);
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Get Customer error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-
-        return c;
-    }
+//    public static ArrayList<Customer> getAllCustomers()
+//    {
+//        ArrayList<Customer> customers = new ArrayList<Customer>();
+//        try
+//        {
+//            runQuery("SELECT * FROM customer cu, contact co, address ad WHERE cu.ContactId = co.ContactId AND cu.AddressId = ad.AddressId");
+//
+//            while(rs.next())
+//            {
+//                Address address = new Address(Integer.valueOf(rs.getString(2)),"", rs.getString(16),rs.getString(17),rs.getString(18),rs.getString(19),rs.getString(20),rs.getString(21),rs.getString(22), Integer.valueOf(rs.getString(23)));                
+//                Contact contact = new Contact(Integer.valueOf(rs.getString(3)),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13));                
+//                customers.add(new Customer(Integer.valueOf(rs.getString(1)), contact, address));
+//            }
+//        }
+//        catch (Exception ex)
+//        {
+//            System.out.println("getAllCustomers error: " + ex.getMessage());
+//        }
+//        finally
+//        {
+//            closeConnection();
+//        }
+//
+//        return customers;
+//    }
+//    
+//    public static Customer getCustomer(String userName)
+//    {
+//        Customer c = null;
+//        try
+//        {
+//            runQuery("SELECT * FROM customer cu, contact co, address ad WHERE cu.ContactId = co.ContactId AND cu.AddressId = ad.AddressId AND cu.userid in (select BrandId from `user` where UserName = '" + userName + "' );");
+//
+//            while(rs.next())
+//            {
+//                Address address = new Address(Integer.valueOf(rs.getString(2)),rs.getString(16),rs.getString(17),rs.getString(18),rs.getString(19),rs.getString(20),rs.getString(21),rs.getString(22), Integer.valueOf(rs.getString(23)));
+//                Contact contact = new Contact(Integer.valueOf(rs.getString(3)),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13));
+//                c = new Customer(Integer.valueOf(rs.getString(1)), contact, address);
+//            }
+//        }
+//        catch (Exception ex)
+//        {
+//            System.out.println("Get Customer error: " + ex.getMessage());
+//        }
+//        finally
+//        {
+//            closeConnection();
+//        }
+//
+//        return c;
+//    }
 
 
     public static ArrayList<StringLiteral> getStringLiterals()
@@ -2378,7 +2384,7 @@ public class Database extends BasicConnection
                 while(rs.next())
                 {
                     user.setUserContact(new Contact(rs.getInt("ContactId"), rs.getString("Title"),rs.getString("FirstName"),rs.getString("LastName"),rs.getString("Position"),rs.getString("Phone"), rs.getString("Fax"), rs.getString("Email"), rs.getString("EmailConfirmed"),rs.getString("Info")));
-                    user.setUserAddress(new Address(rs.getInt("AddressId"), rs.getString("Address1"), rs.getString("Address2"), rs.getString("City"), rs.getString("State"), rs.getString("Zipcode"), rs.getString("Country"), rs.getString("Region"),rs.getInt("UserId")));
+                    user.setUserAddress(new Address(rs.getInt("AddressId"), rs.getString("Recipient"), rs.getString("Address1"), rs.getString("Address2"), rs.getString("City"), rs.getString("State"), rs.getString("Zipcode"), rs.getString("Country"), rs.getString("Region"),rs.getInt("status"), rs.getString("locale")));
                 }
             }
             
@@ -2932,68 +2938,68 @@ public class Database extends BasicConnection
         return shippingMethods;
     }
     
-    public static ArrayList<OrderInfo> getOrderInfoByStatus(String status)
-    {
-        ArrayList<OrderInfo> orders = new ArrayList<OrderInfo>();
-
-        try
-        {
-            openConnection();
-            
-            String query = "SELECT * FROM order o, shopping_cart sc WHERE o.OrderId = sc.OrderId order by OrderDate desc;";
-            
-            if (status != null)
-            {
-                if (!status.equals("all"))
-                {
-                    query ="SELECT * FROM order o, shopping_cart sc WHERE o.OrderId = sc.OrderId AND o.OrderStatus='" + status + "' order by OrderDate desc;";
-                }
-            }
-            
-            System.out.println(query);
-            
-            Statement statement2 = connection.createStatement(); 
-            ResultSet rs2;
-            
-            rs = statement.executeQuery(query);
-            
-            while(rs.next())
-            {
-                OrderInfo order = new OrderInfo(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13),rs.getString(14),rs.getString(15),rs.getString(16),rs.getString(17));
-                
-                rs2 = statement2.executeQuery("SELECT * FROM shopping_cart_item sci WHERE ShoppingCartId = " + rs.getString(16) + ";");
-                while(rs2.next())
-                {
-                    order.getCartItems().add(new ShoppingCartItem(rs2.getString(1),rs2.getString(2),rs2.getString(3),rs2.getString(4),rs2.getString(5),rs2.getString(6)));
-                }
-                                               
-                rs2 = statement2.executeQuery("SELECT * FROM customer cu, contact co, address ad WHERE cu.ContactId = co.ContactId AND cu.AddressId = ad.AddressId AND cu.CustomerId = " + rs.getString(17) + ";");
-                while(rs2.next())
-                {
-                    Address address = new Address(Integer.valueOf(rs2.getString(2)),rs2.getString(16),rs2.getString(17),rs2.getString(18),rs2.getString(19),rs2.getString(20),rs2.getString(21),rs2.getString(22),Integer.valueOf(rs2.getString(23)));
-                    Contact contact = new Contact(Integer.valueOf(rs2.getString(3)),rs2.getString(5),rs2.getString(6),rs2.getString(7),rs2.getString(8),rs2.getString(9),rs2.getString(10),rs2.getString(11),rs2.getString(12),rs.getString(13));
-                    order.setCustomer(new Customer(Integer.valueOf(rs2.getString(1)), contact, address));                    
-                }
-                
-                rs2 = statement2.executeQuery("SELECT * FROM shipping WHERE shipping.ShippingId = " + rs.getString(2) + ";");
-                while(rs2.next())
-                {
-                    order.setShippingMethod(new ShippingMethod(rs2.getString(1),rs2.getString(2),rs2.getString(3),rs2.getString(4),rs2.getString(5)));                    
-                }
-                
-                orders.add(order);
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("getOrderInfoByStatus error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-        return orders;
-    }
+//    public static ArrayList<OrderInfo> getOrderInfoByStatus(String status)
+//    {
+//        ArrayList<OrderInfo> orders = new ArrayList<OrderInfo>();
+//
+//        try
+//        {
+//            openConnection();
+//            
+//            String query = "SELECT * FROM order o, shopping_cart sc WHERE o.OrderId = sc.OrderId order by OrderDate desc;";
+//            
+//            if (status != null)
+//            {
+//                if (!status.equals("all"))
+//                {
+//                    query ="SELECT * FROM order o, shopping_cart sc WHERE o.OrderId = sc.OrderId AND o.OrderStatus='" + status + "' order by OrderDate desc;";
+//                }
+//            }
+//            
+//            System.out.println(query);
+//            
+//            Statement statement2 = connection.createStatement(); 
+//            ResultSet rs2;
+//            
+//            rs = statement.executeQuery(query);
+//            
+//            while(rs.next())
+//            {
+//                OrderInfo order = new OrderInfo(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13),rs.getString(14),rs.getString(15),rs.getString(16),rs.getString(17));
+//                
+//                rs2 = statement2.executeQuery("SELECT * FROM shopping_cart_item sci WHERE ShoppingCartId = " + rs.getString(16) + ";");
+//                while(rs2.next())
+//                {
+//                    order.getCartItems().add(new ShoppingCartItem(rs2.getString(1),rs2.getString(2),rs2.getString(3),rs2.getString(4),rs2.getString(5),rs2.getString(6)));
+//                }
+//                                               
+//                rs2 = statement2.executeQuery("SELECT * FROM customer cu, contact co, address ad WHERE cu.ContactId = co.ContactId AND cu.AddressId = ad.AddressId AND cu.CustomerId = " + rs.getString(17) + ";");
+//                while(rs2.next())
+//                {
+//                    Address address = new Address(Integer.valueOf(rs2.getString(2)),rs2.getString(16),rs2.getString(17),rs2.getString(18),rs2.getString(19),rs2.getString(20),rs2.getString(21),rs2.getString(22),Integer.valueOf(rs2.getString(23)));
+//                    Contact contact = new Contact(Integer.valueOf(rs2.getString(3)),rs2.getString(5),rs2.getString(6),rs2.getString(7),rs2.getString(8),rs2.getString(9),rs2.getString(10),rs2.getString(11),rs2.getString(12),rs.getString(13));
+//                    order.setCustomer(new Customer(Integer.valueOf(rs2.getString(1)), contact, address));                    
+//                }
+//                
+//                rs2 = statement2.executeQuery("SELECT * FROM shipping WHERE shipping.ShippingId = " + rs.getString(2) + ";");
+//                while(rs2.next())
+//                {
+//                    order.setShippingMethod(new ShippingMethod(rs2.getString(1),rs2.getString(2),rs2.getString(3),rs2.getString(4),rs2.getString(5)));                    
+//                }
+//                
+//                orders.add(order);
+//            }
+//        }
+//        catch (Exception ex)
+//        {
+//            System.out.println("getOrderInfoByStatus error: " + ex.getMessage());
+//        }
+//        finally
+//        {
+//            closeConnection();
+//        }
+//        return orders;
+//    }
     
     public static boolean deleteItem(int id, String filePath, String imagePath)
     {
@@ -3303,138 +3309,138 @@ public class Database extends BasicConnection
         return true;
     }
     
-    public static ArrayList<User> getUsersWithServices()
-    {
-        ArrayList<User> users = new ArrayList<User>();        
-        ResultSet rs4;
-
-        try
-        {
-            openConnection();
-            statement = connection.createStatement();
-
-            String query = "SELECT * FROM user u, address a, contact c WHERE a.AddressId = u.AddressId AND c.ContactId = u.ContactId;";
-            System.out.println(query);
-            rs4 = statement.executeQuery(query);
-
-            while(rs4.next())
-            {                                
-                Contact c = new Contact(rs4.getInt("ContactId"), rs4.getString("Title"),rs4.getString("FirstName"),rs4.getString("LastName"),rs4.getString("Position"),rs4.getString("Phone"), rs4.getString("Fax"), rs4.getString("Email"), rs4.getString("EmailConfirmed"),rs4.getString("Info"));               
-                Address a = new Address(rs4.getInt("AddressId"), rs4.getString("Address1"), rs4.getString("Address2"), rs4.getString("City"), rs4.getString("State"), rs4.getString("Zipcode"), rs4.getString("Country"), rs4.getString("Region"), rs4.getInt("UserId"));
-                
-                User u = new User();                               
-                u.setUserContact(c);
-                u.setUserAddress(a);
-                u.setUserId(Integer.valueOf(rs4.getInt("UserId")));
-                u.setUserName(rs4.getString("UserName"));
-                u.setUserImgUrl(rs4.getString("UserImgURL"));
-                u.setUserEmail(rs4.getString("UserEmail"));
-                u.setUserConfirmation(rs4.getString("UserEmailConfirmed"));
-                u.setUserWebUrl(rs4.getString("UserWebUrl"));
-            
-                ArrayList<UserService> services = new ArrayList<UserService>();
-                ArrayList<String> userServiceIds = new ArrayList<String>();
-                
-                rs = statement.executeQuery("SELECT * FROM user_service us WHERE UserId = '" + u.getUserId() + "';");
-                while(rs.next())
-                {
-                    services.add(new UserService(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10)));
-                    userServiceIds.add(rs.getString(1));
-                }
-                
-                for(int i = 0; i < services.size(); i++)
-                {
-                    query = "SELECT * FROM service c WHERE ServiceId = " + userServiceIds.get(i) + ";";
-                    System.out.println(query);
-                    rs = statement.executeQuery(query);
-
-                    while(rs.next())
-                    {
-                        services.get(i).setServiceDetails(new Service(rs.getInt(1), rs.getInt(2),rs.getInt(3),rs.getString(4),rs.getString(5)));                
-                    }
-                }
-                
-                u.setUserServices(services);                
-                users.add(u);
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Get getUsersWithServices error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-
-        return users;
-    }
+//    public static ArrayList<User> getUsersWithServices()
+//    {
+//        ArrayList<User> users = new ArrayList<User>();        
+//        ResultSet rs4;
+//
+//        try
+//        {
+//            openConnection();
+//            statement = connection.createStatement();
+//
+//            String query = "SELECT * FROM user u, address a, contact c WHERE a.AddressId = u.AddressId AND c.ContactId = u.ContactId;";
+//            System.out.println(query);
+//            rs4 = statement.executeQuery(query);
+//
+//            while(rs4.next())
+//            {                                
+//                Contact c = new Contact(rs4.getInt("ContactId"), rs4.getString("Title"),rs4.getString("FirstName"),rs4.getString("LastName"),rs4.getString("Position"),rs4.getString("Phone"), rs4.getString("Fax"), rs4.getString("Email"), rs4.getString("EmailConfirmed"),rs4.getString("Info"));               
+//                Address a = new Address(rs4.getInt("AddressId"), rs4.getString("Address1"), rs4.getString("Address2"), rs4.getString("City"), rs4.getString("State"), rs4.getString("Zipcode"), rs4.getString("Country"), rs4.getString("Region"), rs4.getInt("UserId"));
+//                
+//                User u = new User();                               
+//                u.setUserContact(c);
+//                u.setUserAddress(a);
+//                u.setUserId(Integer.valueOf(rs4.getInt("UserId")));
+//                u.setUserName(rs4.getString("UserName"));
+//                u.setUserImgUrl(rs4.getString("UserImgURL"));
+//                u.setUserEmail(rs4.getString("UserEmail"));
+//                u.setUserConfirmation(rs4.getString("UserEmailConfirmed"));
+//                u.setUserWebUrl(rs4.getString("UserWebUrl"));
+//            
+//                ArrayList<UserService> services = new ArrayList<UserService>();
+//                ArrayList<String> userServiceIds = new ArrayList<String>();
+//                
+//                rs = statement.executeQuery("SELECT * FROM user_service us WHERE UserId = '" + u.getUserId() + "';");
+//                while(rs.next())
+//                {
+//                    services.add(new UserService(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10)));
+//                    userServiceIds.add(rs.getString(1));
+//                }
+//                
+//                for(int i = 0; i < services.size(); i++)
+//                {
+//                    query = "SELECT * FROM service c WHERE ServiceId = " + userServiceIds.get(i) + ";";
+//                    System.out.println(query);
+//                    rs = statement.executeQuery(query);
+//
+//                    while(rs.next())
+//                    {
+//                        services.get(i).setServiceDetails(new Service(rs.getInt(1), rs.getInt(2),rs.getInt(3),rs.getString(4),rs.getString(5)));                
+//                    }
+//                }
+//                
+//                u.setUserServices(services);                
+//                users.add(u);
+//            }
+//        }
+//        catch (Exception ex)
+//        {
+//            System.out.println("Get getUsersWithServices error: " + ex.getMessage());
+//        }
+//        finally
+//        {
+//            closeConnection();
+//        }
+//
+//        return users;
+//    }
     
-    public static ArrayList<User> getUserWithServices(String userId)
-    {
-        ArrayList<User> users = new ArrayList<User>(); 
-
-        try
-        {
-            String query = "SELECT * FROM `user` u, user_service us, address a, contact c WHERE u.AddressId = a.AddressId AND u.ContactId = c.ContactId AND us.UserId = " + userId + ";";
-            runQuery(query);
-
-            while(rs.next())
-            {                                
-                Contact c = new Contact(rs.getInt("ContactId"), rs.getString("Title"),rs.getString("FirstName"),rs.getString("LastName"),rs.getString("Position"),rs.getString("Phone"), rs.getString("Fax"), rs.getString("Email"), rs.getString("EmailConfirmed"),rs.getString("Info"));               
-                Address a = new Address(rs.getInt("AddressId"), rs.getString("Address1"), rs.getString("Address2"), rs.getString("City"), rs.getString("State"), rs.getString("Zipcode"), rs.getString("Country"), rs.getString("Region"), rs.getInt("UserId"));
-                
-                User u = new User();                               
-                u.setUserContact(c);
-                u.setUserAddress(a);
-                u.setUserId(Integer.valueOf(rs.getInt("UserId")));
-                u.setUserName(rs.getString("UserName"));
-                u.setUserPassword(rs.getString("UserPassword"));
-                u.setUserSecurityQuestion(rs.getString("UserSecurityQuestion"));
-                u.setUserSecurityAnswer(rs.getString("UserSecurityAnswer"));
-                u.setUserImgUrl(rs.getString("UserImgURL"));
-                u.setUserEmail(rs.getString("UserEmail"));
-                u.setUserConfirmation(rs.getString("UserEmailConfirmed"));
-                u.setUserWebUrl(rs.getString("UserWebUrl"));
-            
-                ArrayList<UserService> services = new ArrayList<UserService>();
-                ArrayList<String> userServiceIds = new ArrayList<String>();
-                
-                rs = statement.executeQuery("SELECT * FROM user_service us WHERE UserId = '" + u.getUserId() + "';");
-                while(rs.next())
-                {
-                    services.add(new UserService(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10)));
-                    userServiceIds.add(rs.getString(1));
-                }
-                
-                for(int i = 0; i < services.size(); i++)
-                {
-                    query = "SELECT * FROM service c WHERE ServiceId = " + userServiceIds.get(i) + ";";
-                    System.out.println(query);
-                    rs = statement.executeQuery(query);
-
-                    while(rs.next())
-                    {
-                        services.get(i).setServiceDetails(new Service(rs.getInt(1), rs.getInt(2),rs.getInt(3),rs.getString(4),rs.getString(5)));                
-                    }
-                }
-                
-                u.setUserServices(services);  
-                users.add(u);
-
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Get getUserWithServices error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-
-        return users;
-    }
+//    public static ArrayList<User> getUserWithServices(String userId)
+//    {
+//        ArrayList<User> users = new ArrayList<User>(); 
+//
+//        try
+//        {
+//            String query = "SELECT * FROM `user` u, user_service us, address a, contact c WHERE u.AddressId = a.AddressId AND u.ContactId = c.ContactId AND us.UserId = " + userId + ";";
+//            runQuery(query);
+//
+//            while(rs.next())
+//            {                                
+//                Contact c = new Contact(rs.getInt("ContactId"), rs.getString("Title"),rs.getString("FirstName"),rs.getString("LastName"),rs.getString("Position"),rs.getString("Phone"), rs.getString("Fax"), rs.getString("Email"), rs.getString("EmailConfirmed"),rs.getString("Info"));               
+//                Address a = new Address(rs.getInt("AddressId"), rs.getString("Address1"), rs.getString("Address2"), rs.getString("City"), rs.getString("State"), rs.getString("Zipcode"), rs.getString("Country"), rs.getString("Region"), rs.getInt("UserId"));
+//                
+//                User u = new User();                               
+//                u.setUserContact(c);
+//                u.setUserAddress(a);
+//                u.setUserId(Integer.valueOf(rs.getInt("UserId")));
+//                u.setUserName(rs.getString("UserName"));
+//                u.setUserPassword(rs.getString("UserPassword"));
+//                u.setUserSecurityQuestion(rs.getString("UserSecurityQuestion"));
+//                u.setUserSecurityAnswer(rs.getString("UserSecurityAnswer"));
+//                u.setUserImgUrl(rs.getString("UserImgURL"));
+//                u.setUserEmail(rs.getString("UserEmail"));
+//                u.setUserConfirmation(rs.getString("UserEmailConfirmed"));
+//                u.setUserWebUrl(rs.getString("UserWebUrl"));
+//            
+//                ArrayList<UserService> services = new ArrayList<UserService>();
+//                ArrayList<String> userServiceIds = new ArrayList<String>();
+//                
+//                rs = statement.executeQuery("SELECT * FROM user_service us WHERE UserId = '" + u.getUserId() + "';");
+//                while(rs.next())
+//                {
+//                    services.add(new UserService(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10)));
+//                    userServiceIds.add(rs.getString(1));
+//                }
+//                
+//                for(int i = 0; i < services.size(); i++)
+//                {
+//                    query = "SELECT * FROM service c WHERE ServiceId = " + userServiceIds.get(i) + ";";
+//                    System.out.println(query);
+//                    rs = statement.executeQuery(query);
+//
+//                    while(rs.next())
+//                    {
+//                        services.get(i).setServiceDetails(new Service(rs.getInt(1), rs.getInt(2),rs.getInt(3),rs.getString(4),rs.getString(5)));                
+//                    }
+//                }
+//                
+//                u.setUserServices(services);  
+//                users.add(u);
+//
+//            }
+//        }
+//        catch (Exception ex)
+//        {
+//            System.out.println("Get getUserWithServices error: " + ex.getMessage());
+//        }
+//        finally
+//        {
+//            closeConnection();
+//        }
+//
+//        return users;
+//    }
 
     public static Service getService(String serviceId)
     {
@@ -3704,6 +3710,35 @@ public class Database extends BasicConnection
             closeConnection();
         }
         return count;
+                        
+    }
+    
+    public static boolean updateCount(String objectName, int offset)
+    {
+        String columnName = objectName + "Count";
+        boolean success = false;
+        try
+        {
+            if(offset > 0)
+            {
+                runQuery("UPDATE dashboard SET " + columnName + "= " + columnName + " + 1 WHERE DashboardId = 1;");
+                success = true;
+            }
+            else
+            {                
+                runQuery("UPDATE dashboard SET " + columnName + "= " + columnName + " - 1  WHERE DashboardId = 1;");
+                success = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.out.println("updateCount error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+        return success;
                         
     }
 }

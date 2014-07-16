@@ -1,6 +1,6 @@
 package com.transitionsoft.dao;
 
-import com.busy.dao.Address;
+import com.busy.entity.Address;
 import java.util.ArrayList;
 
 public class User {

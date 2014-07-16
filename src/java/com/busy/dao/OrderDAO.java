@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -31,7 +30,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.*;
+    import com.busy.entity.Order;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;

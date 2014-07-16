@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -30,8 +29,8 @@
 
     package com.busy.dao;
 
-    import com.transitionsoft.*;
-    import com.busy.entity.*;
+    import com.transitionsoft.BasicConnection;
+    import com.busy.entity.UserService;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -44,7 +43,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(UserService.PROP_USER_SERVICE_ID) || column.equals(UserService.PROP_START_DATE) || column.equals(UserService.PROP_END_DATE) || column.equals(UserService.PROP_DETAILS) || column.equals(UserService.PROP_CONTRACT_URL) || column.equals(UserService.PROP_DELIVERABLE_URL) || column.equals(UserService.PROP_DEPOSIT_AMOUNT) || column.equals(UserService.PROP_BLOG_ID) || column.equals(UserService.PROP_USER_ID) || column.equals(UserService.PROP_SERVICE_ID) )
+            if(column.equals(UserService.PROP_USER_SERVICE_ID) || column.equals(UserService.PROP_START_DATE) || column.equals(UserService.PROP_END_DATE) || column.equals(UserService.PROP_DETAILS) || column.equals(UserService.PROP_CONTRACT_URL) || column.equals(UserService.PROP_DELIVERABLE_URL) || column.equals(UserService.PROP_DEPOSIT_AMOUNT) || column.equals(UserService.PROP_USER_RANK) || column.equals(UserService.PROP_BLOG_ID) || column.equals(UserService.PROP_USER_ID) || column.equals(UserService.PROP_SERVICE_ID) )
             {
                 return column;
             }
@@ -64,7 +63,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(UserService.PROP_USER_SERVICE_ID) || column.equals(UserService.PROP_DEPOSIT_AMOUNT) || column.equals(UserService.PROP_BLOG_ID) || column.equals(UserService.PROP_USER_ID) || column.equals(UserService.PROP_SERVICE_ID) )
+            if (column.equals(UserService.PROP_USER_SERVICE_ID) || column.equals(UserService.PROP_DEPOSIT_AMOUNT) || column.equals(UserService.PROP_USER_RANK) || column.equals(UserService.PROP_BLOG_ID) || column.equals(UserService.PROP_USER_ID) || column.equals(UserService.PROP_SERVICE_ID) )
             {
                 return true;
             }        
@@ -76,10 +75,10 @@
                                
         public static UserService processUserService(ResultSet rs) throws SQLException
         {        
-            return new UserService(rs.getInt(1), rs.getDate(2), rs.getDate(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getDouble(7), rs.getInt(8), rs.getInt(9), rs.getInt(10));
+            return new UserService(rs.getInt(1), rs.getDate(2), rs.getDate(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getDouble(7), rs.getInt(8), rs.getInt(9), rs.getInt(10), rs.getInt(11));
         }
         
-        public static int addUserService(Date StartDate, Date EndDate, String Details, String ContractUrl, String DeliverableUrl, Double DepositAmount, Integer BlogId, Integer UserId, Integer ServiceId)
+        public static int addUserService(Date StartDate, Date EndDate, String Details, String ContractUrl, String DeliverableUrl, Double DepositAmount, Integer UserRank, Integer BlogId, Integer UserId, Integer ServiceId)
         {   
             int id = 0;
             try
@@ -94,18 +93,20 @@
                 
                 
                 
+                
                                             
                 openConnection();
-                prepareStatement("INSERT INTO user_service(StartDate,EndDate,Details,ContractUrl,DeliverableUrl,DepositAmount,BlogId,UserId,ServiceId) VALUES (?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO user_service(StartDate,EndDate,Details,ContractUrl,DeliverableUrl,DepositAmount,UserRank,BlogId,UserId,ServiceId) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setDate(1, new java.sql.Date(StartDate.getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(EndDate.getTime()));
                 preparedStatement.setString(3, Details);
                 preparedStatement.setString(4, ContractUrl);
                 preparedStatement.setString(5, DeliverableUrl);
                 preparedStatement.setDouble(6, DepositAmount);
-                preparedStatement.setInt(7, BlogId);
-                preparedStatement.setInt(8, UserId);
-                preparedStatement.setInt(9, ServiceId);
+                preparedStatement.setInt(7, UserRank);
+                preparedStatement.setInt(8, BlogId);
+                preparedStatement.setInt(9, UserId);
+                preparedStatement.setInt(10, ServiceId);
                 
                 preparedStatement.executeUpdate();
             
@@ -219,7 +220,7 @@
             return user_service;
         }                
                 
-        public static void updateUserService(Integer UserServiceId,Date StartDate,Date EndDate,String Details,String ContractUrl,String DeliverableUrl,Double DepositAmount,Integer BlogId,Integer UserId,Integer ServiceId)
+        public static void updateUserService(Integer UserServiceId,Date StartDate,Date EndDate,String Details,String ContractUrl,String DeliverableUrl,Double DepositAmount,Integer UserRank,Integer BlogId,Integer UserId,Integer ServiceId)
         {  
             try
             {   
@@ -233,19 +234,21 @@
                 
                 
                 
+                
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_service SET StartDate=?,EndDate=?,Details=?,ContractUrl=?,DeliverableUrl=?,DepositAmount=?,BlogId=?,UserId=?,ServiceId=? WHERE UserServiceId=?;");                    
+                prepareStatement("UPDATE user_service SET StartDate=?,EndDate=?,Details=?,ContractUrl=?,DeliverableUrl=?,DepositAmount=?,UserRank=?,BlogId=?,UserId=?,ServiceId=? WHERE UserServiceId=?;");                    
                 preparedStatement.setDate(1, new java.sql.Date(StartDate.getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(EndDate.getTime()));
                 preparedStatement.setString(3, Details);
                 preparedStatement.setString(4, ContractUrl);
                 preparedStatement.setString(5, DeliverableUrl);
                 preparedStatement.setDouble(6, DepositAmount);
-                preparedStatement.setInt(7, BlogId);
-                preparedStatement.setInt(8, UserId);
-                preparedStatement.setInt(9, ServiceId);
-                preparedStatement.setInt(10, UserServiceId);
+                preparedStatement.setInt(7, UserRank);
+                preparedStatement.setInt(8, BlogId);
+                preparedStatement.setInt(9, UserId);
+                preparedStatement.setInt(10, ServiceId);
+                preparedStatement.setInt(11, UserServiceId);
                 preparedStatement.executeUpdate();
             }
             catch (Exception ex)

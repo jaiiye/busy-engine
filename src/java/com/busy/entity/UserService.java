@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -22,7 +21,6 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
     import java.util.Date;
     
@@ -36,6 +34,7 @@
         public static final String PROP_CONTRACT_URL = "ContractUrl";
         public static final String PROP_DELIVERABLE_URL = "DeliverableUrl";
         public static final String PROP_DEPOSIT_AMOUNT = "DepositAmount";
+        public static final String PROP_USER_RANK = "UserRank";
         public static final String PROP_BLOG_ID = "BlogId";
         public static final String PROP_USER_ID = "UserId";
         public static final String PROP_SERVICE_ID = "ServiceId";
@@ -48,6 +47,7 @@
         private String contractUrl;
         private String deliverableUrl;
         private Double depositAmount;
+        private Integer userRank;
         private Integer blogId;
         private Integer userId;
         private Integer serviceId;
@@ -62,12 +62,13 @@
        this.contractUrl = ""; 
        this.deliverableUrl = ""; 
        this.depositAmount = 0.0; 
+       this.userRank = 0; 
        this.blogId = 0; 
        this.userId = 0; 
        this.serviceId = 0; 
         }
         
-        public UserService(Integer UserServiceId, Date StartDate, Date EndDate, String Details, String ContractUrl, String DeliverableUrl, Double DepositAmount, Integer BlogId, Integer UserId, Integer ServiceId)
+        public UserService(Integer UserServiceId, Date StartDate, Date EndDate, String Details, String ContractUrl, String DeliverableUrl, Double DepositAmount, Integer UserRank, Integer BlogId, Integer UserId, Integer ServiceId)
         {
             this.userServiceId = UserServiceId;
        this.startDate = StartDate;
@@ -76,6 +77,7 @@
        this.contractUrl = ContractUrl;
        this.deliverableUrl = DeliverableUrl;
        this.depositAmount = DepositAmount;
+       this.userRank = UserRank;
        this.blogId = BlogId;
        this.userId = UserId;
        this.serviceId = ServiceId;
@@ -151,6 +153,16 @@
             public void setDepositAmount(Double DepositAmount)
             {
                 this.depositAmount = DepositAmount;
+            }
+        
+            public Integer getUserRank()
+            {
+                return this.userRank;
+            }
+            
+            public void setUserRank(Integer UserRank)
+            {
+                this.userRank = UserRank;
             }
         
             public Integer getBlogId()

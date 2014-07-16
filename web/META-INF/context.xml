@@ -7,7 +7,7 @@
             
             type="javax.sql.DataSource" 
             driverClassName="com.mysql.jdbc.Driver" 
-            url="jdbc:mysql://localhost/busystore" 
+            url="jdbc:mysql://localhost/busyengine" 
             username="root" 
             password="85291012" 
             validationQuery="select 1"

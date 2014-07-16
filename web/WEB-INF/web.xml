@@ -54,10 +54,6 @@
         <servlet-class>com.transitionsoft.DownloadCounter</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ProcessDB</servlet-name>
-        <servlet-class>com.transitionsoft.ProcessDB</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>GenerateUI</servlet-name>
         <servlet-class>com.transitionsoft.GenerateUI</servlet-class>
     </servlet>
@@ -116,10 +112,6 @@
     <servlet-mapping>
         <servlet-name>DownloadCounter</servlet-name>
         <url-pattern>/DownloadCounter</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ProcessDB</servlet-name>
-        <url-pattern>/ProcessDB</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GenerateUI</servlet-name>

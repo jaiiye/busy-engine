@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -22,7 +21,6 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
     import java.util.Date;
     
@@ -32,6 +30,7 @@
         public static final String PROP_SERVICE_ID = "ServiceId";
         public static final String PROP_SERVICE_NAME = "ServiceName";
         public static final String PROP_DESCRIPTION = "Description";
+        public static final String PROP_STATUS = "Status";
         public static final String PROP_SERVICE_CHARGE_ID = "ServiceChargeId";
         public static final String PROP_SERVICE_TYPE_ID = "ServiceTypeId";
         
@@ -39,6 +38,7 @@
         private Integer serviceId;
         private String serviceName;
         private String description;
+        private Integer status;
         private Integer serviceChargeId;
         private Integer serviceTypeId;
         
@@ -48,15 +48,17 @@
             this.serviceId = 0; 
        this.serviceName = ""; 
        this.description = ""; 
+       this.status = 0; 
        this.serviceChargeId = 0; 
        this.serviceTypeId = 0; 
         }
         
-        public Service(Integer ServiceId, String ServiceName, String Description, Integer ServiceChargeId, Integer ServiceTypeId)
+        public Service(Integer ServiceId, String ServiceName, String Description, Integer Status, Integer ServiceChargeId, Integer ServiceTypeId)
         {
             this.serviceId = ServiceId;
        this.serviceName = ServiceName;
        this.description = Description;
+       this.status = Status;
        this.serviceChargeId = ServiceChargeId;
        this.serviceTypeId = ServiceTypeId;
         } 
@@ -91,6 +93,16 @@
             public void setDescription(String Description)
             {
                 this.description = Description;
+            }
+        
+            public Integer getStatus()
+            {
+                return this.status;
+            }
+            
+            public void setStatus(Integer Status)
+            {
+                this.status = Status;
             }
         
             public Integer getServiceChargeId()

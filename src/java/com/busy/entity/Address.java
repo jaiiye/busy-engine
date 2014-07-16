@@ -1,11 +1,9 @@
 package com.busy.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class Address implements Serializable
 {
-
     private static final long serialVersionUID = 1L;
     public static final String PROP_ADDRESS_ID = "AddressId";
     public static final String PROP_RECIPIENT = "Recipient";

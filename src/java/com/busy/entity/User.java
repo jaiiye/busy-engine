@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -22,7 +21,6 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
     import java.util.Date;
     
@@ -38,6 +36,7 @@
         public static final String PROP_REGISTER_DATE = "RegisterDate";
         public static final String PROP_IMAGE_U_R_L = "ImageURL";
         public static final String PROP_STATUS = "Status";
+        public static final String PROP_RANK = "Rank";
         public static final String PROP_WEB_URL = "WebUrl";
         public static final String PROP_BRAND_ID = "BrandId";
         public static final String PROP_USER_TYPE_ID = "UserTypeId";
@@ -55,6 +54,7 @@
         private Date registerDate;
         private String imageURL;
         private Integer status;
+        private Integer rank;
         private String webUrl;
         private Integer brandId;
         private Integer userTypeId;
@@ -74,6 +74,7 @@
        this.registerDate = null; 
        this.imageURL = ""; 
        this.status = 0; 
+       this.rank = 0; 
        this.webUrl = ""; 
        this.brandId = 0; 
        this.userTypeId = 0; 
@@ -82,7 +83,7 @@
        this.userGroupId = 0; 
         }
         
-        public User(Integer UserId, String Username, String Password, String Email, String SecurityQuestion, String SecurityAnswer, Date RegisterDate, String ImageURL, Integer Status, String WebUrl, Integer BrandId, Integer UserTypeId, Integer AddressId, Integer ContactId, Integer UserGroupId)
+        public User(Integer UserId, String Username, String Password, String Email, String SecurityQuestion, String SecurityAnswer, Date RegisterDate, String ImageURL, Integer Status, Integer Rank, String WebUrl, Integer BrandId, Integer UserTypeId, Integer AddressId, Integer ContactId, Integer UserGroupId)
         {
             this.userId = UserId;
        this.username = Username;
@@ -93,6 +94,7 @@
        this.registerDate = RegisterDate;
        this.imageURL = ImageURL;
        this.status = Status;
+       this.rank = Rank;
        this.webUrl = WebUrl;
        this.brandId = BrandId;
        this.userTypeId = UserTypeId;
@@ -191,6 +193,16 @@
             public void setStatus(Integer Status)
             {
                 this.status = Status;
+            }
+        
+            public Integer getRank()
+            {
+                return this.rank;
+            }
+            
+            public void setRank(Integer Rank)
+            {
+                this.rank = Rank;
             }
         
             public String getWebUrl()

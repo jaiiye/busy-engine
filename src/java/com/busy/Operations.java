@@ -1,7 +1,7 @@
 package com.busy;
 
-import com.transitionsoft.Database;
 import com.busy.dao.*;
+import com.transitionsoft.Database;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -2682,6 +2682,66 @@ public class Operations extends HttpServlet
             }
         }
 
+        if (request.getParameter("form").equals("related_items"))
+        {
+            try
+            {
+                switch (Integer.parseInt(request.getParameter("action")))
+                {
+                    case 1: //create
+                        int id = RelatedItemsDAO.addRelatedItems(Integer.parseInt(request.getParameter("item1")), Integer.parseInt(request.getParameter("item2")));
+                        if (id != 0)
+                        {
+                            Database.RecordUserObjectCreationAction(u.getUserId().toString(), u.getUserName(), currentTime, "RelatedItems", id);
+                        }
+
+                        response.sendRedirect("admin/RelatedItemsUI.jsp?SuccessMsg=Added RelatedItems Successfully!");
+                        break;
+                    case 2: //update            
+                        RelatedItemsDAO.updateRelatedItems(Integer.parseInt(request.getParameter("relatedItemId")), Integer.parseInt(request.getParameter("item1")), Integer.parseInt(request.getParameter("item2")));
+                        Database.RecordUserObjectUpdateAction(u.getUserId().toString(), u.getUserName(), currentTime, "RelatedItems", Integer.parseInt(request.getParameter("relatedItemId")));
+                        response.sendRedirect("admin/RelatedItemsUI.jsp?id=" + request.getParameter("relatedItemId") + "&SuccessMsg=Updated RelatedItems Successfully!");
+                        break;
+                    case 3:  //delete
+                        RelatedItemsDAO.deleteRelatedItemsById(request.getParameter("id"));
+                        Database.RecordUserObjectDeletionAction(u.getUserId().toString(), u.getUserName(), currentTime, "RelatedItems", request.getParameter("id"));
+
+                        response.sendRedirect("admin/RelatedItemsUI.jsp?SuccessMsg=Deleted RelatedItems Successfully!");
+                        break;
+                    case 4:  //remove all records
+                        RelatedItemsDAO.deleteAllRelatedItems();
+                        Database.RecordUserObjectClearAction(u.getUserId().toString(), u.getUserName(), currentTime, "RelatedItems");
+                        response.sendRedirect("admin/RelatedItemsUI.jsp?SuccessMsg=Removed All Records Successfully!");
+                        break;
+                    default:
+                        response.sendRedirect("admin/RelatedItemsUI.jsp?ErrorMsg=Error editing RelatedItems, Invalid Action.");
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                System.out.println("Error:" + e.getMessage());
+                switch (Integer.parseInt(request.getParameter("action")))
+                {
+                    case 1:
+                        response.sendRedirect("admin/RelatedItemsUI.jsp?ErrorMsg=Error adding RelatedItems.");
+                        break; //create
+                    case 2:
+                        response.sendRedirect("admin/RelatedItemsUI.jsp?ErrorMsg=Error editing RelatedItems.");
+                        break; //update                                                    
+                    case 3:
+                        response.sendRedirect("admin/RelatedItemsUI.jsp?ErrorMsg=Error deleting RelatedItems.");
+                        break; //delete                                                    
+                    case 4:
+                        response.sendRedirect("admin/RelatedItemsUI.jsp?ErrorMsg=Error clearing RelatedItems.");
+                        break; //clear                          
+                    default:
+                        response.sendRedirect("admin/RelatedItemsUI.jsp?ErrorMsg=Unknown Error RelatedItems, possibly an invalid action.");
+                        break;
+                }
+            }
+        }
+
         if (request.getParameter("form").equals("resource_type"))
         {
             try
@@ -2869,7 +2929,7 @@ public class Operations extends HttpServlet
                 switch (Integer.parseInt(request.getParameter("action")))
                 {
                     case 1: //create
-                        int id = ServiceDAO.addService(request.getParameter("serviceName"), request.getParameter("description"), Integer.parseInt(request.getParameter("serviceChargeId")), Integer.parseInt(request.getParameter("serviceTypeId")));
+                        int id = ServiceDAO.addService(request.getParameter("serviceName"), request.getParameter("description"), Integer.parseInt(request.getParameter("status")), Integer.parseInt(request.getParameter("serviceChargeId")), Integer.parseInt(request.getParameter("serviceTypeId")));
                         if (id != 0)
                         {
                             Database.RecordUserObjectCreationAction(u.getUserId().toString(), u.getUserName(), currentTime, "Service", id);
@@ -2878,7 +2938,7 @@ public class Operations extends HttpServlet
                         response.sendRedirect("admin/ServiceUI.jsp?SuccessMsg=Added Service Successfully!");
                         break;
                     case 2: //update            
-                        ServiceDAO.updateService(Integer.parseInt(request.getParameter("serviceId")), request.getParameter("serviceName"), request.getParameter("description"), Integer.parseInt(request.getParameter("serviceChargeId")), Integer.parseInt(request.getParameter("serviceTypeId")));
+                        ServiceDAO.updateService(Integer.parseInt(request.getParameter("serviceId")), request.getParameter("serviceName"), request.getParameter("description"), Integer.parseInt(request.getParameter("status")), Integer.parseInt(request.getParameter("serviceChargeId")), Integer.parseInt(request.getParameter("serviceTypeId")));
                         Database.RecordUserObjectUpdateAction(u.getUserId().toString(), u.getUserName(), currentTime, "Service", Integer.parseInt(request.getParameter("serviceId")));
                         response.sendRedirect("admin/ServiceUI.jsp?id=" + request.getParameter("serviceId") + "&SuccessMsg=Updated Service Successfully!");
                         break;
@@ -4189,7 +4249,7 @@ public class Operations extends HttpServlet
                 switch (Integer.parseInt(request.getParameter("action")))
                 {
                     case 1: //create
-                        int id = UserDAO.addUser(request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("securityQuestion"), request.getParameter("securityAnswer"), operatingDateFormat.parse(request.getParameter("registerDate")), request.getParameter("imageURL"), Integer.parseInt(request.getParameter("status")), request.getParameter("webUrl"), Integer.parseInt(request.getParameter("brandId")), Integer.parseInt(request.getParameter("userTypeId")), Integer.parseInt(request.getParameter("addressId")), Integer.parseInt(request.getParameter("contactId")), Integer.parseInt(request.getParameter("userGroupId")));
+                        int id = UserDAO.addUser(request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("securityQuestion"), request.getParameter("securityAnswer"), operatingDateFormat.parse(request.getParameter("registerDate")), request.getParameter("imageURL"), Integer.parseInt(request.getParameter("status")), Integer.parseInt(request.getParameter("rank")), request.getParameter("webUrl"), Integer.parseInt(request.getParameter("brandId")), Integer.parseInt(request.getParameter("userTypeId")), Integer.parseInt(request.getParameter("addressId")), Integer.parseInt(request.getParameter("contactId")), Integer.parseInt(request.getParameter("userGroupId")));
                         if (id != 0)
                         {
                             Database.RecordUserObjectCreationAction(u.getUserId().toString(), u.getUserName(), currentTime, "User", id);
@@ -4198,7 +4258,7 @@ public class Operations extends HttpServlet
                         response.sendRedirect("admin/UserUI.jsp?SuccessMsg=Added User Successfully!");
                         break;
                     case 2: //update            
-                        UserDAO.updateUser(Integer.parseInt(request.getParameter("userId")), request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("securityQuestion"), request.getParameter("securityAnswer"), operatingDateFormat.parse(request.getParameter("registerDate")), request.getParameter("imageURL"), Integer.parseInt(request.getParameter("status")), request.getParameter("webUrl"), Integer.parseInt(request.getParameter("brandId")), Integer.parseInt(request.getParameter("userTypeId")), Integer.parseInt(request.getParameter("addressId")), Integer.parseInt(request.getParameter("contactId")), Integer.parseInt(request.getParameter("userGroupId")));
+                        UserDAO.updateUser(Integer.parseInt(request.getParameter("userId")), request.getParameter("username"), request.getParameter("password"), request.getParameter("email"), request.getParameter("securityQuestion"), request.getParameter("securityAnswer"), operatingDateFormat.parse(request.getParameter("registerDate")), request.getParameter("imageURL"), Integer.parseInt(request.getParameter("status")), Integer.parseInt(request.getParameter("rank")), request.getParameter("webUrl"), Integer.parseInt(request.getParameter("brandId")), Integer.parseInt(request.getParameter("userTypeId")), Integer.parseInt(request.getParameter("addressId")), Integer.parseInt(request.getParameter("contactId")), Integer.parseInt(request.getParameter("userGroupId")));
                         Database.RecordUserObjectUpdateAction(u.getUserId().toString(), u.getUserName(), currentTime, "User", Integer.parseInt(request.getParameter("userId")));
                         response.sendRedirect("admin/UserUI.jsp?id=" + request.getParameter("userId") + "&SuccessMsg=Updated User Successfully!");
                         break;
@@ -4489,7 +4549,7 @@ public class Operations extends HttpServlet
                 switch (Integer.parseInt(request.getParameter("action")))
                 {
                     case 1: //create
-                        int id = UserServiceDAO.addUserService(operatingDateFormat.parse(request.getParameter("startDate")), operatingDateFormat.parse(request.getParameter("endDate")), request.getParameter("details"), request.getParameter("contractUrl"), request.getParameter("deliverableUrl"), Double.parseDouble(request.getParameter("depositAmount")), Integer.parseInt(request.getParameter("blogId")), Integer.parseInt(request.getParameter("userId")), Integer.parseInt(request.getParameter("serviceId")));
+                        int id = UserServiceDAO.addUserService(operatingDateFormat.parse(request.getParameter("startDate")), operatingDateFormat.parse(request.getParameter("endDate")), request.getParameter("details"), request.getParameter("contractUrl"), request.getParameter("deliverableUrl"), Double.parseDouble(request.getParameter("depositAmount")), Integer.parseInt(request.getParameter("userRank")), Integer.parseInt(request.getParameter("blogId")), Integer.parseInt(request.getParameter("userId")), Integer.parseInt(request.getParameter("serviceId")));
                         if (id != 0)
                         {
                             Database.RecordUserObjectCreationAction(u.getUserId().toString(), u.getUserName(), currentTime, "UserService", id);
@@ -4498,7 +4558,7 @@ public class Operations extends HttpServlet
                         response.sendRedirect("admin/UserServiceUI.jsp?SuccessMsg=Added UserService Successfully!");
                         break;
                     case 2: //update            
-                        UserServiceDAO.updateUserService(Integer.parseInt(request.getParameter("userServiceId")), operatingDateFormat.parse(request.getParameter("startDate")), operatingDateFormat.parse(request.getParameter("endDate")), request.getParameter("details"), request.getParameter("contractUrl"), request.getParameter("deliverableUrl"), Double.parseDouble(request.getParameter("depositAmount")), Integer.parseInt(request.getParameter("blogId")), Integer.parseInt(request.getParameter("userId")), Integer.parseInt(request.getParameter("serviceId")));
+                        UserServiceDAO.updateUserService(Integer.parseInt(request.getParameter("userServiceId")), operatingDateFormat.parse(request.getParameter("startDate")), operatingDateFormat.parse(request.getParameter("endDate")), request.getParameter("details"), request.getParameter("contractUrl"), request.getParameter("deliverableUrl"), Double.parseDouble(request.getParameter("depositAmount")), Integer.parseInt(request.getParameter("userRank")), Integer.parseInt(request.getParameter("blogId")), Integer.parseInt(request.getParameter("userId")), Integer.parseInt(request.getParameter("serviceId")));
                         Database.RecordUserObjectUpdateAction(u.getUserId().toString(), u.getUserName(), currentTime, "UserService", Integer.parseInt(request.getParameter("userServiceId")));
                         response.sendRedirect("admin/UserServiceUI.jsp?id=" + request.getParameter("userServiceId") + "&SuccessMsg=Updated UserService Successfully!");
                         break;
