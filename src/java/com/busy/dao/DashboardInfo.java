@@ -1,5 +1,6 @@
 package com.busy.dao;
 
+import com.busy.entity.*;
 import java.util.ArrayList;
 
 public class DashboardInfo

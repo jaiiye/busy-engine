@@ -1,25 +1,26 @@
 package com.busy.dao;
 
+import com.busy.entity.*;
+
 public class Preferences
 {
-
-    private SiteInfo siteInfo;
+    private Site siteInfo;
     private StoreInfo storeInfo;
     private Paypal paypalInfo;
 
     public Preferences()
     {
-        siteInfo = SiteInfo.getAllSiteInfoByColumn(SiteInfo.PROP_SITEINFOID, "1").get(0);
-        storeInfo = StoreInfo.getAllStoreInfoByColumn(StoreInfo.PROP_STOREINFOID, "1").get(0);
-        paypalInfo = Paypal.getAllPaypalByColumn(Paypal.PROP_PAYPALID, "1").get(0);
+        siteInfo = SiteDAO.getAllSiteByColumn(Site.PROP_SITE_ID, "1").get(0);
+        storeInfo = StoreInfoDAO.getAllStoreInfoByColumn(StoreInfo.PROP_STORE_INFO_ID, "1").get(0);
+        paypalInfo = PaypalDAO.getAllPaypalByColumn(Paypal.PROP_PAYPAL_ID, "1").get(0);
     }
 
-    public SiteInfo getSiteInfo()
+    public Site getSiteInfo()
     {
         return siteInfo;
     }
 
-    public void setSiteInfo(SiteInfo siteInfo)
+    public void setSiteInfo(Site siteInfo)
     {
         this.siteInfo = siteInfo;
     }
