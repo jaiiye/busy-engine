@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Page implements Serializable
@@ -32,7 +33,7 @@
         public static final String PROP_PAGE_ID = "PageId";
         public static final String PROP_PAGE_NAME = "PageName";
         public static final String PROP_CONTENT = "Content";
-        public static final String PROP_STATUS = "Status";
+        public static final String PROP_PAGE_STATUS = "PageStatus";
         public static final String PROP_FORM_ID = "FormId";
         public static final String PROP_SLIDER_ID = "SliderId";
         public static final String PROP_META_TAG_ID = "MetaTagId";
@@ -40,13 +41,24 @@
         
 
         private Integer pageId;
+                
         private String pageName;
+                
         private String content;
-        private Integer status;
+                
+        private Integer pageStatus;
+                
         private Integer formId;
+        private Form form;        
         private Integer sliderId;
+        private Slider slider;        
         private Integer metaTagId;
+        private MetaTag metaTag;        
         private Integer templateId;
+        private Template template;        
+                 
+        ArrayList<SitePage> sitePageList; 
+        
         
 
         public Page()
@@ -54,24 +66,30 @@
             this.pageId = 0; 
        this.pageName = ""; 
        this.content = ""; 
-       this.status = 0; 
+       this.pageStatus = 0; 
        this.formId = 0; 
        this.sliderId = 0; 
        this.metaTagId = 0; 
        this.templateId = 0; 
-        }
         
-        public Page(Integer PageId, String PageName, String Content, Integer Status, Integer FormId, Integer SliderId, Integer MetaTagId, Integer TemplateId)
+       sitePageList = null; 
+        
+       }
+        
+        public Page(Integer PageId, String PageName, String Content, Integer PageStatus, Integer FormId, Integer SliderId, Integer MetaTagId, Integer TemplateId)
         {
             this.pageId = PageId;
        this.pageName = PageName;
        this.content = Content;
-       this.status = Status;
+       this.pageStatus = PageStatus;
        this.formId = FormId;
        this.sliderId = SliderId;
        this.metaTagId = MetaTagId;
        this.templateId = TemplateId;
-        } 
+              
+       sitePageList = null; 
+        
+       } 
         
              
         
@@ -84,6 +102,8 @@
             {
                 this.pageId = PageId;
             }
+            
+            
         
             public String getPageName()
             {
@@ -94,6 +114,8 @@
             {
                 this.pageName = PageName;
             }
+            
+            
         
             public String getContent()
             {
@@ -104,16 +126,20 @@
             {
                 this.content = Content;
             }
+            
+            
         
-            public Integer getStatus()
+            public Integer getPageStatus()
             {
-                return this.status;
+                return this.pageStatus;
             }
             
-            public void setStatus(Integer Status)
+            public void setPageStatus(Integer PageStatus)
             {
-                this.status = Status;
+                this.pageStatus = PageStatus;
             }
+            
+            
         
             public Integer getFormId()
             {
@@ -124,6 +150,20 @@
             {
                 this.formId = FormId;
             }
+            
+            
+                   
+            public Form getForm()
+                {
+                    return this.form;
+                }
+
+                public void setForm(Form form)
+                {
+                    this.form = form;
+                }
+                   
+            
         
             public Integer getSliderId()
             {
@@ -134,6 +174,20 @@
             {
                 this.sliderId = SliderId;
             }
+            
+            
+                   
+            public Slider getSlider()
+                {
+                    return this.slider;
+                }
+
+                public void setSlider(Slider slider)
+                {
+                    this.slider = slider;
+                }
+                   
+            
         
             public Integer getMetaTagId()
             {
@@ -144,6 +198,20 @@
             {
                 this.metaTagId = MetaTagId;
             }
+            
+            
+                   
+            public MetaTag getMetaTag()
+                {
+                    return this.metaTag;
+                }
+
+                public void setMetaTag(MetaTag metaTag)
+                {
+                    this.metaTag = metaTag;
+                }
+                   
+            
         
             public Integer getTemplateId()
             {
@@ -154,7 +222,33 @@
             {
                 this.templateId = TemplateId;
             }
-           
+            
+            
+                   
+            public Template getTemplate()
+                {
+                    return this.template;
+                }
+
+                public void setTemplate(Template template)
+                {
+                    this.template = template;
+                }
+                   
+            
+         
+        
+        
+            public ArrayList<SitePage> getSitePageList()
+            {
+                return this.sitePageList;
+            }
+            
+            public void setSitePageList(ArrayList<SitePage> sitePageList)
+            {
+                this.sitePageList = sitePageList;
+            }
+        
             
     }
 

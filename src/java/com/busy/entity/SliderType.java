@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class SliderType implements Serializable
@@ -35,8 +36,14 @@
         
 
         private Integer sliderTypeId;
+                
         private String typeName;
+                
         private String code;
+                
+                 
+        ArrayList<Slider> sliderList; 
+        
         
 
         public SliderType()
@@ -44,14 +51,20 @@
             this.sliderTypeId = 0; 
        this.typeName = ""; 
        this.code = ""; 
-        }
+        
+       sliderList = null; 
+        
+       }
         
         public SliderType(Integer SliderTypeId, String TypeName, String Code)
         {
             this.sliderTypeId = SliderTypeId;
        this.typeName = TypeName;
        this.code = Code;
-        } 
+              
+       sliderList = null; 
+        
+       } 
         
              
         
@@ -64,6 +77,8 @@
             {
                 this.sliderTypeId = SliderTypeId;
             }
+            
+            
         
             public String getTypeName()
             {
@@ -74,6 +89,8 @@
             {
                 this.typeName = TypeName;
             }
+            
+            
         
             public String getCode()
             {
@@ -84,7 +101,21 @@
             {
                 this.code = Code;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<Slider> getSliderList()
+            {
+                return this.sliderList;
+            }
+            
+            public void setSliderList(ArrayList<Slider> sliderList)
+            {
+                this.sliderList = sliderList;
+            }
+        
             
     }
 

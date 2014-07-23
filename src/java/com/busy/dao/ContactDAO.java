@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Contact;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Contact.PROP_CONTACT_ID) || column.equals(Contact.PROP_TITLE) || column.equals(Contact.PROP_FIRST_NAME) || column.equals(Contact.PROP_LAST_NAME) || column.equals(Contact.PROP_POSITION) || column.equals(Contact.PROP_PHONE) || column.equals(Contact.PROP_FAX) || column.equals(Contact.PROP_EMAIL) || column.equals(Contact.PROP_STATUS) || column.equals(Contact.PROP_WEB_URL) || column.equals(Contact.PROP_INFO) )
+            if(column.equals(Contact.PROP_CONTACT_ID) || column.equals(Contact.PROP_TITLE) || column.equals(Contact.PROP_FIRST_NAME) || column.equals(Contact.PROP_LAST_NAME) || column.equals(Contact.PROP_POSITION) || column.equals(Contact.PROP_PHONE) || column.equals(Contact.PROP_FAX) || column.equals(Contact.PROP_EMAIL) || column.equals(Contact.PROP_CONTACT_STATUS) || column.equals(Contact.PROP_WEB_URL) || column.equals(Contact.PROP_INFO) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Contact.PROP_CONTACT_ID) || column.equals(Contact.PROP_STATUS) )
+            if (column.equals(Contact.PROP_CONTACT_ID) || column.equals(Contact.PROP_CONTACT_STATUS) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new Contact(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getInt(9), rs.getString(10), rs.getString(11));
         }
         
-        public static int addContact(String Title, String FirstName, String LastName, String Position, String Phone, String Fax, String Email, Integer Status, String WebUrl, String Info)
+        public static int addContact(String Title, String FirstName, String LastName, String Position, String Phone, String Fax, String Email, Integer ContactStatus, String WebUrl, String Info)
         {   
             int id = 0;
             try
@@ -96,7 +105,7 @@
                 checkColumnSize(Info, 65535);
                                             
                 openConnection();
-                prepareStatement("INSERT INTO contact(Title,FirstName,LastName,Position,Phone,Fax,Email,Status,WebUrl,Info) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO contact(Title,FirstName,LastName,Position,Phone,Fax,Email,ContactStatus,WebUrl,Info) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, Title);
                 preparedStatement.setString(2, FirstName);
                 preparedStatement.setString(3, LastName);
@@ -104,7 +113,7 @@
                 preparedStatement.setString(5, Phone);
                 preparedStatement.setString(6, Fax);
                 preparedStatement.setString(7, Email);
-                preparedStatement.setInt(8, Status);
+                preparedStatement.setInt(8, ContactStatus);
                 preparedStatement.setString(9, WebUrl);
                 preparedStatement.setString(10, Info);
                 
@@ -153,6 +162,76 @@
             }
             return contact;
         }
+        
+        public static ArrayList<Contact> getAllContactWithRelatedInfo()
+        {
+            ArrayList<Contact> contactList = new ArrayList<Contact>();
+            try
+            {
+                getAllRecordsByTableName("contact");
+                while (rs.next())
+                {
+                    contactList.add(processContact(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllContactWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return contactList;
+        }
+        
+        
+        public static Contact getRelatedInfo(Contact contact)
+        {
+           
+                  
+            
+            return contact;
+        }
+        
+        public static Contact getAllRelatedObjects(Contact contact)
+        {           
+            contact.setAffiliateList(AffiliateDAO.getAllAffiliateByColumn("ContactId", contact.getContactId().toString()));
+contact.setCustomerList(CustomerDAO.getAllCustomerByColumn("ContactId", contact.getContactId().toString()));
+contact.setItemLocationList(ItemLocationDAO.getAllItemLocationByColumn("ContactId", contact.getContactId().toString()));
+contact.setUserList(UserDAO.getAllUserByColumn("ContactId", contact.getContactId().toString()));
+             
+            return contact;
+        }
+        
+        
+                    
+        public static Contact getRelatedAffiliateList(Contact contact)
+        {           
+            contact.setAffiliateList(AffiliateDAO.getAllAffiliateByColumn("ContactId", contact.getContactId().toString()));
+            return contact;
+        }        
+                    
+        public static Contact getRelatedCustomerList(Contact contact)
+        {           
+            contact.setCustomerList(CustomerDAO.getAllCustomerByColumn("ContactId", contact.getContactId().toString()));
+            return contact;
+        }        
+                    
+        public static Contact getRelatedItemLocationList(Contact contact)
+        {           
+            contact.setItemLocationList(ItemLocationDAO.getAllItemLocationByColumn("ContactId", contact.getContactId().toString()));
+            return contact;
+        }        
+                    
+        public static Contact getRelatedUserList(Contact contact)
+        {           
+            contact.setUserList(UserDAO.getAllUserByColumn("ContactId", contact.getContactId().toString()));
+            return contact;
+        }        
+        
                 
         public static ArrayList<Contact> getContactPaged(int limit, int offset)
         {
@@ -220,7 +299,7 @@
             return contact;
         }                
                 
-        public static void updateContact(Integer ContactId,String Title,String FirstName,String LastName,String Position,String Phone,String Fax,String Email,Integer Status,String WebUrl,String Info)
+        public static void updateContact(Integer ContactId,String Title,String FirstName,String LastName,String Position,String Phone,String Fax,String Email,Integer ContactStatus,String WebUrl,String Info)
         {  
             try
             {   
@@ -237,7 +316,7 @@
                 checkColumnSize(Info, 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE contact SET Title=?,FirstName=?,LastName=?,Position=?,Phone=?,Fax=?,Email=?,Status=?,WebUrl=?,Info=? WHERE ContactId=?;");                    
+                prepareStatement("UPDATE contact SET Title=?,FirstName=?,LastName=?,Position=?,Phone=?,Fax=?,Email=?,ContactStatus=?,WebUrl=?,Info=? WHERE ContactId=?;");                    
                 preparedStatement.setString(1, Title);
                 preparedStatement.setString(2, FirstName);
                 preparedStatement.setString(3, LastName);
@@ -245,7 +324,7 @@
                 preparedStatement.setString(5, Phone);
                 preparedStatement.setString(6, Fax);
                 preparedStatement.setString(7, Email);
-                preparedStatement.setInt(8, Status);
+                preparedStatement.setInt(8, ContactStatus);
                 preparedStatement.setString(9, WebUrl);
                 preparedStatement.setString(10, Info);
                 preparedStatement.setInt(11, ContactId);

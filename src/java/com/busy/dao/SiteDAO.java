@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Site;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_SITE_NAME) || column.equals(Site.PROP_DOMAIN) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_URL) || column.equals(Site.PROP_EMAIL_HOST) || column.equals(Site.PROP_EMAIL_PORT) || column.equals(Site.PROP_EMAIL_USERNAME) || column.equals(Site.PROP_EMAIL_PASSWORD) || column.equals(Site.PROP_STATUS) || column.equals(Site.PROP_LOCALE) || column.equals(Site.PROP_TEMPLATE_ID) )
+            if(column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_SITE_NAME) || column.equals(Site.PROP_DOMAIN) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_URL) || column.equals(Site.PROP_EMAIL_HOST) || column.equals(Site.PROP_EMAIL_PORT) || column.equals(Site.PROP_EMAIL_USERNAME) || column.equals(Site.PROP_EMAIL_PASSWORD) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_LOCALE) || column.equals(Site.PROP_TEMPLATE_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_EMAIL_PORT) || column.equals(Site.PROP_STATUS) || column.equals(Site.PROP_TEMPLATE_ID) )
+            if (column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_EMAIL_PORT) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_TEMPLATE_ID) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new Site(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getString(8), rs.getString(9), rs.getInt(10), rs.getString(11), rs.getInt(12));
         }
         
-        public static int addSite(String SiteName, String Domain, Integer Mode, String Url, String EmailHost, Integer EmailPort, String EmailUsername, String EmailPassword, Integer Status, String Locale, Integer TemplateId)
+        public static int addSite(String SiteName, String Domain, Integer Mode, String Url, String EmailHost, Integer EmailPort, String EmailUsername, String EmailPassword, Integer SiteStatus, String Locale, Integer TemplateId)
         {   
             int id = 0;
             try
@@ -97,7 +106,7 @@
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO site(SiteName,Domain,Mode,Url,EmailHost,EmailPort,EmailUsername,EmailPassword,Status,Locale,TemplateId) VALUES (?,?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO site(SiteName,Domain,Mode,Url,EmailHost,EmailPort,EmailUsername,EmailPassword,SiteStatus,Locale,TemplateId) VALUES (?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, SiteName);
                 preparedStatement.setString(2, Domain);
                 preparedStatement.setInt(3, Mode);
@@ -106,7 +115,7 @@
                 preparedStatement.setInt(6, EmailPort);
                 preparedStatement.setString(7, EmailUsername);
                 preparedStatement.setString(8, EmailPassword);
-                preparedStatement.setInt(9, Status);
+                preparedStatement.setInt(9, SiteStatus);
                 preparedStatement.setString(10, Locale);
                 preparedStatement.setInt(11, TemplateId);
                 
@@ -155,6 +164,122 @@
             }
             return site;
         }
+        
+        public static ArrayList<Site> getAllSiteWithRelatedInfo()
+        {
+            ArrayList<Site> siteList = new ArrayList<Site>();
+            try
+            {
+                getAllRecordsByTableName("site");
+                while (rs.next())
+                {
+                    siteList.add(processSite(rs));
+                }
+
+                
+                    for(Site site : siteList)
+                    {
+                        
+                            getRecordById("Template", site.getTemplateId().toString());
+                            site.setTemplate(TemplateDAO.processTemplate(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllSiteWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return siteList;
+        }
+        
+        
+        public static Site getRelatedInfo(Site site)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Template", site.getTemplateId().toString());
+                            site.setTemplate(TemplateDAO.processTemplate(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return site;
+        }
+        
+        public static Site getAllRelatedObjects(Site site)
+        {           
+            site.setSiteAttributeList(SiteAttributeDAO.getAllSiteAttributeByColumn("SiteId", site.getSiteId().toString()));
+site.setSiteFolderList(SiteFolderDAO.getAllSiteFolderByColumn("SiteId", site.getSiteId().toString()));
+site.setSiteImageList(SiteImageDAO.getAllSiteImageByColumn("SiteId", site.getSiteId().toString()));
+site.setSiteItemList(SiteItemDAO.getAllSiteItemByColumn("SiteId", site.getSiteId().toString()));
+site.setSiteLanguageList(SiteLanguageDAO.getAllSiteLanguageByColumn("SiteId", site.getSiteId().toString()));
+site.setSitePageList(SitePageDAO.getAllSitePageByColumn("SiteId", site.getSiteId().toString()));
+site.setUserGroupList(UserGroupDAO.getAllUserGroupByColumn("SiteId", site.getSiteId().toString()));
+             
+            return site;
+        }
+        
+        
+                    
+        public static Site getRelatedSiteAttributeList(Site site)
+        {           
+            site.setSiteAttributeList(SiteAttributeDAO.getAllSiteAttributeByColumn("SiteId", site.getSiteId().toString()));
+            return site;
+        }        
+                    
+        public static Site getRelatedSiteFolderList(Site site)
+        {           
+            site.setSiteFolderList(SiteFolderDAO.getAllSiteFolderByColumn("SiteId", site.getSiteId().toString()));
+            return site;
+        }        
+                    
+        public static Site getRelatedSiteImageList(Site site)
+        {           
+            site.setSiteImageList(SiteImageDAO.getAllSiteImageByColumn("SiteId", site.getSiteId().toString()));
+            return site;
+        }        
+                    
+        public static Site getRelatedSiteItemList(Site site)
+        {           
+            site.setSiteItemList(SiteItemDAO.getAllSiteItemByColumn("SiteId", site.getSiteId().toString()));
+            return site;
+        }        
+                    
+        public static Site getRelatedSiteLanguageList(Site site)
+        {           
+            site.setSiteLanguageList(SiteLanguageDAO.getAllSiteLanguageByColumn("SiteId", site.getSiteId().toString()));
+            return site;
+        }        
+                    
+        public static Site getRelatedSitePageList(Site site)
+        {           
+            site.setSitePageList(SitePageDAO.getAllSitePageByColumn("SiteId", site.getSiteId().toString()));
+            return site;
+        }        
+                    
+        public static Site getRelatedUserGroupList(Site site)
+        {           
+            site.setUserGroupList(UserGroupDAO.getAllUserGroupByColumn("SiteId", site.getSiteId().toString()));
+            return site;
+        }        
+        
                 
         public static ArrayList<Site> getSitePaged(int limit, int offset)
         {
@@ -222,7 +347,7 @@
             return site;
         }                
                 
-        public static void updateSite(Integer SiteId,String SiteName,String Domain,Integer Mode,String Url,String EmailHost,Integer EmailPort,String EmailUsername,String EmailPassword,Integer Status,String Locale,Integer TemplateId)
+        public static void updateSite(Integer SiteId,String SiteName,String Domain,Integer Mode,String Url,String EmailHost,Integer EmailPort,String EmailUsername,String EmailPassword,Integer SiteStatus,String Locale,Integer TemplateId)
         {  
             try
             {   
@@ -240,7 +365,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site SET SiteName=?,Domain=?,Mode=?,Url=?,EmailHost=?,EmailPort=?,EmailUsername=?,EmailPassword=?,Status=?,Locale=?,TemplateId=? WHERE SiteId=?;");                    
+                prepareStatement("UPDATE site SET SiteName=?,Domain=?,Mode=?,Url=?,EmailHost=?,EmailPort=?,EmailUsername=?,EmailPassword=?,SiteStatus=?,Locale=?,TemplateId=? WHERE SiteId=?;");                    
                 preparedStatement.setString(1, SiteName);
                 preparedStatement.setString(2, Domain);
                 preparedStatement.setInt(3, Mode);
@@ -249,7 +374,7 @@
                 preparedStatement.setInt(6, EmailPort);
                 preparedStatement.setString(7, EmailUsername);
                 preparedStatement.setString(8, EmailPassword);
-                preparedStatement.setInt(9, Status);
+                preparedStatement.setInt(9, SiteStatus);
                 preparedStatement.setString(10, Locale);
                 preparedStatement.setInt(11, TemplateId);
                 preparedStatement.setInt(12, SiteId);

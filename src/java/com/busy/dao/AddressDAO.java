@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Address;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Address.PROP_ADDRESS_ID) || column.equals(Address.PROP_RECIPIENT) || column.equals(Address.PROP_ADDRESS1) || column.equals(Address.PROP_ADDRESS2) || column.equals(Address.PROP_CITY) || column.equals(Address.PROP_STATE_PROVINCE) || column.equals(Address.PROP_ZIP_POSTAL_CODE) || column.equals(Address.PROP_COUNTRY) || column.equals(Address.PROP_REGION) || column.equals(Address.PROP_STATUS) || column.equals(Address.PROP_LOCALE) )
+            if(column.equals(Address.PROP_ADDRESS_ID) || column.equals(Address.PROP_RECIPIENT) || column.equals(Address.PROP_ADDRESS1) || column.equals(Address.PROP_ADDRESS2) || column.equals(Address.PROP_CITY) || column.equals(Address.PROP_STATE_PROVINCE) || column.equals(Address.PROP_ZIP_POSTAL_CODE) || column.equals(Address.PROP_COUNTRY) || column.equals(Address.PROP_REGION) || column.equals(Address.PROP_ADDRESS_STATUS) || column.equals(Address.PROP_LOCALE) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Address.PROP_ADDRESS_ID) || column.equals(Address.PROP_STATUS) )
+            if (column.equals(Address.PROP_ADDRESS_ID) || column.equals(Address.PROP_ADDRESS_STATUS) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new Address(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getInt(10), rs.getString(11));
         }
         
-        public static int addAddress(String Recipient, String Address1, String Address2, String City, String StateProvince, String ZipPostalCode, String Country, String Region, Integer Status, String Locale)
+        public static int addAddress(String Recipient, String Address1, String Address2, String City, String StateProvince, String ZipPostalCode, String Country, String Region, Integer AddressStatus, String Locale)
         {   
             int id = 0;
             try
@@ -90,13 +99,13 @@
                 checkColumnSize(City, 100);
                 checkColumnSize(StateProvince, 100);
                 checkColumnSize(ZipPostalCode, 10);
-                checkColumnSize(Country, 150);
+                checkColumnSize(Country, 100);
                 checkColumnSize(Region, 100);
                 
                 checkColumnSize(Locale, 10);
                                             
                 openConnection();
-                prepareStatement("INSERT INTO address(Recipient,Address1,Address2,City,StateProvince,ZipPostalCode,Country,Region,Status,Locale) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO address(Recipient,Address1,Address2,City,StateProvince,ZipPostalCode,Country,Region,AddressStatus,Locale) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, Recipient);
                 preparedStatement.setString(2, Address1);
                 preparedStatement.setString(3, Address2);
@@ -105,7 +114,7 @@
                 preparedStatement.setString(6, ZipPostalCode);
                 preparedStatement.setString(7, Country);
                 preparedStatement.setString(8, Region);
-                preparedStatement.setInt(9, Status);
+                preparedStatement.setInt(9, AddressStatus);
                 preparedStatement.setString(10, Locale);
                 
                 preparedStatement.executeUpdate();
@@ -153,6 +162,69 @@
             }
             return address;
         }
+        
+        public static ArrayList<Address> getAllAddressWithRelatedInfo()
+        {
+            ArrayList<Address> addressList = new ArrayList<Address>();
+            try
+            {
+                getAllRecordsByTableName("address");
+                while (rs.next())
+                {
+                    addressList.add(processAddress(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllAddressWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return addressList;
+        }
+        
+        
+        public static Address getRelatedInfo(Address address)
+        {
+           
+                  
+            
+            return address;
+        }
+        
+        public static Address getAllRelatedObjects(Address address)
+        {           
+            address.setAffiliateList(AffiliateDAO.getAllAffiliateByColumn("AddressId", address.getAddressId().toString()));
+address.setItemLocationList(ItemLocationDAO.getAllItemLocationByColumn("AddressId", address.getAddressId().toString()));
+address.setUserList(UserDAO.getAllUserByColumn("AddressId", address.getAddressId().toString()));
+             
+            return address;
+        }
+        
+        
+                    
+        public static Address getRelatedAffiliateList(Address address)
+        {           
+            address.setAffiliateList(AffiliateDAO.getAllAffiliateByColumn("AddressId", address.getAddressId().toString()));
+            return address;
+        }        
+                    
+        public static Address getRelatedItemLocationList(Address address)
+        {           
+            address.setItemLocationList(ItemLocationDAO.getAllItemLocationByColumn("AddressId", address.getAddressId().toString()));
+            return address;
+        }        
+                    
+        public static Address getRelatedUserList(Address address)
+        {           
+            address.setUserList(UserDAO.getAllUserByColumn("AddressId", address.getAddressId().toString()));
+            return address;
+        }        
+        
                 
         public static ArrayList<Address> getAddressPaged(int limit, int offset)
         {
@@ -220,7 +292,7 @@
             return address;
         }                
                 
-        public static void updateAddress(Integer AddressId,String Recipient,String Address1,String Address2,String City,String StateProvince,String ZipPostalCode,String Country,String Region,Integer Status,String Locale)
+        public static void updateAddress(Integer AddressId,String Recipient,String Address1,String Address2,String City,String StateProvince,String ZipPostalCode,String Country,String Region,Integer AddressStatus,String Locale)
         {  
             try
             {   
@@ -231,13 +303,13 @@
                 checkColumnSize(City, 100);
                 checkColumnSize(StateProvince, 100);
                 checkColumnSize(ZipPostalCode, 10);
-                checkColumnSize(Country, 150);
+                checkColumnSize(Country, 100);
                 checkColumnSize(Region, 100);
                 
                 checkColumnSize(Locale, 10);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE address SET Recipient=?,Address1=?,Address2=?,City=?,StateProvince=?,ZipPostalCode=?,Country=?,Region=?,Status=?,Locale=? WHERE AddressId=?;");                    
+                prepareStatement("UPDATE address SET Recipient=?,Address1=?,Address2=?,City=?,StateProvince=?,ZipPostalCode=?,Country=?,Region=?,AddressStatus=?,Locale=? WHERE AddressId=?;");                    
                 preparedStatement.setString(1, Recipient);
                 preparedStatement.setString(2, Address1);
                 preparedStatement.setString(3, Address2);
@@ -246,7 +318,7 @@
                 preparedStatement.setString(6, ZipPostalCode);
                 preparedStatement.setString(7, Country);
                 preparedStatement.setString(8, Region);
-                preparedStatement.setInt(9, Status);
+                preparedStatement.setInt(9, AddressStatus);
                 preparedStatement.setString(10, Locale);
                 preparedStatement.setInt(11, AddressId);
                 preparedStatement.executeUpdate();

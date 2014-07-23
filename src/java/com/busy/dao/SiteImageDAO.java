@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.SiteImage;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(SiteImage.PROP_IMAGE_ID) || column.equals(SiteImage.PROP_FILE_NAME) || column.equals(SiteImage.PROP_DESCRIPTION) || column.equals(SiteImage.PROP_LINK_URL) || column.equals(SiteImage.PROP_RANK) || column.equals(SiteImage.PROP_IMAGE_TYPE_ID) || column.equals(SiteImage.PROP_SITE_ID) )
+            if(column.equals(SiteImage.PROP_SITE_IMAGE_ID) || column.equals(SiteImage.PROP_FILE_NAME) || column.equals(SiteImage.PROP_DESCRIPTION) || column.equals(SiteImage.PROP_LINK_URL) || column.equals(SiteImage.PROP_RANK) || column.equals(SiteImage.PROP_IMAGE_TYPE_ID) || column.equals(SiteImage.PROP_SITE_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SiteImage.PROP_IMAGE_ID) || column.equals(SiteImage.PROP_RANK) || column.equals(SiteImage.PROP_IMAGE_TYPE_ID) || column.equals(SiteImage.PROP_SITE_ID) )
+            if (column.equals(SiteImage.PROP_SITE_IMAGE_ID) || column.equals(SiteImage.PROP_RANK) || column.equals(SiteImage.PROP_IMAGE_TYPE_ID) || column.equals(SiteImage.PROP_SITE_ID) )
             {
                 return true;
             }        
@@ -145,6 +154,79 @@
             }
             return site_image;
         }
+        
+        public static ArrayList<SiteImage> getAllSiteImageWithRelatedInfo()
+        {
+            ArrayList<SiteImage> site_imageList = new ArrayList<SiteImage>();
+            try
+            {
+                getAllRecordsByTableName("site_image");
+                while (rs.next())
+                {
+                    site_imageList.add(processSiteImage(rs));
+                }
+
+                
+                    for(SiteImage site_image : site_imageList)
+                    {
+                        
+                            getRecordById("ImageType", site_image.getImageTypeId().toString());
+                            site_image.setImageType(ImageTypeDAO.processImageType(rs));               
+                        
+                            getRecordById("Site", site_image.getSiteId().toString());
+                            site_image.setSite(SiteDAO.processSite(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllSiteImageWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return site_imageList;
+        }
+        
+        
+        public static SiteImage getRelatedInfo(SiteImage site_image)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("ImageType", site_image.getImageTypeId().toString());
+                            site_image.setImageType(ImageTypeDAO.processImageType(rs));               
+                        
+                            getRecordById("Site", site_image.getSiteId().toString());
+                            site_image.setSite(SiteDAO.processSite(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return site_image;
+        }
+        
+        public static SiteImage getAllRelatedObjects(SiteImage site_image)
+        {           
+                         
+            return site_image;
+        }
+        
+        
+        
                 
         public static ArrayList<SiteImage> getSiteImagePaged(int limit, int offset)
         {
@@ -212,7 +294,7 @@
             return site_image;
         }                
                 
-        public static void updateSiteImage(Integer ImageId,String FileName,String Description,String LinkUrl,Integer Rank,Integer ImageTypeId,Integer SiteId)
+        public static void updateSiteImage(Integer SiteImageId,String FileName,String Description,String LinkUrl,Integer Rank,Integer ImageTypeId,Integer SiteId)
         {  
             try
             {   
@@ -225,14 +307,14 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_image SET FileName=?,Description=?,LinkUrl=?,Rank=?,ImageTypeId=?,SiteId=? WHERE ImageId=?;");                    
+                prepareStatement("UPDATE site_image SET FileName=?,Description=?,LinkUrl=?,Rank=?,ImageTypeId=?,SiteId=? WHERE SiteImageId=?;");                    
                 preparedStatement.setString(1, FileName);
                 preparedStatement.setString(2, Description);
                 preparedStatement.setString(3, LinkUrl);
                 preparedStatement.setInt(4, Rank);
                 preparedStatement.setInt(5, ImageTypeId);
                 preparedStatement.setInt(6, SiteId);
-                preparedStatement.setInt(7, ImageId);
+                preparedStatement.setInt(7, SiteImageId);
                 preparedStatement.executeUpdate();
             }
             catch (Exception ex)

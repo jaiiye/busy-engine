@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ItemDiscount;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -75,10 +84,10 @@
                                
         public static ItemDiscount processItemDiscount(ResultSet rs) throws SQLException
         {        
-            return new ItemDiscount(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getBoolean(4));
+            return new ItemDiscount(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4));
         }
         
-        public static int addItemDiscount(Integer ItemId, Integer DiscountId, Boolean ApplyToOptions)
+        public static int addItemDiscount(Integer ItemId, Integer DiscountId, Integer ApplyToOptions)
         {   
             int id = 0;
             try
@@ -92,7 +101,7 @@
                 prepareStatement("INSERT INTO item_discount(ItemId,DiscountId,ApplyToOptions) VALUES (?,?,?);");                    
                 preparedStatement.setInt(1, ItemId);
                 preparedStatement.setInt(2, DiscountId);
-                preparedStatement.setBoolean(3, ApplyToOptions);
+                preparedStatement.setInt(3, ApplyToOptions);
                 
                 preparedStatement.executeUpdate();
             
@@ -139,6 +148,79 @@
             }
             return item_discount;
         }
+        
+        public static ArrayList<ItemDiscount> getAllItemDiscountWithRelatedInfo()
+        {
+            ArrayList<ItemDiscount> item_discountList = new ArrayList<ItemDiscount>();
+            try
+            {
+                getAllRecordsByTableName("item_discount");
+                while (rs.next())
+                {
+                    item_discountList.add(processItemDiscount(rs));
+                }
+
+                
+                    for(ItemDiscount item_discount : item_discountList)
+                    {
+                        
+                            getRecordById("Item", item_discount.getItemId().toString());
+                            item_discount.setItem(ItemDAO.processItem(rs));               
+                        
+                            getRecordById("Discount", item_discount.getDiscountId().toString());
+                            item_discount.setDiscount(DiscountDAO.processDiscount(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemDiscountWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return item_discountList;
+        }
+        
+        
+        public static ItemDiscount getRelatedInfo(ItemDiscount item_discount)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Item", item_discount.getItemId().toString());
+                            item_discount.setItem(ItemDAO.processItem(rs));               
+                        
+                            getRecordById("Discount", item_discount.getDiscountId().toString());
+                            item_discount.setDiscount(DiscountDAO.processDiscount(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return item_discount;
+        }
+        
+        public static ItemDiscount getAllRelatedObjects(ItemDiscount item_discount)
+        {           
+                         
+            return item_discount;
+        }
+        
+        
+        
                 
         public static ArrayList<ItemDiscount> getItemDiscountPaged(int limit, int offset)
         {
@@ -206,7 +288,7 @@
             return item_discount;
         }                
                 
-        public static void updateItemDiscount(Integer ItemDiscountId,Integer ItemId,Integer DiscountId,Boolean ApplyToOptions)
+        public static void updateItemDiscount(Integer ItemDiscountId,Integer ItemId,Integer DiscountId,Integer ApplyToOptions)
         {  
             try
             {   
@@ -219,7 +301,7 @@
                 prepareStatement("UPDATE item_discount SET ItemId=?,DiscountId=?,ApplyToOptions=? WHERE ItemDiscountId=?;");                    
                 preparedStatement.setInt(1, ItemId);
                 preparedStatement.setInt(2, DiscountId);
-                preparedStatement.setBoolean(3, ApplyToOptions);
+                preparedStatement.setInt(3, ApplyToOptions);
                 preparedStatement.setInt(4, ItemDiscountId);
                 preparedStatement.executeUpdate();
             }

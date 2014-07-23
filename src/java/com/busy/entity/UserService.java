@@ -19,9 +19,12 @@
 
 
 
+
+
     package com.busy.entity;
 
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class UserService implements Serializable
@@ -41,16 +44,30 @@
         
 
         private Integer userServiceId;
+                
         private Date startDate;
+                
         private Date endDate;
+                
         private String details;
+                
         private String contractUrl;
+                
         private String deliverableUrl;
+                
         private Double depositAmount;
+                
         private Integer userRank;
+                
         private Integer blogId;
+        private Blog blog;        
         private Integer userId;
+        private User user;        
         private Integer serviceId;
+        private Service service;        
+                 
+        ArrayList<ServiceCharge> serviceChargeList; 
+        
         
 
         public UserService()
@@ -66,7 +83,10 @@
        this.blogId = 0; 
        this.userId = 0; 
        this.serviceId = 0; 
-        }
+        
+       serviceChargeList = null; 
+        
+       }
         
         public UserService(Integer UserServiceId, Date StartDate, Date EndDate, String Details, String ContractUrl, String DeliverableUrl, Double DepositAmount, Integer UserRank, Integer BlogId, Integer UserId, Integer ServiceId)
         {
@@ -81,7 +101,10 @@
        this.blogId = BlogId;
        this.userId = UserId;
        this.serviceId = ServiceId;
-        } 
+              
+       serviceChargeList = null; 
+        
+       } 
         
              
         
@@ -94,6 +117,8 @@
             {
                 this.userServiceId = UserServiceId;
             }
+            
+            
         
             public Date getStartDate()
             {
@@ -104,6 +129,8 @@
             {
                 this.startDate = StartDate;
             }
+            
+            
         
             public Date getEndDate()
             {
@@ -114,6 +141,8 @@
             {
                 this.endDate = EndDate;
             }
+            
+            
         
             public String getDetails()
             {
@@ -124,6 +153,8 @@
             {
                 this.details = Details;
             }
+            
+            
         
             public String getContractUrl()
             {
@@ -134,6 +165,8 @@
             {
                 this.contractUrl = ContractUrl;
             }
+            
+            
         
             public String getDeliverableUrl()
             {
@@ -144,6 +177,8 @@
             {
                 this.deliverableUrl = DeliverableUrl;
             }
+            
+            
         
             public Double getDepositAmount()
             {
@@ -154,6 +189,8 @@
             {
                 this.depositAmount = DepositAmount;
             }
+            
+            
         
             public Integer getUserRank()
             {
@@ -164,6 +201,8 @@
             {
                 this.userRank = UserRank;
             }
+            
+            
         
             public Integer getBlogId()
             {
@@ -174,6 +213,20 @@
             {
                 this.blogId = BlogId;
             }
+            
+            
+                   
+            public Blog getBlog()
+                {
+                    return this.blog;
+                }
+
+                public void setBlog(Blog blog)
+                {
+                    this.blog = blog;
+                }
+                   
+            
         
             public Integer getUserId()
             {
@@ -184,6 +237,20 @@
             {
                 this.userId = UserId;
             }
+            
+            
+                   
+            public User getUser()
+                {
+                    return this.user;
+                }
+
+                public void setUser(User user)
+                {
+                    this.user = user;
+                }
+                   
+            
         
             public Integer getServiceId()
             {
@@ -194,7 +261,33 @@
             {
                 this.serviceId = ServiceId;
             }
-           
+            
+            
+                   
+            public Service getService()
+                {
+                    return this.service;
+                }
+
+                public void setService(Service service)
+                {
+                    this.service = service;
+                }
+                   
+            
+         
+        
+        
+            public ArrayList<ServiceCharge> getServiceChargeList()
+            {
+                return this.serviceChargeList;
+            }
+            
+            public void setServiceChargeList(ArrayList<ServiceCharge> serviceChargeList)
+            {
+                this.serviceChargeList = serviceChargeList;
+            }
+        
             
     }
 

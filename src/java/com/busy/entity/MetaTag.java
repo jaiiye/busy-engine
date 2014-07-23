@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class MetaTag implements Serializable
@@ -36,9 +37,19 @@
         
 
         private Integer metaTagId;
+                
         private String title;
+                
         private String description;
+                
         private String keywords;
+                
+                 
+        ArrayList<BlogPost> blogPostList; 
+        ArrayList<Item> itemList; 
+        ArrayList<Page> pageList; 
+        ArrayList<Vendor> vendorList; 
+        
         
 
         public MetaTag()
@@ -47,7 +58,13 @@
        this.title = ""; 
        this.description = ""; 
        this.keywords = ""; 
-        }
+        
+       blogPostList = null; 
+        itemList = null; 
+        pageList = null; 
+        vendorList = null; 
+        
+       }
         
         public MetaTag(Integer MetaTagId, String Title, String Description, String Keywords)
         {
@@ -55,7 +72,13 @@
        this.title = Title;
        this.description = Description;
        this.keywords = Keywords;
-        } 
+              
+       blogPostList = null; 
+        itemList = null; 
+        pageList = null; 
+        vendorList = null; 
+        
+       } 
         
              
         
@@ -68,6 +91,8 @@
             {
                 this.metaTagId = MetaTagId;
             }
+            
+            
         
             public String getTitle()
             {
@@ -78,6 +103,8 @@
             {
                 this.title = Title;
             }
+            
+            
         
             public String getDescription()
             {
@@ -88,6 +115,8 @@
             {
                 this.description = Description;
             }
+            
+            
         
             public String getKeywords()
             {
@@ -98,7 +127,51 @@
             {
                 this.keywords = Keywords;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<BlogPost> getBlogPostList()
+            {
+                return this.blogPostList;
+            }
+            
+            public void setBlogPostList(ArrayList<BlogPost> blogPostList)
+            {
+                this.blogPostList = blogPostList;
+            }
+        
+            public ArrayList<Item> getItemList()
+            {
+                return this.itemList;
+            }
+            
+            public void setItemList(ArrayList<Item> itemList)
+            {
+                this.itemList = itemList;
+            }
+        
+            public ArrayList<Page> getPageList()
+            {
+                return this.pageList;
+            }
+            
+            public void setPageList(ArrayList<Page> pageList)
+            {
+                this.pageList = pageList;
+            }
+        
+            public ArrayList<Vendor> getVendorList()
+            {
+                return this.vendorList;
+            }
+            
+            public void setVendorList(ArrayList<Vendor> vendorList)
+            {
+                this.vendorList = vendorList;
+            }
+        
             
     }
 

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemAvailability implements Serializable
@@ -34,20 +35,31 @@
         
 
         private Integer itemAvailabilityId;
+                
         private String type;
+                
+                 
+        ArrayList<OptionAvailability> optionAvailabilityList; 
+        
         
 
         public ItemAvailability()
         {
             this.itemAvailabilityId = 0; 
        this.type = ""; 
-        }
+        
+       optionAvailabilityList = null; 
+        
+       }
         
         public ItemAvailability(Integer ItemAvailabilityId, String Type)
         {
             this.itemAvailabilityId = ItemAvailabilityId;
        this.type = Type;
-        } 
+              
+       optionAvailabilityList = null; 
+        
+       } 
         
              
         
@@ -60,6 +72,8 @@
             {
                 this.itemAvailabilityId = ItemAvailabilityId;
             }
+            
+            
         
             public String getType()
             {
@@ -70,7 +84,21 @@
             {
                 this.type = Type;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<OptionAvailability> getOptionAvailabilityList()
+            {
+                return this.optionAvailabilityList;
+            }
+            
+            public void setOptionAvailabilityList(ArrayList<OptionAvailability> optionAvailabilityList)
+            {
+                this.optionAvailabilityList = optionAvailabilityList;
+            }
+        
             
     }
 

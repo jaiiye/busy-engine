@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ServiceCharge;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -145,6 +154,80 @@
             }
             return service_charge;
         }
+        
+        public static ArrayList<ServiceCharge> getAllServiceChargeWithRelatedInfo()
+        {
+            ArrayList<ServiceCharge> service_chargeList = new ArrayList<ServiceCharge>();
+            try
+            {
+                getAllRecordsByTableName("service_charge");
+                while (rs.next())
+                {
+                    service_chargeList.add(processServiceCharge(rs));
+                }
+
+                
+                    for(ServiceCharge service_charge : service_chargeList)
+                    {
+                        
+                            getRecordById("UserService", service_charge.getUserServiceId().toString());
+                            service_charge.setUserService(UserServiceDAO.processUserService(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllServiceChargeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return service_chargeList;
+        }
+        
+        
+        public static ServiceCharge getRelatedInfo(ServiceCharge service_charge)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("UserService", service_charge.getUserServiceId().toString());
+                            service_charge.setUserService(UserServiceDAO.processUserService(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return service_charge;
+        }
+        
+        public static ServiceCharge getAllRelatedObjects(ServiceCharge service_charge)
+        {           
+            service_charge.setServiceList(ServiceDAO.getAllServiceByColumn("ServiceChargeId", service_charge.getServiceChargeId().toString()));
+             
+            return service_charge;
+        }
+        
+        
+                    
+        public static ServiceCharge getRelatedServiceList(ServiceCharge service_charge)
+        {           
+            service_charge.setServiceList(ServiceDAO.getAllServiceByColumn("ServiceChargeId", service_charge.getServiceChargeId().toString()));
+            return service_charge;
+        }        
+        
                 
         public static ArrayList<ServiceCharge> getServiceChargePaged(int limit, int offset)
         {

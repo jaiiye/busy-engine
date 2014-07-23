@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ItemBrand;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,62 @@
             }
             return item_brand;
         }
+        
+        public static ArrayList<ItemBrand> getAllItemBrandWithRelatedInfo()
+        {
+            ArrayList<ItemBrand> item_brandList = new ArrayList<ItemBrand>();
+            try
+            {
+                getAllRecordsByTableName("item_brand");
+                while (rs.next())
+                {
+                    item_brandList.add(processItemBrand(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemBrandWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return item_brandList;
+        }
+        
+        
+        public static ItemBrand getRelatedInfo(ItemBrand item_brand)
+        {
+           
+                  
+            
+            return item_brand;
+        }
+        
+        public static ItemBrand getAllRelatedObjects(ItemBrand item_brand)
+        {           
+            item_brand.setItemList(ItemDAO.getAllItemByColumn("ItemBrandId", item_brand.getItemBrandId().toString()));
+item_brand.setUserList(UserDAO.getAllUserByColumn("ItemBrandId", item_brand.getItemBrandId().toString()));
+             
+            return item_brand;
+        }
+        
+        
+                    
+        public static ItemBrand getRelatedItemList(ItemBrand item_brand)
+        {           
+            item_brand.setItemList(ItemDAO.getAllItemByColumn("ItemBrandId", item_brand.getItemBrandId().toString()));
+            return item_brand;
+        }        
+                    
+        public static ItemBrand getRelatedUserList(ItemBrand item_brand)
+        {           
+            item_brand.setUserList(UserDAO.getAllUserByColumn("ItemBrandId", item_brand.getItemBrandId().toString()));
+            return item_brand;
+        }        
+        
                 
         public static ArrayList<ItemBrand> getItemBrandPaged(int limit, int offset)
         {

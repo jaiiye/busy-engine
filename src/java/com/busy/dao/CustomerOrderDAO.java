@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.CustomerOrder;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -141,6 +150,92 @@
             }
             return customer_order;
         }
+        
+        public static ArrayList<CustomerOrder> getAllCustomerOrderWithRelatedInfo()
+        {
+            ArrayList<CustomerOrder> customer_orderList = new ArrayList<CustomerOrder>();
+            try
+            {
+                getAllRecordsByTableName("customer_order");
+                while (rs.next())
+                {
+                    customer_orderList.add(processCustomerOrder(rs));
+                }
+
+                
+                    for(CustomerOrder customer_order : customer_orderList)
+                    {
+                        
+                            getRecordById("Customer", customer_order.getCustomerId().toString());
+                            customer_order.setCustomer(CustomerDAO.processCustomer(rs));               
+                        
+                            getRecordById("Order", customer_order.getOrderId().toString());
+                            customer_order.setOrder(OrderDAO.processOrder(rs));               
+                        
+                            getRecordById("Discount", customer_order.getDiscountId().toString());
+                            customer_order.setDiscount(DiscountDAO.processDiscount(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllCustomerOrderWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return customer_orderList;
+        }
+        
+        
+        public static CustomerOrder getRelatedInfo(CustomerOrder customer_order)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Customer", customer_order.getCustomerId().toString());
+                            customer_order.setCustomer(CustomerDAO.processCustomer(rs));               
+                        
+                            getRecordById("Order", customer_order.getOrderId().toString());
+                            customer_order.setOrder(OrderDAO.processOrder(rs));               
+                        
+                            getRecordById("Discount", customer_order.getDiscountId().toString());
+                            customer_order.setDiscount(DiscountDAO.processDiscount(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return customer_order;
+        }
+        
+        public static CustomerOrder getAllRelatedObjects(CustomerOrder customer_order)
+        {           
+            customer_order.setOrderItemList(OrderItemDAO.getAllOrderItemByColumn("CustomerOrderId", customer_order.getCustomerOrderId().toString()));
+             
+            return customer_order;
+        }
+        
+        
+                    
+        public static CustomerOrder getRelatedOrderItemList(CustomerOrder customer_order)
+        {           
+            customer_order.setOrderItemList(OrderItemDAO.getAllOrderItemByColumn("CustomerOrderId", customer_order.getCustomerOrderId().toString()));
+            return customer_order;
+        }        
+        
                 
         public static ArrayList<CustomerOrder> getCustomerOrderPaged(int limit, int offset)
         {

@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Template;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Template.PROP_TEMPLATE_ID) || column.equals(Template.PROP_TEMPLATE_NAME) || column.equals(Template.PROP_MARKUP) || column.equals(Template.PROP_STATUS) || column.equals(Template.PROP_TEMPLATE_TYPE_ID) )
+            if(column.equals(Template.PROP_TEMPLATE_ID) || column.equals(Template.PROP_TEMPLATE_NAME) || column.equals(Template.PROP_MARKUP) || column.equals(Template.PROP_TEMPLATE_STATUS) || column.equals(Template.PROP_TEMPLATE_TYPE_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Template.PROP_TEMPLATE_ID) || column.equals(Template.PROP_STATUS) || column.equals(Template.PROP_TEMPLATE_TYPE_ID) )
+            if (column.equals(Template.PROP_TEMPLATE_ID) || column.equals(Template.PROP_TEMPLATE_STATUS) || column.equals(Template.PROP_TEMPLATE_TYPE_ID) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new Template(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5));
         }
         
-        public static int addTemplate(String TemplateName, String Markup, Integer Status, Integer TemplateTypeId)
+        public static int addTemplate(String TemplateName, String Markup, Integer TemplateStatus, Integer TemplateTypeId)
         {   
             int id = 0;
             try
@@ -90,10 +99,10 @@
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO template(TemplateName,Markup,Status,TemplateTypeId) VALUES (?,?,?,?);");                    
+                prepareStatement("INSERT INTO template(TemplateName,Markup,TemplateStatus,TemplateTypeId) VALUES (?,?,?,?);");                    
                 preparedStatement.setString(1, TemplateName);
                 preparedStatement.setString(2, Markup);
-                preparedStatement.setInt(3, Status);
+                preparedStatement.setInt(3, TemplateStatus);
                 preparedStatement.setInt(4, TemplateTypeId);
                 
                 preparedStatement.executeUpdate();
@@ -141,6 +150,108 @@
             }
             return template;
         }
+        
+        public static ArrayList<Template> getAllTemplateWithRelatedInfo()
+        {
+            ArrayList<Template> templateList = new ArrayList<Template>();
+            try
+            {
+                getAllRecordsByTableName("template");
+                while (rs.next())
+                {
+                    templateList.add(processTemplate(rs));
+                }
+
+                
+                    for(Template template : templateList)
+                    {
+                        
+                            getRecordById("TemplateType", template.getTemplateTypeId().toString());
+                            template.setTemplateType(TemplateTypeDAO.processTemplateType(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllTemplateWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return templateList;
+        }
+        
+        
+        public static Template getRelatedInfo(Template template)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("TemplateType", template.getTemplateTypeId().toString());
+                            template.setTemplateType(TemplateTypeDAO.processTemplateType(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return template;
+        }
+        
+        public static Template getAllRelatedObjects(Template template)
+        {           
+            template.setItemList(ItemDAO.getAllItemByColumn("TemplateId", template.getTemplateId().toString()));
+template.setPageList(PageDAO.getAllPageByColumn("TemplateId", template.getTemplateId().toString()));
+template.setResourceUrlList(ResourceUrlDAO.getAllResourceUrlByColumn("TemplateId", template.getTemplateId().toString()));
+template.setSiteList(SiteDAO.getAllSiteByColumn("TemplateId", template.getTemplateId().toString()));
+template.setVendorList(VendorDAO.getAllVendorByColumn("TemplateId", template.getTemplateId().toString()));
+             
+            return template;
+        }
+        
+        
+                    
+        public static Template getRelatedItemList(Template template)
+        {           
+            template.setItemList(ItemDAO.getAllItemByColumn("TemplateId", template.getTemplateId().toString()));
+            return template;
+        }        
+                    
+        public static Template getRelatedPageList(Template template)
+        {           
+            template.setPageList(PageDAO.getAllPageByColumn("TemplateId", template.getTemplateId().toString()));
+            return template;
+        }        
+                    
+        public static Template getRelatedResourceUrlList(Template template)
+        {           
+            template.setResourceUrlList(ResourceUrlDAO.getAllResourceUrlByColumn("TemplateId", template.getTemplateId().toString()));
+            return template;
+        }        
+                    
+        public static Template getRelatedSiteList(Template template)
+        {           
+            template.setSiteList(SiteDAO.getAllSiteByColumn("TemplateId", template.getTemplateId().toString()));
+            return template;
+        }        
+                    
+        public static Template getRelatedVendorList(Template template)
+        {           
+            template.setVendorList(VendorDAO.getAllVendorByColumn("TemplateId", template.getTemplateId().toString()));
+            return template;
+        }        
+        
                 
         public static ArrayList<Template> getTemplatePaged(int limit, int offset)
         {
@@ -208,7 +319,7 @@
             return template;
         }                
                 
-        public static void updateTemplate(Integer TemplateId,String TemplateName,String Markup,Integer Status,Integer TemplateTypeId)
+        public static void updateTemplate(Integer TemplateId,String TemplateName,String Markup,Integer TemplateStatus,Integer TemplateTypeId)
         {  
             try
             {   
@@ -219,10 +330,10 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE template SET TemplateName=?,Markup=?,Status=?,TemplateTypeId=? WHERE TemplateId=?;");                    
+                prepareStatement("UPDATE template SET TemplateName=?,Markup=?,TemplateStatus=?,TemplateTypeId=? WHERE TemplateId=?;");                    
                 preparedStatement.setString(1, TemplateName);
                 preparedStatement.setString(2, Markup);
-                preparedStatement.setInt(3, Status);
+                preparedStatement.setInt(3, TemplateStatus);
                 preparedStatement.setInt(4, TemplateTypeId);
                 preparedStatement.setInt(5, TemplateId);
                 preparedStatement.executeUpdate();

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemOption implements Serializable
@@ -35,8 +36,14 @@
         
 
         private Integer itemOptionId;
+                
         private String optionName;
+                
         private String description;
+                
+                 
+        ArrayList<OptionAvailability> optionAvailabilityList; 
+        
         
 
         public ItemOption()
@@ -44,14 +51,20 @@
             this.itemOptionId = 0; 
        this.optionName = ""; 
        this.description = ""; 
-        }
+        
+       optionAvailabilityList = null; 
+        
+       }
         
         public ItemOption(Integer ItemOptionId, String OptionName, String Description)
         {
             this.itemOptionId = ItemOptionId;
        this.optionName = OptionName;
        this.description = Description;
-        } 
+              
+       optionAvailabilityList = null; 
+        
+       } 
         
              
         
@@ -64,6 +77,8 @@
             {
                 this.itemOptionId = ItemOptionId;
             }
+            
+            
         
             public String getOptionName()
             {
@@ -74,6 +89,8 @@
             {
                 this.optionName = OptionName;
             }
+            
+            
         
             public String getDescription()
             {
@@ -84,7 +101,21 @@
             {
                 this.description = Description;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<OptionAvailability> getOptionAvailabilityList()
+            {
+                return this.optionAvailabilityList;
+            }
+            
+            public void setOptionAvailabilityList(ArrayList<OptionAvailability> optionAvailabilityList)
+            {
+                this.optionAvailabilityList = optionAvailabilityList;
+            }
+        
             
     }
 

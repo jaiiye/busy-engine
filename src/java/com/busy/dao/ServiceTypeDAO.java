@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ServiceType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,55 @@
             }
             return service_type;
         }
+        
+        public static ArrayList<ServiceType> getAllServiceTypeWithRelatedInfo()
+        {
+            ArrayList<ServiceType> service_typeList = new ArrayList<ServiceType>();
+            try
+            {
+                getAllRecordsByTableName("service_type");
+                while (rs.next())
+                {
+                    service_typeList.add(processServiceType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllServiceTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return service_typeList;
+        }
+        
+        
+        public static ServiceType getRelatedInfo(ServiceType service_type)
+        {
+           
+                  
+            
+            return service_type;
+        }
+        
+        public static ServiceType getAllRelatedObjects(ServiceType service_type)
+        {           
+            service_type.setServiceList(ServiceDAO.getAllServiceByColumn("ServiceTypeId", service_type.getServiceTypeId().toString()));
+             
+            return service_type;
+        }
+        
+        
+                    
+        public static ServiceType getRelatedServiceList(ServiceType service_type)
+        {           
+            service_type.setServiceList(ServiceDAO.getAllServiceByColumn("ServiceTypeId", service_type.getServiceTypeId().toString()));
+            return service_type;
+        }        
+        
                 
         public static ArrayList<ServiceType> getServiceTypePaged(int limit, int offset)
         {

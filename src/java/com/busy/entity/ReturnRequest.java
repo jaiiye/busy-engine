@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ReturnRequest implements Serializable
@@ -35,18 +36,28 @@
         public static final String PROP_RETURN_REASON = "ReturnReason";
         public static final String PROP_REQUESTED_ACTION = "RequestedAction";
         public static final String PROP_NOTES = "Notes";
-        public static final String PROP_STATUS = "Status";
+        public static final String PROP_REQUEST_STATUS = "RequestStatus";
         public static final String PROP_ORDER_ITEM_ID = "OrderItemId";
         
 
         private Integer returnRequestId;
+                
         private Integer quantity;
+                
         private Date requestDate;
+                
         private String returnReason;
+                
         private String requestedAction;
+                
         private String notes;
-        private Integer status;
+                
+        private Integer requestStatus;
+                
         private Integer orderItemId;
+        private OrderItem orderItem;        
+                 
+        
         
 
         public ReturnRequest()
@@ -57,11 +68,13 @@
        this.returnReason = ""; 
        this.requestedAction = ""; 
        this.notes = ""; 
-       this.status = 0; 
+       this.requestStatus = 0; 
        this.orderItemId = 0; 
-        }
         
-        public ReturnRequest(Integer ReturnRequestId, Integer Quantity, Date RequestDate, String ReturnReason, String RequestedAction, String Notes, Integer Status, Integer OrderItemId)
+       
+       }
+        
+        public ReturnRequest(Integer ReturnRequestId, Integer Quantity, Date RequestDate, String ReturnReason, String RequestedAction, String Notes, Integer RequestStatus, Integer OrderItemId)
         {
             this.returnRequestId = ReturnRequestId;
        this.quantity = Quantity;
@@ -69,9 +82,11 @@
        this.returnReason = ReturnReason;
        this.requestedAction = RequestedAction;
        this.notes = Notes;
-       this.status = Status;
+       this.requestStatus = RequestStatus;
        this.orderItemId = OrderItemId;
-        } 
+              
+       
+       } 
         
              
         
@@ -84,6 +99,8 @@
             {
                 this.returnRequestId = ReturnRequestId;
             }
+            
+            
         
             public Integer getQuantity()
             {
@@ -94,6 +111,8 @@
             {
                 this.quantity = Quantity;
             }
+            
+            
         
             public Date getRequestDate()
             {
@@ -104,6 +123,8 @@
             {
                 this.requestDate = RequestDate;
             }
+            
+            
         
             public String getReturnReason()
             {
@@ -114,6 +135,8 @@
             {
                 this.returnReason = ReturnReason;
             }
+            
+            
         
             public String getRequestedAction()
             {
@@ -124,6 +147,8 @@
             {
                 this.requestedAction = RequestedAction;
             }
+            
+            
         
             public String getNotes()
             {
@@ -134,16 +159,20 @@
             {
                 this.notes = Notes;
             }
+            
+            
         
-            public Integer getStatus()
+            public Integer getRequestStatus()
             {
-                return this.status;
+                return this.requestStatus;
             }
             
-            public void setStatus(Integer Status)
+            public void setRequestStatus(Integer RequestStatus)
             {
-                this.status = Status;
+                this.requestStatus = RequestStatus;
             }
+            
+            
         
             public Integer getOrderItemId()
             {
@@ -154,7 +183,23 @@
             {
                 this.orderItemId = OrderItemId;
             }
-           
+            
+            
+                   
+            public OrderItem getOrderItem()
+                {
+                    return this.orderItem;
+                }
+
+                public void setOrderItem(OrderItem orderItem)
+                {
+                    this.orderItem = orderItem;
+                }
+                   
+            
+         
+        
+        
             
     }
 

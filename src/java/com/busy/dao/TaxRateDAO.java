@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.TaxRate;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(TaxRate.PROP_TAX_RATE_ID) || column.equals(TaxRate.PROP_TAX_CATEGORY) || column.equals(TaxRate.PROP_STATE_PROVINCE) || column.equals(TaxRate.PROP_ZIP_POSTAL_CODE) || column.equals(TaxRate.PROP_COUNTRY) || column.equals(TaxRate.PROP_COUNTRY_CODE) || column.equals(TaxRate.PROP_PERCENTAGE) )
+            if(column.equals(TaxRate.PROP_TAX_RATE_ID) || column.equals(TaxRate.PROP_TAX_CATEGORY) || column.equals(TaxRate.PROP_PERCENTAGE) || column.equals(TaxRate.PROP_ZIP_POSTAL_CODE) || column.equals(TaxRate.PROP_STATE_PROVINCE_ID) || column.equals(TaxRate.PROP_COUNTRY_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(TaxRate.PROP_TAX_RATE_ID) || column.equals(TaxRate.PROP_PERCENTAGE) )
+            if (column.equals(TaxRate.PROP_TAX_RATE_ID) || column.equals(TaxRate.PROP_PERCENTAGE) || column.equals(TaxRate.PROP_STATE_PROVINCE_ID) || column.equals(TaxRate.PROP_COUNTRY_ID) )
             {
                 return true;
             }        
@@ -75,30 +84,28 @@
                                
         public static TaxRate processTaxRate(ResultSet rs) throws SQLException
         {        
-            return new TaxRate(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getDouble(7));
+            return new TaxRate(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
         }
         
-        public static int addTaxRate(String TaxCategory, String StateProvince, String ZipPostalCode, String Country, String CountryCode, Double Percentage)
+        public static int addTaxRate(String TaxCategory, Double Percentage, String ZipPostalCode, Integer StateProvinceId, Integer CountryId)
         {   
             int id = 0;
             try
             {
                 
                 checkColumnSize(TaxCategory, 100);
-                checkColumnSize(StateProvince, 100);
+                
                 checkColumnSize(ZipPostalCode, 15);
-                checkColumnSize(Country, 150);
-                checkColumnSize(CountryCode, 10);
+                
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO tax_rate(TaxCategory,StateProvince,ZipPostalCode,Country,CountryCode,Percentage) VALUES (?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO tax_rate(TaxCategory,Percentage,ZipPostalCode,StateProvinceId,CountryId) VALUES (?,?,?,?,?);");                    
                 preparedStatement.setString(1, TaxCategory);
-                preparedStatement.setString(2, StateProvince);
+                preparedStatement.setDouble(2, Percentage);
                 preparedStatement.setString(3, ZipPostalCode);
-                preparedStatement.setString(4, Country);
-                preparedStatement.setString(5, CountryCode);
-                preparedStatement.setDouble(6, Percentage);
+                preparedStatement.setInt(4, StateProvinceId);
+                preparedStatement.setInt(5, CountryId);
                 
                 preparedStatement.executeUpdate();
             
@@ -145,6 +152,79 @@
             }
             return tax_rate;
         }
+        
+        public static ArrayList<TaxRate> getAllTaxRateWithRelatedInfo()
+        {
+            ArrayList<TaxRate> tax_rateList = new ArrayList<TaxRate>();
+            try
+            {
+                getAllRecordsByTableName("tax_rate");
+                while (rs.next())
+                {
+                    tax_rateList.add(processTaxRate(rs));
+                }
+
+                
+                    for(TaxRate tax_rate : tax_rateList)
+                    {
+                        
+                            getRecordById("StateProvince", tax_rate.getStateProvinceId().toString());
+                            tax_rate.setStateProvince(StateProvinceDAO.processStateProvince(rs));               
+                        
+                            getRecordById("Country", tax_rate.getCountryId().toString());
+                            tax_rate.setCountry(CountryDAO.processCountry(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllTaxRateWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return tax_rateList;
+        }
+        
+        
+        public static TaxRate getRelatedInfo(TaxRate tax_rate)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("StateProvince", tax_rate.getStateProvinceId().toString());
+                            tax_rate.setStateProvince(StateProvinceDAO.processStateProvince(rs));               
+                        
+                            getRecordById("Country", tax_rate.getCountryId().toString());
+                            tax_rate.setCountry(CountryDAO.processCountry(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return tax_rate;
+        }
+        
+        public static TaxRate getAllRelatedObjects(TaxRate tax_rate)
+        {           
+                         
+            return tax_rate;
+        }
+        
+        
+        
                 
         public static ArrayList<TaxRate> getTaxRatePaged(int limit, int offset)
         {
@@ -212,27 +292,25 @@
             return tax_rate;
         }                
                 
-        public static void updateTaxRate(Integer TaxRateId,String TaxCategory,String StateProvince,String ZipPostalCode,String Country,String CountryCode,Double Percentage)
+        public static void updateTaxRate(Integer TaxRateId,String TaxCategory,Double Percentage,String ZipPostalCode,Integer StateProvinceId,Integer CountryId)
         {  
             try
             {   
                 
                 checkColumnSize(TaxCategory, 100);
-                checkColumnSize(StateProvince, 100);
+                
                 checkColumnSize(ZipPostalCode, 15);
-                checkColumnSize(Country, 150);
-                checkColumnSize(CountryCode, 10);
+                
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE tax_rate SET TaxCategory=?,StateProvince=?,ZipPostalCode=?,Country=?,CountryCode=?,Percentage=? WHERE TaxRateId=?;");                    
+                prepareStatement("UPDATE tax_rate SET TaxCategory=?,Percentage=?,ZipPostalCode=?,StateProvinceId=?,CountryId=? WHERE TaxRateId=?;");                    
                 preparedStatement.setString(1, TaxCategory);
-                preparedStatement.setString(2, StateProvince);
+                preparedStatement.setDouble(2, Percentage);
                 preparedStatement.setString(3, ZipPostalCode);
-                preparedStatement.setString(4, Country);
-                preparedStatement.setString(5, CountryCode);
-                preparedStatement.setDouble(6, Percentage);
-                preparedStatement.setInt(7, TaxRateId);
+                preparedStatement.setInt(4, StateProvinceId);
+                preparedStatement.setInt(5, CountryId);
+                preparedStatement.setInt(6, TaxRateId);
                 preparedStatement.executeUpdate();
             }
             catch (Exception ex)

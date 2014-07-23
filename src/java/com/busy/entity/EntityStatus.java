@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,62 +23,76 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
-    public class Status implements Serializable
+    public class EntityStatus implements Serializable
     {    
         private static final long serialVersionUID = 1L;       
-        public static final String PROP_STATUS_ID = "StatusId";
-        public static final String PROP_CODE = "Code";
+        public static final String PROP_ENTITY_STATUS_ID = "EntityStatusId";
+        public static final String PROP_STATUS_CODE = "StatusCode";
         public static final String PROP_STATUS_NAME = "StatusName";
         public static final String PROP_APPLIES_TO = "AppliesTo";
         
 
-        private Integer statusId;
-        private Integer code;
+        private Integer entityStatusId;
+                
+        private Integer statusCode;
+                
         private String statusName;
+                
         private String appliesTo;
+                
+                 
+        
         
 
-        public Status()
+        public EntityStatus()
         {
-            this.statusId = 0; 
-       this.code = 0; 
+            this.entityStatusId = 0; 
+       this.statusCode = 0; 
        this.statusName = ""; 
        this.appliesTo = ""; 
-        }
         
-        public Status(Integer StatusId, Integer Code, String StatusName, String AppliesTo)
+       
+       }
+        
+        public EntityStatus(Integer EntityStatusId, Integer StatusCode, String StatusName, String AppliesTo)
         {
-            this.statusId = StatusId;
-       this.code = Code;
+            this.entityStatusId = EntityStatusId;
+       this.statusCode = StatusCode;
        this.statusName = StatusName;
        this.appliesTo = AppliesTo;
-        } 
+              
+       
+       } 
         
              
         
-            public Integer getStatusId()
+            public Integer getEntityStatusId()
             {
-                return this.statusId;
+                return this.entityStatusId;
             }
             
-            public void setStatusId(Integer StatusId)
+            public void setEntityStatusId(Integer EntityStatusId)
             {
-                this.statusId = StatusId;
+                this.entityStatusId = EntityStatusId;
             }
+            
+            
         
-            public Integer getCode()
+            public Integer getStatusCode()
             {
-                return this.code;
+                return this.statusCode;
             }
             
-            public void setCode(Integer Code)
+            public void setStatusCode(Integer StatusCode)
             {
-                this.code = Code;
+                this.statusCode = StatusCode;
             }
+            
+            
         
             public String getStatusName()
             {
@@ -88,6 +103,8 @@
             {
                 this.statusName = StatusName;
             }
+            
+            
         
             public String getAppliesTo()
             {
@@ -98,7 +115,11 @@
             {
                 this.appliesTo = AppliesTo;
             }
-           
+            
+            
+         
+        
+        
             
     }
 

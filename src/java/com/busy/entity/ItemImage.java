@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemImage implements Serializable
@@ -38,11 +39,19 @@
         
 
         private Integer itemImageId;
+                
         private String imageName;
+                
         private String thumbnailName;
+                
         private String alternateText;
+                
         private Integer rank;
+                
         private Integer itemId;
+        private Item item;        
+                 
+        
         
 
         public ItemImage()
@@ -53,7 +62,9 @@
        this.alternateText = ""; 
        this.rank = 0; 
        this.itemId = 0; 
-        }
+        
+       
+       }
         
         public ItemImage(Integer ItemImageId, String ImageName, String ThumbnailName, String AlternateText, Integer Rank, Integer ItemId)
         {
@@ -63,7 +74,9 @@
        this.alternateText = AlternateText;
        this.rank = Rank;
        this.itemId = ItemId;
-        } 
+              
+       
+       } 
         
              
         
@@ -76,6 +89,8 @@
             {
                 this.itemImageId = ItemImageId;
             }
+            
+            
         
             public String getImageName()
             {
@@ -86,6 +101,8 @@
             {
                 this.imageName = ImageName;
             }
+            
+            
         
             public String getThumbnailName()
             {
@@ -96,6 +113,8 @@
             {
                 this.thumbnailName = ThumbnailName;
             }
+            
+            
         
             public String getAlternateText()
             {
@@ -106,6 +125,8 @@
             {
                 this.alternateText = AlternateText;
             }
+            
+            
         
             public Integer getRank()
             {
@@ -116,6 +137,8 @@
             {
                 this.rank = Rank;
             }
+            
+            
         
             public Integer getItemId()
             {
@@ -126,7 +149,23 @@
             {
                 this.itemId = ItemId;
             }
-           
+            
+            
+                   
+            public Item getItem()
+                {
+                    return this.item;
+                }
+
+                public void setItem(Item item)
+                {
+                    this.item = item;
+                }
+                   
+            
+         
+        
+        
             
     }
 

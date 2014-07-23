@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.VendorType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -135,6 +144,55 @@
             }
             return vendor_type;
         }
+        
+        public static ArrayList<VendorType> getAllVendorTypeWithRelatedInfo()
+        {
+            ArrayList<VendorType> vendor_typeList = new ArrayList<VendorType>();
+            try
+            {
+                getAllRecordsByTableName("vendor_type");
+                while (rs.next())
+                {
+                    vendor_typeList.add(processVendorType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllVendorTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return vendor_typeList;
+        }
+        
+        
+        public static VendorType getRelatedInfo(VendorType vendor_type)
+        {
+           
+                  
+            
+            return vendor_type;
+        }
+        
+        public static VendorType getAllRelatedObjects(VendorType vendor_type)
+        {           
+            vendor_type.setVendorList(VendorDAO.getAllVendorByColumn("VendorTypeId", vendor_type.getVendorTypeId().toString()));
+             
+            return vendor_type;
+        }
+        
+        
+                    
+        public static VendorType getRelatedVendorList(VendorType vendor_type)
+        {           
+            vendor_type.setVendorList(VendorDAO.getAllVendorByColumn("VendorTypeId", vendor_type.getVendorTypeId().toString()));
+            return vendor_type;
+        }        
+        
                 
         public static ArrayList<VendorType> getVendorTypePaged(int limit, int offset)
         {

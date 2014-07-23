@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemFile implements Serializable
@@ -38,11 +39,19 @@
         
 
         private Integer itemFileId;
+                
         private String fileName;
+                
         private String description;
+                
         private String label;
-        private Boolean hidden;
+                
+        private Integer hidden;
+                
         private Integer itemId;
+        private Item item;        
+                 
+        
         
 
         public ItemFile()
@@ -51,11 +60,13 @@
        this.fileName = ""; 
        this.description = ""; 
        this.label = ""; 
-       this.hidden = null; 
+       this.hidden = 0; 
        this.itemId = 0; 
-        }
         
-        public ItemFile(Integer ItemFileId, String FileName, String Description, String Label, Boolean Hidden, Integer ItemId)
+       
+       }
+        
+        public ItemFile(Integer ItemFileId, String FileName, String Description, String Label, Integer Hidden, Integer ItemId)
         {
             this.itemFileId = ItemFileId;
        this.fileName = FileName;
@@ -63,7 +74,9 @@
        this.label = Label;
        this.hidden = Hidden;
        this.itemId = ItemId;
-        } 
+              
+       
+       } 
         
              
         
@@ -76,6 +89,8 @@
             {
                 this.itemFileId = ItemFileId;
             }
+            
+            
         
             public String getFileName()
             {
@@ -86,6 +101,8 @@
             {
                 this.fileName = FileName;
             }
+            
+            
         
             public String getDescription()
             {
@@ -96,6 +113,8 @@
             {
                 this.description = Description;
             }
+            
+            
         
             public String getLabel()
             {
@@ -106,16 +125,20 @@
             {
                 this.label = Label;
             }
+            
+            
         
-            public Boolean getHidden()
+            public Integer getHidden()
             {
                 return this.hidden;
             }
             
-            public void setHidden(Boolean Hidden)
+            public void setHidden(Integer Hidden)
             {
                 this.hidden = Hidden;
             }
+            
+            
         
             public Integer getItemId()
             {
@@ -126,7 +149,23 @@
             {
                 this.itemId = ItemId;
             }
-           
+            
+            
+                   
+            public Item getItem()
+                {
+                    return this.item;
+                }
+
+                public void setItem(Item item)
+                {
+                    this.item = item;
+                }
+                   
+            
+         
+        
+        
             
     }
 

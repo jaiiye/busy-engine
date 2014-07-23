@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemLocation implements Serializable
@@ -34,13 +35,23 @@
         public static final String PROP_LONGITUDE = "Longitude";
         public static final String PROP_ITEM_ID = "ItemId";
         public static final String PROP_ADDRESS_ID = "AddressId";
+        public static final String PROP_CONTACT_ID = "ContactId";
         
 
         private Integer itemLocationId;
+                
         private String latitude;
+                
         private String longitude;
+                
         private Integer itemId;
+        private Item item;        
         private Integer addressId;
+        private Address address;        
+        private Integer contactId;
+        private Contact contact;        
+                 
+        
         
 
         public ItemLocation()
@@ -50,16 +61,22 @@
        this.longitude = ""; 
        this.itemId = 0; 
        this.addressId = 0; 
-        }
+       this.contactId = 0; 
         
-        public ItemLocation(Integer ItemLocationId, String Latitude, String Longitude, Integer ItemId, Integer AddressId)
+       
+       }
+        
+        public ItemLocation(Integer ItemLocationId, String Latitude, String Longitude, Integer ItemId, Integer AddressId, Integer ContactId)
         {
             this.itemLocationId = ItemLocationId;
        this.latitude = Latitude;
        this.longitude = Longitude;
        this.itemId = ItemId;
        this.addressId = AddressId;
-        } 
+       this.contactId = ContactId;
+              
+       
+       } 
         
              
         
@@ -72,6 +89,8 @@
             {
                 this.itemLocationId = ItemLocationId;
             }
+            
+            
         
             public String getLatitude()
             {
@@ -82,6 +101,8 @@
             {
                 this.latitude = Latitude;
             }
+            
+            
         
             public String getLongitude()
             {
@@ -92,6 +113,8 @@
             {
                 this.longitude = Longitude;
             }
+            
+            
         
             public Integer getItemId()
             {
@@ -102,6 +125,20 @@
             {
                 this.itemId = ItemId;
             }
+            
+            
+                   
+            public Item getItem()
+                {
+                    return this.item;
+                }
+
+                public void setItem(Item item)
+                {
+                    this.item = item;
+                }
+                   
+            
         
             public Integer getAddressId()
             {
@@ -112,7 +149,47 @@
             {
                 this.addressId = AddressId;
             }
-           
+            
+            
+                   
+            public Address getAddress()
+                {
+                    return this.address;
+                }
+
+                public void setAddress(Address address)
+                {
+                    this.address = address;
+                }
+                   
+            
+        
+            public Integer getContactId()
+            {
+                return this.contactId;
+            }
+            
+            public void setContactId(Integer ContactId)
+            {
+                this.contactId = ContactId;
+            }
+            
+            
+                   
+            public Contact getContact()
+                {
+                    return this.contact;
+                }
+
+                public void setContact(Contact contact)
+                {
+                    this.contact = contact;
+                }
+                   
+            
+         
+        
+        
             
     }
 

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,14 +23,14 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class SiteImage implements Serializable
     {    
         private static final long serialVersionUID = 1L;       
-        public static final String PROP_IMAGE_ID = "ImageId";
+        public static final String PROP_SITE_IMAGE_ID = "SiteImageId";
         public static final String PROP_FILE_NAME = "FileName";
         public static final String PROP_DESCRIPTION = "Description";
         public static final String PROP_LINK_URL = "LinkUrl";
@@ -38,48 +39,63 @@
         public static final String PROP_SITE_ID = "SiteId";
         
 
-        private Integer imageId;
+        private Integer siteImageId;
+                
         private String fileName;
+                
         private String description;
+                
         private String linkUrl;
+                
         private Integer rank;
+                
         private Integer imageTypeId;
+        private ImageType imageType;        
         private Integer siteId;
+        private Site site;        
+                 
+        
         
 
         public SiteImage()
         {
-            this.imageId = 0; 
+            this.siteImageId = 0; 
        this.fileName = ""; 
        this.description = ""; 
        this.linkUrl = ""; 
        this.rank = 0; 
        this.imageTypeId = 0; 
        this.siteId = 0; 
-        }
         
-        public SiteImage(Integer ImageId, String FileName, String Description, String LinkUrl, Integer Rank, Integer ImageTypeId, Integer SiteId)
+       
+       }
+        
+        public SiteImage(Integer SiteImageId, String FileName, String Description, String LinkUrl, Integer Rank, Integer ImageTypeId, Integer SiteId)
         {
-            this.imageId = ImageId;
+            this.siteImageId = SiteImageId;
        this.fileName = FileName;
        this.description = Description;
        this.linkUrl = LinkUrl;
        this.rank = Rank;
        this.imageTypeId = ImageTypeId;
        this.siteId = SiteId;
-        } 
+              
+       
+       } 
         
              
         
-            public Integer getImageId()
+            public Integer getSiteImageId()
             {
-                return this.imageId;
+                return this.siteImageId;
             }
             
-            public void setImageId(Integer ImageId)
+            public void setSiteImageId(Integer SiteImageId)
             {
-                this.imageId = ImageId;
+                this.siteImageId = SiteImageId;
             }
+            
+            
         
             public String getFileName()
             {
@@ -90,6 +106,8 @@
             {
                 this.fileName = FileName;
             }
+            
+            
         
             public String getDescription()
             {
@@ -100,6 +118,8 @@
             {
                 this.description = Description;
             }
+            
+            
         
             public String getLinkUrl()
             {
@@ -110,6 +130,8 @@
             {
                 this.linkUrl = LinkUrl;
             }
+            
+            
         
             public Integer getRank()
             {
@@ -120,6 +142,8 @@
             {
                 this.rank = Rank;
             }
+            
+            
         
             public Integer getImageTypeId()
             {
@@ -130,6 +154,20 @@
             {
                 this.imageTypeId = ImageTypeId;
             }
+            
+            
+                   
+            public ImageType getImageType()
+                {
+                    return this.imageType;
+                }
+
+                public void setImageType(ImageType imageType)
+                {
+                    this.imageType = imageType;
+                }
+                   
+            
         
             public Integer getSiteId()
             {
@@ -140,7 +178,23 @@
             {
                 this.siteId = SiteId;
             }
-           
+            
+            
+                   
+            public Site getSite()
+                {
+                    return this.site;
+                }
+
+                public void setSite(Site site)
+                {
+                    this.site = site;
+                }
+                   
+            
+         
+        
+        
             
     }
 

@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Paypal;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -155,6 +164,48 @@
             }
             return paypal;
         }
+        
+        public static ArrayList<Paypal> getAllPaypalWithRelatedInfo()
+        {
+            ArrayList<Paypal> paypalList = new ArrayList<Paypal>();
+            try
+            {
+                getAllRecordsByTableName("paypal");
+                while (rs.next())
+                {
+                    paypalList.add(processPaypal(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllPaypalWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return paypalList;
+        }
+        
+        
+        public static Paypal getRelatedInfo(Paypal paypal)
+        {
+           
+                  
+            
+            return paypal;
+        }
+        
+        public static Paypal getAllRelatedObjects(Paypal paypal)
+        {           
+                         
+            return paypal;
+        }
+        
+        
+        
                 
         public static ArrayList<Paypal> getPaypalPaged(int limit, int offset)
         {

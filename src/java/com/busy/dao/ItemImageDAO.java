@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ItemImage;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -143,6 +152,73 @@
             }
             return item_image;
         }
+        
+        public static ArrayList<ItemImage> getAllItemImageWithRelatedInfo()
+        {
+            ArrayList<ItemImage> item_imageList = new ArrayList<ItemImage>();
+            try
+            {
+                getAllRecordsByTableName("item_image");
+                while (rs.next())
+                {
+                    item_imageList.add(processItemImage(rs));
+                }
+
+                
+                    for(ItemImage item_image : item_imageList)
+                    {
+                        
+                            getRecordById("Item", item_image.getItemId().toString());
+                            item_image.setItem(ItemDAO.processItem(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemImageWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return item_imageList;
+        }
+        
+        
+        public static ItemImage getRelatedInfo(ItemImage item_image)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Item", item_image.getItemId().toString());
+                            item_image.setItem(ItemDAO.processItem(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return item_image;
+        }
+        
+        public static ItemImage getAllRelatedObjects(ItemImage item_image)
+        {           
+                         
+            return item_image;
+        }
+        
+        
+        
                 
         public static ArrayList<ItemImage> getItemImagePaged(int limit, int offset)
         {

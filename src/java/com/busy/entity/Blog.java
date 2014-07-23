@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Blog implements Serializable
@@ -36,9 +37,17 @@
         
 
         private Integer blogId;
+                
         private String topic;
+                
         private Integer blogTypeId;
+        private BlogType blogType;        
         private Integer knowledgeBaseId;
+        private KnowledgeBase knowledgeBase;        
+                 
+        ArrayList<BlogPost> blogPostList; 
+        ArrayList<UserService> userServiceList; 
+        
         
 
         public Blog()
@@ -47,7 +56,11 @@
        this.topic = ""; 
        this.blogTypeId = 0; 
        this.knowledgeBaseId = 0; 
-        }
+        
+       blogPostList = null; 
+        userServiceList = null; 
+        
+       }
         
         public Blog(Integer BlogId, String Topic, Integer BlogTypeId, Integer KnowledgeBaseId)
         {
@@ -55,7 +68,11 @@
        this.topic = Topic;
        this.blogTypeId = BlogTypeId;
        this.knowledgeBaseId = KnowledgeBaseId;
-        } 
+              
+       blogPostList = null; 
+        userServiceList = null; 
+        
+       } 
         
              
         
@@ -68,6 +85,8 @@
             {
                 this.blogId = BlogId;
             }
+            
+            
         
             public String getTopic()
             {
@@ -78,6 +97,8 @@
             {
                 this.topic = Topic;
             }
+            
+            
         
             public Integer getBlogTypeId()
             {
@@ -88,6 +109,20 @@
             {
                 this.blogTypeId = BlogTypeId;
             }
+            
+            
+                   
+            public BlogType getBlogType()
+                {
+                    return this.blogType;
+                }
+
+                public void setBlogType(BlogType blogType)
+                {
+                    this.blogType = blogType;
+                }
+                   
+            
         
             public Integer getKnowledgeBaseId()
             {
@@ -98,7 +133,43 @@
             {
                 this.knowledgeBaseId = KnowledgeBaseId;
             }
-           
+            
+            
+                   
+            public KnowledgeBase getKnowledgeBase()
+                {
+                    return this.knowledgeBase;
+                }
+
+                public void setKnowledgeBase(KnowledgeBase knowledgeBase)
+                {
+                    this.knowledgeBase = knowledgeBase;
+                }
+                   
+            
+         
+        
+        
+            public ArrayList<BlogPost> getBlogPostList()
+            {
+                return this.blogPostList;
+            }
+            
+            public void setBlogPostList(ArrayList<BlogPost> blogPostList)
+            {
+                this.blogPostList = blogPostList;
+            }
+        
+            public ArrayList<UserService> getUserServiceList()
+            {
+                return this.userServiceList;
+            }
+            
+            public void setUserServiceList(ArrayList<UserService> userServiceList)
+            {
+                this.userServiceList = userServiceList;
+            }
+        
             
     }
 

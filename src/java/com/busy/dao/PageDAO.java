@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Page;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Page.PROP_PAGE_ID) || column.equals(Page.PROP_PAGE_NAME) || column.equals(Page.PROP_CONTENT) || column.equals(Page.PROP_STATUS) || column.equals(Page.PROP_FORM_ID) || column.equals(Page.PROP_SLIDER_ID) || column.equals(Page.PROP_META_TAG_ID) || column.equals(Page.PROP_TEMPLATE_ID) )
+            if(column.equals(Page.PROP_PAGE_ID) || column.equals(Page.PROP_PAGE_NAME) || column.equals(Page.PROP_CONTENT) || column.equals(Page.PROP_PAGE_STATUS) || column.equals(Page.PROP_FORM_ID) || column.equals(Page.PROP_SLIDER_ID) || column.equals(Page.PROP_META_TAG_ID) || column.equals(Page.PROP_TEMPLATE_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Page.PROP_PAGE_ID) || column.equals(Page.PROP_STATUS) || column.equals(Page.PROP_FORM_ID) || column.equals(Page.PROP_SLIDER_ID) || column.equals(Page.PROP_META_TAG_ID) || column.equals(Page.PROP_TEMPLATE_ID) )
+            if (column.equals(Page.PROP_PAGE_ID) || column.equals(Page.PROP_PAGE_STATUS) || column.equals(Page.PROP_FORM_ID) || column.equals(Page.PROP_SLIDER_ID) || column.equals(Page.PROP_META_TAG_ID) || column.equals(Page.PROP_TEMPLATE_ID) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new Page(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7), rs.getInt(8));
         }
         
-        public static int addPage(String PageName, String Content, Integer Status, Integer FormId, Integer SliderId, Integer MetaTagId, Integer TemplateId)
+        public static int addPage(String PageName, String Content, Integer PageStatus, Integer FormId, Integer SliderId, Integer MetaTagId, Integer TemplateId)
         {   
             int id = 0;
             try
@@ -93,10 +102,10 @@
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO page(PageName,Content,Status,FormId,SliderId,MetaTagId,TemplateId) VALUES (?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO page(PageName,Content,PageStatus,FormId,SliderId,MetaTagId,TemplateId) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, PageName);
                 preparedStatement.setString(2, Content);
-                preparedStatement.setInt(3, Status);
+                preparedStatement.setInt(3, PageStatus);
                 preparedStatement.setInt(4, FormId);
                 preparedStatement.setInt(5, SliderId);
                 preparedStatement.setInt(6, MetaTagId);
@@ -147,6 +156,98 @@
             }
             return page;
         }
+        
+        public static ArrayList<Page> getAllPageWithRelatedInfo()
+        {
+            ArrayList<Page> pageList = new ArrayList<Page>();
+            try
+            {
+                getAllRecordsByTableName("page");
+                while (rs.next())
+                {
+                    pageList.add(processPage(rs));
+                }
+
+                
+                    for(Page page : pageList)
+                    {
+                        
+                            getRecordById("Form", page.getFormId().toString());
+                            page.setForm(FormDAO.processForm(rs));               
+                        
+                            getRecordById("Slider", page.getSliderId().toString());
+                            page.setSlider(SliderDAO.processSlider(rs));               
+                        
+                            getRecordById("MetaTag", page.getMetaTagId().toString());
+                            page.setMetaTag(MetaTagDAO.processMetaTag(rs));               
+                        
+                            getRecordById("Template", page.getTemplateId().toString());
+                            page.setTemplate(TemplateDAO.processTemplate(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllPageWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return pageList;
+        }
+        
+        
+        public static Page getRelatedInfo(Page page)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Form", page.getFormId().toString());
+                            page.setForm(FormDAO.processForm(rs));               
+                        
+                            getRecordById("Slider", page.getSliderId().toString());
+                            page.setSlider(SliderDAO.processSlider(rs));               
+                        
+                            getRecordById("MetaTag", page.getMetaTagId().toString());
+                            page.setMetaTag(MetaTagDAO.processMetaTag(rs));               
+                        
+                            getRecordById("Template", page.getTemplateId().toString());
+                            page.setTemplate(TemplateDAO.processTemplate(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return page;
+        }
+        
+        public static Page getAllRelatedObjects(Page page)
+        {           
+            page.setSitePageList(SitePageDAO.getAllSitePageByColumn("PageId", page.getPageId().toString()));
+             
+            return page;
+        }
+        
+        
+                    
+        public static Page getRelatedSitePageList(Page page)
+        {           
+            page.setSitePageList(SitePageDAO.getAllSitePageByColumn("PageId", page.getPageId().toString()));
+            return page;
+        }        
+        
                 
         public static ArrayList<Page> getPagePaged(int limit, int offset)
         {
@@ -214,7 +315,7 @@
             return page;
         }                
                 
-        public static void updatePage(Integer PageId,String PageName,String Content,Integer Status,Integer FormId,Integer SliderId,Integer MetaTagId,Integer TemplateId)
+        public static void updatePage(Integer PageId,String PageName,String Content,Integer PageStatus,Integer FormId,Integer SliderId,Integer MetaTagId,Integer TemplateId)
         {  
             try
             {   
@@ -228,10 +329,10 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE page SET PageName=?,Content=?,Status=?,FormId=?,SliderId=?,MetaTagId=?,TemplateId=? WHERE PageId=?;");                    
+                prepareStatement("UPDATE page SET PageName=?,Content=?,PageStatus=?,FormId=?,SliderId=?,MetaTagId=?,TemplateId=? WHERE PageId=?;");                    
                 preparedStatement.setString(1, PageName);
                 preparedStatement.setString(2, Content);
-                preparedStatement.setInt(3, Status);
+                preparedStatement.setInt(3, PageStatus);
                 preparedStatement.setInt(4, FormId);
                 preparedStatement.setInt(5, SliderId);
                 preparedStatement.setInt(6, MetaTagId);

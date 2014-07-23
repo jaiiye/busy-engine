@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.SiteAttribute;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(SiteAttribute.PROP_SITE_ATTRIBUTE_ID) || column.equals(SiteAttribute.PROP_KEY) || column.equals(SiteAttribute.PROP_VALUE) || column.equals(SiteAttribute.PROP_TYPE) || column.equals(SiteAttribute.PROP_SITE_ID) )
+            if(column.equals(SiteAttribute.PROP_SITE_ATTRIBUTE_ID) || column.equals(SiteAttribute.PROP_ATTRIBUTE_KEY) || column.equals(SiteAttribute.PROP_ATTRIBUTE_VALUE) || column.equals(SiteAttribute.PROP_ATTRIBUTE_TYPE) || column.equals(SiteAttribute.PROP_SITE_ID) )
             {
                 return column;
             }
@@ -78,22 +87,22 @@
             return new SiteAttribute(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5));
         }
         
-        public static int addSiteAttribute(String Key, String Value, String Type, Integer SiteId)
+        public static int addSiteAttribute(String AttributeKey, String AttributeValue, String AttributeType, Integer SiteId)
         {   
             int id = 0;
             try
             {
                 
-                checkColumnSize(Key, 100);
-                checkColumnSize(Value, 255);
-                checkColumnSize(Type, 45);
+                checkColumnSize(AttributeKey, 100);
+                checkColumnSize(AttributeValue, 255);
+                checkColumnSize(AttributeType, 45);
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO site_attribute(Key,Value,Type,SiteId) VALUES (?,?,?,?);");                    
-                preparedStatement.setString(1, Key);
-                preparedStatement.setString(2, Value);
-                preparedStatement.setString(3, Type);
+                prepareStatement("INSERT INTO site_attribute(AttributeKey,AttributeValue,AttributeType,SiteId) VALUES (?,?,?,?);");                    
+                preparedStatement.setString(1, AttributeKey);
+                preparedStatement.setString(2, AttributeValue);
+                preparedStatement.setString(3, AttributeType);
                 preparedStatement.setInt(4, SiteId);
                 
                 preparedStatement.executeUpdate();
@@ -141,6 +150,73 @@
             }
             return site_attribute;
         }
+        
+        public static ArrayList<SiteAttribute> getAllSiteAttributeWithRelatedInfo()
+        {
+            ArrayList<SiteAttribute> site_attributeList = new ArrayList<SiteAttribute>();
+            try
+            {
+                getAllRecordsByTableName("site_attribute");
+                while (rs.next())
+                {
+                    site_attributeList.add(processSiteAttribute(rs));
+                }
+
+                
+                    for(SiteAttribute site_attribute : site_attributeList)
+                    {
+                        
+                            getRecordById("Site", site_attribute.getSiteId().toString());
+                            site_attribute.setSite(SiteDAO.processSite(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllSiteAttributeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return site_attributeList;
+        }
+        
+        
+        public static SiteAttribute getRelatedInfo(SiteAttribute site_attribute)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Site", site_attribute.getSiteId().toString());
+                            site_attribute.setSite(SiteDAO.processSite(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return site_attribute;
+        }
+        
+        public static SiteAttribute getAllRelatedObjects(SiteAttribute site_attribute)
+        {           
+                         
+            return site_attribute;
+        }
+        
+        
+        
                 
         public static ArrayList<SiteAttribute> getSiteAttributePaged(int limit, int offset)
         {
@@ -208,21 +284,21 @@
             return site_attribute;
         }                
                 
-        public static void updateSiteAttribute(Integer SiteAttributeId,String Key,String Value,String Type,Integer SiteId)
+        public static void updateSiteAttribute(Integer SiteAttributeId,String AttributeKey,String AttributeValue,String AttributeType,Integer SiteId)
         {  
             try
             {   
                 
-                checkColumnSize(Key, 100);
-                checkColumnSize(Value, 255);
-                checkColumnSize(Type, 45);
+                checkColumnSize(AttributeKey, 100);
+                checkColumnSize(AttributeValue, 255);
+                checkColumnSize(AttributeType, 45);
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_attribute SET Key=?,Value=?,Type=?,SiteId=? WHERE SiteAttributeId=?;");                    
-                preparedStatement.setString(1, Key);
-                preparedStatement.setString(2, Value);
-                preparedStatement.setString(3, Type);
+                prepareStatement("UPDATE site_attribute SET AttributeKey=?,AttributeValue=?,AttributeType=?,SiteId=? WHERE SiteAttributeId=?;");                    
+                preparedStatement.setString(1, AttributeKey);
+                preparedStatement.setString(2, AttributeValue);
+                preparedStatement.setString(3, AttributeType);
                 preparedStatement.setInt(4, SiteId);
                 preparedStatement.setInt(5, SiteAttributeId);
                 preparedStatement.executeUpdate();

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class PageTemplate implements Serializable
@@ -35,8 +36,13 @@
         
 
         private Integer pageTemplateId;
+                
         private String name;
+                
         private String markup;
+                
+                 
+        
         
 
         public PageTemplate()
@@ -44,14 +50,18 @@
             this.pageTemplateId = 0; 
        this.name = ""; 
        this.markup = ""; 
-        }
+        
+       
+       }
         
         public PageTemplate(Integer PageTemplateId, String Name, String Markup)
         {
             this.pageTemplateId = PageTemplateId;
        this.name = Name;
        this.markup = Markup;
-        } 
+              
+       
+       } 
         
              
         
@@ -64,6 +74,8 @@
             {
                 this.pageTemplateId = PageTemplateId;
             }
+            
+            
         
             public String getName()
             {
@@ -74,6 +86,8 @@
             {
                 this.name = Name;
             }
+            
+            
         
             public String getMarkup()
             {
@@ -84,7 +98,11 @@
             {
                 this.markup = Markup;
             }
-           
+            
+            
+         
+        
+        
             
     }
 

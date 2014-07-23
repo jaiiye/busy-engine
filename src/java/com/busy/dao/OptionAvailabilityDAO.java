@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.OptionAvailability;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -149,6 +158,85 @@
             }
             return option_availability;
         }
+        
+        public static ArrayList<OptionAvailability> getAllOptionAvailabilityWithRelatedInfo()
+        {
+            ArrayList<OptionAvailability> option_availabilityList = new ArrayList<OptionAvailability>();
+            try
+            {
+                getAllRecordsByTableName("option_availability");
+                while (rs.next())
+                {
+                    option_availabilityList.add(processOptionAvailability(rs));
+                }
+
+                
+                    for(OptionAvailability option_availability : option_availabilityList)
+                    {
+                        
+                            getRecordById("Item", option_availability.getItemId().toString());
+                            option_availability.setItem(ItemDAO.processItem(rs));               
+                        
+                            getRecordById("ItemOption", option_availability.getItemOptionId().toString());
+                            option_availability.setItemOption(ItemOptionDAO.processItemOption(rs));               
+                        
+                            getRecordById("ItemAvailability", option_availability.getItemAvailabilityId().toString());
+                            option_availability.setItemAvailability(ItemAvailabilityDAO.processItemAvailability(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllOptionAvailabilityWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return option_availabilityList;
+        }
+        
+        
+        public static OptionAvailability getRelatedInfo(OptionAvailability option_availability)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Item", option_availability.getItemId().toString());
+                            option_availability.setItem(ItemDAO.processItem(rs));               
+                        
+                            getRecordById("ItemOption", option_availability.getItemOptionId().toString());
+                            option_availability.setItemOption(ItemOptionDAO.processItemOption(rs));               
+                        
+                            getRecordById("ItemAvailability", option_availability.getItemAvailabilityId().toString());
+                            option_availability.setItemAvailability(ItemAvailabilityDAO.processItemAvailability(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return option_availability;
+        }
+        
+        public static OptionAvailability getAllRelatedObjects(OptionAvailability option_availability)
+        {           
+                         
+            return option_availability;
+        }
+        
+        
+        
                 
         public static ArrayList<OptionAvailability> getOptionAvailabilityPaged(int limit, int offset)
         {

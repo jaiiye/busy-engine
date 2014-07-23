@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.UserService;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -153,6 +162,92 @@
             }
             return user_service;
         }
+        
+        public static ArrayList<UserService> getAllUserServiceWithRelatedInfo()
+        {
+            ArrayList<UserService> user_serviceList = new ArrayList<UserService>();
+            try
+            {
+                getAllRecordsByTableName("user_service");
+                while (rs.next())
+                {
+                    user_serviceList.add(processUserService(rs));
+                }
+
+                
+                    for(UserService user_service : user_serviceList)
+                    {
+                        
+                            getRecordById("Blog", user_service.getBlogId().toString());
+                            user_service.setBlog(BlogDAO.processBlog(rs));               
+                        
+                            getRecordById("User", user_service.getUserId().toString());
+                            user_service.setUser(UserDAO.processUser(rs));               
+                        
+                            getRecordById("Service", user_service.getServiceId().toString());
+                            user_service.setService(ServiceDAO.processService(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllUserServiceWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return user_serviceList;
+        }
+        
+        
+        public static UserService getRelatedInfo(UserService user_service)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Blog", user_service.getBlogId().toString());
+                            user_service.setBlog(BlogDAO.processBlog(rs));               
+                        
+                            getRecordById("User", user_service.getUserId().toString());
+                            user_service.setUser(UserDAO.processUser(rs));               
+                        
+                            getRecordById("Service", user_service.getServiceId().toString());
+                            user_service.setService(ServiceDAO.processService(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return user_service;
+        }
+        
+        public static UserService getAllRelatedObjects(UserService user_service)
+        {           
+            user_service.setServiceChargeList(ServiceChargeDAO.getAllServiceChargeByColumn("UserServiceId", user_service.getUserServiceId().toString()));
+             
+            return user_service;
+        }
+        
+        
+                    
+        public static UserService getRelatedServiceChargeList(UserService user_service)
+        {           
+            user_service.setServiceChargeList(ServiceChargeDAO.getAllServiceChargeByColumn("UserServiceId", user_service.getUserServiceId().toString()));
+            return user_service;
+        }        
+        
                 
         public static ArrayList<UserService> getUserServicePaged(int limit, int offset)
         {

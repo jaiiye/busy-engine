@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.PostCategory;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -135,6 +144,55 @@
             }
             return post_category;
         }
+        
+        public static ArrayList<PostCategory> getAllPostCategoryWithRelatedInfo()
+        {
+            ArrayList<PostCategory> post_categoryList = new ArrayList<PostCategory>();
+            try
+            {
+                getAllRecordsByTableName("post_category");
+                while (rs.next())
+                {
+                    post_categoryList.add(processPostCategory(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllPostCategoryWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return post_categoryList;
+        }
+        
+        
+        public static PostCategory getRelatedInfo(PostCategory post_category)
+        {
+           
+                  
+            
+            return post_category;
+        }
+        
+        public static PostCategory getAllRelatedObjects(PostCategory post_category)
+        {           
+            post_category.setBlogPostCategoryList(BlogPostCategoryDAO.getAllBlogPostCategoryByColumn("PostCategoryId", post_category.getPostCategoryId().toString()));
+             
+            return post_category;
+        }
+        
+        
+                    
+        public static PostCategory getRelatedBlogPostCategoryList(PostCategory post_category)
+        {           
+            post_category.setBlogPostCategoryList(BlogPostCategoryDAO.getAllBlogPostCategoryByColumn("PostCategoryId", post_category.getPostCategoryId().toString()));
+            return post_category;
+        }        
+        
                 
         public static ArrayList<PostCategory> getPostCategoryPaged(int limit, int offset)
         {

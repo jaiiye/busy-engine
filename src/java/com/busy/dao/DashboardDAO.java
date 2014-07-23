@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Dashboard;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -161,6 +170,48 @@
             }
             return dashboard;
         }
+        
+        public static ArrayList<Dashboard> getAllDashboardWithRelatedInfo()
+        {
+            ArrayList<Dashboard> dashboardList = new ArrayList<Dashboard>();
+            try
+            {
+                getAllRecordsByTableName("dashboard");
+                while (rs.next())
+                {
+                    dashboardList.add(processDashboard(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllDashboardWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return dashboardList;
+        }
+        
+        
+        public static Dashboard getRelatedInfo(Dashboard dashboard)
+        {
+           
+                  
+            
+            return dashboard;
+        }
+        
+        public static Dashboard getAllRelatedObjects(Dashboard dashboard)
+        {           
+                         
+            return dashboard;
+        }
+        
+        
+        
                 
         public static ArrayList<Dashboard> getDashboardPaged(int limit, int offset)
         {

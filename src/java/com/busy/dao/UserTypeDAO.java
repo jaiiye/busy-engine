@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.UserType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(UserType.PROP_TYPE_ID) || column.equals(UserType.PROP_TYPE_NAME) || column.equals(UserType.PROP_DESCRIPTION) || column.equals(UserType.PROP_REDIRECT_U_R_L) )
+            if(column.equals(UserType.PROP_USER_TYPE_ID) || column.equals(UserType.PROP_TYPE_NAME) || column.equals(UserType.PROP_DESCRIPTION) || column.equals(UserType.PROP_REDIRECT_U_R_L) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(UserType.PROP_TYPE_ID) )
+            if (column.equals(UserType.PROP_USER_TYPE_ID) )
             {
                 return true;
             }        
@@ -139,6 +148,55 @@
             }
             return user_type;
         }
+        
+        public static ArrayList<UserType> getAllUserTypeWithRelatedInfo()
+        {
+            ArrayList<UserType> user_typeList = new ArrayList<UserType>();
+            try
+            {
+                getAllRecordsByTableName("user_type");
+                while (rs.next())
+                {
+                    user_typeList.add(processUserType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllUserTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return user_typeList;
+        }
+        
+        
+        public static UserType getRelatedInfo(UserType user_type)
+        {
+           
+                  
+            
+            return user_type;
+        }
+        
+        public static UserType getAllRelatedObjects(UserType user_type)
+        {           
+            user_type.setUserList(UserDAO.getAllUserByColumn("UserTypeId", user_type.getUserTypeId().toString()));
+             
+            return user_type;
+        }
+        
+        
+                    
+        public static UserType getRelatedUserList(UserType user_type)
+        {           
+            user_type.setUserList(UserDAO.getAllUserByColumn("UserTypeId", user_type.getUserTypeId().toString()));
+            return user_type;
+        }        
+        
                 
         public static ArrayList<UserType> getUserTypePaged(int limit, int offset)
         {
@@ -206,7 +264,7 @@
             return user_type;
         }                
                 
-        public static void updateUserType(Integer TypeId,String TypeName,String Description,String RedirectURL)
+        public static void updateUserType(Integer UserTypeId,String TypeName,String Description,String RedirectURL)
         {  
             try
             {   
@@ -216,11 +274,11 @@
                 checkColumnSize(RedirectURL, 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_type SET TypeName=?,Description=?,RedirectURL=? WHERE TypeId=?;");                    
+                prepareStatement("UPDATE user_type SET TypeName=?,Description=?,RedirectURL=? WHERE UserTypeId=?;");                    
                 preparedStatement.setString(1, TypeName);
                 preparedStatement.setString(2, Description);
                 preparedStatement.setString(3, RedirectURL);
-                preparedStatement.setInt(4, TypeId);
+                preparedStatement.setInt(4, UserTypeId);
                 preparedStatement.executeUpdate();
             }
             catch (Exception ex)

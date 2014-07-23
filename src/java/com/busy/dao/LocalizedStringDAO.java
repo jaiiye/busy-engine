@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.LocalizedString;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(LocalizedString.PROP_LOCALIZED_STRING_ID) || column.equals(LocalizedString.PROP_LOCALE) || column.equals(LocalizedString.PROP_VALUE) || column.equals(LocalizedString.PROP_TEXT_STRING_ID) )
+            if(column.equals(LocalizedString.PROP_LOCALIZED_STRING_ID) || column.equals(LocalizedString.PROP_LOCALE) || column.equals(LocalizedString.PROP_STRING_VALUE) || column.equals(LocalizedString.PROP_TEXT_STRING_ID) )
             {
                 return column;
             }
@@ -78,20 +87,20 @@
             return new LocalizedString(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4));
         }
         
-        public static int addLocalizedString(Integer Locale, String Value, Integer TextStringId)
+        public static int addLocalizedString(Integer Locale, String StringValue, Integer TextStringId)
         {   
             int id = 0;
             try
             {
                 
                 
-                checkColumnSize(Value, 255);
+                checkColumnSize(StringValue, 255);
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO localized_string(Locale,Value,TextStringId) VALUES (?,?,?);");                    
+                prepareStatement("INSERT INTO localized_string(Locale,StringValue,TextStringId) VALUES (?,?,?);");                    
                 preparedStatement.setInt(1, Locale);
-                preparedStatement.setString(2, Value);
+                preparedStatement.setString(2, StringValue);
                 preparedStatement.setInt(3, TextStringId);
                 
                 preparedStatement.executeUpdate();
@@ -139,6 +148,80 @@
             }
             return localized_string;
         }
+        
+        public static ArrayList<LocalizedString> getAllLocalizedStringWithRelatedInfo()
+        {
+            ArrayList<LocalizedString> localized_stringList = new ArrayList<LocalizedString>();
+            try
+            {
+                getAllRecordsByTableName("localized_string");
+                while (rs.next())
+                {
+                    localized_stringList.add(processLocalizedString(rs));
+                }
+
+                
+                    for(LocalizedString localized_string : localized_stringList)
+                    {
+                        
+                            getRecordById("TextString", localized_string.getTextStringId().toString());
+                            localized_string.setTextString(TextStringDAO.processTextString(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllLocalizedStringWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return localized_stringList;
+        }
+        
+        
+        public static LocalizedString getRelatedInfo(LocalizedString localized_string)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("TextString", localized_string.getTextStringId().toString());
+                            localized_string.setTextString(TextStringDAO.processTextString(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return localized_string;
+        }
+        
+        public static LocalizedString getAllRelatedObjects(LocalizedString localized_string)
+        {           
+            localized_string.setTextStringLocalList(TextStringLocalDAO.getAllTextStringLocalByColumn("LocalizedStringId", localized_string.getLocalizedStringId().toString()));
+             
+            return localized_string;
+        }
+        
+        
+                    
+        public static LocalizedString getRelatedTextStringLocalList(LocalizedString localized_string)
+        {           
+            localized_string.setTextStringLocalList(TextStringLocalDAO.getAllTextStringLocalByColumn("LocalizedStringId", localized_string.getLocalizedStringId().toString()));
+            return localized_string;
+        }        
+        
                 
         public static ArrayList<LocalizedString> getLocalizedStringPaged(int limit, int offset)
         {
@@ -206,19 +289,19 @@
             return localized_string;
         }                
                 
-        public static void updateLocalizedString(Integer LocalizedStringId,Integer Locale,String Value,Integer TextStringId)
+        public static void updateLocalizedString(Integer LocalizedStringId,Integer Locale,String StringValue,Integer TextStringId)
         {  
             try
             {   
                 
                 
-                checkColumnSize(Value, 255);
+                checkColumnSize(StringValue, 255);
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE localized_string SET Locale=?,Value=?,TextStringId=? WHERE LocalizedStringId=?;");                    
+                prepareStatement("UPDATE localized_string SET Locale=?,StringValue=?,TextStringId=? WHERE LocalizedStringId=?;");                    
                 preparedStatement.setInt(1, Locale);
-                preparedStatement.setString(2, Value);
+                preparedStatement.setString(2, StringValue);
                 preparedStatement.setInt(3, TextStringId);
                 preparedStatement.setInt(4, LocalizedStringId);
                 preparedStatement.executeUpdate();

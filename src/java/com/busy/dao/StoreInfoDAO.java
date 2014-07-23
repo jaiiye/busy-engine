@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.StoreInfo;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -143,6 +152,48 @@
             }
             return store_info;
         }
+        
+        public static ArrayList<StoreInfo> getAllStoreInfoWithRelatedInfo()
+        {
+            ArrayList<StoreInfo> store_infoList = new ArrayList<StoreInfo>();
+            try
+            {
+                getAllRecordsByTableName("store_info");
+                while (rs.next())
+                {
+                    store_infoList.add(processStoreInfo(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllStoreInfoWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return store_infoList;
+        }
+        
+        
+        public static StoreInfo getRelatedInfo(StoreInfo store_info)
+        {
+           
+                  
+            
+            return store_info;
+        }
+        
+        public static StoreInfo getAllRelatedObjects(StoreInfo store_info)
+        {           
+                         
+            return store_info;
+        }
+        
+        
+        
                 
         public static ArrayList<StoreInfo> getStoreInfoPaged(int limit, int offset)
         {

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class VendorType implements Serializable
@@ -34,20 +35,31 @@
         
 
         private Integer vendorTypeId;
+                
         private String typeName;
+                
+                 
+        ArrayList<Vendor> vendorList; 
+        
         
 
         public VendorType()
         {
             this.vendorTypeId = 0; 
        this.typeName = ""; 
-        }
+        
+       vendorList = null; 
+        
+       }
         
         public VendorType(Integer VendorTypeId, String TypeName)
         {
             this.vendorTypeId = VendorTypeId;
        this.typeName = TypeName;
-        } 
+              
+       vendorList = null; 
+        
+       } 
         
              
         
@@ -60,6 +72,8 @@
             {
                 this.vendorTypeId = VendorTypeId;
             }
+            
+            
         
             public String getTypeName()
             {
@@ -70,7 +84,21 @@
             {
                 this.typeName = TypeName;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<Vendor> getVendorList()
+            {
+                return this.vendorList;
+            }
+            
+            public void setVendorList(ArrayList<Vendor> vendorList)
+            {
+                this.vendorList = vendorList;
+            }
+        
             
     }
 

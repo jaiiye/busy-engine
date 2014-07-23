@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.SliderType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,55 @@
             }
             return slider_type;
         }
+        
+        public static ArrayList<SliderType> getAllSliderTypeWithRelatedInfo()
+        {
+            ArrayList<SliderType> slider_typeList = new ArrayList<SliderType>();
+            try
+            {
+                getAllRecordsByTableName("slider_type");
+                while (rs.next())
+                {
+                    slider_typeList.add(processSliderType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllSliderTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return slider_typeList;
+        }
+        
+        
+        public static SliderType getRelatedInfo(SliderType slider_type)
+        {
+           
+                  
+            
+            return slider_type;
+        }
+        
+        public static SliderType getAllRelatedObjects(SliderType slider_type)
+        {           
+            slider_type.setSliderList(SliderDAO.getAllSliderByColumn("SliderTypeId", slider_type.getSliderTypeId().toString()));
+             
+            return slider_type;
+        }
+        
+        
+                    
+        public static SliderType getRelatedSliderList(SliderType slider_type)
+        {           
+            slider_type.setSliderList(SliderDAO.getAllSliderByColumn("SliderTypeId", slider_type.getSliderTypeId().toString()));
+            return slider_type;
+        }        
+        
                 
         public static ArrayList<SliderType> getSliderTypePaged(int limit, int offset)
         {

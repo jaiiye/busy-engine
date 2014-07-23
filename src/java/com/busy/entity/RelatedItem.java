@@ -19,12 +19,15 @@
 
 
 
+
+
     package com.busy.entity;
 
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
-    public class RelatedItems implements Serializable
+    public class RelatedItem implements Serializable
     {    
         private static final long serialVersionUID = 1L;       
         public static final String PROP_RELATED_ITEM_ID = "RelatedItemId";
@@ -33,23 +36,32 @@
         
 
         private Integer relatedItemId;
+                
         private Integer item1;
+                
         private Integer item2;
+                
+                 
+        
         
 
-        public RelatedItems()
+        public RelatedItem()
         {
             this.relatedItemId = 0; 
        this.item1 = 0; 
        this.item2 = 0; 
-        }
         
-        public RelatedItems(Integer RelatedItemId, Integer Item1, Integer Item2)
+       
+       }
+        
+        public RelatedItem(Integer RelatedItemId, Integer Item1, Integer Item2)
         {
             this.relatedItemId = RelatedItemId;
        this.item1 = Item1;
        this.item2 = Item2;
-        } 
+              
+       
+       } 
         
              
         
@@ -62,6 +74,8 @@
             {
                 this.relatedItemId = RelatedItemId;
             }
+            
+            
         
             public Integer getItem1()
             {
@@ -72,6 +86,8 @@
             {
                 this.item1 = Item1;
             }
+            
+            
         
             public Integer getItem2()
             {
@@ -82,7 +98,11 @@
             {
                 this.item2 = Item2;
             }
-           
+            
+            
+         
+        
+        
             
     }
 

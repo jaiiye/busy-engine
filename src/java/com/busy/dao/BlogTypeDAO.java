@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.BlogType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -135,6 +144,55 @@
             }
             return blog_type;
         }
+        
+        public static ArrayList<BlogType> getAllBlogTypeWithRelatedInfo()
+        {
+            ArrayList<BlogType> blog_typeList = new ArrayList<BlogType>();
+            try
+            {
+                getAllRecordsByTableName("blog_type");
+                while (rs.next())
+                {
+                    blog_typeList.add(processBlogType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllBlogTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return blog_typeList;
+        }
+        
+        
+        public static BlogType getRelatedInfo(BlogType blog_type)
+        {
+           
+                  
+            
+            return blog_type;
+        }
+        
+        public static BlogType getAllRelatedObjects(BlogType blog_type)
+        {           
+            blog_type.setBlogList(BlogDAO.getAllBlogByColumn("BlogTypeId", blog_type.getBlogTypeId().toString()));
+             
+            return blog_type;
+        }
+        
+        
+                    
+        public static BlogType getRelatedBlogList(BlogType blog_type)
+        {           
+            blog_type.setBlogList(BlogDAO.getAllBlogByColumn("BlogTypeId", blog_type.getBlogTypeId().toString()));
+            return blog_type;
+        }        
+        
                 
         public static ArrayList<BlogType> getBlogTypePaged(int limit, int offset)
         {

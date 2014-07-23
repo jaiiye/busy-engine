@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,52 +23,67 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class UserType implements Serializable
     {    
         private static final long serialVersionUID = 1L;       
-        public static final String PROP_TYPE_ID = "TypeId";
+        public static final String PROP_USER_TYPE_ID = "UserTypeId";
         public static final String PROP_TYPE_NAME = "TypeName";
         public static final String PROP_DESCRIPTION = "Description";
         public static final String PROP_REDIRECT_U_R_L = "RedirectURL";
         
 
-        private Integer typeId;
+        private Integer userTypeId;
+                
         private String typeName;
+                
         private String description;
+                
         private String redirectURL;
+                
+                 
+        ArrayList<User> userList; 
+        
         
 
         public UserType()
         {
-            this.typeId = 0; 
+            this.userTypeId = 0; 
        this.typeName = ""; 
        this.description = ""; 
        this.redirectURL = ""; 
-        }
         
-        public UserType(Integer TypeId, String TypeName, String Description, String RedirectURL)
+       userList = null; 
+        
+       }
+        
+        public UserType(Integer UserTypeId, String TypeName, String Description, String RedirectURL)
         {
-            this.typeId = TypeId;
+            this.userTypeId = UserTypeId;
        this.typeName = TypeName;
        this.description = Description;
        this.redirectURL = RedirectURL;
-        } 
+              
+       userList = null; 
+        
+       } 
         
              
         
-            public Integer getTypeId()
+            public Integer getUserTypeId()
             {
-                return this.typeId;
+                return this.userTypeId;
             }
             
-            public void setTypeId(Integer TypeId)
+            public void setUserTypeId(Integer UserTypeId)
             {
-                this.typeId = TypeId;
+                this.userTypeId = UserTypeId;
             }
+            
+            
         
             public String getTypeName()
             {
@@ -78,6 +94,8 @@
             {
                 this.typeName = TypeName;
             }
+            
+            
         
             public String getDescription()
             {
@@ -88,6 +106,8 @@
             {
                 this.description = Description;
             }
+            
+            
         
             public String getRedirectURL()
             {
@@ -98,7 +118,21 @@
             {
                 this.redirectURL = RedirectURL;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<User> getUserList()
+            {
+                return this.userList;
+            }
+            
+            public void setUserList(ArrayList<User> userList)
+            {
+                this.userList = userList;
+            }
+        
             
     }
 

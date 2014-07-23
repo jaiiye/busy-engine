@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.SiteFolder;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -141,6 +150,80 @@
             }
             return site_folder;
         }
+        
+        public static ArrayList<SiteFolder> getAllSiteFolderWithRelatedInfo()
+        {
+            ArrayList<SiteFolder> site_folderList = new ArrayList<SiteFolder>();
+            try
+            {
+                getAllRecordsByTableName("site_folder");
+                while (rs.next())
+                {
+                    site_folderList.add(processSiteFolder(rs));
+                }
+
+                
+                    for(SiteFolder site_folder : site_folderList)
+                    {
+                        
+                            getRecordById("Site", site_folder.getSiteId().toString());
+                            site_folder.setSite(SiteDAO.processSite(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllSiteFolderWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return site_folderList;
+        }
+        
+        
+        public static SiteFolder getRelatedInfo(SiteFolder site_folder)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Site", site_folder.getSiteId().toString());
+                            site_folder.setSite(SiteDAO.processSite(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return site_folder;
+        }
+        
+        public static SiteFolder getAllRelatedObjects(SiteFolder site_folder)
+        {           
+            site_folder.setFileFolderList(FileFolderDAO.getAllFileFolderByColumn("SiteFolderId", site_folder.getSiteFolderId().toString()));
+             
+            return site_folder;
+        }
+        
+        
+                    
+        public static SiteFolder getRelatedFileFolderList(SiteFolder site_folder)
+        {           
+            site_folder.setFileFolderList(FileFolderDAO.getAllFileFolderByColumn("SiteFolderId", site_folder.getSiteFolderId().toString()));
+            return site_folder;
+        }        
+        
                 
         public static ArrayList<SiteFolder> getSiteFolderPaged(int limit, int offset)
         {

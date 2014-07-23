@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class BlogPostCategory implements Serializable
@@ -35,8 +36,13 @@
         
 
         private Integer blogPostCategoryId;
+                
         private Integer blogPostId;
+        private BlogPost blogPost;        
         private Integer postCategoryId;
+        private PostCategory postCategory;        
+                 
+        
         
 
         public BlogPostCategory()
@@ -44,14 +50,18 @@
             this.blogPostCategoryId = 0; 
        this.blogPostId = 0; 
        this.postCategoryId = 0; 
-        }
+        
+       
+       }
         
         public BlogPostCategory(Integer BlogPostCategoryId, Integer BlogPostId, Integer PostCategoryId)
         {
             this.blogPostCategoryId = BlogPostCategoryId;
        this.blogPostId = BlogPostId;
        this.postCategoryId = PostCategoryId;
-        } 
+              
+       
+       } 
         
              
         
@@ -64,6 +74,8 @@
             {
                 this.blogPostCategoryId = BlogPostCategoryId;
             }
+            
+            
         
             public Integer getBlogPostId()
             {
@@ -74,6 +86,20 @@
             {
                 this.blogPostId = BlogPostId;
             }
+            
+            
+                   
+            public BlogPost getBlogPost()
+                {
+                    return this.blogPost;
+                }
+
+                public void setBlogPost(BlogPost blogPost)
+                {
+                    this.blogPost = blogPost;
+                }
+                   
+            
         
             public Integer getPostCategoryId()
             {
@@ -84,7 +110,23 @@
             {
                 this.postCategoryId = PostCategoryId;
             }
-           
+            
+            
+                   
+            public PostCategory getPostCategory()
+                {
+                    return this.postCategory;
+                }
+
+                public void setPostCategory(PostCategory postCategory)
+                {
+                    this.postCategory = postCategory;
+                }
+                   
+            
+         
+        
+        
             
     }
 

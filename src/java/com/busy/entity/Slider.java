@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Slider implements Serializable
@@ -36,9 +37,17 @@
         
 
         private Integer sliderId;
+                
         private String sliderName;
+                
         private Integer sliderTypeId;
+        private SliderType sliderType;        
         private Integer formId;
+        private Form form;        
+                 
+        ArrayList<Page> pageList; 
+        ArrayList<SliderItem> sliderItemList; 
+        
         
 
         public Slider()
@@ -47,7 +56,11 @@
        this.sliderName = ""; 
        this.sliderTypeId = 0; 
        this.formId = 0; 
-        }
+        
+       pageList = null; 
+        sliderItemList = null; 
+        
+       }
         
         public Slider(Integer SliderId, String SliderName, Integer SliderTypeId, Integer FormId)
         {
@@ -55,7 +68,11 @@
        this.sliderName = SliderName;
        this.sliderTypeId = SliderTypeId;
        this.formId = FormId;
-        } 
+              
+       pageList = null; 
+        sliderItemList = null; 
+        
+       } 
         
              
         
@@ -68,6 +85,8 @@
             {
                 this.sliderId = SliderId;
             }
+            
+            
         
             public String getSliderName()
             {
@@ -78,6 +97,8 @@
             {
                 this.sliderName = SliderName;
             }
+            
+            
         
             public Integer getSliderTypeId()
             {
@@ -88,6 +109,20 @@
             {
                 this.sliderTypeId = SliderTypeId;
             }
+            
+            
+                   
+            public SliderType getSliderType()
+                {
+                    return this.sliderType;
+                }
+
+                public void setSliderType(SliderType sliderType)
+                {
+                    this.sliderType = sliderType;
+                }
+                   
+            
         
             public Integer getFormId()
             {
@@ -98,7 +133,43 @@
             {
                 this.formId = FormId;
             }
-           
+            
+            
+                   
+            public Form getForm()
+                {
+                    return this.form;
+                }
+
+                public void setForm(Form form)
+                {
+                    this.form = form;
+                }
+                   
+            
+         
+        
+        
+            public ArrayList<Page> getPageList()
+            {
+                return this.pageList;
+            }
+            
+            public void setPageList(ArrayList<Page> pageList)
+            {
+                this.pageList = pageList;
+            }
+        
+            public ArrayList<SliderItem> getSliderItemList()
+            {
+                return this.sliderItemList;
+            }
+            
+            public void setSliderItemList(ArrayList<SliderItem> sliderItemList)
+            {
+                this.sliderItemList = sliderItemList;
+            }
+        
             
     }
 

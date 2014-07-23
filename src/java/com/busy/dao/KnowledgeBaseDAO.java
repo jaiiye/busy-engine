@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.KnowledgeBase;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -145,6 +154,55 @@
             }
             return knowledge_base;
         }
+        
+        public static ArrayList<KnowledgeBase> getAllKnowledgeBaseWithRelatedInfo()
+        {
+            ArrayList<KnowledgeBase> knowledge_baseList = new ArrayList<KnowledgeBase>();
+            try
+            {
+                getAllRecordsByTableName("knowledge_base");
+                while (rs.next())
+                {
+                    knowledge_baseList.add(processKnowledgeBase(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllKnowledgeBaseWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return knowledge_baseList;
+        }
+        
+        
+        public static KnowledgeBase getRelatedInfo(KnowledgeBase knowledge_base)
+        {
+           
+                  
+            
+            return knowledge_base;
+        }
+        
+        public static KnowledgeBase getAllRelatedObjects(KnowledgeBase knowledge_base)
+        {           
+            knowledge_base.setBlogList(BlogDAO.getAllBlogByColumn("KnowledgeBaseId", knowledge_base.getKnowledgeBaseId().toString()));
+             
+            return knowledge_base;
+        }
+        
+        
+                    
+        public static KnowledgeBase getRelatedBlogList(KnowledgeBase knowledge_base)
+        {           
+            knowledge_base.setBlogList(BlogDAO.getAllBlogByColumn("KnowledgeBaseId", knowledge_base.getKnowledgeBaseId().toString()));
+            return knowledge_base;
+        }        
+        
                 
         public static ArrayList<KnowledgeBase> getKnowledgeBasePaged(int limit, int offset)
         {

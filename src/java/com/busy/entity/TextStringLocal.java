@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class TextStringLocal implements Serializable
@@ -36,9 +37,15 @@
         
 
         private Integer localizedStringId;
+                
         private String value;
+                
         private String locale;
+                
         private Integer textStringId;
+        private TextString textString;        
+                 
+        
         
 
         public TextStringLocal()
@@ -47,7 +54,9 @@
        this.value = ""; 
        this.locale = ""; 
        this.textStringId = 0; 
-        }
+        
+       
+       }
         
         public TextStringLocal(Integer LocalizedStringId, String Value, String Locale, Integer TextStringId)
         {
@@ -55,7 +64,9 @@
        this.value = Value;
        this.locale = Locale;
        this.textStringId = TextStringId;
-        } 
+              
+       
+       } 
         
              
         
@@ -68,6 +79,8 @@
             {
                 this.localizedStringId = LocalizedStringId;
             }
+            
+            
         
             public String getValue()
             {
@@ -78,6 +91,8 @@
             {
                 this.value = Value;
             }
+            
+            
         
             public String getLocale()
             {
@@ -88,6 +103,8 @@
             {
                 this.locale = Locale;
             }
+            
+            
         
             public Integer getTextStringId()
             {
@@ -98,7 +115,23 @@
             {
                 this.textStringId = TextStringId;
             }
-           
+            
+            
+                   
+            public TextString getTextString()
+                {
+                    return this.textString;
+                }
+
+                public void setTextString(TextString textString)
+                {
+                    this.textString = textString;
+                }
+                   
+            
+         
+        
+        
             
     }
 

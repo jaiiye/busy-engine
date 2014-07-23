@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ResourceType implements Serializable
@@ -31,27 +32,39 @@
         private static final long serialVersionUID = 1L;       
         public static final String PROP_RESOURCE_TYPE_ID = "ResourceTypeId";
         public static final String PROP_TYPE_NAME = "TypeName";
-        public static final String PROP_VALUE = "Value";
+        public static final String PROP_TYPE_VALUE = "TypeValue";
         
 
         private Integer resourceTypeId;
+                
         private String typeName;
-        private String value;
+                
+        private String typeValue;
+                
+                 
+        ArrayList<ResourceUrl> resourceUrlList; 
+        
         
 
         public ResourceType()
         {
             this.resourceTypeId = 0; 
        this.typeName = ""; 
-       this.value = ""; 
-        }
+       this.typeValue = ""; 
         
-        public ResourceType(Integer ResourceTypeId, String TypeName, String Value)
+       resourceUrlList = null; 
+        
+       }
+        
+        public ResourceType(Integer ResourceTypeId, String TypeName, String TypeValue)
         {
             this.resourceTypeId = ResourceTypeId;
        this.typeName = TypeName;
-       this.value = Value;
-        } 
+       this.typeValue = TypeValue;
+              
+       resourceUrlList = null; 
+        
+       } 
         
              
         
@@ -64,6 +77,8 @@
             {
                 this.resourceTypeId = ResourceTypeId;
             }
+            
+            
         
             public String getTypeName()
             {
@@ -74,17 +89,33 @@
             {
                 this.typeName = TypeName;
             }
+            
+            
         
-            public String getValue()
+            public String getTypeValue()
             {
-                return this.value;
+                return this.typeValue;
             }
             
-            public void setValue(String Value)
+            public void setTypeValue(String TypeValue)
             {
-                this.value = Value;
+                this.typeValue = TypeValue;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<ResourceUrl> getResourceUrlList()
+            {
+                return this.resourceUrlList;
+            }
+            
+            public void setResourceUrlList(ArrayList<ResourceUrl> resourceUrlList)
+            {
+                this.resourceUrlList = resourceUrlList;
+            }
+        
             
     }
 

@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Affiliate;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Affiliate.PROP_AFFILIATE_ID) || column.equals(Affiliate.PROP_COMPANY_NAME) || column.equals(Affiliate.PROP_EMAIL) || column.equals(Affiliate.PROP_PHONE) || column.equals(Affiliate.PROP_FAX) || column.equals(Affiliate.PROP_WEB_URL) || column.equals(Affiliate.PROP_DETAILS) || column.equals(Affiliate.PROP_SERVICE_HOURS) || column.equals(Affiliate.PROP_STATUS) || column.equals(Affiliate.PROP_USER_ID) || column.equals(Affiliate.PROP_CONTACT_ID) || column.equals(Affiliate.PROP_ADDRESS_ID) )
+            if(column.equals(Affiliate.PROP_AFFILIATE_ID) || column.equals(Affiliate.PROP_COMPANY_NAME) || column.equals(Affiliate.PROP_EMAIL) || column.equals(Affiliate.PROP_PHONE) || column.equals(Affiliate.PROP_FAX) || column.equals(Affiliate.PROP_WEB_URL) || column.equals(Affiliate.PROP_DETAILS) || column.equals(Affiliate.PROP_SERVICE_HOURS) || column.equals(Affiliate.PROP_AFFILIATE_STATUS) || column.equals(Affiliate.PROP_USER_ID) || column.equals(Affiliate.PROP_CONTACT_ID) || column.equals(Affiliate.PROP_ADDRESS_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Affiliate.PROP_AFFILIATE_ID) || column.equals(Affiliate.PROP_SERVICE_HOURS) || column.equals(Affiliate.PROP_STATUS) || column.equals(Affiliate.PROP_USER_ID) || column.equals(Affiliate.PROP_CONTACT_ID) || column.equals(Affiliate.PROP_ADDRESS_ID) )
+            if (column.equals(Affiliate.PROP_AFFILIATE_ID) || column.equals(Affiliate.PROP_SERVICE_HOURS) || column.equals(Affiliate.PROP_AFFILIATE_STATUS) || column.equals(Affiliate.PROP_USER_ID) || column.equals(Affiliate.PROP_CONTACT_ID) || column.equals(Affiliate.PROP_ADDRESS_ID) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new Affiliate(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getInt(10), rs.getInt(11), rs.getInt(12));
         }
         
-        public static int addAffiliate(String CompanyName, String Email, String Phone, String Fax, String WebUrl, String Details, Integer ServiceHours, Integer Status, Integer UserId, Integer ContactId, Integer AddressId)
+        public static int addAffiliate(String CompanyName, String Email, String Phone, String Fax, String WebUrl, String Details, Integer ServiceHours, Integer AffiliateStatus, Integer UserId, Integer ContactId, Integer AddressId)
         {   
             int id = 0;
             try
@@ -97,7 +106,7 @@
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO affiliate(CompanyName,Email,Phone,Fax,WebUrl,Details,ServiceHours,Status,UserId,ContactId,AddressId) VALUES (?,?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO affiliate(CompanyName,Email,Phone,Fax,WebUrl,Details,ServiceHours,AffiliateStatus,UserId,ContactId,AddressId) VALUES (?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, CompanyName);
                 preparedStatement.setString(2, Email);
                 preparedStatement.setString(3, Phone);
@@ -105,7 +114,7 @@
                 preparedStatement.setString(5, WebUrl);
                 preparedStatement.setString(6, Details);
                 preparedStatement.setInt(7, ServiceHours);
-                preparedStatement.setInt(8, Status);
+                preparedStatement.setInt(8, AffiliateStatus);
                 preparedStatement.setInt(9, UserId);
                 preparedStatement.setInt(10, ContactId);
                 preparedStatement.setInt(11, AddressId);
@@ -155,6 +164,92 @@
             }
             return affiliate;
         }
+        
+        public static ArrayList<Affiliate> getAllAffiliateWithRelatedInfo()
+        {
+            ArrayList<Affiliate> affiliateList = new ArrayList<Affiliate>();
+            try
+            {
+                getAllRecordsByTableName("affiliate");
+                while (rs.next())
+                {
+                    affiliateList.add(processAffiliate(rs));
+                }
+
+                
+                    for(Affiliate affiliate : affiliateList)
+                    {
+                        
+                            getRecordById("User", affiliate.getUserId().toString());
+                            affiliate.setUser(UserDAO.processUser(rs));               
+                        
+                            getRecordById("Contact", affiliate.getContactId().toString());
+                            affiliate.setContact(ContactDAO.processContact(rs));               
+                        
+                            getRecordById("Address", affiliate.getAddressId().toString());
+                            affiliate.setAddress(AddressDAO.processAddress(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllAffiliateWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return affiliateList;
+        }
+        
+        
+        public static Affiliate getRelatedInfo(Affiliate affiliate)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("User", affiliate.getUserId().toString());
+                            affiliate.setUser(UserDAO.processUser(rs));               
+                        
+                            getRecordById("Contact", affiliate.getContactId().toString());
+                            affiliate.setContact(ContactDAO.processContact(rs));               
+                        
+                            getRecordById("Address", affiliate.getAddressId().toString());
+                            affiliate.setAddress(AddressDAO.processAddress(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return affiliate;
+        }
+        
+        public static Affiliate getAllRelatedObjects(Affiliate affiliate)
+        {           
+            affiliate.setOrderList(OrderDAO.getAllOrderByColumn("AffiliateId", affiliate.getAffiliateId().toString()));
+             
+            return affiliate;
+        }
+        
+        
+                    
+        public static Affiliate getRelatedOrderList(Affiliate affiliate)
+        {           
+            affiliate.setOrderList(OrderDAO.getAllOrderByColumn("AffiliateId", affiliate.getAffiliateId().toString()));
+            return affiliate;
+        }        
+        
                 
         public static ArrayList<Affiliate> getAffiliatePaged(int limit, int offset)
         {
@@ -222,7 +317,7 @@
             return affiliate;
         }                
                 
-        public static void updateAffiliate(Integer AffiliateId,String CompanyName,String Email,String Phone,String Fax,String WebUrl,String Details,Integer ServiceHours,Integer Status,Integer UserId,Integer ContactId,Integer AddressId)
+        public static void updateAffiliate(Integer AffiliateId,String CompanyName,String Email,String Phone,String Fax,String WebUrl,String Details,Integer ServiceHours,Integer AffiliateStatus,Integer UserId,Integer ContactId,Integer AddressId)
         {  
             try
             {   
@@ -240,7 +335,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE affiliate SET CompanyName=?,Email=?,Phone=?,Fax=?,WebUrl=?,Details=?,ServiceHours=?,Status=?,UserId=?,ContactId=?,AddressId=? WHERE AffiliateId=?;");                    
+                prepareStatement("UPDATE affiliate SET CompanyName=?,Email=?,Phone=?,Fax=?,WebUrl=?,Details=?,ServiceHours=?,AffiliateStatus=?,UserId=?,ContactId=?,AddressId=? WHERE AffiliateId=?;");                    
                 preparedStatement.setString(1, CompanyName);
                 preparedStatement.setString(2, Email);
                 preparedStatement.setString(3, Phone);
@@ -248,7 +343,7 @@
                 preparedStatement.setString(5, WebUrl);
                 preparedStatement.setString(6, Details);
                 preparedStatement.setInt(7, ServiceHours);
-                preparedStatement.setInt(8, Status);
+                preparedStatement.setInt(8, AffiliateStatus);
                 preparedStatement.setInt(9, UserId);
                 preparedStatement.setInt(10, ContactId);
                 preparedStatement.setInt(11, AddressId);

@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Order;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Order.PROP_ORDER_ID) || column.equals(Order.PROP_ORDER_DATE) || column.equals(Order.PROP_SHIP_DATE) || column.equals(Order.PROP_PAYMENT_METHOD) || column.equals(Order.PROP_PURCHASE_ORDER) || column.equals(Order.PROP_TRANSACTION_ID) || column.equals(Order.PROP_AMOUNT_BILLED) || column.equals(Order.PROP_PAYMENT_STATUS) || column.equals(Order.PROP_PENDING_REASON) || column.equals(Order.PROP_PAYMENT_TYPE) || column.equals(Order.PROP_TRANSACTION_FEE) || column.equals(Order.PROP_CURRENCY_CODE) || column.equals(Order.PROP_PAYER_ID) || column.equals(Order.PROP_SUBTOTAL_AMOUNT) || column.equals(Order.PROP_DISCOUNT_AMOUNT) || column.equals(Order.PROP_TAX_AMOUNT) || column.equals(Order.PROP_SHIPPING_AMOUNT) || column.equals(Order.PROP_TOTAL_AMOUNT) || column.equals(Order.PROP_REFUND_AMOUNT) || column.equals(Order.PROP_NOTES) || column.equals(Order.PROP_STATUS) || column.equals(Order.PROP_SHIPPING_ID) || column.equals(Order.PROP_AFFILIATE_ID) )
+            if(column.equals(Order.PROP_ORDER_ID) || column.equals(Order.PROP_ORDER_DATE) || column.equals(Order.PROP_SHIP_DATE) || column.equals(Order.PROP_PAYMENT_METHOD) || column.equals(Order.PROP_PURCHASE_ORDER) || column.equals(Order.PROP_TRANSACTION_ID) || column.equals(Order.PROP_AMOUNT_BILLED) || column.equals(Order.PROP_PAYMENT_STATUS) || column.equals(Order.PROP_PENDING_REASON) || column.equals(Order.PROP_PAYMENT_TYPE) || column.equals(Order.PROP_TRANSACTION_FEE) || column.equals(Order.PROP_CURRENCY_CODE) || column.equals(Order.PROP_PAYER_ID) || column.equals(Order.PROP_SUBTOTAL_AMOUNT) || column.equals(Order.PROP_DISCOUNT_AMOUNT) || column.equals(Order.PROP_TAX_AMOUNT) || column.equals(Order.PROP_SHIPPING_AMOUNT) || column.equals(Order.PROP_TOTAL_AMOUNT) || column.equals(Order.PROP_REFUND_AMOUNT) || column.equals(Order.PROP_NOTES) || column.equals(Order.PROP_ORDER_STATUS) || column.equals(Order.PROP_SHIPPING_ID) || column.equals(Order.PROP_AFFILIATE_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Order.PROP_ORDER_ID) || column.equals(Order.PROP_AMOUNT_BILLED) || column.equals(Order.PROP_TRANSACTION_FEE) || column.equals(Order.PROP_SUBTOTAL_AMOUNT) || column.equals(Order.PROP_DISCOUNT_AMOUNT) || column.equals(Order.PROP_TAX_AMOUNT) || column.equals(Order.PROP_SHIPPING_AMOUNT) || column.equals(Order.PROP_TOTAL_AMOUNT) || column.equals(Order.PROP_REFUND_AMOUNT) || column.equals(Order.PROP_STATUS) || column.equals(Order.PROP_SHIPPING_ID) || column.equals(Order.PROP_AFFILIATE_ID) )
+            if (column.equals(Order.PROP_ORDER_ID) || column.equals(Order.PROP_AMOUNT_BILLED) || column.equals(Order.PROP_TRANSACTION_FEE) || column.equals(Order.PROP_SUBTOTAL_AMOUNT) || column.equals(Order.PROP_DISCOUNT_AMOUNT) || column.equals(Order.PROP_TAX_AMOUNT) || column.equals(Order.PROP_SHIPPING_AMOUNT) || column.equals(Order.PROP_TOTAL_AMOUNT) || column.equals(Order.PROP_REFUND_AMOUNT) || column.equals(Order.PROP_ORDER_STATUS) || column.equals(Order.PROP_SHIPPING_ID) || column.equals(Order.PROP_AFFILIATE_ID) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new Order(rs.getInt(1), rs.getDate(2), rs.getDate(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getDouble(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getDouble(11), rs.getString(12), rs.getString(13), rs.getDouble(14), rs.getDouble(15), rs.getDouble(16), rs.getDouble(17), rs.getDouble(18), rs.getDouble(19), rs.getString(20), rs.getInt(21), rs.getInt(22), rs.getInt(23));
         }
         
-        public static int addOrder(Date OrderDate, Date ShipDate, String PaymentMethod, String PurchaseOrder, String TransactionId, Double AmountBilled, String PaymentStatus, String PendingReason, String PaymentType, Double TransactionFee, String CurrencyCode, String PayerId, Double SubtotalAmount, Double DiscountAmount, Double TaxAmount, Double ShippingAmount, Double TotalAmount, Double RefundAmount, String Notes, Integer Status, Integer ShippingId, Integer AffiliateId)
+        public static int addOrder(Date OrderDate, Date ShipDate, String PaymentMethod, String PurchaseOrder, String TransactionId, Double AmountBilled, String PaymentStatus, String PendingReason, String PaymentType, Double TransactionFee, String CurrencyCode, String PayerId, Double SubtotalAmount, Double DiscountAmount, Double TaxAmount, Double ShippingAmount, Double TotalAmount, Double RefundAmount, String Notes, Integer OrderStatus, Integer ShippingId, Integer AffiliateId)
         {   
             int id = 0;
             try
@@ -108,7 +117,7 @@
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO order(OrderDate,ShipDate,PaymentMethod,PurchaseOrder,TransactionId,AmountBilled,PaymentStatus,PendingReason,PaymentType,TransactionFee,CurrencyCode,PayerId,SubtotalAmount,DiscountAmount,TaxAmount,ShippingAmount,TotalAmount,RefundAmount,Notes,Status,ShippingId,AffiliateId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO order(OrderDate,ShipDate,PaymentMethod,PurchaseOrder,TransactionId,AmountBilled,PaymentStatus,PendingReason,PaymentType,TransactionFee,CurrencyCode,PayerId,SubtotalAmount,DiscountAmount,TaxAmount,ShippingAmount,TotalAmount,RefundAmount,Notes,OrderStatus,ShippingId,AffiliateId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setDate(1, new java.sql.Date(OrderDate.getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(ShipDate.getTime()));
                 preparedStatement.setString(3, PaymentMethod);
@@ -128,7 +137,7 @@
                 preparedStatement.setDouble(17, TotalAmount);
                 preparedStatement.setDouble(18, RefundAmount);
                 preparedStatement.setString(19, Notes);
-                preparedStatement.setInt(20, Status);
+                preparedStatement.setInt(20, OrderStatus);
                 preparedStatement.setInt(21, ShippingId);
                 preparedStatement.setInt(22, AffiliateId);
                 
@@ -177,6 +186,100 @@
             }
             return order;
         }
+        
+        public static ArrayList<Order> getAllOrderWithRelatedInfo()
+        {
+            ArrayList<Order> orderList = new ArrayList<Order>();
+            try
+            {
+                getAllRecordsByTableName("order");
+                while (rs.next())
+                {
+                    orderList.add(processOrder(rs));
+                }
+
+                
+                    for(Order order : orderList)
+                    {
+                        
+                            getRecordById("Shipping", order.getShippingId().toString());
+                            order.setShipping(ShippingDAO.processShipping(rs));               
+                        
+                            getRecordById("Affiliate", order.getAffiliateId().toString());
+                            order.setAffiliate(AffiliateDAO.processAffiliate(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllOrderWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return orderList;
+        }
+        
+        
+        public static Order getRelatedInfo(Order order)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Shipping", order.getShippingId().toString());
+                            order.setShipping(ShippingDAO.processShipping(rs));               
+                        
+                            getRecordById("Affiliate", order.getAffiliateId().toString());
+                            order.setAffiliate(AffiliateDAO.processAffiliate(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return order;
+        }
+        
+        public static Order getAllRelatedObjects(Order order)
+        {           
+            order.setCustomerOrderList(CustomerOrderDAO.getAllCustomerOrderByColumn("OrderId", order.getOrderId().toString()));
+order.setRecurringPaymentList(RecurringPaymentDAO.getAllRecurringPaymentByColumn("OrderId", order.getOrderId().toString()));
+order.setShipmentList(ShipmentDAO.getAllShipmentByColumn("OrderId", order.getOrderId().toString()));
+             
+            return order;
+        }
+        
+        
+                    
+        public static Order getRelatedCustomerOrderList(Order order)
+        {           
+            order.setCustomerOrderList(CustomerOrderDAO.getAllCustomerOrderByColumn("OrderId", order.getOrderId().toString()));
+            return order;
+        }        
+                    
+        public static Order getRelatedRecurringPaymentList(Order order)
+        {           
+            order.setRecurringPaymentList(RecurringPaymentDAO.getAllRecurringPaymentByColumn("OrderId", order.getOrderId().toString()));
+            return order;
+        }        
+                    
+        public static Order getRelatedShipmentList(Order order)
+        {           
+            order.setShipmentList(ShipmentDAO.getAllShipmentByColumn("OrderId", order.getOrderId().toString()));
+            return order;
+        }        
+        
                 
         public static ArrayList<Order> getOrderPaged(int limit, int offset)
         {
@@ -244,7 +347,7 @@
             return order;
         }                
                 
-        public static void updateOrder(Integer OrderId,Date OrderDate,Date ShipDate,String PaymentMethod,String PurchaseOrder,String TransactionId,Double AmountBilled,String PaymentStatus,String PendingReason,String PaymentType,Double TransactionFee,String CurrencyCode,String PayerId,Double SubtotalAmount,Double DiscountAmount,Double TaxAmount,Double ShippingAmount,Double TotalAmount,Double RefundAmount,String Notes,Integer Status,Integer ShippingId,Integer AffiliateId)
+        public static void updateOrder(Integer OrderId,Date OrderDate,Date ShipDate,String PaymentMethod,String PurchaseOrder,String TransactionId,Double AmountBilled,String PaymentStatus,String PendingReason,String PaymentType,Double TransactionFee,String CurrencyCode,String PayerId,Double SubtotalAmount,Double DiscountAmount,Double TaxAmount,Double ShippingAmount,Double TotalAmount,Double RefundAmount,String Notes,Integer OrderStatus,Integer ShippingId,Integer AffiliateId)
         {  
             try
             {   
@@ -273,7 +376,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE order SET OrderDate=?,ShipDate=?,PaymentMethod=?,PurchaseOrder=?,TransactionId=?,AmountBilled=?,PaymentStatus=?,PendingReason=?,PaymentType=?,TransactionFee=?,CurrencyCode=?,PayerId=?,SubtotalAmount=?,DiscountAmount=?,TaxAmount=?,ShippingAmount=?,TotalAmount=?,RefundAmount=?,Notes=?,Status=?,ShippingId=?,AffiliateId=? WHERE OrderId=?;");                    
+                prepareStatement("UPDATE order SET OrderDate=?,ShipDate=?,PaymentMethod=?,PurchaseOrder=?,TransactionId=?,AmountBilled=?,PaymentStatus=?,PendingReason=?,PaymentType=?,TransactionFee=?,CurrencyCode=?,PayerId=?,SubtotalAmount=?,DiscountAmount=?,TaxAmount=?,ShippingAmount=?,TotalAmount=?,RefundAmount=?,Notes=?,OrderStatus=?,ShippingId=?,AffiliateId=? WHERE OrderId=?;");                    
                 preparedStatement.setDate(1, new java.sql.Date(OrderDate.getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(ShipDate.getTime()));
                 preparedStatement.setString(3, PaymentMethod);
@@ -293,7 +396,7 @@
                 preparedStatement.setDouble(17, TotalAmount);
                 preparedStatement.setDouble(18, RefundAmount);
                 preparedStatement.setString(19, Notes);
-                preparedStatement.setInt(20, Status);
+                preparedStatement.setInt(20, OrderStatus);
                 preparedStatement.setInt(21, ShippingId);
                 preparedStatement.setInt(22, AffiliateId);
                 preparedStatement.setInt(23, OrderId);

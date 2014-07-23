@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.SiteFile;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -139,6 +148,55 @@
             }
             return site_file;
         }
+        
+        public static ArrayList<SiteFile> getAllSiteFileWithRelatedInfo()
+        {
+            ArrayList<SiteFile> site_fileList = new ArrayList<SiteFile>();
+            try
+            {
+                getAllRecordsByTableName("site_file");
+                while (rs.next())
+                {
+                    site_fileList.add(processSiteFile(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllSiteFileWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return site_fileList;
+        }
+        
+        
+        public static SiteFile getRelatedInfo(SiteFile site_file)
+        {
+           
+                  
+            
+            return site_file;
+        }
+        
+        public static SiteFile getAllRelatedObjects(SiteFile site_file)
+        {           
+            site_file.setFileFolderList(FileFolderDAO.getAllFileFolderByColumn("SiteFileId", site_file.getSiteFileId().toString()));
+             
+            return site_file;
+        }
+        
+        
+                    
+        public static SiteFile getRelatedFileFolderList(SiteFile site_file)
+        {           
+            site_file.setFileFolderList(FileFolderDAO.getAllFileFolderByColumn("SiteFileId", site_file.getSiteFileId().toString()));
+            return site_file;
+        }        
+        
                 
         public static ArrayList<SiteFile> getSiteFilePaged(int limit, int offset)
         {

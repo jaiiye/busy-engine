@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class SiteFolder implements Serializable
@@ -37,10 +38,18 @@
         
 
         private Integer siteFolderId;
+                
         private String folderName;
+                
         private String description;
+                
         private Integer rank;
+                
         private Integer siteId;
+        private Site site;        
+                 
+        ArrayList<FileFolder> fileFolderList; 
+        
         
 
         public SiteFolder()
@@ -50,7 +59,10 @@
        this.description = ""; 
        this.rank = 0; 
        this.siteId = 0; 
-        }
+        
+       fileFolderList = null; 
+        
+       }
         
         public SiteFolder(Integer SiteFolderId, String FolderName, String Description, Integer Rank, Integer SiteId)
         {
@@ -59,7 +71,10 @@
        this.description = Description;
        this.rank = Rank;
        this.siteId = SiteId;
-        } 
+              
+       fileFolderList = null; 
+        
+       } 
         
              
         
@@ -72,6 +87,8 @@
             {
                 this.siteFolderId = SiteFolderId;
             }
+            
+            
         
             public String getFolderName()
             {
@@ -82,6 +99,8 @@
             {
                 this.folderName = FolderName;
             }
+            
+            
         
             public String getDescription()
             {
@@ -92,6 +111,8 @@
             {
                 this.description = Description;
             }
+            
+            
         
             public Integer getRank()
             {
@@ -102,6 +123,8 @@
             {
                 this.rank = Rank;
             }
+            
+            
         
             public Integer getSiteId()
             {
@@ -112,7 +135,33 @@
             {
                 this.siteId = SiteId;
             }
-           
+            
+            
+                   
+            public Site getSite()
+                {
+                    return this.site;
+                }
+
+                public void setSite(Site site)
+                {
+                    this.site = site;
+                }
+                   
+            
+         
+        
+        
+            public ArrayList<FileFolder> getFileFolderList()
+            {
+                return this.fileFolderList;
+            }
+            
+            public void setFileFolderList(ArrayList<FileFolder> fileFolderList)
+            {
+                this.fileFolderList = fileFolderList;
+            }
+        
             
     }
 

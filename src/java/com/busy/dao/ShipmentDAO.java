@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Shipment;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -147,6 +156,73 @@
             }
             return shipment;
         }
+        
+        public static ArrayList<Shipment> getAllShipmentWithRelatedInfo()
+        {
+            ArrayList<Shipment> shipmentList = new ArrayList<Shipment>();
+            try
+            {
+                getAllRecordsByTableName("shipment");
+                while (rs.next())
+                {
+                    shipmentList.add(processShipment(rs));
+                }
+
+                
+                    for(Shipment shipment : shipmentList)
+                    {
+                        
+                            getRecordById("Order", shipment.getOrderId().toString());
+                            shipment.setOrder(OrderDAO.processOrder(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllShipmentWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return shipmentList;
+        }
+        
+        
+        public static Shipment getRelatedInfo(Shipment shipment)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Order", shipment.getOrderId().toString());
+                            shipment.setOrder(OrderDAO.processOrder(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return shipment;
+        }
+        
+        public static Shipment getAllRelatedObjects(Shipment shipment)
+        {           
+                         
+            return shipment;
+        }
+        
+        
+        
                 
         public static ArrayList<Shipment> getShipmentPaged(int limit, int offset)
         {

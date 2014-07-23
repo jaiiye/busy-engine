@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.FileFolder;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,79 @@
             }
             return file_folder;
         }
+        
+        public static ArrayList<FileFolder> getAllFileFolderWithRelatedInfo()
+        {
+            ArrayList<FileFolder> file_folderList = new ArrayList<FileFolder>();
+            try
+            {
+                getAllRecordsByTableName("file_folder");
+                while (rs.next())
+                {
+                    file_folderList.add(processFileFolder(rs));
+                }
+
+                
+                    for(FileFolder file_folder : file_folderList)
+                    {
+                        
+                            getRecordById("SiteFile", file_folder.getSiteFileId().toString());
+                            file_folder.setSiteFile(SiteFileDAO.processSiteFile(rs));               
+                        
+                            getRecordById("SiteFolder", file_folder.getSiteFolderId().toString());
+                            file_folder.setSiteFolder(SiteFolderDAO.processSiteFolder(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllFileFolderWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return file_folderList;
+        }
+        
+        
+        public static FileFolder getRelatedInfo(FileFolder file_folder)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("SiteFile", file_folder.getSiteFileId().toString());
+                            file_folder.setSiteFile(SiteFileDAO.processSiteFile(rs));               
+                        
+                            getRecordById("SiteFolder", file_folder.getSiteFolderId().toString());
+                            file_folder.setSiteFolder(SiteFolderDAO.processSiteFolder(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return file_folder;
+        }
+        
+        public static FileFolder getAllRelatedObjects(FileFolder file_folder)
+        {           
+                         
+            return file_folder;
+        }
+        
+        
+        
                 
         public static ArrayList<FileFolder> getFileFolderPaged(int limit, int offset)
         {

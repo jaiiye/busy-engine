@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.PageTemplate;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,48 @@
             }
             return page_template;
         }
+        
+        public static ArrayList<PageTemplate> getAllPageTemplateWithRelatedInfo()
+        {
+            ArrayList<PageTemplate> page_templateList = new ArrayList<PageTemplate>();
+            try
+            {
+                getAllRecordsByTableName("page_template");
+                while (rs.next())
+                {
+                    page_templateList.add(processPageTemplate(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllPageTemplateWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return page_templateList;
+        }
+        
+        
+        public static PageTemplate getRelatedInfo(PageTemplate page_template)
+        {
+           
+                  
+            
+            return page_template;
+        }
+        
+        public static PageTemplate getAllRelatedObjects(PageTemplate page_template)
+        {           
+                         
+            return page_template;
+        }
+        
+        
+        
                 
         public static ArrayList<PageTemplate> getPageTemplatePaged(int limit, int offset)
         {

@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.BlogPostCategory;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,79 @@
             }
             return blog_post_category;
         }
+        
+        public static ArrayList<BlogPostCategory> getAllBlogPostCategoryWithRelatedInfo()
+        {
+            ArrayList<BlogPostCategory> blog_post_categoryList = new ArrayList<BlogPostCategory>();
+            try
+            {
+                getAllRecordsByTableName("blog_post_category");
+                while (rs.next())
+                {
+                    blog_post_categoryList.add(processBlogPostCategory(rs));
+                }
+
+                
+                    for(BlogPostCategory blog_post_category : blog_post_categoryList)
+                    {
+                        
+                            getRecordById("BlogPost", blog_post_category.getBlogPostId().toString());
+                            blog_post_category.setBlogPost(BlogPostDAO.processBlogPost(rs));               
+                        
+                            getRecordById("PostCategory", blog_post_category.getPostCategoryId().toString());
+                            blog_post_category.setPostCategory(PostCategoryDAO.processPostCategory(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllBlogPostCategoryWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return blog_post_categoryList;
+        }
+        
+        
+        public static BlogPostCategory getRelatedInfo(BlogPostCategory blog_post_category)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("BlogPost", blog_post_category.getBlogPostId().toString());
+                            blog_post_category.setBlogPost(BlogPostDAO.processBlogPost(rs));               
+                        
+                            getRecordById("PostCategory", blog_post_category.getPostCategoryId().toString());
+                            blog_post_category.setPostCategory(PostCategoryDAO.processPostCategory(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return blog_post_category;
+        }
+        
+        public static BlogPostCategory getAllRelatedObjects(BlogPostCategory blog_post_category)
+        {           
+                         
+            return blog_post_category;
+        }
+        
+        
+        
                 
         public static ArrayList<BlogPostCategory> getBlogPostCategoryPaged(int limit, int offset)
         {

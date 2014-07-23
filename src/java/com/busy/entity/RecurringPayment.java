@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class RecurringPayment implements Serializable
@@ -38,11 +39,19 @@
         
 
         private Integer recurringPaymentId;
+                
         private Integer cycleLength;
+                
         private Integer cyclePeriod;
+                
         private Integer totalCycles;
+                
         private Date startDate;
+                
         private Integer orderId;
+        private Order order;        
+                 
+        
         
 
         public RecurringPayment()
@@ -53,7 +62,9 @@
        this.totalCycles = 0; 
        this.startDate = null; 
        this.orderId = 0; 
-        }
+        
+       
+       }
         
         public RecurringPayment(Integer RecurringPaymentId, Integer CycleLength, Integer CyclePeriod, Integer TotalCycles, Date StartDate, Integer OrderId)
         {
@@ -63,7 +74,9 @@
        this.totalCycles = TotalCycles;
        this.startDate = StartDate;
        this.orderId = OrderId;
-        } 
+              
+       
+       } 
         
              
         
@@ -76,6 +89,8 @@
             {
                 this.recurringPaymentId = RecurringPaymentId;
             }
+            
+            
         
             public Integer getCycleLength()
             {
@@ -86,6 +101,8 @@
             {
                 this.cycleLength = CycleLength;
             }
+            
+            
         
             public Integer getCyclePeriod()
             {
@@ -96,6 +113,8 @@
             {
                 this.cyclePeriod = CyclePeriod;
             }
+            
+            
         
             public Integer getTotalCycles()
             {
@@ -106,6 +125,8 @@
             {
                 this.totalCycles = TotalCycles;
             }
+            
+            
         
             public Date getStartDate()
             {
@@ -116,6 +137,8 @@
             {
                 this.startDate = StartDate;
             }
+            
+            
         
             public Integer getOrderId()
             {
@@ -126,7 +149,23 @@
             {
                 this.orderId = OrderId;
             }
-           
+            
+            
+                   
+            public Order getOrder()
+                {
+                    return this.order;
+                }
+
+                public void setOrder(Order order)
+                {
+                    this.order = order;
+                }
+                   
+            
+         
+        
+        
             
     }
 

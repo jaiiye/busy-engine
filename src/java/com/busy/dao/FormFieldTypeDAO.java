@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.FormFieldType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,55 @@
             }
             return form_field_type;
         }
+        
+        public static ArrayList<FormFieldType> getAllFormFieldTypeWithRelatedInfo()
+        {
+            ArrayList<FormFieldType> form_field_typeList = new ArrayList<FormFieldType>();
+            try
+            {
+                getAllRecordsByTableName("form_field_type");
+                while (rs.next())
+                {
+                    form_field_typeList.add(processFormFieldType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllFormFieldTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return form_field_typeList;
+        }
+        
+        
+        public static FormFieldType getRelatedInfo(FormFieldType form_field_type)
+        {
+           
+                  
+            
+            return form_field_type;
+        }
+        
+        public static FormFieldType getAllRelatedObjects(FormFieldType form_field_type)
+        {           
+            form_field_type.setFormFieldList(FormFieldDAO.getAllFormFieldByColumn("FormFieldTypeId", form_field_type.getFormFieldTypeId().toString()));
+             
+            return form_field_type;
+        }
+        
+        
+                    
+        public static FormFieldType getRelatedFormFieldList(FormFieldType form_field_type)
+        {           
+            form_field_type.setFormFieldList(FormFieldDAO.getAllFormFieldByColumn("FormFieldTypeId", form_field_type.getFormFieldTypeId().toString()));
+            return form_field_type;
+        }        
+        
                 
         public static ArrayList<FormFieldType> getFormFieldTypePaged(int limit, int offset)
         {

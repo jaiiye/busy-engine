@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Order implements Serializable
@@ -49,34 +50,62 @@
         public static final String PROP_TOTAL_AMOUNT = "TotalAmount";
         public static final String PROP_REFUND_AMOUNT = "RefundAmount";
         public static final String PROP_NOTES = "Notes";
-        public static final String PROP_STATUS = "Status";
+        public static final String PROP_ORDER_STATUS = "OrderStatus";
         public static final String PROP_SHIPPING_ID = "ShippingId";
         public static final String PROP_AFFILIATE_ID = "AffiliateId";
         
 
         private Integer orderId;
+                
         private Date orderDate;
+                
         private Date shipDate;
+                
         private String paymentMethod;
+                
         private String purchaseOrder;
+                
         private String transactionId;
+                
         private Double amountBilled;
+                
         private String paymentStatus;
+                
         private String pendingReason;
+                
         private String paymentType;
+                
         private Double transactionFee;
+                
         private String currencyCode;
+                
         private String payerId;
+                
         private Double subtotalAmount;
+                
         private Double discountAmount;
+                
         private Double taxAmount;
+                
         private Double shippingAmount;
+                
         private Double totalAmount;
+                
         private Double refundAmount;
+                
         private String notes;
-        private Integer status;
+                
+        private Integer orderStatus;
+                
         private Integer shippingId;
+        private Shipping shipping;        
         private Integer affiliateId;
+        private Affiliate affiliate;        
+                 
+        ArrayList<CustomerOrder> customerOrderList; 
+        ArrayList<RecurringPayment> recurringPaymentList; 
+        ArrayList<Shipment> shipmentList; 
+        
         
 
         public Order()
@@ -101,12 +130,17 @@
        this.totalAmount = 0.0; 
        this.refundAmount = 0.0; 
        this.notes = ""; 
-       this.status = 0; 
+       this.orderStatus = 0; 
        this.shippingId = 0; 
        this.affiliateId = 0; 
-        }
         
-        public Order(Integer OrderId, Date OrderDate, Date ShipDate, String PaymentMethod, String PurchaseOrder, String TransactionId, Double AmountBilled, String PaymentStatus, String PendingReason, String PaymentType, Double TransactionFee, String CurrencyCode, String PayerId, Double SubtotalAmount, Double DiscountAmount, Double TaxAmount, Double ShippingAmount, Double TotalAmount, Double RefundAmount, String Notes, Integer Status, Integer ShippingId, Integer AffiliateId)
+       customerOrderList = null; 
+        recurringPaymentList = null; 
+        shipmentList = null; 
+        
+       }
+        
+        public Order(Integer OrderId, Date OrderDate, Date ShipDate, String PaymentMethod, String PurchaseOrder, String TransactionId, Double AmountBilled, String PaymentStatus, String PendingReason, String PaymentType, Double TransactionFee, String CurrencyCode, String PayerId, Double SubtotalAmount, Double DiscountAmount, Double TaxAmount, Double ShippingAmount, Double TotalAmount, Double RefundAmount, String Notes, Integer OrderStatus, Integer ShippingId, Integer AffiliateId)
         {
             this.orderId = OrderId;
        this.orderDate = OrderDate;
@@ -128,10 +162,15 @@
        this.totalAmount = TotalAmount;
        this.refundAmount = RefundAmount;
        this.notes = Notes;
-       this.status = Status;
+       this.orderStatus = OrderStatus;
        this.shippingId = ShippingId;
        this.affiliateId = AffiliateId;
-        } 
+              
+       customerOrderList = null; 
+        recurringPaymentList = null; 
+        shipmentList = null; 
+        
+       } 
         
              
         
@@ -144,6 +183,8 @@
             {
                 this.orderId = OrderId;
             }
+            
+            
         
             public Date getOrderDate()
             {
@@ -154,6 +195,8 @@
             {
                 this.orderDate = OrderDate;
             }
+            
+            
         
             public Date getShipDate()
             {
@@ -164,6 +207,8 @@
             {
                 this.shipDate = ShipDate;
             }
+            
+            
         
             public String getPaymentMethod()
             {
@@ -174,6 +219,8 @@
             {
                 this.paymentMethod = PaymentMethod;
             }
+            
+            
         
             public String getPurchaseOrder()
             {
@@ -184,6 +231,8 @@
             {
                 this.purchaseOrder = PurchaseOrder;
             }
+            
+            
         
             public String getTransactionId()
             {
@@ -194,6 +243,8 @@
             {
                 this.transactionId = TransactionId;
             }
+            
+            
         
             public Double getAmountBilled()
             {
@@ -204,6 +255,8 @@
             {
                 this.amountBilled = AmountBilled;
             }
+            
+            
         
             public String getPaymentStatus()
             {
@@ -214,6 +267,8 @@
             {
                 this.paymentStatus = PaymentStatus;
             }
+            
+            
         
             public String getPendingReason()
             {
@@ -224,6 +279,8 @@
             {
                 this.pendingReason = PendingReason;
             }
+            
+            
         
             public String getPaymentType()
             {
@@ -234,6 +291,8 @@
             {
                 this.paymentType = PaymentType;
             }
+            
+            
         
             public Double getTransactionFee()
             {
@@ -244,6 +303,8 @@
             {
                 this.transactionFee = TransactionFee;
             }
+            
+            
         
             public String getCurrencyCode()
             {
@@ -254,6 +315,8 @@
             {
                 this.currencyCode = CurrencyCode;
             }
+            
+            
         
             public String getPayerId()
             {
@@ -264,6 +327,8 @@
             {
                 this.payerId = PayerId;
             }
+            
+            
         
             public Double getSubtotalAmount()
             {
@@ -274,6 +339,8 @@
             {
                 this.subtotalAmount = SubtotalAmount;
             }
+            
+            
         
             public Double getDiscountAmount()
             {
@@ -284,6 +351,8 @@
             {
                 this.discountAmount = DiscountAmount;
             }
+            
+            
         
             public Double getTaxAmount()
             {
@@ -294,6 +363,8 @@
             {
                 this.taxAmount = TaxAmount;
             }
+            
+            
         
             public Double getShippingAmount()
             {
@@ -304,6 +375,8 @@
             {
                 this.shippingAmount = ShippingAmount;
             }
+            
+            
         
             public Double getTotalAmount()
             {
@@ -314,6 +387,8 @@
             {
                 this.totalAmount = TotalAmount;
             }
+            
+            
         
             public Double getRefundAmount()
             {
@@ -324,6 +399,8 @@
             {
                 this.refundAmount = RefundAmount;
             }
+            
+            
         
             public String getNotes()
             {
@@ -334,16 +411,20 @@
             {
                 this.notes = Notes;
             }
+            
+            
         
-            public Integer getStatus()
+            public Integer getOrderStatus()
             {
-                return this.status;
+                return this.orderStatus;
             }
             
-            public void setStatus(Integer Status)
+            public void setOrderStatus(Integer OrderStatus)
             {
-                this.status = Status;
+                this.orderStatus = OrderStatus;
             }
+            
+            
         
             public Integer getShippingId()
             {
@@ -354,6 +435,20 @@
             {
                 this.shippingId = ShippingId;
             }
+            
+            
+                   
+            public Shipping getShipping()
+                {
+                    return this.shipping;
+                }
+
+                public void setShipping(Shipping shipping)
+                {
+                    this.shipping = shipping;
+                }
+                   
+            
         
             public Integer getAffiliateId()
             {
@@ -364,7 +459,53 @@
             {
                 this.affiliateId = AffiliateId;
             }
-           
+            
+            
+                   
+            public Affiliate getAffiliate()
+                {
+                    return this.affiliate;
+                }
+
+                public void setAffiliate(Affiliate affiliate)
+                {
+                    this.affiliate = affiliate;
+                }
+                   
+            
+         
+        
+        
+            public ArrayList<CustomerOrder> getCustomerOrderList()
+            {
+                return this.customerOrderList;
+            }
+            
+            public void setCustomerOrderList(ArrayList<CustomerOrder> customerOrderList)
+            {
+                this.customerOrderList = customerOrderList;
+            }
+        
+            public ArrayList<RecurringPayment> getRecurringPaymentList()
+            {
+                return this.recurringPaymentList;
+            }
+            
+            public void setRecurringPaymentList(ArrayList<RecurringPayment> recurringPaymentList)
+            {
+                this.recurringPaymentList = recurringPaymentList;
+            }
+        
+            public ArrayList<Shipment> getShipmentList()
+            {
+                return this.shipmentList;
+            }
+            
+            public void setShipmentList(ArrayList<Shipment> shipmentList)
+            {
+                this.shipmentList = shipmentList;
+            }
+        
             
     }
 

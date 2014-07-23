@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemBrand implements Serializable
@@ -35,8 +36,15 @@
         
 
         private Integer itemBrandId;
+                
         private String name;
+                
         private String description;
+                
+                 
+        ArrayList<Item> itemList; 
+        ArrayList<User> userList; 
+        
         
 
         public ItemBrand()
@@ -44,14 +52,22 @@
             this.itemBrandId = 0; 
        this.name = ""; 
        this.description = ""; 
-        }
+        
+       itemList = null; 
+        userList = null; 
+        
+       }
         
         public ItemBrand(Integer ItemBrandId, String Name, String Description)
         {
             this.itemBrandId = ItemBrandId;
        this.name = Name;
        this.description = Description;
-        } 
+              
+       itemList = null; 
+        userList = null; 
+        
+       } 
         
              
         
@@ -64,6 +80,8 @@
             {
                 this.itemBrandId = ItemBrandId;
             }
+            
+            
         
             public String getName()
             {
@@ -74,6 +92,8 @@
             {
                 this.name = Name;
             }
+            
+            
         
             public String getDescription()
             {
@@ -84,7 +104,31 @@
             {
                 this.description = Description;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<Item> getItemList()
+            {
+                return this.itemList;
+            }
+            
+            public void setItemList(ArrayList<Item> itemList)
+            {
+                this.itemList = itemList;
+            }
+        
+            public ArrayList<User> getUserList()
+            {
+                return this.userList;
+            }
+            
+            public void setUserList(ArrayList<User> userList)
+            {
+                this.userList = userList;
+            }
+        
             
     }
 

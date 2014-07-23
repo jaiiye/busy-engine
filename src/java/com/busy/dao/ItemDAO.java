@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Item;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Item.PROP_ITEM_ID) || column.equals(Item.PROP_ITEM_NAME) || column.equals(Item.PROP_DESCRIPTION) || column.equals(Item.PROP_LIST_PRICE) || column.equals(Item.PROP_PRICE) || column.equals(Item.PROP_SHORT_DESCRIPTION) || column.equals(Item.PROP_ADJUSTMENT) || column.equals(Item.PROP_SKU) || column.equals(Item.PROP_RATING_SUM) || column.equals(Item.PROP_VOTE_COUNT) || column.equals(Item.PROP_RANK) || column.equals(Item.PROP_STATUS) || column.equals(Item.PROP_LOCALE) || column.equals(Item.PROP_ITEM_TYPE_ID) || column.equals(Item.PROP_ITEM_BRAND_ID) || column.equals(Item.PROP_META_TAG_ID) || column.equals(Item.PROP_TEMPLATE_ID) || column.equals(Item.PROP_VENDOR_ID) )
+            if(column.equals(Item.PROP_ITEM_ID) || column.equals(Item.PROP_ITEM_NAME) || column.equals(Item.PROP_DESCRIPTION) || column.equals(Item.PROP_LIST_PRICE) || column.equals(Item.PROP_PRICE) || column.equals(Item.PROP_SHORT_DESCRIPTION) || column.equals(Item.PROP_ADJUSTMENT) || column.equals(Item.PROP_SKU) || column.equals(Item.PROP_RATING_SUM) || column.equals(Item.PROP_VOTE_COUNT) || column.equals(Item.PROP_RANK) || column.equals(Item.PROP_ITEM_STATUS) || column.equals(Item.PROP_LOCALE) || column.equals(Item.PROP_ITEM_TYPE_ID) || column.equals(Item.PROP_ITEM_BRAND_ID) || column.equals(Item.PROP_META_TAG_ID) || column.equals(Item.PROP_TEMPLATE_ID) || column.equals(Item.PROP_VENDOR_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Item.PROP_ITEM_ID) || column.equals(Item.PROP_LIST_PRICE) || column.equals(Item.PROP_PRICE) || column.equals(Item.PROP_ADJUSTMENT) || column.equals(Item.PROP_RATING_SUM) || column.equals(Item.PROP_VOTE_COUNT) || column.equals(Item.PROP_RANK) || column.equals(Item.PROP_STATUS) || column.equals(Item.PROP_ITEM_TYPE_ID) || column.equals(Item.PROP_ITEM_BRAND_ID) || column.equals(Item.PROP_META_TAG_ID) || column.equals(Item.PROP_TEMPLATE_ID) || column.equals(Item.PROP_VENDOR_ID) )
+            if (column.equals(Item.PROP_ITEM_ID) || column.equals(Item.PROP_LIST_PRICE) || column.equals(Item.PROP_PRICE) || column.equals(Item.PROP_ADJUSTMENT) || column.equals(Item.PROP_RATING_SUM) || column.equals(Item.PROP_VOTE_COUNT) || column.equals(Item.PROP_RANK) || column.equals(Item.PROP_ITEM_STATUS) || column.equals(Item.PROP_ITEM_TYPE_ID) || column.equals(Item.PROP_ITEM_BRAND_ID) || column.equals(Item.PROP_META_TAG_ID) || column.equals(Item.PROP_TEMPLATE_ID) || column.equals(Item.PROP_VENDOR_ID) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new Item(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getDouble(4), rs.getDouble(5), rs.getString(6), rs.getInt(7), rs.getString(8), rs.getInt(9), rs.getInt(10), rs.getInt(11), rs.getInt(12), rs.getString(13), rs.getInt(14), rs.getInt(15), rs.getInt(16), rs.getInt(17), rs.getInt(18));
         }
         
-        public static int addItem(String ItemName, String Description, Double ListPrice, Double Price, String ShortDescription, Integer Adjustment, String Sku, Integer RatingSum, Integer VoteCount, Integer Rank, Integer Status, String Locale, Integer ItemTypeId, Integer ItemBrandId, Integer MetaTagId, Integer TemplateId, Integer VendorId)
+        public static int addItem(String ItemName, String Description, Double ListPrice, Double Price, String ShortDescription, Integer Adjustment, String Sku, Integer RatingSum, Integer VoteCount, Integer Rank, Integer ItemStatus, String Locale, Integer ItemTypeId, Integer ItemBrandId, Integer MetaTagId, Integer TemplateId, Integer VendorId)
         {   
             int id = 0;
             try
@@ -103,7 +112,7 @@
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO item(ItemName,Description,ListPrice,Price,ShortDescription,Adjustment,Sku,RatingSum,VoteCount,Rank,Status,Locale,ItemTypeId,ItemBrandId,MetaTagId,TemplateId,VendorId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO item(ItemName,Description,ListPrice,Price,ShortDescription,Adjustment,Sku,RatingSum,VoteCount,Rank,ItemStatus,Locale,ItemTypeId,ItemBrandId,MetaTagId,TemplateId,VendorId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, ItemName);
                 preparedStatement.setString(2, Description);
                 preparedStatement.setDouble(3, ListPrice);
@@ -114,7 +123,7 @@
                 preparedStatement.setInt(8, RatingSum);
                 preparedStatement.setInt(9, VoteCount);
                 preparedStatement.setInt(10, Rank);
-                preparedStatement.setInt(11, Status);
+                preparedStatement.setInt(11, ItemStatus);
                 preparedStatement.setString(12, Locale);
                 preparedStatement.setInt(13, ItemTypeId);
                 preparedStatement.setInt(14, ItemBrandId);
@@ -167,6 +176,167 @@
             }
             return item;
         }
+        
+        public static ArrayList<Item> getAllItemWithRelatedInfo()
+        {
+            ArrayList<Item> itemList = new ArrayList<Item>();
+            try
+            {
+                getAllRecordsByTableName("item");
+                while (rs.next())
+                {
+                    itemList.add(processItem(rs));
+                }
+
+                
+                    for(Item item : itemList)
+                    {
+                        
+                            getRecordById("ItemType", item.getItemTypeId().toString());
+                            item.setItemType(ItemTypeDAO.processItemType(rs));               
+                        
+                            getRecordById("ItemBrand", item.getItemBrandId().toString());
+                            item.setItemBrand(ItemBrandDAO.processItemBrand(rs));               
+                        
+                            getRecordById("MetaTag", item.getMetaTagId().toString());
+                            item.setMetaTag(MetaTagDAO.processMetaTag(rs));               
+                        
+                            getRecordById("Template", item.getTemplateId().toString());
+                            item.setTemplate(TemplateDAO.processTemplate(rs));               
+                        
+                            getRecordById("Vendor", item.getVendorId().toString());
+                            item.setVendor(VendorDAO.processVendor(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return itemList;
+        }
+        
+        
+        public static Item getRelatedInfo(Item item)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("ItemType", item.getItemTypeId().toString());
+                            item.setItemType(ItemTypeDAO.processItemType(rs));               
+                        
+                            getRecordById("ItemBrand", item.getItemBrandId().toString());
+                            item.setItemBrand(ItemBrandDAO.processItemBrand(rs));               
+                        
+                            getRecordById("MetaTag", item.getMetaTagId().toString());
+                            item.setMetaTag(MetaTagDAO.processMetaTag(rs));               
+                        
+                            getRecordById("Template", item.getTemplateId().toString());
+                            item.setTemplate(TemplateDAO.processTemplate(rs));               
+                        
+                            getRecordById("Vendor", item.getVendorId().toString());
+                            item.setVendor(VendorDAO.processVendor(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return item;
+        }
+        
+        public static Item getAllRelatedObjects(Item item)
+        {           
+            item.setItemAttributeList(ItemAttributeDAO.getAllItemAttributeByColumn("ItemId", item.getItemId().toString()));
+item.setItemCategoryList(ItemCategoryDAO.getAllItemCategoryByColumn("ItemId", item.getItemId().toString()));
+item.setItemDiscountList(ItemDiscountDAO.getAllItemDiscountByColumn("ItemId", item.getItemId().toString()));
+item.setItemFileList(ItemFileDAO.getAllItemFileByColumn("ItemId", item.getItemId().toString()));
+item.setItemImageList(ItemImageDAO.getAllItemImageByColumn("ItemId", item.getItemId().toString()));
+item.setItemLocationList(ItemLocationDAO.getAllItemLocationByColumn("ItemId", item.getItemId().toString()));
+item.setItemReviewList(ItemReviewDAO.getAllItemReviewByColumn("ItemId", item.getItemId().toString()));
+item.setOptionAvailabilityList(OptionAvailabilityDAO.getAllOptionAvailabilityByColumn("ItemId", item.getItemId().toString()));
+item.setOrderItemList(OrderItemDAO.getAllOrderItemByColumn("ItemId", item.getItemId().toString()));
+item.setSiteItemList(SiteItemDAO.getAllSiteItemByColumn("ItemId", item.getItemId().toString()));
+             
+            return item;
+        }
+        
+        
+                    
+        public static Item getRelatedItemAttributeList(Item item)
+        {           
+            item.setItemAttributeList(ItemAttributeDAO.getAllItemAttributeByColumn("ItemId", item.getItemId().toString()));
+            return item;
+        }        
+                    
+        public static Item getRelatedItemCategoryList(Item item)
+        {           
+            item.setItemCategoryList(ItemCategoryDAO.getAllItemCategoryByColumn("ItemId", item.getItemId().toString()));
+            return item;
+        }        
+                    
+        public static Item getRelatedItemDiscountList(Item item)
+        {           
+            item.setItemDiscountList(ItemDiscountDAO.getAllItemDiscountByColumn("ItemId", item.getItemId().toString()));
+            return item;
+        }        
+                    
+        public static Item getRelatedItemFileList(Item item)
+        {           
+            item.setItemFileList(ItemFileDAO.getAllItemFileByColumn("ItemId", item.getItemId().toString()));
+            return item;
+        }        
+                    
+        public static Item getRelatedItemImageList(Item item)
+        {           
+            item.setItemImageList(ItemImageDAO.getAllItemImageByColumn("ItemId", item.getItemId().toString()));
+            return item;
+        }        
+                    
+        public static Item getRelatedItemLocationList(Item item)
+        {           
+            item.setItemLocationList(ItemLocationDAO.getAllItemLocationByColumn("ItemId", item.getItemId().toString()));
+            return item;
+        }        
+                    
+        public static Item getRelatedItemReviewList(Item item)
+        {           
+            item.setItemReviewList(ItemReviewDAO.getAllItemReviewByColumn("ItemId", item.getItemId().toString()));
+            return item;
+        }        
+                    
+        public static Item getRelatedOptionAvailabilityList(Item item)
+        {           
+            item.setOptionAvailabilityList(OptionAvailabilityDAO.getAllOptionAvailabilityByColumn("ItemId", item.getItemId().toString()));
+            return item;
+        }        
+                    
+        public static Item getRelatedOrderItemList(Item item)
+        {           
+            item.setOrderItemList(OrderItemDAO.getAllOrderItemByColumn("ItemId", item.getItemId().toString()));
+            return item;
+        }        
+                    
+        public static Item getRelatedSiteItemList(Item item)
+        {           
+            item.setSiteItemList(SiteItemDAO.getAllSiteItemByColumn("ItemId", item.getItemId().toString()));
+            return item;
+        }        
+        
                 
         public static ArrayList<Item> getItemPaged(int limit, int offset)
         {
@@ -234,7 +404,7 @@
             return item;
         }                
                 
-        public static void updateItem(Integer ItemId,String ItemName,String Description,Double ListPrice,Double Price,String ShortDescription,Integer Adjustment,String Sku,Integer RatingSum,Integer VoteCount,Integer Rank,Integer Status,String Locale,Integer ItemTypeId,Integer ItemBrandId,Integer MetaTagId,Integer TemplateId,Integer VendorId)
+        public static void updateItem(Integer ItemId,String ItemName,String Description,Double ListPrice,Double Price,String ShortDescription,Integer Adjustment,String Sku,Integer RatingSum,Integer VoteCount,Integer Rank,Integer ItemStatus,String Locale,Integer ItemTypeId,Integer ItemBrandId,Integer MetaTagId,Integer TemplateId,Integer VendorId)
         {  
             try
             {   
@@ -258,7 +428,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item SET ItemName=?,Description=?,ListPrice=?,Price=?,ShortDescription=?,Adjustment=?,Sku=?,RatingSum=?,VoteCount=?,Rank=?,Status=?,Locale=?,ItemTypeId=?,ItemBrandId=?,MetaTagId=?,TemplateId=?,VendorId=? WHERE ItemId=?;");                    
+                prepareStatement("UPDATE item SET ItemName=?,Description=?,ListPrice=?,Price=?,ShortDescription=?,Adjustment=?,Sku=?,RatingSum=?,VoteCount=?,Rank=?,ItemStatus=?,Locale=?,ItemTypeId=?,ItemBrandId=?,MetaTagId=?,TemplateId=?,VendorId=? WHERE ItemId=?;");                    
                 preparedStatement.setString(1, ItemName);
                 preparedStatement.setString(2, Description);
                 preparedStatement.setDouble(3, ListPrice);
@@ -269,7 +439,7 @@
                 preparedStatement.setInt(8, RatingSum);
                 preparedStatement.setInt(9, VoteCount);
                 preparedStatement.setInt(10, Rank);
-                preparedStatement.setInt(11, Status);
+                preparedStatement.setInt(11, ItemStatus);
                 preparedStatement.setString(12, Locale);
                 preparedStatement.setInt(13, ItemTypeId);
                 preparedStatement.setInt(14, ItemBrandId);

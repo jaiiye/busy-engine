@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Comment implements Serializable
@@ -33,20 +34,30 @@
         public static final String PROP_TITLE = "Title";
         public static final String PROP_CONTENT = "Content";
         public static final String PROP_DATE = "Date";
-        public static final String PROP_STATUS = "Status";
+        public static final String PROP_COMMENT_STATUS = "CommentStatus";
         public static final String PROP_USER_ID = "UserId";
-        public static final String PROP_POST_ID = "PostId";
-        public static final String PROP_REVIEW_ID = "ReviewId";
+        public static final String PROP_BLOG_POST_ID = "BlogPostId";
+        public static final String PROP_ITEM_REVIEW_ID = "ItemReviewId";
         
 
         private Integer commentId;
+                
         private String title;
+                
         private String content;
+                
         private Date date;
-        private Integer status;
+                
+        private Integer commentStatus;
+                
         private Integer userId;
-        private Integer postId;
-        private Integer reviewId;
+        private User user;        
+        private Integer blogPostId;
+        private BlogPost blogPost;        
+        private Integer itemReviewId;
+        private ItemReview itemReview;        
+                 
+        
         
 
         public Comment()
@@ -55,23 +66,27 @@
        this.title = ""; 
        this.content = ""; 
        this.date = null; 
-       this.status = 0; 
+       this.commentStatus = 0; 
        this.userId = 0; 
-       this.postId = 0; 
-       this.reviewId = 0; 
-        }
+       this.blogPostId = 0; 
+       this.itemReviewId = 0; 
         
-        public Comment(Integer CommentId, String Title, String Content, Date Date, Integer Status, Integer UserId, Integer PostId, Integer ReviewId)
+       
+       }
+        
+        public Comment(Integer CommentId, String Title, String Content, Date Date, Integer CommentStatus, Integer UserId, Integer BlogPostId, Integer ItemReviewId)
         {
             this.commentId = CommentId;
        this.title = Title;
        this.content = Content;
        this.date = Date;
-       this.status = Status;
+       this.commentStatus = CommentStatus;
        this.userId = UserId;
-       this.postId = PostId;
-       this.reviewId = ReviewId;
-        } 
+       this.blogPostId = BlogPostId;
+       this.itemReviewId = ItemReviewId;
+              
+       
+       } 
         
              
         
@@ -84,6 +99,8 @@
             {
                 this.commentId = CommentId;
             }
+            
+            
         
             public String getTitle()
             {
@@ -94,6 +111,8 @@
             {
                 this.title = Title;
             }
+            
+            
         
             public String getContent()
             {
@@ -104,6 +123,8 @@
             {
                 this.content = Content;
             }
+            
+            
         
             public Date getDate()
             {
@@ -114,16 +135,20 @@
             {
                 this.date = Date;
             }
+            
+            
         
-            public Integer getStatus()
+            public Integer getCommentStatus()
             {
-                return this.status;
+                return this.commentStatus;
             }
             
-            public void setStatus(Integer Status)
+            public void setCommentStatus(Integer CommentStatus)
             {
-                this.status = Status;
+                this.commentStatus = CommentStatus;
             }
+            
+            
         
             public Integer getUserId()
             {
@@ -134,27 +159,71 @@
             {
                 this.userId = UserId;
             }
+            
+            
+                   
+            public User getUser()
+                {
+                    return this.user;
+                }
+
+                public void setUser(User user)
+                {
+                    this.user = user;
+                }
+                   
+            
         
-            public Integer getPostId()
+            public Integer getBlogPostId()
             {
-                return this.postId;
+                return this.blogPostId;
             }
             
-            public void setPostId(Integer PostId)
+            public void setBlogPostId(Integer BlogPostId)
             {
-                this.postId = PostId;
-            }
-        
-            public Integer getReviewId()
-            {
-                return this.reviewId;
+                this.blogPostId = BlogPostId;
             }
             
-            public void setReviewId(Integer ReviewId)
+            
+                   
+            public BlogPost getBlogPost()
+                {
+                    return this.blogPost;
+                }
+
+                public void setBlogPost(BlogPost blogPost)
+                {
+                    this.blogPost = blogPost;
+                }
+                   
+            
+        
+            public Integer getItemReviewId()
             {
-                this.reviewId = ReviewId;
+                return this.itemReviewId;
             }
-           
+            
+            public void setItemReviewId(Integer ItemReviewId)
+            {
+                this.itemReviewId = ItemReviewId;
+            }
+            
+            
+                   
+            public ItemReview getItemReview()
+                {
+                    return this.itemReview;
+                }
+
+                public void setItemReview(ItemReview itemReview)
+                {
+                    this.itemReview = itemReview;
+                }
+                   
+            
+         
+        
+        
             
     }
 

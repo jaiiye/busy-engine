@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class FormField implements Serializable
@@ -44,17 +45,31 @@
         
 
         private Integer formFieldId;
+                
         private String fieldName;
+                
         private String label;
+                
         private String errorText;
+                
         private String validationRegex;
+                
         private Integer rank;
+                
         private String defaultValue;
+                
         private String options;
+                
         private String groupName;
+                
         private Integer optional;
+                
         private Integer formFieldTypeId;
+        private FormFieldType formFieldType;        
         private Integer formId;
+        private Form form;        
+                 
+        
         
 
         public FormField()
@@ -71,7 +86,9 @@
        this.optional = 0; 
        this.formFieldTypeId = 0; 
        this.formId = 0; 
-        }
+        
+       
+       }
         
         public FormField(Integer FormFieldId, String FieldName, String Label, String ErrorText, String ValidationRegex, Integer Rank, String DefaultValue, String Options, String GroupName, Integer Optional, Integer FormFieldTypeId, Integer FormId)
         {
@@ -87,7 +104,9 @@
        this.optional = Optional;
        this.formFieldTypeId = FormFieldTypeId;
        this.formId = FormId;
-        } 
+              
+       
+       } 
         
              
         
@@ -100,6 +119,8 @@
             {
                 this.formFieldId = FormFieldId;
             }
+            
+            
         
             public String getFieldName()
             {
@@ -110,6 +131,8 @@
             {
                 this.fieldName = FieldName;
             }
+            
+            
         
             public String getLabel()
             {
@@ -120,6 +143,8 @@
             {
                 this.label = Label;
             }
+            
+            
         
             public String getErrorText()
             {
@@ -130,6 +155,8 @@
             {
                 this.errorText = ErrorText;
             }
+            
+            
         
             public String getValidationRegex()
             {
@@ -140,6 +167,8 @@
             {
                 this.validationRegex = ValidationRegex;
             }
+            
+            
         
             public Integer getRank()
             {
@@ -150,6 +179,8 @@
             {
                 this.rank = Rank;
             }
+            
+            
         
             public String getDefaultValue()
             {
@@ -160,6 +191,8 @@
             {
                 this.defaultValue = DefaultValue;
             }
+            
+            
         
             public String getOptions()
             {
@@ -170,6 +203,8 @@
             {
                 this.options = Options;
             }
+            
+            
         
             public String getGroupName()
             {
@@ -180,6 +215,8 @@
             {
                 this.groupName = GroupName;
             }
+            
+            
         
             public Integer getOptional()
             {
@@ -190,6 +227,8 @@
             {
                 this.optional = Optional;
             }
+            
+            
         
             public Integer getFormFieldTypeId()
             {
@@ -200,6 +239,20 @@
             {
                 this.formFieldTypeId = FormFieldTypeId;
             }
+            
+            
+                   
+            public FormFieldType getFormFieldType()
+                {
+                    return this.formFieldType;
+                }
+
+                public void setFormFieldType(FormFieldType formFieldType)
+                {
+                    this.formFieldType = formFieldType;
+                }
+                   
+            
         
             public Integer getFormId()
             {
@@ -210,7 +263,23 @@
             {
                 this.formId = FormId;
             }
-           
+            
+            
+                   
+            public Form getForm()
+                {
+                    return this.form;
+                }
+
+                public void setForm(Form form)
+                {
+                    this.form = form;
+                }
+                   
+            
+         
+        
+        
             
     }
 

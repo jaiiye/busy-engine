@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ImageType implements Serializable
@@ -35,8 +36,14 @@
         
 
         private Integer imageTypeId;
+                
         private String typeName;
+                
         private String description;
+                
+                 
+        ArrayList<SiteImage> siteImageList; 
+        
         
 
         public ImageType()
@@ -44,14 +51,20 @@
             this.imageTypeId = 0; 
        this.typeName = ""; 
        this.description = ""; 
-        }
+        
+       siteImageList = null; 
+        
+       }
         
         public ImageType(Integer ImageTypeId, String TypeName, String Description)
         {
             this.imageTypeId = ImageTypeId;
        this.typeName = TypeName;
        this.description = Description;
-        } 
+              
+       siteImageList = null; 
+        
+       } 
         
              
         
@@ -64,6 +77,8 @@
             {
                 this.imageTypeId = ImageTypeId;
             }
+            
+            
         
             public String getTypeName()
             {
@@ -74,6 +89,8 @@
             {
                 this.typeName = TypeName;
             }
+            
+            
         
             public String getDescription()
             {
@@ -84,7 +101,21 @@
             {
                 this.description = Description;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<SiteImage> getSiteImageList()
+            {
+                return this.siteImageList;
+            }
+            
+            public void setSiteImageList(ArrayList<SiteImage> siteImageList)
+            {
+                this.siteImageList = siteImageList;
+            }
+        
             
     }
 

@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.TextStringLocal;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -139,6 +148,73 @@
             }
             return text_string_local;
         }
+        
+        public static ArrayList<TextStringLocal> getAllTextStringLocalWithRelatedInfo()
+        {
+            ArrayList<TextStringLocal> text_string_localList = new ArrayList<TextStringLocal>();
+            try
+            {
+                getAllRecordsByTableName("text_string_local");
+                while (rs.next())
+                {
+                    text_string_localList.add(processTextStringLocal(rs));
+                }
+
+                
+                    for(TextStringLocal text_string_local : text_string_localList)
+                    {
+                        
+                            getRecordById("TextString", text_string_local.getTextStringId().toString());
+                            text_string_local.setTextString(TextStringDAO.processTextString(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllTextStringLocalWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return text_string_localList;
+        }
+        
+        
+        public static TextStringLocal getRelatedInfo(TextStringLocal text_string_local)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("TextString", text_string_local.getTextStringId().toString());
+                            text_string_local.setTextString(TextStringDAO.processTextString(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return text_string_local;
+        }
+        
+        public static TextStringLocal getAllRelatedObjects(TextStringLocal text_string_local)
+        {           
+                         
+            return text_string_local;
+        }
+        
+        
+        
                 
         public static ArrayList<TextStringLocal> getTextStringLocalPaged(int limit, int offset)
         {

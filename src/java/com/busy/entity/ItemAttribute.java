@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemAttribute implements Serializable
@@ -33,16 +34,24 @@
         public static final String PROP_KEY = "Key";
         public static final String PROP_VALUE = "Value";
         public static final String PROP_LOCALE = "Locale";
-        public static final String PROP_ATTRIBUTE_TYPE_ID = "AttributeTypeId";
+        public static final String PROP_ITEM_ATTRIBUTE_TYPE_ID = "ItemAttributeTypeId";
         public static final String PROP_ITEM_ID = "ItemId";
         
 
         private Integer itemAttributeId;
+                
         private String key;
+                
         private String value;
+                
         private String locale;
-        private Integer attributeTypeId;
+                
+        private Integer itemAttributeTypeId;
+        private ItemAttributeType itemAttributeType;        
         private Integer itemId;
+        private Item item;        
+                 
+        
         
 
         public ItemAttribute()
@@ -51,19 +60,23 @@
        this.key = ""; 
        this.value = ""; 
        this.locale = ""; 
-       this.attributeTypeId = 0; 
+       this.itemAttributeTypeId = 0; 
        this.itemId = 0; 
-        }
         
-        public ItemAttribute(Integer ItemAttributeId, String Key, String Value, String Locale, Integer AttributeTypeId, Integer ItemId)
+       
+       }
+        
+        public ItemAttribute(Integer ItemAttributeId, String Key, String Value, String Locale, Integer ItemAttributeTypeId, Integer ItemId)
         {
             this.itemAttributeId = ItemAttributeId;
        this.key = Key;
        this.value = Value;
        this.locale = Locale;
-       this.attributeTypeId = AttributeTypeId;
+       this.itemAttributeTypeId = ItemAttributeTypeId;
        this.itemId = ItemId;
-        } 
+              
+       
+       } 
         
              
         
@@ -76,6 +89,8 @@
             {
                 this.itemAttributeId = ItemAttributeId;
             }
+            
+            
         
             public String getKey()
             {
@@ -86,6 +101,8 @@
             {
                 this.key = Key;
             }
+            
+            
         
             public String getValue()
             {
@@ -96,6 +113,8 @@
             {
                 this.value = Value;
             }
+            
+            
         
             public String getLocale()
             {
@@ -106,16 +125,32 @@
             {
                 this.locale = Locale;
             }
+            
+            
         
-            public Integer getAttributeTypeId()
+            public Integer getItemAttributeTypeId()
             {
-                return this.attributeTypeId;
+                return this.itemAttributeTypeId;
             }
             
-            public void setAttributeTypeId(Integer AttributeTypeId)
+            public void setItemAttributeTypeId(Integer ItemAttributeTypeId)
             {
-                this.attributeTypeId = AttributeTypeId;
+                this.itemAttributeTypeId = ItemAttributeTypeId;
             }
+            
+            
+                   
+            public ItemAttributeType getItemAttributeType()
+                {
+                    return this.itemAttributeType;
+                }
+
+                public void setItemAttributeType(ItemAttributeType itemAttributeType)
+                {
+                    this.itemAttributeType = itemAttributeType;
+                }
+                   
+            
         
             public Integer getItemId()
             {
@@ -126,7 +161,23 @@
             {
                 this.itemId = ItemId;
             }
-           
+            
+            
+                   
+            public Item getItem()
+                {
+                    return this.item;
+                }
+
+                public void setItem(Item item)
+                {
+                    this.item = item;
+                }
+                   
+            
+         
+        
+        
             
     }
 

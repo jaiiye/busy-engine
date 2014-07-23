@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ItemOption;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,55 @@
             }
             return item_option;
         }
+        
+        public static ArrayList<ItemOption> getAllItemOptionWithRelatedInfo()
+        {
+            ArrayList<ItemOption> item_optionList = new ArrayList<ItemOption>();
+            try
+            {
+                getAllRecordsByTableName("item_option");
+                while (rs.next())
+                {
+                    item_optionList.add(processItemOption(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemOptionWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return item_optionList;
+        }
+        
+        
+        public static ItemOption getRelatedInfo(ItemOption item_option)
+        {
+           
+                  
+            
+            return item_option;
+        }
+        
+        public static ItemOption getAllRelatedObjects(ItemOption item_option)
+        {           
+            item_option.setOptionAvailabilityList(OptionAvailabilityDAO.getAllOptionAvailabilityByColumn("ItemOptionId", item_option.getItemOptionId().toString()));
+             
+            return item_option;
+        }
+        
+        
+                    
+        public static ItemOption getRelatedOptionAvailabilityList(ItemOption item_option)
+        {           
+            item_option.setOptionAvailabilityList(OptionAvailabilityDAO.getAllOptionAvailabilityByColumn("ItemOptionId", item_option.getItemOptionId().toString()));
+            return item_option;
+        }        
+        
                 
         public static ArrayList<ItemOption> getItemOptionPaged(int limit, int offset)
         {

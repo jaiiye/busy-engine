@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,44 +23,55 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Mailinglist implements Serializable
     {    
         private static final long serialVersionUID = 1L;       
         public static final String PROP_MAILINGLIST_ID = "MailinglistId";
-        public static final String PROP_LIST_NAME = "ListName";
+        public static final String PROP_FULL_NAME = "FullName";
         public static final String PROP_EMAIL = "Email";
-        public static final String PROP_STATUS = "Status";
+        public static final String PROP_LIST_STATUS = "ListStatus";
         public static final String PROP_USER_ID = "UserId";
         
 
         private Integer mailinglistId;
-        private String listName;
+                
+        private String fullName;
+                
         private String email;
-        private Integer status;
+                
+        private Integer listStatus;
+                
         private Integer userId;
+        private User user;        
+                 
+        
         
 
         public Mailinglist()
         {
             this.mailinglistId = 0; 
-       this.listName = ""; 
+       this.fullName = ""; 
        this.email = ""; 
-       this.status = 0; 
+       this.listStatus = 0; 
        this.userId = 0; 
-        }
         
-        public Mailinglist(Integer MailinglistId, String ListName, String Email, Integer Status, Integer UserId)
+       
+       }
+        
+        public Mailinglist(Integer MailinglistId, String FullName, String Email, Integer ListStatus, Integer UserId)
         {
             this.mailinglistId = MailinglistId;
-       this.listName = ListName;
+       this.fullName = FullName;
        this.email = Email;
-       this.status = Status;
+       this.listStatus = ListStatus;
        this.userId = UserId;
-        } 
+              
+       
+       } 
         
              
         
@@ -72,16 +84,20 @@
             {
                 this.mailinglistId = MailinglistId;
             }
+            
+            
         
-            public String getListName()
+            public String getFullName()
             {
-                return this.listName;
+                return this.fullName;
             }
             
-            public void setListName(String ListName)
+            public void setFullName(String FullName)
             {
-                this.listName = ListName;
+                this.fullName = FullName;
             }
+            
+            
         
             public String getEmail()
             {
@@ -92,16 +108,20 @@
             {
                 this.email = Email;
             }
+            
+            
         
-            public Integer getStatus()
+            public Integer getListStatus()
             {
-                return this.status;
+                return this.listStatus;
             }
             
-            public void setStatus(Integer Status)
+            public void setListStatus(Integer ListStatus)
             {
-                this.status = Status;
+                this.listStatus = ListStatus;
             }
+            
+            
         
             public Integer getUserId()
             {
@@ -112,7 +132,23 @@
             {
                 this.userId = UserId;
             }
-           
+            
+            
+                   
+            public User getUser()
+                {
+                    return this.user;
+                }
+
+                public void setUser(User user)
+                {
+                    this.user = user;
+                }
+                   
+            
+         
+        
+        
             
     }
 

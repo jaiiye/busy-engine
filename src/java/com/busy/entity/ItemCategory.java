@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemCategory implements Serializable
@@ -35,8 +36,13 @@
         
 
         private Integer itemCategoryId;
+                
         private Integer categoryId;
+        private Category category;        
         private Integer itemId;
+        private Item item;        
+                 
+        
         
 
         public ItemCategory()
@@ -44,14 +50,18 @@
             this.itemCategoryId = 0; 
        this.categoryId = 0; 
        this.itemId = 0; 
-        }
+        
+       
+       }
         
         public ItemCategory(Integer ItemCategoryId, Integer CategoryId, Integer ItemId)
         {
             this.itemCategoryId = ItemCategoryId;
        this.categoryId = CategoryId;
        this.itemId = ItemId;
-        } 
+              
+       
+       } 
         
              
         
@@ -64,6 +74,8 @@
             {
                 this.itemCategoryId = ItemCategoryId;
             }
+            
+            
         
             public Integer getCategoryId()
             {
@@ -74,6 +86,20 @@
             {
                 this.categoryId = CategoryId;
             }
+            
+            
+                   
+            public Category getCategory()
+                {
+                    return this.category;
+                }
+
+                public void setCategory(Category category)
+                {
+                    this.category = category;
+                }
+                   
+            
         
             public Integer getItemId()
             {
@@ -84,7 +110,23 @@
             {
                 this.itemId = ItemId;
             }
-           
+            
+            
+                   
+            public Item getItem()
+                {
+                    return this.item;
+                }
+
+                public void setItem(Item item)
+                {
+                    this.item = item;
+                }
+                   
+            
+         
+        
+        
             
     }
 

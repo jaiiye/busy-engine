@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.SiteItem;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,79 @@
             }
             return site_item;
         }
+        
+        public static ArrayList<SiteItem> getAllSiteItemWithRelatedInfo()
+        {
+            ArrayList<SiteItem> site_itemList = new ArrayList<SiteItem>();
+            try
+            {
+                getAllRecordsByTableName("site_item");
+                while (rs.next())
+                {
+                    site_itemList.add(processSiteItem(rs));
+                }
+
+                
+                    for(SiteItem site_item : site_itemList)
+                    {
+                        
+                            getRecordById("Site", site_item.getSiteId().toString());
+                            site_item.setSite(SiteDAO.processSite(rs));               
+                        
+                            getRecordById("Item", site_item.getItemId().toString());
+                            site_item.setItem(ItemDAO.processItem(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllSiteItemWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return site_itemList;
+        }
+        
+        
+        public static SiteItem getRelatedInfo(SiteItem site_item)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Site", site_item.getSiteId().toString());
+                            site_item.setSite(SiteDAO.processSite(rs));               
+                        
+                            getRecordById("Item", site_item.getItemId().toString());
+                            site_item.setItem(ItemDAO.processItem(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return site_item;
+        }
+        
+        public static SiteItem getAllRelatedObjects(SiteItem site_item)
+        {           
+                         
+            return site_item;
+        }
+        
+        
+        
                 
         public static ArrayList<SiteItem> getSiteItemPaged(int limit, int offset)
         {

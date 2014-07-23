@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class UserActionType implements Serializable
@@ -34,20 +35,31 @@
         
 
         private Integer userActionTypeId;
+                
         private String typeName;
+                
+                 
+        ArrayList<UserAction> userActionList; 
+        
         
 
         public UserActionType()
         {
             this.userActionTypeId = 0; 
        this.typeName = ""; 
-        }
+        
+       userActionList = null; 
+        
+       }
         
         public UserActionType(Integer UserActionTypeId, String TypeName)
         {
             this.userActionTypeId = UserActionTypeId;
        this.typeName = TypeName;
-        } 
+              
+       userActionList = null; 
+        
+       } 
         
              
         
@@ -60,6 +72,8 @@
             {
                 this.userActionTypeId = UserActionTypeId;
             }
+            
+            
         
             public String getTypeName()
             {
@@ -70,7 +84,21 @@
             {
                 this.typeName = TypeName;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<UserAction> getUserActionList()
+            {
+                return this.userActionList;
+            }
+            
+            public void setUserActionList(ArrayList<UserAction> userActionList)
+            {
+                this.userActionList = userActionList;
+            }
+        
             
     }
 

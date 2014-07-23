@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ImageType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,55 @@
             }
             return image_type;
         }
+        
+        public static ArrayList<ImageType> getAllImageTypeWithRelatedInfo()
+        {
+            ArrayList<ImageType> image_typeList = new ArrayList<ImageType>();
+            try
+            {
+                getAllRecordsByTableName("image_type");
+                while (rs.next())
+                {
+                    image_typeList.add(processImageType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllImageTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return image_typeList;
+        }
+        
+        
+        public static ImageType getRelatedInfo(ImageType image_type)
+        {
+           
+                  
+            
+            return image_type;
+        }
+        
+        public static ImageType getAllRelatedObjects(ImageType image_type)
+        {           
+            image_type.setSiteImageList(SiteImageDAO.getAllSiteImageByColumn("ImageTypeId", image_type.getImageTypeId().toString()));
+             
+            return image_type;
+        }
+        
+        
+                    
+        public static ImageType getRelatedSiteImageList(ImageType image_type)
+        {           
+            image_type.setSiteImageList(SiteImageDAO.getAllSiteImageByColumn("ImageTypeId", image_type.getImageTypeId().toString()));
+            return image_type;
+        }        
+        
                 
         public static ArrayList<ImageType> getImageTypePaged(int limit, int offset)
         {

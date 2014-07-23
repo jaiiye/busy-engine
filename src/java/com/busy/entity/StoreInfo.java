@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class StoreInfo implements Serializable
@@ -38,11 +39,19 @@
         
 
         private Integer storeInfoId;
+                
         private String logoTitle;
+                
         private String logoImage;
+                
         private String storeName;
+                
         private String companyName;
+                
         private String locale;
+                
+                 
+        
         
 
         public StoreInfo()
@@ -53,7 +62,9 @@
        this.storeName = ""; 
        this.companyName = ""; 
        this.locale = ""; 
-        }
+        
+       
+       }
         
         public StoreInfo(Integer StoreInfoId, String LogoTitle, String LogoImage, String StoreName, String CompanyName, String Locale)
         {
@@ -63,7 +74,9 @@
        this.storeName = StoreName;
        this.companyName = CompanyName;
        this.locale = Locale;
-        } 
+              
+       
+       } 
         
              
         
@@ -76,6 +89,8 @@
             {
                 this.storeInfoId = StoreInfoId;
             }
+            
+            
         
             public String getLogoTitle()
             {
@@ -86,6 +101,8 @@
             {
                 this.logoTitle = LogoTitle;
             }
+            
+            
         
             public String getLogoImage()
             {
@@ -96,6 +113,8 @@
             {
                 this.logoImage = LogoImage;
             }
+            
+            
         
             public String getStoreName()
             {
@@ -106,6 +125,8 @@
             {
                 this.storeName = StoreName;
             }
+            
+            
         
             public String getCompanyName()
             {
@@ -116,6 +137,8 @@
             {
                 this.companyName = CompanyName;
             }
+            
+            
         
             public String getLocale()
             {
@@ -126,7 +149,11 @@
             {
                 this.locale = Locale;
             }
-           
+            
+            
+         
+        
+        
             
     }
 

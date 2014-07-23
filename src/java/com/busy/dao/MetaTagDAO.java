@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.MetaTag;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -139,6 +148,76 @@
             }
             return meta_tag;
         }
+        
+        public static ArrayList<MetaTag> getAllMetaTagWithRelatedInfo()
+        {
+            ArrayList<MetaTag> meta_tagList = new ArrayList<MetaTag>();
+            try
+            {
+                getAllRecordsByTableName("meta_tag");
+                while (rs.next())
+                {
+                    meta_tagList.add(processMetaTag(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllMetaTagWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return meta_tagList;
+        }
+        
+        
+        public static MetaTag getRelatedInfo(MetaTag meta_tag)
+        {
+           
+                  
+            
+            return meta_tag;
+        }
+        
+        public static MetaTag getAllRelatedObjects(MetaTag meta_tag)
+        {           
+            meta_tag.setBlogPostList(BlogPostDAO.getAllBlogPostByColumn("MetaTagId", meta_tag.getMetaTagId().toString()));
+meta_tag.setItemList(ItemDAO.getAllItemByColumn("MetaTagId", meta_tag.getMetaTagId().toString()));
+meta_tag.setPageList(PageDAO.getAllPageByColumn("MetaTagId", meta_tag.getMetaTagId().toString()));
+meta_tag.setVendorList(VendorDAO.getAllVendorByColumn("MetaTagId", meta_tag.getMetaTagId().toString()));
+             
+            return meta_tag;
+        }
+        
+        
+                    
+        public static MetaTag getRelatedBlogPostList(MetaTag meta_tag)
+        {           
+            meta_tag.setBlogPostList(BlogPostDAO.getAllBlogPostByColumn("MetaTagId", meta_tag.getMetaTagId().toString()));
+            return meta_tag;
+        }        
+                    
+        public static MetaTag getRelatedItemList(MetaTag meta_tag)
+        {           
+            meta_tag.setItemList(ItemDAO.getAllItemByColumn("MetaTagId", meta_tag.getMetaTagId().toString()));
+            return meta_tag;
+        }        
+                    
+        public static MetaTag getRelatedPageList(MetaTag meta_tag)
+        {           
+            meta_tag.setPageList(PageDAO.getAllPageByColumn("MetaTagId", meta_tag.getMetaTagId().toString()));
+            return meta_tag;
+        }        
+                    
+        public static MetaTag getRelatedVendorList(MetaTag meta_tag)
+        {           
+            meta_tag.setVendorList(VendorDAO.getAllVendorByColumn("MetaTagId", meta_tag.getMetaTagId().toString()));
+            return meta_tag;
+        }        
+        
                 
         public static ArrayList<MetaTag> getMetaTagPaged(int limit, int offset)
         {

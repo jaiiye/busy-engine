@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class OptionAvailability implements Serializable
@@ -41,14 +42,25 @@
         
 
         private Integer optionAvailabilityId;
+                
         private Integer itemId;
+        private Item item;        
         private Integer itemOptionId;
+        private ItemOption itemOption;        
         private Integer itemAvailabilityId;
+        private ItemAvailability itemAvailability;        
         private Integer availableQuantity;
+                
         private Double price;
+                
         private Date availableFrom;
+                
         private Date availableTo;
+                
         private Integer maximumQuantity;
+                
+                 
+        
         
 
         public OptionAvailability()
@@ -62,7 +74,9 @@
        this.availableFrom = null; 
        this.availableTo = null; 
        this.maximumQuantity = 0; 
-        }
+        
+       
+       }
         
         public OptionAvailability(Integer OptionAvailabilityId, Integer ItemId, Integer ItemOptionId, Integer ItemAvailabilityId, Integer AvailableQuantity, Double Price, Date AvailableFrom, Date AvailableTo, Integer MaximumQuantity)
         {
@@ -75,7 +89,9 @@
        this.availableFrom = AvailableFrom;
        this.availableTo = AvailableTo;
        this.maximumQuantity = MaximumQuantity;
-        } 
+              
+       
+       } 
         
              
         
@@ -88,6 +104,8 @@
             {
                 this.optionAvailabilityId = OptionAvailabilityId;
             }
+            
+            
         
             public Integer getItemId()
             {
@@ -98,6 +116,20 @@
             {
                 this.itemId = ItemId;
             }
+            
+            
+                   
+            public Item getItem()
+                {
+                    return this.item;
+                }
+
+                public void setItem(Item item)
+                {
+                    this.item = item;
+                }
+                   
+            
         
             public Integer getItemOptionId()
             {
@@ -108,6 +140,20 @@
             {
                 this.itemOptionId = ItemOptionId;
             }
+            
+            
+                   
+            public ItemOption getItemOption()
+                {
+                    return this.itemOption;
+                }
+
+                public void setItemOption(ItemOption itemOption)
+                {
+                    this.itemOption = itemOption;
+                }
+                   
+            
         
             public Integer getItemAvailabilityId()
             {
@@ -118,6 +164,20 @@
             {
                 this.itemAvailabilityId = ItemAvailabilityId;
             }
+            
+            
+                   
+            public ItemAvailability getItemAvailability()
+                {
+                    return this.itemAvailability;
+                }
+
+                public void setItemAvailability(ItemAvailability itemAvailability)
+                {
+                    this.itemAvailability = itemAvailability;
+                }
+                   
+            
         
             public Integer getAvailableQuantity()
             {
@@ -128,6 +188,8 @@
             {
                 this.availableQuantity = AvailableQuantity;
             }
+            
+            
         
             public Double getPrice()
             {
@@ -138,6 +200,8 @@
             {
                 this.price = Price;
             }
+            
+            
         
             public Date getAvailableFrom()
             {
@@ -148,6 +212,8 @@
             {
                 this.availableFrom = AvailableFrom;
             }
+            
+            
         
             public Date getAvailableTo()
             {
@@ -158,6 +224,8 @@
             {
                 this.availableTo = AvailableTo;
             }
+            
+            
         
             public Integer getMaximumQuantity()
             {
@@ -168,7 +236,11 @@
             {
                 this.maximumQuantity = MaximumQuantity;
             }
-           
+            
+            
+         
+        
+        
             
     }
 

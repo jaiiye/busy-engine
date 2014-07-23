@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.FormField;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -155,6 +164,79 @@
             }
             return form_field;
         }
+        
+        public static ArrayList<FormField> getAllFormFieldWithRelatedInfo()
+        {
+            ArrayList<FormField> form_fieldList = new ArrayList<FormField>();
+            try
+            {
+                getAllRecordsByTableName("form_field");
+                while (rs.next())
+                {
+                    form_fieldList.add(processFormField(rs));
+                }
+
+                
+                    for(FormField form_field : form_fieldList)
+                    {
+                        
+                            getRecordById("FormFieldType", form_field.getFormFieldTypeId().toString());
+                            form_field.setFormFieldType(FormFieldTypeDAO.processFormFieldType(rs));               
+                        
+                            getRecordById("Form", form_field.getFormId().toString());
+                            form_field.setForm(FormDAO.processForm(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllFormFieldWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return form_fieldList;
+        }
+        
+        
+        public static FormField getRelatedInfo(FormField form_field)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("FormFieldType", form_field.getFormFieldTypeId().toString());
+                            form_field.setFormFieldType(FormFieldTypeDAO.processFormFieldType(rs));               
+                        
+                            getRecordById("Form", form_field.getFormId().toString());
+                            form_field.setForm(FormDAO.processForm(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return form_field;
+        }
+        
+        public static FormField getAllRelatedObjects(FormField form_field)
+        {           
+                         
+            return form_field;
+        }
+        
+        
+        
                 
         public static ArrayList<FormField> getFormFieldPaged(int limit, int offset)
         {

@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ItemFile;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -75,10 +84,10 @@
                                
         public static ItemFile processItemFile(ResultSet rs) throws SQLException
         {        
-            return new ItemFile(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getBoolean(5), rs.getInt(6));
+            return new ItemFile(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
         }
         
-        public static int addItemFile(String FileName, String Description, String Label, Boolean Hidden, Integer ItemId)
+        public static int addItemFile(String FileName, String Description, String Label, Integer Hidden, Integer ItemId)
         {   
             int id = 0;
             try
@@ -95,7 +104,7 @@
                 preparedStatement.setString(1, FileName);
                 preparedStatement.setString(2, Description);
                 preparedStatement.setString(3, Label);
-                preparedStatement.setBoolean(4, Hidden);
+                preparedStatement.setInt(4, Hidden);
                 preparedStatement.setInt(5, ItemId);
                 
                 preparedStatement.executeUpdate();
@@ -143,6 +152,73 @@
             }
             return item_file;
         }
+        
+        public static ArrayList<ItemFile> getAllItemFileWithRelatedInfo()
+        {
+            ArrayList<ItemFile> item_fileList = new ArrayList<ItemFile>();
+            try
+            {
+                getAllRecordsByTableName("item_file");
+                while (rs.next())
+                {
+                    item_fileList.add(processItemFile(rs));
+                }
+
+                
+                    for(ItemFile item_file : item_fileList)
+                    {
+                        
+                            getRecordById("Item", item_file.getItemId().toString());
+                            item_file.setItem(ItemDAO.processItem(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemFileWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return item_fileList;
+        }
+        
+        
+        public static ItemFile getRelatedInfo(ItemFile item_file)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Item", item_file.getItemId().toString());
+                            item_file.setItem(ItemDAO.processItem(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return item_file;
+        }
+        
+        public static ItemFile getAllRelatedObjects(ItemFile item_file)
+        {           
+                         
+            return item_file;
+        }
+        
+        
+        
                 
         public static ArrayList<ItemFile> getItemFilePaged(int limit, int offset)
         {
@@ -210,7 +286,7 @@
             return item_file;
         }                
                 
-        public static void updateItemFile(Integer ItemFileId,String FileName,String Description,String Label,Boolean Hidden,Integer ItemId)
+        public static void updateItemFile(Integer ItemFileId,String FileName,String Description,String Label,Integer Hidden,Integer ItemId)
         {  
             try
             {   
@@ -226,7 +302,7 @@
                 preparedStatement.setString(1, FileName);
                 preparedStatement.setString(2, Description);
                 preparedStatement.setString(3, Label);
-                preparedStatement.setBoolean(4, Hidden);
+                preparedStatement.setInt(4, Hidden);
                 preparedStatement.setInt(5, ItemId);
                 preparedStatement.setInt(6, ItemFileId);
                 preparedStatement.executeUpdate();

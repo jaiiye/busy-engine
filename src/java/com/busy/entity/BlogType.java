@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class BlogType implements Serializable
@@ -34,20 +35,31 @@
         
 
         private Integer blogTypeId;
+                
         private String typeName;
+                
+                 
+        ArrayList<Blog> blogList; 
+        
         
 
         public BlogType()
         {
             this.blogTypeId = 0; 
        this.typeName = ""; 
-        }
+        
+       blogList = null; 
+        
+       }
         
         public BlogType(Integer BlogTypeId, String TypeName)
         {
             this.blogTypeId = BlogTypeId;
        this.typeName = TypeName;
-        } 
+              
+       blogList = null; 
+        
+       } 
         
              
         
@@ -60,6 +72,8 @@
             {
                 this.blogTypeId = BlogTypeId;
             }
+            
+            
         
             public String getTypeName()
             {
@@ -70,7 +84,21 @@
             {
                 this.typeName = TypeName;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<Blog> getBlogList()
+            {
+                return this.blogList;
+            }
+            
+            public void setBlogList(ArrayList<Blog> blogList)
+            {
+                this.blogList = blogList;
+            }
+        
             
     }
 

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Paypal implements Serializable
@@ -44,17 +45,31 @@
         
 
         private Integer paypalId;
+                
         private String payPalUrl;
+                
         private String currencyCode;
+                
         private String apiUsername;
+                
         private String apiPassword;
+                
         private String apiSignature;
+                
         private String apiEndpoint;
+                
         private Boolean activeProfile;
+                
         private String returnUrl;
+                
         private String cancelUrl;
+                
         private String paymentType;
+                
         private String environment;
+                
+                 
+        
         
 
         public Paypal()
@@ -71,7 +86,9 @@
        this.cancelUrl = ""; 
        this.paymentType = ""; 
        this.environment = ""; 
-        }
+        
+       
+       }
         
         public Paypal(Integer PaypalId, String PayPalUrl, String CurrencyCode, String ApiUsername, String ApiPassword, String ApiSignature, String ApiEndpoint, Boolean ActiveProfile, String ReturnUrl, String CancelUrl, String PaymentType, String Environment)
         {
@@ -87,7 +104,9 @@
        this.cancelUrl = CancelUrl;
        this.paymentType = PaymentType;
        this.environment = Environment;
-        } 
+              
+       
+       } 
         
              
         
@@ -100,6 +119,8 @@
             {
                 this.paypalId = PaypalId;
             }
+            
+            
         
             public String getPayPalUrl()
             {
@@ -110,6 +131,8 @@
             {
                 this.payPalUrl = PayPalUrl;
             }
+            
+            
         
             public String getCurrencyCode()
             {
@@ -120,6 +143,8 @@
             {
                 this.currencyCode = CurrencyCode;
             }
+            
+            
         
             public String getApiUsername()
             {
@@ -130,6 +155,8 @@
             {
                 this.apiUsername = ApiUsername;
             }
+            
+            
         
             public String getApiPassword()
             {
@@ -140,6 +167,8 @@
             {
                 this.apiPassword = ApiPassword;
             }
+            
+            
         
             public String getApiSignature()
             {
@@ -150,6 +179,8 @@
             {
                 this.apiSignature = ApiSignature;
             }
+            
+            
         
             public String getApiEndpoint()
             {
@@ -160,6 +191,8 @@
             {
                 this.apiEndpoint = ApiEndpoint;
             }
+            
+            
         
             public Boolean getActiveProfile()
             {
@@ -170,6 +203,8 @@
             {
                 this.activeProfile = ActiveProfile;
             }
+            
+            
         
             public String getReturnUrl()
             {
@@ -180,6 +215,8 @@
             {
                 this.returnUrl = ReturnUrl;
             }
+            
+            
         
             public String getCancelUrl()
             {
@@ -190,6 +227,8 @@
             {
                 this.cancelUrl = CancelUrl;
             }
+            
+            
         
             public String getPaymentType()
             {
@@ -200,6 +239,8 @@
             {
                 this.paymentType = PaymentType;
             }
+            
+            
         
             public String getEnvironment()
             {
@@ -210,7 +251,11 @@
             {
                 this.environment = Environment;
             }
-           
+            
+            
+         
+        
+        
             
     }
 

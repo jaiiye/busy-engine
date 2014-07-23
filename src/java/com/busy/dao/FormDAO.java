@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Form;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -75,10 +84,10 @@
                                
         public static Form processForm(ResultSet rs) throws SQLException
         {        
-            return new Form(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getBoolean(7), rs.getBoolean(8));
+            return new Form(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getInt(8));
         }
         
-        public static int addForm(String FormName, String Description, String SubmissionEmail, String SubmissionMethod, String Action, Boolean Resettable, Boolean FileUpload)
+        public static int addForm(String FormName, String Description, String SubmissionEmail, String SubmissionMethod, String Action, Integer Resettable, Integer FileUpload)
         {   
             int id = 0;
             try
@@ -99,8 +108,8 @@
                 preparedStatement.setString(3, SubmissionEmail);
                 preparedStatement.setString(4, SubmissionMethod);
                 preparedStatement.setString(5, Action);
-                preparedStatement.setBoolean(6, Resettable);
-                preparedStatement.setBoolean(7, FileUpload);
+                preparedStatement.setInt(6, Resettable);
+                preparedStatement.setInt(7, FileUpload);
                 
                 preparedStatement.executeUpdate();
             
@@ -147,6 +156,69 @@
             }
             return form;
         }
+        
+        public static ArrayList<Form> getAllFormWithRelatedInfo()
+        {
+            ArrayList<Form> formList = new ArrayList<Form>();
+            try
+            {
+                getAllRecordsByTableName("form");
+                while (rs.next())
+                {
+                    formList.add(processForm(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllFormWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return formList;
+        }
+        
+        
+        public static Form getRelatedInfo(Form form)
+        {
+           
+                  
+            
+            return form;
+        }
+        
+        public static Form getAllRelatedObjects(Form form)
+        {           
+            form.setFormFieldList(FormFieldDAO.getAllFormFieldByColumn("FormId", form.getFormId().toString()));
+form.setPageList(PageDAO.getAllPageByColumn("FormId", form.getFormId().toString()));
+form.setSliderList(SliderDAO.getAllSliderByColumn("FormId", form.getFormId().toString()));
+             
+            return form;
+        }
+        
+        
+                    
+        public static Form getRelatedFormFieldList(Form form)
+        {           
+            form.setFormFieldList(FormFieldDAO.getAllFormFieldByColumn("FormId", form.getFormId().toString()));
+            return form;
+        }        
+                    
+        public static Form getRelatedPageList(Form form)
+        {           
+            form.setPageList(PageDAO.getAllPageByColumn("FormId", form.getFormId().toString()));
+            return form;
+        }        
+                    
+        public static Form getRelatedSliderList(Form form)
+        {           
+            form.setSliderList(SliderDAO.getAllSliderByColumn("FormId", form.getFormId().toString()));
+            return form;
+        }        
+        
                 
         public static ArrayList<Form> getFormPaged(int limit, int offset)
         {
@@ -214,7 +286,7 @@
             return form;
         }                
                 
-        public static void updateForm(Integer FormId,String FormName,String Description,String SubmissionEmail,String SubmissionMethod,String Action,Boolean Resettable,Boolean FileUpload)
+        public static void updateForm(Integer FormId,String FormName,String Description,String SubmissionEmail,String SubmissionMethod,String Action,Integer Resettable,Integer FileUpload)
         {  
             try
             {   
@@ -234,8 +306,8 @@
                 preparedStatement.setString(3, SubmissionEmail);
                 preparedStatement.setString(4, SubmissionMethod);
                 preparedStatement.setString(5, Action);
-                preparedStatement.setBoolean(6, Resettable);
-                preparedStatement.setBoolean(7, FileUpload);
+                preparedStatement.setInt(6, Resettable);
+                preparedStatement.setInt(7, FileUpload);
                 preparedStatement.setInt(8, FormId);
                 preparedStatement.executeUpdate();
             }

@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.TextString;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -135,6 +144,62 @@
             }
             return text_string;
         }
+        
+        public static ArrayList<TextString> getAllTextStringWithRelatedInfo()
+        {
+            ArrayList<TextString> text_stringList = new ArrayList<TextString>();
+            try
+            {
+                getAllRecordsByTableName("text_string");
+                while (rs.next())
+                {
+                    text_stringList.add(processTextString(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllTextStringWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return text_stringList;
+        }
+        
+        
+        public static TextString getRelatedInfo(TextString text_string)
+        {
+           
+                  
+            
+            return text_string;
+        }
+        
+        public static TextString getAllRelatedObjects(TextString text_string)
+        {           
+            text_string.setLocalizedStringList(LocalizedStringDAO.getAllLocalizedStringByColumn("TextStringId", text_string.getTextStringId().toString()));
+text_string.setTextStringLocalList(TextStringLocalDAO.getAllTextStringLocalByColumn("TextStringId", text_string.getTextStringId().toString()));
+             
+            return text_string;
+        }
+        
+        
+                    
+        public static TextString getRelatedLocalizedStringList(TextString text_string)
+        {           
+            text_string.setLocalizedStringList(LocalizedStringDAO.getAllLocalizedStringByColumn("TextStringId", text_string.getTextStringId().toString()));
+            return text_string;
+        }        
+                    
+        public static TextString getRelatedTextStringLocalList(TextString text_string)
+        {           
+            text_string.setTextStringLocalList(TextStringLocalDAO.getAllTextStringLocalByColumn("TextStringId", text_string.getTextStringId().toString()));
+            return text_string;
+        }        
+        
                 
         public static ArrayList<TextString> getTextStringPaged(int limit, int offset)
         {

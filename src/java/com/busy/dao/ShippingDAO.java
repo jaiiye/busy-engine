@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Shipping;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Shipping.PROP_SHIPPING_ID) || column.equals(Shipping.PROP_METHOD_NAME) || column.equals(Shipping.PROP_STATE_PROVINCE) || column.equals(Shipping.PROP_COUNTRY) || column.equals(Shipping.PROP_QUANTITY) || column.equals(Shipping.PROP_UNIT_OF_MEASURE) || column.equals(Shipping.PROP_RATE_PER_UNIT_COST) || column.equals(Shipping.PROP_ADDITIONAL_COST) )
+            if(column.equals(Shipping.PROP_SHIPPING_ID) || column.equals(Shipping.PROP_METHOD_NAME) || column.equals(Shipping.PROP_QUANTITY) || column.equals(Shipping.PROP_UNIT_OF_MEASURE) || column.equals(Shipping.PROP_RATE_PER_UNIT_COST) || column.equals(Shipping.PROP_ADDITIONAL_COST) || column.equals(Shipping.PROP_STATE_PROVINCE_ID) || column.equals(Shipping.PROP_COUNTRY_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Shipping.PROP_SHIPPING_ID) || column.equals(Shipping.PROP_QUANTITY) || column.equals(Shipping.PROP_RATE_PER_UNIT_COST) || column.equals(Shipping.PROP_ADDITIONAL_COST) )
+            if (column.equals(Shipping.PROP_SHIPPING_ID) || column.equals(Shipping.PROP_QUANTITY) || column.equals(Shipping.PROP_RATE_PER_UNIT_COST) || column.equals(Shipping.PROP_ADDITIONAL_COST) || column.equals(Shipping.PROP_STATE_PROVINCE_ID) || column.equals(Shipping.PROP_COUNTRY_ID) )
             {
                 return true;
             }        
@@ -75,32 +84,32 @@
                                
         public static Shipping processShipping(ResultSet rs) throws SQLException
         {        
-            return new Shipping(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDouble(5), rs.getString(6), rs.getDouble(7), rs.getDouble(8));
+            return new Shipping(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getString(4), rs.getDouble(5), rs.getDouble(6), rs.getInt(7), rs.getInt(8));
         }
         
-        public static int addShipping(String MethodName, String StateProvince, String Country, Double Quantity, String UnitOfMeasure, Double RatePerUnitCost, Double AdditionalCost)
+        public static int addShipping(String MethodName, Double Quantity, String UnitOfMeasure, Double RatePerUnitCost, Double AdditionalCost, Integer StateProvinceId, Integer CountryId)
         {   
             int id = 0;
             try
             {
                 
                 checkColumnSize(MethodName, 100);
-                checkColumnSize(StateProvince, 50);
-                checkColumnSize(Country, 100);
                 
                 checkColumnSize(UnitOfMeasure, 100);
                 
                 
+                
+                
                                             
                 openConnection();
-                prepareStatement("INSERT INTO shipping(MethodName,StateProvince,Country,Quantity,UnitOfMeasure,RatePerUnitCost,AdditionalCost) VALUES (?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO shipping(MethodName,Quantity,UnitOfMeasure,RatePerUnitCost,AdditionalCost,StateProvinceId,CountryId) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, MethodName);
-                preparedStatement.setString(2, StateProvince);
-                preparedStatement.setString(3, Country);
-                preparedStatement.setDouble(4, Quantity);
-                preparedStatement.setString(5, UnitOfMeasure);
-                preparedStatement.setDouble(6, RatePerUnitCost);
-                preparedStatement.setDouble(7, AdditionalCost);
+                preparedStatement.setDouble(2, Quantity);
+                preparedStatement.setString(3, UnitOfMeasure);
+                preparedStatement.setDouble(4, RatePerUnitCost);
+                preparedStatement.setDouble(5, AdditionalCost);
+                preparedStatement.setInt(6, StateProvinceId);
+                preparedStatement.setInt(7, CountryId);
                 
                 preparedStatement.executeUpdate();
             
@@ -147,6 +156,86 @@
             }
             return shipping;
         }
+        
+        public static ArrayList<Shipping> getAllShippingWithRelatedInfo()
+        {
+            ArrayList<Shipping> shippingList = new ArrayList<Shipping>();
+            try
+            {
+                getAllRecordsByTableName("shipping");
+                while (rs.next())
+                {
+                    shippingList.add(processShipping(rs));
+                }
+
+                
+                    for(Shipping shipping : shippingList)
+                    {
+                        
+                            getRecordById("StateProvince", shipping.getStateProvinceId().toString());
+                            shipping.setStateProvince(StateProvinceDAO.processStateProvince(rs));               
+                        
+                            getRecordById("Country", shipping.getCountryId().toString());
+                            shipping.setCountry(CountryDAO.processCountry(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllShippingWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return shippingList;
+        }
+        
+        
+        public static Shipping getRelatedInfo(Shipping shipping)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("StateProvince", shipping.getStateProvinceId().toString());
+                            shipping.setStateProvince(StateProvinceDAO.processStateProvince(rs));               
+                        
+                            getRecordById("Country", shipping.getCountryId().toString());
+                            shipping.setCountry(CountryDAO.processCountry(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return shipping;
+        }
+        
+        public static Shipping getAllRelatedObjects(Shipping shipping)
+        {           
+            shipping.setOrderList(OrderDAO.getAllOrderByColumn("ShippingId", shipping.getShippingId().toString()));
+             
+            return shipping;
+        }
+        
+        
+                    
+        public static Shipping getRelatedOrderList(Shipping shipping)
+        {           
+            shipping.setOrderList(OrderDAO.getAllOrderByColumn("ShippingId", shipping.getShippingId().toString()));
+            return shipping;
+        }        
+        
                 
         public static ArrayList<Shipping> getShippingPaged(int limit, int offset)
         {
@@ -214,28 +303,28 @@
             return shipping;
         }                
                 
-        public static void updateShipping(Integer ShippingId,String MethodName,String StateProvince,String Country,Double Quantity,String UnitOfMeasure,Double RatePerUnitCost,Double AdditionalCost)
+        public static void updateShipping(Integer ShippingId,String MethodName,Double Quantity,String UnitOfMeasure,Double RatePerUnitCost,Double AdditionalCost,Integer StateProvinceId,Integer CountryId)
         {  
             try
             {   
                 
                 checkColumnSize(MethodName, 100);
-                checkColumnSize(StateProvince, 50);
-                checkColumnSize(Country, 100);
                 
                 checkColumnSize(UnitOfMeasure, 100);
                 
                 
+                
+                
                                   
                 openConnection();                           
-                prepareStatement("UPDATE shipping SET MethodName=?,StateProvince=?,Country=?,Quantity=?,UnitOfMeasure=?,RatePerUnitCost=?,AdditionalCost=? WHERE ShippingId=?;");                    
+                prepareStatement("UPDATE shipping SET MethodName=?,Quantity=?,UnitOfMeasure=?,RatePerUnitCost=?,AdditionalCost=?,StateProvinceId=?,CountryId=? WHERE ShippingId=?;");                    
                 preparedStatement.setString(1, MethodName);
-                preparedStatement.setString(2, StateProvince);
-                preparedStatement.setString(3, Country);
-                preparedStatement.setDouble(4, Quantity);
-                preparedStatement.setString(5, UnitOfMeasure);
-                preparedStatement.setDouble(6, RatePerUnitCost);
-                preparedStatement.setDouble(7, AdditionalCost);
+                preparedStatement.setDouble(2, Quantity);
+                preparedStatement.setString(3, UnitOfMeasure);
+                preparedStatement.setDouble(4, RatePerUnitCost);
+                preparedStatement.setDouble(5, AdditionalCost);
+                preparedStatement.setInt(6, StateProvinceId);
+                preparedStatement.setInt(7, CountryId);
                 preparedStatement.setInt(8, ShippingId);
                 preparedStatement.executeUpdate();
             }

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class KnowledgeBase implements Serializable
@@ -39,12 +40,22 @@
         
 
         private Integer knowledgeBaseId;
+                
         private String knowledgeBaseName;
+                
         private String description;
+                
         private Integer rank;
+                
         private Date lastModified;
+                
         private Integer latestTopic;
+                
         private Integer latestPost;
+                
+                 
+        ArrayList<Blog> blogList; 
+        
         
 
         public KnowledgeBase()
@@ -56,7 +67,10 @@
        this.lastModified = null; 
        this.latestTopic = 0; 
        this.latestPost = 0; 
-        }
+        
+       blogList = null; 
+        
+       }
         
         public KnowledgeBase(Integer KnowledgeBaseId, String KnowledgeBaseName, String Description, Integer Rank, Date LastModified, Integer LatestTopic, Integer LatestPost)
         {
@@ -67,7 +81,10 @@
        this.lastModified = LastModified;
        this.latestTopic = LatestTopic;
        this.latestPost = LatestPost;
-        } 
+              
+       blogList = null; 
+        
+       } 
         
              
         
@@ -80,6 +97,8 @@
             {
                 this.knowledgeBaseId = KnowledgeBaseId;
             }
+            
+            
         
             public String getKnowledgeBaseName()
             {
@@ -90,6 +109,8 @@
             {
                 this.knowledgeBaseName = KnowledgeBaseName;
             }
+            
+            
         
             public String getDescription()
             {
@@ -100,6 +121,8 @@
             {
                 this.description = Description;
             }
+            
+            
         
             public Integer getRank()
             {
@@ -110,6 +133,8 @@
             {
                 this.rank = Rank;
             }
+            
+            
         
             public Date getLastModified()
             {
@@ -120,6 +145,8 @@
             {
                 this.lastModified = LastModified;
             }
+            
+            
         
             public Integer getLatestTopic()
             {
@@ -130,6 +157,8 @@
             {
                 this.latestTopic = LatestTopic;
             }
+            
+            
         
             public Integer getLatestPost()
             {
@@ -140,7 +169,21 @@
             {
                 this.latestPost = LatestPost;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<Blog> getBlogList()
+            {
+                return this.blogList;
+            }
+            
+            public void setBlogList(ArrayList<Blog> blogList)
+            {
+                this.blogList = blogList;
+            }
+        
             
     }
 

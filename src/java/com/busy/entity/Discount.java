@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Discount implements Serializable
@@ -36,21 +37,37 @@
         public static final String PROP_START_DATE = "StartDate";
         public static final String PROP_END_DATE = "EndDate";
         public static final String PROP_COUPON_CODE = "CouponCode";
-        public static final String PROP_STATUS = "Status";
+        public static final String PROP_DISCOUNT_STATUS = "DiscountStatus";
         public static final String PROP_ASK_COUPON_CODE = "AskCouponCode";
         public static final String PROP_USE_PERCENTAGE = "UsePercentage";
         
 
         private Integer discountId;
+                
         private String discountName;
+                
         private Double discountAmount;
+                
         private Double discountPercent;
+                
         private Date startDate;
+                
         private Date endDate;
+                
         private String couponCode;
-        private Integer status;
-        private Boolean askCouponCode;
-        private Boolean usePercentage;
+                
+        private Integer discountStatus;
+                
+        private Integer askCouponCode;
+                
+        private Integer usePercentage;
+                
+                 
+        ArrayList<Category> categoryList; 
+        ArrayList<CustomerOrder> customerOrderList; 
+        ArrayList<ItemDiscount> itemDiscountList; 
+        ArrayList<UserGroup> userGroupList; 
+        
         
 
         public Discount()
@@ -62,12 +79,18 @@
        this.startDate = null; 
        this.endDate = null; 
        this.couponCode = ""; 
-       this.status = 0; 
-       this.askCouponCode = null; 
-       this.usePercentage = null; 
-        }
+       this.discountStatus = 0; 
+       this.askCouponCode = 0; 
+       this.usePercentage = 0; 
         
-        public Discount(Integer DiscountId, String DiscountName, Double DiscountAmount, Double DiscountPercent, Date StartDate, Date EndDate, String CouponCode, Integer Status, Boolean AskCouponCode, Boolean UsePercentage)
+       categoryList = null; 
+        customerOrderList = null; 
+        itemDiscountList = null; 
+        userGroupList = null; 
+        
+       }
+        
+        public Discount(Integer DiscountId, String DiscountName, Double DiscountAmount, Double DiscountPercent, Date StartDate, Date EndDate, String CouponCode, Integer DiscountStatus, Integer AskCouponCode, Integer UsePercentage)
         {
             this.discountId = DiscountId;
        this.discountName = DiscountName;
@@ -76,10 +99,16 @@
        this.startDate = StartDate;
        this.endDate = EndDate;
        this.couponCode = CouponCode;
-       this.status = Status;
+       this.discountStatus = DiscountStatus;
        this.askCouponCode = AskCouponCode;
        this.usePercentage = UsePercentage;
-        } 
+              
+       categoryList = null; 
+        customerOrderList = null; 
+        itemDiscountList = null; 
+        userGroupList = null; 
+        
+       } 
         
              
         
@@ -92,6 +121,8 @@
             {
                 this.discountId = DiscountId;
             }
+            
+            
         
             public String getDiscountName()
             {
@@ -102,6 +133,8 @@
             {
                 this.discountName = DiscountName;
             }
+            
+            
         
             public Double getDiscountAmount()
             {
@@ -112,6 +145,8 @@
             {
                 this.discountAmount = DiscountAmount;
             }
+            
+            
         
             public Double getDiscountPercent()
             {
@@ -122,6 +157,8 @@
             {
                 this.discountPercent = DiscountPercent;
             }
+            
+            
         
             public Date getStartDate()
             {
@@ -132,6 +169,8 @@
             {
                 this.startDate = StartDate;
             }
+            
+            
         
             public Date getEndDate()
             {
@@ -142,6 +181,8 @@
             {
                 this.endDate = EndDate;
             }
+            
+            
         
             public String getCouponCode()
             {
@@ -152,37 +193,87 @@
             {
                 this.couponCode = CouponCode;
             }
+            
+            
         
-            public Integer getStatus()
+            public Integer getDiscountStatus()
             {
-                return this.status;
+                return this.discountStatus;
             }
             
-            public void setStatus(Integer Status)
+            public void setDiscountStatus(Integer DiscountStatus)
             {
-                this.status = Status;
+                this.discountStatus = DiscountStatus;
             }
+            
+            
         
-            public Boolean getAskCouponCode()
+            public Integer getAskCouponCode()
             {
                 return this.askCouponCode;
             }
             
-            public void setAskCouponCode(Boolean AskCouponCode)
+            public void setAskCouponCode(Integer AskCouponCode)
             {
                 this.askCouponCode = AskCouponCode;
             }
+            
+            
         
-            public Boolean getUsePercentage()
+            public Integer getUsePercentage()
             {
                 return this.usePercentage;
             }
             
-            public void setUsePercentage(Boolean UsePercentage)
+            public void setUsePercentage(Integer UsePercentage)
             {
                 this.usePercentage = UsePercentage;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<Category> getCategoryList()
+            {
+                return this.categoryList;
+            }
+            
+            public void setCategoryList(ArrayList<Category> categoryList)
+            {
+                this.categoryList = categoryList;
+            }
+        
+            public ArrayList<CustomerOrder> getCustomerOrderList()
+            {
+                return this.customerOrderList;
+            }
+            
+            public void setCustomerOrderList(ArrayList<CustomerOrder> customerOrderList)
+            {
+                this.customerOrderList = customerOrderList;
+            }
+        
+            public ArrayList<ItemDiscount> getItemDiscountList()
+            {
+                return this.itemDiscountList;
+            }
+            
+            public void setItemDiscountList(ArrayList<ItemDiscount> itemDiscountList)
+            {
+                this.itemDiscountList = itemDiscountList;
+            }
+        
+            public ArrayList<UserGroup> getUserGroupList()
+            {
+                return this.userGroupList;
+            }
+            
+            public void setUserGroupList(ArrayList<UserGroup> userGroupList)
+            {
+                this.userGroupList = userGroupList;
+            }
+        
             
     }
 

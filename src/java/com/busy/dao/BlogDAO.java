@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Blog;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -139,6 +148,93 @@
             }
             return blog;
         }
+        
+        public static ArrayList<Blog> getAllBlogWithRelatedInfo()
+        {
+            ArrayList<Blog> blogList = new ArrayList<Blog>();
+            try
+            {
+                getAllRecordsByTableName("blog");
+                while (rs.next())
+                {
+                    blogList.add(processBlog(rs));
+                }
+
+                
+                    for(Blog blog : blogList)
+                    {
+                        
+                            getRecordById("BlogType", blog.getBlogTypeId().toString());
+                            blog.setBlogType(BlogTypeDAO.processBlogType(rs));               
+                        
+                            getRecordById("KnowledgeBase", blog.getKnowledgeBaseId().toString());
+                            blog.setKnowledgeBase(KnowledgeBaseDAO.processKnowledgeBase(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllBlogWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return blogList;
+        }
+        
+        
+        public static Blog getRelatedInfo(Blog blog)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("BlogType", blog.getBlogTypeId().toString());
+                            blog.setBlogType(BlogTypeDAO.processBlogType(rs));               
+                        
+                            getRecordById("KnowledgeBase", blog.getKnowledgeBaseId().toString());
+                            blog.setKnowledgeBase(KnowledgeBaseDAO.processKnowledgeBase(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return blog;
+        }
+        
+        public static Blog getAllRelatedObjects(Blog blog)
+        {           
+            blog.setBlogPostList(BlogPostDAO.getAllBlogPostByColumn("BlogId", blog.getBlogId().toString()));
+blog.setUserServiceList(UserServiceDAO.getAllUserServiceByColumn("BlogId", blog.getBlogId().toString()));
+             
+            return blog;
+        }
+        
+        
+                    
+        public static Blog getRelatedBlogPostList(Blog blog)
+        {           
+            blog.setBlogPostList(BlogPostDAO.getAllBlogPostByColumn("BlogId", blog.getBlogId().toString()));
+            return blog;
+        }        
+                    
+        public static Blog getRelatedUserServiceList(Blog blog)
+        {           
+            blog.setUserServiceList(UserServiceDAO.getAllUserServiceByColumn("BlogId", blog.getBlogId().toString()));
+            return blog;
+        }        
+        
                 
         public static ArrayList<Blog> getBlogPaged(int limit, int offset)
         {

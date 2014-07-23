@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemAttributeType implements Serializable
@@ -35,8 +36,14 @@
         
 
         private Integer itemAttributeTypeId;
+                
         private String attributeName;
+                
         private String description;
+                
+                 
+        ArrayList<ItemAttribute> itemAttributeList; 
+        
         
 
         public ItemAttributeType()
@@ -44,14 +51,20 @@
             this.itemAttributeTypeId = 0; 
        this.attributeName = ""; 
        this.description = ""; 
-        }
+        
+       itemAttributeList = null; 
+        
+       }
         
         public ItemAttributeType(Integer ItemAttributeTypeId, String AttributeName, String Description)
         {
             this.itemAttributeTypeId = ItemAttributeTypeId;
        this.attributeName = AttributeName;
        this.description = Description;
-        } 
+              
+       itemAttributeList = null; 
+        
+       } 
         
              
         
@@ -64,6 +77,8 @@
             {
                 this.itemAttributeTypeId = ItemAttributeTypeId;
             }
+            
+            
         
             public String getAttributeName()
             {
@@ -74,6 +89,8 @@
             {
                 this.attributeName = AttributeName;
             }
+            
+            
         
             public String getDescription()
             {
@@ -84,7 +101,21 @@
             {
                 this.description = Description;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<ItemAttribute> getItemAttributeList()
+            {
+                return this.itemAttributeList;
+            }
+            
+            public void setItemAttributeList(ArrayList<ItemAttribute> itemAttributeList)
+            {
+                this.itemAttributeList = itemAttributeList;
+            }
+        
             
     }
 

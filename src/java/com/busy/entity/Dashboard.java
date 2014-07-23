@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Dashboard implements Serializable
@@ -47,20 +48,37 @@
         
 
         private Integer dashboardId;
+                
         private Integer userCount;
+                
         private Integer blogPostCount;
+                
         private Integer itemCount;
+                
         private Integer orderCount;
+                
         private Integer siteFileCount;
+                
         private Integer imageCount;
+                
         private Integer blogCount;
+                
         private Integer commentCount;
+                
         private Integer pageCount;
+                
         private Integer formCount;
+                
         private Integer sliderCount;
+                
         private Integer itemBrandCount;
+                
         private Integer categoryCount;
+                
         private Integer itemOptionCount;
+                
+                 
+        
         
 
         public Dashboard()
@@ -80,7 +98,9 @@
        this.itemBrandCount = 0; 
        this.categoryCount = 0; 
        this.itemOptionCount = 0; 
-        }
+        
+       
+       }
         
         public Dashboard(Integer DashboardId, Integer UserCount, Integer BlogPostCount, Integer ItemCount, Integer OrderCount, Integer SiteFileCount, Integer ImageCount, Integer BlogCount, Integer CommentCount, Integer PageCount, Integer FormCount, Integer SliderCount, Integer ItemBrandCount, Integer CategoryCount, Integer ItemOptionCount)
         {
@@ -99,7 +119,9 @@
        this.itemBrandCount = ItemBrandCount;
        this.categoryCount = CategoryCount;
        this.itemOptionCount = ItemOptionCount;
-        } 
+              
+       
+       } 
         
              
         
@@ -112,6 +134,8 @@
             {
                 this.dashboardId = DashboardId;
             }
+            
+            
         
             public Integer getUserCount()
             {
@@ -122,6 +146,8 @@
             {
                 this.userCount = UserCount;
             }
+            
+            
         
             public Integer getBlogPostCount()
             {
@@ -132,6 +158,8 @@
             {
                 this.blogPostCount = BlogPostCount;
             }
+            
+            
         
             public Integer getItemCount()
             {
@@ -142,6 +170,8 @@
             {
                 this.itemCount = ItemCount;
             }
+            
+            
         
             public Integer getOrderCount()
             {
@@ -152,6 +182,8 @@
             {
                 this.orderCount = OrderCount;
             }
+            
+            
         
             public Integer getSiteFileCount()
             {
@@ -162,6 +194,8 @@
             {
                 this.siteFileCount = SiteFileCount;
             }
+            
+            
         
             public Integer getImageCount()
             {
@@ -172,6 +206,8 @@
             {
                 this.imageCount = ImageCount;
             }
+            
+            
         
             public Integer getBlogCount()
             {
@@ -182,6 +218,8 @@
             {
                 this.blogCount = BlogCount;
             }
+            
+            
         
             public Integer getCommentCount()
             {
@@ -192,6 +230,8 @@
             {
                 this.commentCount = CommentCount;
             }
+            
+            
         
             public Integer getPageCount()
             {
@@ -202,6 +242,8 @@
             {
                 this.pageCount = PageCount;
             }
+            
+            
         
             public Integer getFormCount()
             {
@@ -212,6 +254,8 @@
             {
                 this.formCount = FormCount;
             }
+            
+            
         
             public Integer getSliderCount()
             {
@@ -222,6 +266,8 @@
             {
                 this.sliderCount = SliderCount;
             }
+            
+            
         
             public Integer getItemBrandCount()
             {
@@ -232,6 +278,8 @@
             {
                 this.itemBrandCount = ItemBrandCount;
             }
+            
+            
         
             public Integer getCategoryCount()
             {
@@ -242,6 +290,8 @@
             {
                 this.categoryCount = CategoryCount;
             }
+            
+            
         
             public Integer getItemOptionCount()
             {
@@ -252,7 +302,11 @@
             {
                 this.itemOptionCount = ItemOptionCount;
             }
-           
+            
+            
+         
+        
+        
             
     }
 

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class CustomerOrder implements Serializable
@@ -37,10 +38,18 @@
         
 
         private Integer customerOrderId;
+                
         private Integer customerId;
+        private Customer customer;        
         private Integer orderId;
+        private Order order;        
         private Integer discountId;
+        private Discount discount;        
         private String customerIp;
+                
+                 
+        ArrayList<OrderItem> orderItemList; 
+        
         
 
         public CustomerOrder()
@@ -50,7 +59,10 @@
        this.orderId = 0; 
        this.discountId = 0; 
        this.customerIp = ""; 
-        }
+        
+       orderItemList = null; 
+        
+       }
         
         public CustomerOrder(Integer CustomerOrderId, Integer CustomerId, Integer OrderId, Integer DiscountId, String CustomerIp)
         {
@@ -59,7 +71,10 @@
        this.orderId = OrderId;
        this.discountId = DiscountId;
        this.customerIp = CustomerIp;
-        } 
+              
+       orderItemList = null; 
+        
+       } 
         
              
         
@@ -72,6 +87,8 @@
             {
                 this.customerOrderId = CustomerOrderId;
             }
+            
+            
         
             public Integer getCustomerId()
             {
@@ -82,6 +99,20 @@
             {
                 this.customerId = CustomerId;
             }
+            
+            
+                   
+            public Customer getCustomer()
+                {
+                    return this.customer;
+                }
+
+                public void setCustomer(Customer customer)
+                {
+                    this.customer = customer;
+                }
+                   
+            
         
             public Integer getOrderId()
             {
@@ -92,6 +123,20 @@
             {
                 this.orderId = OrderId;
             }
+            
+            
+                   
+            public Order getOrder()
+                {
+                    return this.order;
+                }
+
+                public void setOrder(Order order)
+                {
+                    this.order = order;
+                }
+                   
+            
         
             public Integer getDiscountId()
             {
@@ -102,6 +147,20 @@
             {
                 this.discountId = DiscountId;
             }
+            
+            
+                   
+            public Discount getDiscount()
+                {
+                    return this.discount;
+                }
+
+                public void setDiscount(Discount discount)
+                {
+                    this.discount = discount;
+                }
+                   
+            
         
             public String getCustomerIp()
             {
@@ -112,7 +171,21 @@
             {
                 this.customerIp = CustomerIp;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<OrderItem> getOrderItemList()
+            {
+                return this.orderItemList;
+            }
+            
+            public void setOrderItemList(ArrayList<OrderItem> orderItemList)
+            {
+                this.orderItemList = orderItemList;
+            }
+        
             
     }
 

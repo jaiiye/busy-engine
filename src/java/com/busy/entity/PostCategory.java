@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class PostCategory implements Serializable
@@ -34,20 +35,31 @@
         
 
         private Integer postCategoryId;
+                
         private String name;
+                
+                 
+        ArrayList<BlogPostCategory> blogPostCategoryList; 
+        
         
 
         public PostCategory()
         {
             this.postCategoryId = 0; 
        this.name = ""; 
-        }
+        
+       blogPostCategoryList = null; 
+        
+       }
         
         public PostCategory(Integer PostCategoryId, String Name)
         {
             this.postCategoryId = PostCategoryId;
        this.name = Name;
-        } 
+              
+       blogPostCategoryList = null; 
+        
+       } 
         
              
         
@@ -60,6 +72,8 @@
             {
                 this.postCategoryId = PostCategoryId;
             }
+            
+            
         
             public String getName()
             {
@@ -70,7 +84,21 @@
             {
                 this.name = Name;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<BlogPostCategory> getBlogPostCategoryList()
+            {
+                return this.blogPostCategoryList;
+            }
+            
+            public void setBlogPostCategoryList(ArrayList<BlogPostCategory> blogPostCategoryList)
+            {
+                this.blogPostCategoryList = blogPostCategoryList;
+            }
+        
             
     }
 

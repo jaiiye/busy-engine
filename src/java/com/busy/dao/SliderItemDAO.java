@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.SliderItem;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -147,6 +156,73 @@
             }
             return slider_item;
         }
+        
+        public static ArrayList<SliderItem> getAllSliderItemWithRelatedInfo()
+        {
+            ArrayList<SliderItem> slider_itemList = new ArrayList<SliderItem>();
+            try
+            {
+                getAllRecordsByTableName("slider_item");
+                while (rs.next())
+                {
+                    slider_itemList.add(processSliderItem(rs));
+                }
+
+                
+                    for(SliderItem slider_item : slider_itemList)
+                    {
+                        
+                            getRecordById("Slider", slider_item.getSliderId().toString());
+                            slider_item.setSlider(SliderDAO.processSlider(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllSliderItemWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return slider_itemList;
+        }
+        
+        
+        public static SliderItem getRelatedInfo(SliderItem slider_item)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Slider", slider_item.getSliderId().toString());
+                            slider_item.setSlider(SliderDAO.processSlider(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return slider_item;
+        }
+        
+        public static SliderItem getAllRelatedObjects(SliderItem slider_item)
+        {           
+                         
+            return slider_item;
+        }
+        
+        
+        
                 
         public static ArrayList<SliderItem> getSliderItemPaged(int limit, int offset)
         {

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class TextString implements Serializable
@@ -34,20 +35,34 @@
         
 
         private Integer textStringId;
+                
         private String key;
+                
+                 
+        ArrayList<LocalizedString> localizedStringList; 
+        ArrayList<TextStringLocal> textStringLocalList; 
+        
         
 
         public TextString()
         {
             this.textStringId = 0; 
        this.key = ""; 
-        }
+        
+       localizedStringList = null; 
+        textStringLocalList = null; 
+        
+       }
         
         public TextString(Integer TextStringId, String Key)
         {
             this.textStringId = TextStringId;
        this.key = Key;
-        } 
+              
+       localizedStringList = null; 
+        textStringLocalList = null; 
+        
+       } 
         
              
         
@@ -60,6 +75,8 @@
             {
                 this.textStringId = TextStringId;
             }
+            
+            
         
             public String getKey()
             {
@@ -70,7 +87,31 @@
             {
                 this.key = Key;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<LocalizedString> getLocalizedStringList()
+            {
+                return this.localizedStringList;
+            }
+            
+            public void setLocalizedStringList(ArrayList<LocalizedString> localizedStringList)
+            {
+                this.localizedStringList = localizedStringList;
+            }
+        
+            public ArrayList<TextStringLocal> getTextStringLocalList()
+            {
+                return this.textStringLocalList;
+            }
+            
+            public void setTextStringLocalList(ArrayList<TextStringLocal> textStringLocalList)
+            {
+                this.textStringLocalList = textStringLocalList;
+            }
+        
             
     }
 

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class SiteFile implements Serializable
@@ -36,9 +37,16 @@
         
 
         private Integer siteFileId;
+                
         private String fileName;
+                
         private String description;
+                
         private String label;
+                
+                 
+        ArrayList<FileFolder> fileFolderList; 
+        
         
 
         public SiteFile()
@@ -47,7 +55,10 @@
        this.fileName = ""; 
        this.description = ""; 
        this.label = ""; 
-        }
+        
+       fileFolderList = null; 
+        
+       }
         
         public SiteFile(Integer SiteFileId, String FileName, String Description, String Label)
         {
@@ -55,7 +66,10 @@
        this.fileName = FileName;
        this.description = Description;
        this.label = Label;
-        } 
+              
+       fileFolderList = null; 
+        
+       } 
         
              
         
@@ -68,6 +82,8 @@
             {
                 this.siteFileId = SiteFileId;
             }
+            
+            
         
             public String getFileName()
             {
@@ -78,6 +94,8 @@
             {
                 this.fileName = FileName;
             }
+            
+            
         
             public String getDescription()
             {
@@ -88,6 +106,8 @@
             {
                 this.description = Description;
             }
+            
+            
         
             public String getLabel()
             {
@@ -98,7 +118,21 @@
             {
                 this.label = Label;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<FileFolder> getFileFolderList()
+            {
+                return this.fileFolderList;
+            }
+            
+            public void setFileFolderList(ArrayList<FileFolder> fileFolderList)
+            {
+                this.fileFolderList = fileFolderList;
+            }
+        
             
     }
 

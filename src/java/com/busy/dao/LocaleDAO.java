@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Locale;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,48 @@
             }
             return locale;
         }
+        
+        public static ArrayList<Locale> getAllLocaleWithRelatedInfo()
+        {
+            ArrayList<Locale> localeList = new ArrayList<Locale>();
+            try
+            {
+                getAllRecordsByTableName("locale");
+                while (rs.next())
+                {
+                    localeList.add(processLocale(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllLocaleWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return localeList;
+        }
+        
+        
+        public static Locale getRelatedInfo(Locale locale)
+        {
+           
+                  
+            
+            return locale;
+        }
+        
+        public static Locale getAllRelatedObjects(Locale locale)
+        {           
+                         
+            return locale;
+        }
+        
+        
+        
                 
         public static ArrayList<Locale> getLocalePaged(int limit, int offset)
         {

@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ItemAttributeType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,55 @@
             }
             return item_attribute_type;
         }
+        
+        public static ArrayList<ItemAttributeType> getAllItemAttributeTypeWithRelatedInfo()
+        {
+            ArrayList<ItemAttributeType> item_attribute_typeList = new ArrayList<ItemAttributeType>();
+            try
+            {
+                getAllRecordsByTableName("item_attribute_type");
+                while (rs.next())
+                {
+                    item_attribute_typeList.add(processItemAttributeType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemAttributeTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return item_attribute_typeList;
+        }
+        
+        
+        public static ItemAttributeType getRelatedInfo(ItemAttributeType item_attribute_type)
+        {
+           
+                  
+            
+            return item_attribute_type;
+        }
+        
+        public static ItemAttributeType getAllRelatedObjects(ItemAttributeType item_attribute_type)
+        {           
+            item_attribute_type.setItemAttributeList(ItemAttributeDAO.getAllItemAttributeByColumn("ItemAttributeTypeId", item_attribute_type.getItemAttributeTypeId().toString()));
+             
+            return item_attribute_type;
+        }
+        
+        
+                    
+        public static ItemAttributeType getRelatedItemAttributeList(ItemAttributeType item_attribute_type)
+        {           
+            item_attribute_type.setItemAttributeList(ItemAttributeDAO.getAllItemAttributeByColumn("ItemAttributeTypeId", item_attribute_type.getItemAttributeTypeId().toString()));
+            return item_attribute_type;
+        }        
+        
                 
         public static ArrayList<ItemAttributeType> getItemAttributeTypePaged(int limit, int offset)
         {

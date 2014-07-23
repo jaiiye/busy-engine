@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Discount;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Discount.PROP_DISCOUNT_ID) || column.equals(Discount.PROP_DISCOUNT_NAME) || column.equals(Discount.PROP_DISCOUNT_AMOUNT) || column.equals(Discount.PROP_DISCOUNT_PERCENT) || column.equals(Discount.PROP_START_DATE) || column.equals(Discount.PROP_END_DATE) || column.equals(Discount.PROP_COUPON_CODE) || column.equals(Discount.PROP_STATUS) || column.equals(Discount.PROP_ASK_COUPON_CODE) || column.equals(Discount.PROP_USE_PERCENTAGE) )
+            if(column.equals(Discount.PROP_DISCOUNT_ID) || column.equals(Discount.PROP_DISCOUNT_NAME) || column.equals(Discount.PROP_DISCOUNT_AMOUNT) || column.equals(Discount.PROP_DISCOUNT_PERCENT) || column.equals(Discount.PROP_START_DATE) || column.equals(Discount.PROP_END_DATE) || column.equals(Discount.PROP_COUPON_CODE) || column.equals(Discount.PROP_DISCOUNT_STATUS) || column.equals(Discount.PROP_ASK_COUPON_CODE) || column.equals(Discount.PROP_USE_PERCENTAGE) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Discount.PROP_DISCOUNT_ID) || column.equals(Discount.PROP_DISCOUNT_AMOUNT) || column.equals(Discount.PROP_DISCOUNT_PERCENT) || column.equals(Discount.PROP_STATUS) || column.equals(Discount.PROP_ASK_COUPON_CODE) || column.equals(Discount.PROP_USE_PERCENTAGE) )
+            if (column.equals(Discount.PROP_DISCOUNT_ID) || column.equals(Discount.PROP_DISCOUNT_AMOUNT) || column.equals(Discount.PROP_DISCOUNT_PERCENT) || column.equals(Discount.PROP_DISCOUNT_STATUS) || column.equals(Discount.PROP_ASK_COUPON_CODE) || column.equals(Discount.PROP_USE_PERCENTAGE) )
             {
                 return true;
             }        
@@ -75,10 +84,10 @@
                                
         public static Discount processDiscount(ResultSet rs) throws SQLException
         {        
-            return new Discount(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getDouble(4), rs.getDate(5), rs.getDate(6), rs.getString(7), rs.getInt(8), rs.getBoolean(9), rs.getBoolean(10));
+            return new Discount(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getDouble(4), rs.getDate(5), rs.getDate(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getInt(10));
         }
         
-        public static int addDiscount(String DiscountName, Double DiscountAmount, Double DiscountPercent, Date StartDate, Date EndDate, String CouponCode, Integer Status, Boolean AskCouponCode, Boolean UsePercentage)
+        public static int addDiscount(String DiscountName, Double DiscountAmount, Double DiscountPercent, Date StartDate, Date EndDate, String CouponCode, Integer DiscountStatus, Integer AskCouponCode, Integer UsePercentage)
         {   
             int id = 0;
             try
@@ -95,16 +104,16 @@
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO discount(DiscountName,DiscountAmount,DiscountPercent,StartDate,EndDate,CouponCode,Status,AskCouponCode,UsePercentage) VALUES (?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO discount(DiscountName,DiscountAmount,DiscountPercent,StartDate,EndDate,CouponCode,DiscountStatus,AskCouponCode,UsePercentage) VALUES (?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, DiscountName);
                 preparedStatement.setDouble(2, DiscountAmount);
                 preparedStatement.setDouble(3, DiscountPercent);
                 preparedStatement.setDate(4, new java.sql.Date(StartDate.getTime()));
                 preparedStatement.setDate(5, new java.sql.Date(EndDate.getTime()));
                 preparedStatement.setString(6, CouponCode);
-                preparedStatement.setInt(7, Status);
-                preparedStatement.setBoolean(8, AskCouponCode);
-                preparedStatement.setBoolean(9, UsePercentage);
+                preparedStatement.setInt(7, DiscountStatus);
+                preparedStatement.setInt(8, AskCouponCode);
+                preparedStatement.setInt(9, UsePercentage);
                 
                 preparedStatement.executeUpdate();
             
@@ -151,6 +160,76 @@
             }
             return discount;
         }
+        
+        public static ArrayList<Discount> getAllDiscountWithRelatedInfo()
+        {
+            ArrayList<Discount> discountList = new ArrayList<Discount>();
+            try
+            {
+                getAllRecordsByTableName("discount");
+                while (rs.next())
+                {
+                    discountList.add(processDiscount(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllDiscountWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return discountList;
+        }
+        
+        
+        public static Discount getRelatedInfo(Discount discount)
+        {
+           
+                  
+            
+            return discount;
+        }
+        
+        public static Discount getAllRelatedObjects(Discount discount)
+        {           
+            discount.setCategoryList(CategoryDAO.getAllCategoryByColumn("DiscountId", discount.getDiscountId().toString()));
+discount.setCustomerOrderList(CustomerOrderDAO.getAllCustomerOrderByColumn("DiscountId", discount.getDiscountId().toString()));
+discount.setItemDiscountList(ItemDiscountDAO.getAllItemDiscountByColumn("DiscountId", discount.getDiscountId().toString()));
+discount.setUserGroupList(UserGroupDAO.getAllUserGroupByColumn("DiscountId", discount.getDiscountId().toString()));
+             
+            return discount;
+        }
+        
+        
+                    
+        public static Discount getRelatedCategoryList(Discount discount)
+        {           
+            discount.setCategoryList(CategoryDAO.getAllCategoryByColumn("DiscountId", discount.getDiscountId().toString()));
+            return discount;
+        }        
+                    
+        public static Discount getRelatedCustomerOrderList(Discount discount)
+        {           
+            discount.setCustomerOrderList(CustomerOrderDAO.getAllCustomerOrderByColumn("DiscountId", discount.getDiscountId().toString()));
+            return discount;
+        }        
+                    
+        public static Discount getRelatedItemDiscountList(Discount discount)
+        {           
+            discount.setItemDiscountList(ItemDiscountDAO.getAllItemDiscountByColumn("DiscountId", discount.getDiscountId().toString()));
+            return discount;
+        }        
+                    
+        public static Discount getRelatedUserGroupList(Discount discount)
+        {           
+            discount.setUserGroupList(UserGroupDAO.getAllUserGroupByColumn("DiscountId", discount.getDiscountId().toString()));
+            return discount;
+        }        
+        
                 
         public static ArrayList<Discount> getDiscountPaged(int limit, int offset)
         {
@@ -218,7 +297,7 @@
             return discount;
         }                
                 
-        public static void updateDiscount(Integer DiscountId,String DiscountName,Double DiscountAmount,Double DiscountPercent,Date StartDate,Date EndDate,String CouponCode,Integer Status,Boolean AskCouponCode,Boolean UsePercentage)
+        public static void updateDiscount(Integer DiscountId,String DiscountName,Double DiscountAmount,Double DiscountPercent,Date StartDate,Date EndDate,String CouponCode,Integer DiscountStatus,Integer AskCouponCode,Integer UsePercentage)
         {  
             try
             {   
@@ -234,16 +313,16 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE discount SET DiscountName=?,DiscountAmount=?,DiscountPercent=?,StartDate=?,EndDate=?,CouponCode=?,Status=?,AskCouponCode=?,UsePercentage=? WHERE DiscountId=?;");                    
+                prepareStatement("UPDATE discount SET DiscountName=?,DiscountAmount=?,DiscountPercent=?,StartDate=?,EndDate=?,CouponCode=?,DiscountStatus=?,AskCouponCode=?,UsePercentage=? WHERE DiscountId=?;");                    
                 preparedStatement.setString(1, DiscountName);
                 preparedStatement.setDouble(2, DiscountAmount);
                 preparedStatement.setDouble(3, DiscountPercent);
                 preparedStatement.setDate(4, new java.sql.Date(StartDate.getTime()));
                 preparedStatement.setDate(5, new java.sql.Date(EndDate.getTime()));
                 preparedStatement.setString(6, CouponCode);
-                preparedStatement.setInt(7, Status);
-                preparedStatement.setBoolean(8, AskCouponCode);
-                preparedStatement.setBoolean(9, UsePercentage);
+                preparedStatement.setInt(7, DiscountStatus);
+                preparedStatement.setInt(8, AskCouponCode);
+                preparedStatement.setInt(9, UsePercentage);
                 preparedStatement.setInt(10, DiscountId);
                 preparedStatement.executeUpdate();
             }

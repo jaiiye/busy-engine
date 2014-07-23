@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class UserGroup implements Serializable
@@ -36,9 +37,16 @@
         
 
         private Integer userGroupId;
+                
         private String groupName;
+                
         private Integer siteId;
+        private Site site;        
         private Integer discountId;
+        private Discount discount;        
+                 
+        ArrayList<User> userList; 
+        
         
 
         public UserGroup()
@@ -47,7 +55,10 @@
        this.groupName = ""; 
        this.siteId = 0; 
        this.discountId = 0; 
-        }
+        
+       userList = null; 
+        
+       }
         
         public UserGroup(Integer UserGroupId, String GroupName, Integer SiteId, Integer DiscountId)
         {
@@ -55,7 +66,10 @@
        this.groupName = GroupName;
        this.siteId = SiteId;
        this.discountId = DiscountId;
-        } 
+              
+       userList = null; 
+        
+       } 
         
              
         
@@ -68,6 +82,8 @@
             {
                 this.userGroupId = UserGroupId;
             }
+            
+            
         
             public String getGroupName()
             {
@@ -78,6 +94,8 @@
             {
                 this.groupName = GroupName;
             }
+            
+            
         
             public Integer getSiteId()
             {
@@ -88,6 +106,20 @@
             {
                 this.siteId = SiteId;
             }
+            
+            
+                   
+            public Site getSite()
+                {
+                    return this.site;
+                }
+
+                public void setSite(Site site)
+                {
+                    this.site = site;
+                }
+                   
+            
         
             public Integer getDiscountId()
             {
@@ -98,7 +130,33 @@
             {
                 this.discountId = DiscountId;
             }
-           
+            
+            
+                   
+            public Discount getDiscount()
+                {
+                    return this.discount;
+                }
+
+                public void setDiscount(Discount discount)
+                {
+                    this.discount = discount;
+                }
+                   
+            
+         
+        
+        
+            public ArrayList<User> getUserList()
+            {
+                return this.userList;
+            }
+            
+            public void setUserList(ArrayList<User> userList)
+            {
+                this.userList = userList;
+            }
+        
             
     }
 

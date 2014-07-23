@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class SliderItem implements Serializable
@@ -40,13 +41,23 @@
         
 
         private Integer sliderItemId;
+                
         private String title;
+                
         private String description;
+                
         private String url;
+                
         private String imageName;
+                
         private String alternateText;
+                
         private Integer rank;
+                
         private Integer sliderId;
+        private Slider slider;        
+                 
+        
         
 
         public SliderItem()
@@ -59,7 +70,9 @@
        this.alternateText = ""; 
        this.rank = 0; 
        this.sliderId = 0; 
-        }
+        
+       
+       }
         
         public SliderItem(Integer SliderItemId, String Title, String Description, String Url, String ImageName, String AlternateText, Integer Rank, Integer SliderId)
         {
@@ -71,7 +84,9 @@
        this.alternateText = AlternateText;
        this.rank = Rank;
        this.sliderId = SliderId;
-        } 
+              
+       
+       } 
         
              
         
@@ -84,6 +99,8 @@
             {
                 this.sliderItemId = SliderItemId;
             }
+            
+            
         
             public String getTitle()
             {
@@ -94,6 +111,8 @@
             {
                 this.title = Title;
             }
+            
+            
         
             public String getDescription()
             {
@@ -104,6 +123,8 @@
             {
                 this.description = Description;
             }
+            
+            
         
             public String getUrl()
             {
@@ -114,6 +135,8 @@
             {
                 this.url = Url;
             }
+            
+            
         
             public String getImageName()
             {
@@ -124,6 +147,8 @@
             {
                 this.imageName = ImageName;
             }
+            
+            
         
             public String getAlternateText()
             {
@@ -134,6 +159,8 @@
             {
                 this.alternateText = AlternateText;
             }
+            
+            
         
             public Integer getRank()
             {
@@ -144,6 +171,8 @@
             {
                 this.rank = Rank;
             }
+            
+            
         
             public Integer getSliderId()
             {
@@ -154,7 +183,23 @@
             {
                 this.sliderId = SliderId;
             }
-           
+            
+            
+                   
+            public Slider getSlider()
+                {
+                    return this.slider;
+                }
+
+                public void setSlider(Slider slider)
+                {
+                    this.slider = slider;
+                }
+                   
+            
+         
+        
+        
             
     }
 

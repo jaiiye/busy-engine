@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ServiceType implements Serializable
@@ -35,8 +36,14 @@
         
 
         private Integer serviceTypeId;
+                
         private String typeName;
+                
         private String desciption;
+                
+                 
+        ArrayList<Service> serviceList; 
+        
         
 
         public ServiceType()
@@ -44,14 +51,20 @@
             this.serviceTypeId = 0; 
        this.typeName = ""; 
        this.desciption = ""; 
-        }
+        
+       serviceList = null; 
+        
+       }
         
         public ServiceType(Integer ServiceTypeId, String TypeName, String Desciption)
         {
             this.serviceTypeId = ServiceTypeId;
        this.typeName = TypeName;
        this.desciption = Desciption;
-        } 
+              
+       serviceList = null; 
+        
+       } 
         
              
         
@@ -64,6 +77,8 @@
             {
                 this.serviceTypeId = ServiceTypeId;
             }
+            
+            
         
             public String getTypeName()
             {
@@ -74,6 +89,8 @@
             {
                 this.typeName = TypeName;
             }
+            
+            
         
             public String getDesciption()
             {
@@ -84,7 +101,21 @@
             {
                 this.desciption = Desciption;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<Service> getServiceList()
+            {
+                return this.serviceList;
+            }
+            
+            public void setServiceList(ArrayList<Service> serviceList)
+            {
+                this.serviceList = serviceList;
+            }
+        
             
     }
 

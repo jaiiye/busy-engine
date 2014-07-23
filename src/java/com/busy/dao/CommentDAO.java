@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Comment;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Comment.PROP_COMMENT_ID) || column.equals(Comment.PROP_TITLE) || column.equals(Comment.PROP_CONTENT) || column.equals(Comment.PROP_DATE) || column.equals(Comment.PROP_STATUS) || column.equals(Comment.PROP_USER_ID) || column.equals(Comment.PROP_POST_ID) || column.equals(Comment.PROP_REVIEW_ID) )
+            if(column.equals(Comment.PROP_COMMENT_ID) || column.equals(Comment.PROP_TITLE) || column.equals(Comment.PROP_CONTENT) || column.equals(Comment.PROP_DATE) || column.equals(Comment.PROP_COMMENT_STATUS) || column.equals(Comment.PROP_USER_ID) || column.equals(Comment.PROP_BLOG_POST_ID) || column.equals(Comment.PROP_ITEM_REVIEW_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Comment.PROP_COMMENT_ID) || column.equals(Comment.PROP_STATUS) || column.equals(Comment.PROP_USER_ID) || column.equals(Comment.PROP_POST_ID) || column.equals(Comment.PROP_REVIEW_ID) )
+            if (column.equals(Comment.PROP_COMMENT_ID) || column.equals(Comment.PROP_COMMENT_STATUS) || column.equals(Comment.PROP_USER_ID) || column.equals(Comment.PROP_BLOG_POST_ID) || column.equals(Comment.PROP_ITEM_REVIEW_ID) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new Comment(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getDate(4), rs.getInt(5), rs.getInt(6), rs.getInt(7), rs.getInt(8));
         }
         
-        public static int addComment(String Title, String Content, Date Date, Integer Status, Integer UserId, Integer PostId, Integer ReviewId)
+        public static int addComment(String Title, String Content, Date Date, Integer CommentStatus, Integer UserId, Integer BlogPostId, Integer ItemReviewId)
         {   
             int id = 0;
             try
@@ -93,14 +102,14 @@
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO comment(Title,Content,Date,Status,UserId,PostId,ReviewId) VALUES (?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO comment(Title,Content,Date,CommentStatus,UserId,BlogPostId,ItemReviewId) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, Title);
                 preparedStatement.setString(2, Content);
                 preparedStatement.setDate(3, new java.sql.Date(Date.getTime()));
-                preparedStatement.setInt(4, Status);
+                preparedStatement.setInt(4, CommentStatus);
                 preparedStatement.setInt(5, UserId);
-                preparedStatement.setInt(6, PostId);
-                preparedStatement.setInt(7, ReviewId);
+                preparedStatement.setInt(6, BlogPostId);
+                preparedStatement.setInt(7, ItemReviewId);
                 
                 preparedStatement.executeUpdate();
             
@@ -147,6 +156,85 @@
             }
             return comment;
         }
+        
+        public static ArrayList<Comment> getAllCommentWithRelatedInfo()
+        {
+            ArrayList<Comment> commentList = new ArrayList<Comment>();
+            try
+            {
+                getAllRecordsByTableName("comment");
+                while (rs.next())
+                {
+                    commentList.add(processComment(rs));
+                }
+
+                
+                    for(Comment comment : commentList)
+                    {
+                        
+                            getRecordById("User", comment.getUserId().toString());
+                            comment.setUser(UserDAO.processUser(rs));               
+                        
+                            getRecordById("BlogPost", comment.getBlogPostId().toString());
+                            comment.setBlogPost(BlogPostDAO.processBlogPost(rs));               
+                        
+                            getRecordById("ItemReview", comment.getItemReviewId().toString());
+                            comment.setItemReview(ItemReviewDAO.processItemReview(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllCommentWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return commentList;
+        }
+        
+        
+        public static Comment getRelatedInfo(Comment comment)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("User", comment.getUserId().toString());
+                            comment.setUser(UserDAO.processUser(rs));               
+                        
+                            getRecordById("BlogPost", comment.getBlogPostId().toString());
+                            comment.setBlogPost(BlogPostDAO.processBlogPost(rs));               
+                        
+                            getRecordById("ItemReview", comment.getItemReviewId().toString());
+                            comment.setItemReview(ItemReviewDAO.processItemReview(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return comment;
+        }
+        
+        public static Comment getAllRelatedObjects(Comment comment)
+        {           
+                         
+            return comment;
+        }
+        
+        
+        
                 
         public static ArrayList<Comment> getCommentPaged(int limit, int offset)
         {
@@ -214,7 +302,7 @@
             return comment;
         }                
                 
-        public static void updateComment(Integer CommentId,String Title,String Content,Date Date,Integer Status,Integer UserId,Integer PostId,Integer ReviewId)
+        public static void updateComment(Integer CommentId,String Title,String Content,Date Date,Integer CommentStatus,Integer UserId,Integer BlogPostId,Integer ItemReviewId)
         {  
             try
             {   
@@ -228,14 +316,14 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE comment SET Title=?,Content=?,Date=?,Status=?,UserId=?,PostId=?,ReviewId=? WHERE CommentId=?;");                    
+                prepareStatement("UPDATE comment SET Title=?,Content=?,Date=?,CommentStatus=?,UserId=?,BlogPostId=?,ItemReviewId=? WHERE CommentId=?;");                    
                 preparedStatement.setString(1, Title);
                 preparedStatement.setString(2, Content);
                 preparedStatement.setDate(3, new java.sql.Date(Date.getTime()));
-                preparedStatement.setInt(4, Status);
+                preparedStatement.setInt(4, CommentStatus);
                 preparedStatement.setInt(5, UserId);
-                preparedStatement.setInt(6, PostId);
-                preparedStatement.setInt(7, ReviewId);
+                preparedStatement.setInt(6, BlogPostId);
+                preparedStatement.setInt(7, ItemReviewId);
                 preparedStatement.setInt(8, CommentId);
                 preparedStatement.executeUpdate();
             }

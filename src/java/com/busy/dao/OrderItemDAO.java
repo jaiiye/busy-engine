@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.OrderItem;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -143,6 +152,86 @@
             }
             return order_item;
         }
+        
+        public static ArrayList<OrderItem> getAllOrderItemWithRelatedInfo()
+        {
+            ArrayList<OrderItem> order_itemList = new ArrayList<OrderItem>();
+            try
+            {
+                getAllRecordsByTableName("order_item");
+                while (rs.next())
+                {
+                    order_itemList.add(processOrderItem(rs));
+                }
+
+                
+                    for(OrderItem order_item : order_itemList)
+                    {
+                        
+                            getRecordById("CustomerOrder", order_item.getCustomerOrderId().toString());
+                            order_item.setCustomerOrder(CustomerOrderDAO.processCustomerOrder(rs));               
+                        
+                            getRecordById("Item", order_item.getItemId().toString());
+                            order_item.setItem(ItemDAO.processItem(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllOrderItemWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return order_itemList;
+        }
+        
+        
+        public static OrderItem getRelatedInfo(OrderItem order_item)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("CustomerOrder", order_item.getCustomerOrderId().toString());
+                            order_item.setCustomerOrder(CustomerOrderDAO.processCustomerOrder(rs));               
+                        
+                            getRecordById("Item", order_item.getItemId().toString());
+                            order_item.setItem(ItemDAO.processItem(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return order_item;
+        }
+        
+        public static OrderItem getAllRelatedObjects(OrderItem order_item)
+        {           
+            order_item.setReturnRequestList(ReturnRequestDAO.getAllReturnRequestByColumn("OrderItemId", order_item.getOrderItemId().toString()));
+             
+            return order_item;
+        }
+        
+        
+                    
+        public static OrderItem getRelatedReturnRequestList(OrderItem order_item)
+        {           
+            order_item.setReturnRequestList(ReturnRequestDAO.getAllReturnRequestByColumn("OrderItemId", order_item.getOrderItemId().toString()));
+            return order_item;
+        }        
+        
                 
         public static ArrayList<OrderItem> getOrderItemPaged(int limit, int offset)
         {

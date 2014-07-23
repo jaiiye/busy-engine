@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.RecurringPayment;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -143,6 +152,73 @@
             }
             return recurring_payment;
         }
+        
+        public static ArrayList<RecurringPayment> getAllRecurringPaymentWithRelatedInfo()
+        {
+            ArrayList<RecurringPayment> recurring_paymentList = new ArrayList<RecurringPayment>();
+            try
+            {
+                getAllRecordsByTableName("recurring_payment");
+                while (rs.next())
+                {
+                    recurring_paymentList.add(processRecurringPayment(rs));
+                }
+
+                
+                    for(RecurringPayment recurring_payment : recurring_paymentList)
+                    {
+                        
+                            getRecordById("Order", recurring_payment.getOrderId().toString());
+                            recurring_payment.setOrder(OrderDAO.processOrder(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllRecurringPaymentWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return recurring_paymentList;
+        }
+        
+        
+        public static RecurringPayment getRelatedInfo(RecurringPayment recurring_payment)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Order", recurring_payment.getOrderId().toString());
+                            recurring_payment.setOrder(OrderDAO.processOrder(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return recurring_payment;
+        }
+        
+        public static RecurringPayment getAllRelatedObjects(RecurringPayment recurring_payment)
+        {           
+                         
+            return recurring_payment;
+        }
+        
+        
+        
                 
         public static ArrayList<RecurringPayment> getRecurringPaymentPaged(int limit, int offset)
         {

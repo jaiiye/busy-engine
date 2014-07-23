@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ResourceType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(ResourceType.PROP_RESOURCE_TYPE_ID) || column.equals(ResourceType.PROP_TYPE_NAME) || column.equals(ResourceType.PROP_VALUE) )
+            if(column.equals(ResourceType.PROP_RESOURCE_TYPE_ID) || column.equals(ResourceType.PROP_TYPE_NAME) || column.equals(ResourceType.PROP_TYPE_VALUE) )
             {
                 return column;
             }
@@ -78,19 +87,19 @@
             return new ResourceType(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
         
-        public static int addResourceType(String TypeName, String Value)
+        public static int addResourceType(String TypeName, String TypeValue)
         {   
             int id = 0;
             try
             {
                 
                 checkColumnSize(TypeName, 45);
-                checkColumnSize(Value, 45);
+                checkColumnSize(TypeValue, 150);
                                             
                 openConnection();
-                prepareStatement("INSERT INTO resource_type(TypeName,Value) VALUES (?,?);");                    
+                prepareStatement("INSERT INTO resource_type(TypeName,TypeValue) VALUES (?,?);");                    
                 preparedStatement.setString(1, TypeName);
-                preparedStatement.setString(2, Value);
+                preparedStatement.setString(2, TypeValue);
                 
                 preparedStatement.executeUpdate();
             
@@ -137,6 +146,55 @@
             }
             return resource_type;
         }
+        
+        public static ArrayList<ResourceType> getAllResourceTypeWithRelatedInfo()
+        {
+            ArrayList<ResourceType> resource_typeList = new ArrayList<ResourceType>();
+            try
+            {
+                getAllRecordsByTableName("resource_type");
+                while (rs.next())
+                {
+                    resource_typeList.add(processResourceType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllResourceTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return resource_typeList;
+        }
+        
+        
+        public static ResourceType getRelatedInfo(ResourceType resource_type)
+        {
+           
+                  
+            
+            return resource_type;
+        }
+        
+        public static ResourceType getAllRelatedObjects(ResourceType resource_type)
+        {           
+            resource_type.setResourceUrlList(ResourceUrlDAO.getAllResourceUrlByColumn("ResourceTypeId", resource_type.getResourceTypeId().toString()));
+             
+            return resource_type;
+        }
+        
+        
+                    
+        public static ResourceType getRelatedResourceUrlList(ResourceType resource_type)
+        {           
+            resource_type.setResourceUrlList(ResourceUrlDAO.getAllResourceUrlByColumn("ResourceTypeId", resource_type.getResourceTypeId().toString()));
+            return resource_type;
+        }        
+        
                 
         public static ArrayList<ResourceType> getResourceTypePaged(int limit, int offset)
         {
@@ -204,18 +262,18 @@
             return resource_type;
         }                
                 
-        public static void updateResourceType(Integer ResourceTypeId,String TypeName,String Value)
+        public static void updateResourceType(Integer ResourceTypeId,String TypeName,String TypeValue)
         {  
             try
             {   
                 
                 checkColumnSize(TypeName, 45);
-                checkColumnSize(Value, 45);
+                checkColumnSize(TypeValue, 150);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE resource_type SET TypeName=?,Value=? WHERE ResourceTypeId=?;");                    
+                prepareStatement("UPDATE resource_type SET TypeName=?,TypeValue=? WHERE ResourceTypeId=?;");                    
                 preparedStatement.setString(1, TypeName);
-                preparedStatement.setString(2, Value);
+                preparedStatement.setString(2, TypeValue);
                 preparedStatement.setInt(3, ResourceTypeId);
                 preparedStatement.executeUpdate();
             }

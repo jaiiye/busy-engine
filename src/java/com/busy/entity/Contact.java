@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Contact implements Serializable
@@ -37,22 +38,39 @@
         public static final String PROP_PHONE = "Phone";
         public static final String PROP_FAX = "Fax";
         public static final String PROP_EMAIL = "Email";
-        public static final String PROP_STATUS = "Status";
+        public static final String PROP_CONTACT_STATUS = "ContactStatus";
         public static final String PROP_WEB_URL = "WebUrl";
         public static final String PROP_INFO = "Info";
         
 
         private Integer contactId;
+                
         private String title;
+                
         private String firstName;
+                
         private String lastName;
+                
         private String position;
+                
         private String phone;
+                
         private String fax;
+                
         private String email;
-        private Integer status;
+                
+        private Integer contactStatus;
+                
         private String webUrl;
+                
         private String info;
+                
+                 
+        ArrayList<Affiliate> affiliateList; 
+        ArrayList<Customer> customerList; 
+        ArrayList<ItemLocation> itemLocationList; 
+        ArrayList<User> userList; 
+        
         
 
         public Contact()
@@ -65,12 +83,18 @@
        this.phone = ""; 
        this.fax = ""; 
        this.email = ""; 
-       this.status = 0; 
+       this.contactStatus = 0; 
        this.webUrl = ""; 
        this.info = ""; 
-        }
         
-        public Contact(Integer ContactId, String Title, String FirstName, String LastName, String Position, String Phone, String Fax, String Email, Integer Status, String WebUrl, String Info)
+       affiliateList = null; 
+        customerList = null; 
+        itemLocationList = null; 
+        userList = null; 
+        
+       }
+        
+        public Contact(Integer ContactId, String Title, String FirstName, String LastName, String Position, String Phone, String Fax, String Email, Integer ContactStatus, String WebUrl, String Info)
         {
             this.contactId = ContactId;
        this.title = Title;
@@ -80,10 +104,16 @@
        this.phone = Phone;
        this.fax = Fax;
        this.email = Email;
-       this.status = Status;
+       this.contactStatus = ContactStatus;
        this.webUrl = WebUrl;
        this.info = Info;
-        } 
+              
+       affiliateList = null; 
+        customerList = null; 
+        itemLocationList = null; 
+        userList = null; 
+        
+       } 
         
              
         
@@ -96,6 +126,8 @@
             {
                 this.contactId = ContactId;
             }
+            
+            
         
             public String getTitle()
             {
@@ -106,6 +138,8 @@
             {
                 this.title = Title;
             }
+            
+            
         
             public String getFirstName()
             {
@@ -116,6 +150,8 @@
             {
                 this.firstName = FirstName;
             }
+            
+            
         
             public String getLastName()
             {
@@ -126,6 +162,8 @@
             {
                 this.lastName = LastName;
             }
+            
+            
         
             public String getPosition()
             {
@@ -136,6 +174,8 @@
             {
                 this.position = Position;
             }
+            
+            
         
             public String getPhone()
             {
@@ -146,6 +186,8 @@
             {
                 this.phone = Phone;
             }
+            
+            
         
             public String getFax()
             {
@@ -156,6 +198,8 @@
             {
                 this.fax = Fax;
             }
+            
+            
         
             public String getEmail()
             {
@@ -166,16 +210,20 @@
             {
                 this.email = Email;
             }
+            
+            
         
-            public Integer getStatus()
+            public Integer getContactStatus()
             {
-                return this.status;
+                return this.contactStatus;
             }
             
-            public void setStatus(Integer Status)
+            public void setContactStatus(Integer ContactStatus)
             {
-                this.status = Status;
+                this.contactStatus = ContactStatus;
             }
+            
+            
         
             public String getWebUrl()
             {
@@ -186,6 +234,8 @@
             {
                 this.webUrl = WebUrl;
             }
+            
+            
         
             public String getInfo()
             {
@@ -196,7 +246,51 @@
             {
                 this.info = Info;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<Affiliate> getAffiliateList()
+            {
+                return this.affiliateList;
+            }
+            
+            public void setAffiliateList(ArrayList<Affiliate> affiliateList)
+            {
+                this.affiliateList = affiliateList;
+            }
+        
+            public ArrayList<Customer> getCustomerList()
+            {
+                return this.customerList;
+            }
+            
+            public void setCustomerList(ArrayList<Customer> customerList)
+            {
+                this.customerList = customerList;
+            }
+        
+            public ArrayList<ItemLocation> getItemLocationList()
+            {
+                return this.itemLocationList;
+            }
+            
+            public void setItemLocationList(ArrayList<ItemLocation> itemLocationList)
+            {
+                this.itemLocationList = itemLocationList;
+            }
+        
+            public ArrayList<User> getUserList()
+            {
+                return this.userList;
+            }
+            
+            public void setUserList(ArrayList<User> userList)
+            {
+                this.userList = userList;
+            }
+        
             
     }
 

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Locale implements Serializable
@@ -35,8 +36,13 @@
         
 
         private Integer localeId;
+                
         private String localeString;
+                
         private String localeCharacterSet;
+                
+                 
+        
         
 
         public Locale()
@@ -44,14 +50,18 @@
             this.localeId = 0; 
        this.localeString = ""; 
        this.localeCharacterSet = ""; 
-        }
+        
+       
+       }
         
         public Locale(Integer LocaleId, String LocaleString, String LocaleCharacterSet)
         {
             this.localeId = LocaleId;
        this.localeString = LocaleString;
        this.localeCharacterSet = LocaleCharacterSet;
-        } 
+              
+       
+       } 
         
              
         
@@ -64,6 +74,8 @@
             {
                 this.localeId = LocaleId;
             }
+            
+            
         
             public String getLocaleString()
             {
@@ -74,6 +86,8 @@
             {
                 this.localeString = LocaleString;
             }
+            
+            
         
             public String getLocaleCharacterSet()
             {
@@ -84,7 +98,11 @@
             {
                 this.localeCharacterSet = LocaleCharacterSet;
             }
-           
+            
+            
+         
+        
+        
             
     }
 

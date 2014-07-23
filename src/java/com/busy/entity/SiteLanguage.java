@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class SiteLanguage implements Serializable
@@ -38,11 +39,19 @@
         
 
         private Integer siteLanguageId;
+                
         private String languageName;
+                
         private String locale;
-        private Boolean rtl;
+                
+        private Integer rtl;
+                
         private String flagFileName;
+                
         private Integer siteId;
+        private Site site;        
+                 
+        
         
 
         public SiteLanguage()
@@ -50,12 +59,14 @@
             this.siteLanguageId = 0; 
        this.languageName = ""; 
        this.locale = ""; 
-       this.rtl = null; 
+       this.rtl = 0; 
        this.flagFileName = ""; 
        this.siteId = 0; 
-        }
         
-        public SiteLanguage(Integer SiteLanguageId, String LanguageName, String Locale, Boolean Rtl, String FlagFileName, Integer SiteId)
+       
+       }
+        
+        public SiteLanguage(Integer SiteLanguageId, String LanguageName, String Locale, Integer Rtl, String FlagFileName, Integer SiteId)
         {
             this.siteLanguageId = SiteLanguageId;
        this.languageName = LanguageName;
@@ -63,7 +74,9 @@
        this.rtl = Rtl;
        this.flagFileName = FlagFileName;
        this.siteId = SiteId;
-        } 
+              
+       
+       } 
         
              
         
@@ -76,6 +89,8 @@
             {
                 this.siteLanguageId = SiteLanguageId;
             }
+            
+            
         
             public String getLanguageName()
             {
@@ -86,6 +101,8 @@
             {
                 this.languageName = LanguageName;
             }
+            
+            
         
             public String getLocale()
             {
@@ -96,16 +113,20 @@
             {
                 this.locale = Locale;
             }
+            
+            
         
-            public Boolean getRtl()
+            public Integer getRtl()
             {
                 return this.rtl;
             }
             
-            public void setRtl(Boolean Rtl)
+            public void setRtl(Integer Rtl)
             {
                 this.rtl = Rtl;
             }
+            
+            
         
             public String getFlagFileName()
             {
@@ -116,6 +137,8 @@
             {
                 this.flagFileName = FlagFileName;
             }
+            
+            
         
             public Integer getSiteId()
             {
@@ -126,7 +149,23 @@
             {
                 this.siteId = SiteId;
             }
-           
+            
+            
+                   
+            public Site getSite()
+                {
+                    return this.site;
+                }
+
+                public void setSite(Site site)
+                {
+                    this.site = site;
+                }
+                   
+            
+         
+        
+        
             
     }
 

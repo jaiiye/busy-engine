@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Slider;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -139,6 +148,93 @@
             }
             return slider;
         }
+        
+        public static ArrayList<Slider> getAllSliderWithRelatedInfo()
+        {
+            ArrayList<Slider> sliderList = new ArrayList<Slider>();
+            try
+            {
+                getAllRecordsByTableName("slider");
+                while (rs.next())
+                {
+                    sliderList.add(processSlider(rs));
+                }
+
+                
+                    for(Slider slider : sliderList)
+                    {
+                        
+                            getRecordById("SliderType", slider.getSliderTypeId().toString());
+                            slider.setSliderType(SliderTypeDAO.processSliderType(rs));               
+                        
+                            getRecordById("Form", slider.getFormId().toString());
+                            slider.setForm(FormDAO.processForm(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllSliderWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return sliderList;
+        }
+        
+        
+        public static Slider getRelatedInfo(Slider slider)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("SliderType", slider.getSliderTypeId().toString());
+                            slider.setSliderType(SliderTypeDAO.processSliderType(rs));               
+                        
+                            getRecordById("Form", slider.getFormId().toString());
+                            slider.setForm(FormDAO.processForm(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return slider;
+        }
+        
+        public static Slider getAllRelatedObjects(Slider slider)
+        {           
+            slider.setPageList(PageDAO.getAllPageByColumn("SliderId", slider.getSliderId().toString()));
+slider.setSliderItemList(SliderItemDAO.getAllSliderItemByColumn("SliderId", slider.getSliderId().toString()));
+             
+            return slider;
+        }
+        
+        
+                    
+        public static Slider getRelatedPageList(Slider slider)
+        {           
+            slider.setPageList(PageDAO.getAllPageByColumn("SliderId", slider.getSliderId().toString()));
+            return slider;
+        }        
+                    
+        public static Slider getRelatedSliderItemList(Slider slider)
+        {           
+            slider.setSliderItemList(SliderItemDAO.getAllSliderItemByColumn("SliderId", slider.getSliderId().toString()));
+            return slider;
+        }        
+        
                 
         public static ArrayList<Slider> getSliderPaged(int limit, int offset)
         {

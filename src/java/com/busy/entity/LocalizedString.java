@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class LocalizedString implements Serializable
@@ -31,31 +32,44 @@
         private static final long serialVersionUID = 1L;       
         public static final String PROP_LOCALIZED_STRING_ID = "LocalizedStringId";
         public static final String PROP_LOCALE = "Locale";
-        public static final String PROP_VALUE = "Value";
+        public static final String PROP_STRING_VALUE = "StringValue";
         public static final String PROP_TEXT_STRING_ID = "TextStringId";
         
 
         private Integer localizedStringId;
+                
         private Integer locale;
-        private String value;
+                
+        private String stringValue;
+                
         private Integer textStringId;
+        private TextString textString;        
+                 
+        ArrayList<TextStringLocal> textStringLocalList; 
+        
         
 
         public LocalizedString()
         {
             this.localizedStringId = 0; 
        this.locale = 0; 
-       this.value = ""; 
+       this.stringValue = ""; 
        this.textStringId = 0; 
-        }
         
-        public LocalizedString(Integer LocalizedStringId, Integer Locale, String Value, Integer TextStringId)
+       textStringLocalList = null; 
+        
+       }
+        
+        public LocalizedString(Integer LocalizedStringId, Integer Locale, String StringValue, Integer TextStringId)
         {
             this.localizedStringId = LocalizedStringId;
        this.locale = Locale;
-       this.value = Value;
+       this.stringValue = StringValue;
        this.textStringId = TextStringId;
-        } 
+              
+       textStringLocalList = null; 
+        
+       } 
         
              
         
@@ -68,6 +82,8 @@
             {
                 this.localizedStringId = LocalizedStringId;
             }
+            
+            
         
             public Integer getLocale()
             {
@@ -78,16 +94,20 @@
             {
                 this.locale = Locale;
             }
+            
+            
         
-            public String getValue()
+            public String getStringValue()
             {
-                return this.value;
+                return this.stringValue;
             }
             
-            public void setValue(String Value)
+            public void setStringValue(String StringValue)
             {
-                this.value = Value;
+                this.stringValue = StringValue;
             }
+            
+            
         
             public Integer getTextStringId()
             {
@@ -98,7 +118,33 @@
             {
                 this.textStringId = TextStringId;
             }
-           
+            
+            
+                   
+            public TextString getTextString()
+                {
+                    return this.textString;
+                }
+
+                public void setTextString(TextString textString)
+                {
+                    this.textString = textString;
+                }
+                   
+            
+         
+        
+        
+            public ArrayList<TextStringLocal> getTextStringLocalList()
+            {
+                return this.textStringLocalList;
+            }
+            
+            public void setTextStringLocalList(ArrayList<TextStringLocal> textStringLocalList)
+            {
+                this.textStringLocalList = textStringLocalList;
+            }
+        
             
     }
 

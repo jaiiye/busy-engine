@@ -1,7 +1,7 @@
 package com.busy.dao;
 
 import com.transitionsoft.BasicConnection;
-import com.busy.entity.UserRole;
+import com.busy.entity.*;
 import java.util.ArrayList;
 import java.io.Serializable;
 import java.sql.ResultSet;
@@ -34,7 +34,7 @@ public class UserRoleDAO extends BasicConnection implements Serializable
     }
 
     public static boolean isColumnNumeric(String column)
-    {     
+    {
         return false;     
     }
 
@@ -98,6 +98,41 @@ public class UserRoleDAO extends BasicConnection implements Serializable
         {
             closeConnection();
         }
+        return user_role;
+    }
+
+    public static ArrayList<UserRole> getAllUserRoleWithRelatedInfo()
+    {
+        ArrayList<UserRole> user_roleList = new ArrayList<UserRole>();
+        try
+        {
+            getAllRecordsByTableName("user_role");
+            while (rs.next())
+            {
+                user_roleList.add(processUserRole(rs));
+            }
+
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("getAllUserRoleWithRelatedInfo error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+        return user_roleList;
+    }
+
+    public static UserRole getRelatedInfo(UserRole user_role)
+    {
+
+        return user_role;
+    }
+
+    public static UserRole getAllRelatedObjects(UserRole user_role)
+    {
+
         return user_role;
     }
 

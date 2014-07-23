@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class OrderItem implements Serializable
@@ -38,11 +39,20 @@
         
 
         private Integer orderItemId;
+                
         private Integer customerOrderId;
+        private CustomerOrder customerOrder;        
         private Integer itemId;
+        private Item item;        
         private Integer quantity;
+                
         private String optionName;
+                
         private Double unitPrice;
+                
+                 
+        ArrayList<ReturnRequest> returnRequestList; 
+        
         
 
         public OrderItem()
@@ -53,7 +63,10 @@
        this.quantity = 0; 
        this.optionName = ""; 
        this.unitPrice = 0.0; 
-        }
+        
+       returnRequestList = null; 
+        
+       }
         
         public OrderItem(Integer OrderItemId, Integer CustomerOrderId, Integer ItemId, Integer Quantity, String OptionName, Double UnitPrice)
         {
@@ -63,7 +76,10 @@
        this.quantity = Quantity;
        this.optionName = OptionName;
        this.unitPrice = UnitPrice;
-        } 
+              
+       returnRequestList = null; 
+        
+       } 
         
              
         
@@ -76,6 +92,8 @@
             {
                 this.orderItemId = OrderItemId;
             }
+            
+            
         
             public Integer getCustomerOrderId()
             {
@@ -86,6 +104,20 @@
             {
                 this.customerOrderId = CustomerOrderId;
             }
+            
+            
+                   
+            public CustomerOrder getCustomerOrder()
+                {
+                    return this.customerOrder;
+                }
+
+                public void setCustomerOrder(CustomerOrder customerOrder)
+                {
+                    this.customerOrder = customerOrder;
+                }
+                   
+            
         
             public Integer getItemId()
             {
@@ -96,6 +128,20 @@
             {
                 this.itemId = ItemId;
             }
+            
+            
+                   
+            public Item getItem()
+                {
+                    return this.item;
+                }
+
+                public void setItem(Item item)
+                {
+                    this.item = item;
+                }
+                   
+            
         
             public Integer getQuantity()
             {
@@ -106,6 +152,8 @@
             {
                 this.quantity = Quantity;
             }
+            
+            
         
             public String getOptionName()
             {
@@ -116,6 +164,8 @@
             {
                 this.optionName = OptionName;
             }
+            
+            
         
             public Double getUnitPrice()
             {
@@ -126,7 +176,21 @@
             {
                 this.unitPrice = UnitPrice;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<ReturnRequest> getReturnRequestList()
+            {
+                return this.returnRequestList;
+            }
+            
+            public void setReturnRequestList(ArrayList<ReturnRequest> returnRequestList)
+            {
+                this.returnRequestList = returnRequestList;
+            }
+        
             
     }
 

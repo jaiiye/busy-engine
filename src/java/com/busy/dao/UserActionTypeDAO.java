@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.UserActionType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -135,6 +144,55 @@
             }
             return user_action_type;
         }
+        
+        public static ArrayList<UserActionType> getAllUserActionTypeWithRelatedInfo()
+        {
+            ArrayList<UserActionType> user_action_typeList = new ArrayList<UserActionType>();
+            try
+            {
+                getAllRecordsByTableName("user_action_type");
+                while (rs.next())
+                {
+                    user_action_typeList.add(processUserActionType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllUserActionTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return user_action_typeList;
+        }
+        
+        
+        public static UserActionType getRelatedInfo(UserActionType user_action_type)
+        {
+           
+                  
+            
+            return user_action_type;
+        }
+        
+        public static UserActionType getAllRelatedObjects(UserActionType user_action_type)
+        {           
+            user_action_type.setUserActionList(UserActionDAO.getAllUserActionByColumn("UserActionTypeId", user_action_type.getUserActionTypeId().toString()));
+             
+            return user_action_type;
+        }
+        
+        
+                    
+        public static UserActionType getRelatedUserActionList(UserActionType user_action_type)
+        {           
+            user_action_type.setUserActionList(UserActionDAO.getAllUserActionByColumn("UserActionTypeId", user_action_type.getUserActionTypeId().toString()));
+            return user_action_type;
+        }        
+        
                 
         public static ArrayList<UserActionType> getUserActionTypePaged(int limit, int offset)
         {

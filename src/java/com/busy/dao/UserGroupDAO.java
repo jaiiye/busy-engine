@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.UserGroup;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -139,6 +148,86 @@
             }
             return user_group;
         }
+        
+        public static ArrayList<UserGroup> getAllUserGroupWithRelatedInfo()
+        {
+            ArrayList<UserGroup> user_groupList = new ArrayList<UserGroup>();
+            try
+            {
+                getAllRecordsByTableName("user_group");
+                while (rs.next())
+                {
+                    user_groupList.add(processUserGroup(rs));
+                }
+
+                
+                    for(UserGroup user_group : user_groupList)
+                    {
+                        
+                            getRecordById("Site", user_group.getSiteId().toString());
+                            user_group.setSite(SiteDAO.processSite(rs));               
+                        
+                            getRecordById("Discount", user_group.getDiscountId().toString());
+                            user_group.setDiscount(DiscountDAO.processDiscount(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllUserGroupWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return user_groupList;
+        }
+        
+        
+        public static UserGroup getRelatedInfo(UserGroup user_group)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Site", user_group.getSiteId().toString());
+                            user_group.setSite(SiteDAO.processSite(rs));               
+                        
+                            getRecordById("Discount", user_group.getDiscountId().toString());
+                            user_group.setDiscount(DiscountDAO.processDiscount(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return user_group;
+        }
+        
+        public static UserGroup getAllRelatedObjects(UserGroup user_group)
+        {           
+            user_group.setUserList(UserDAO.getAllUserByColumn("UserGroupId", user_group.getUserGroupId().toString()));
+             
+            return user_group;
+        }
+        
+        
+                    
+        public static UserGroup getRelatedUserList(UserGroup user_group)
+        {           
+            user_group.setUserList(UserDAO.getAllUserByColumn("UserGroupId", user_group.getUserGroupId().toString()));
+            return user_group;
+        }        
+        
                 
         public static ArrayList<UserGroup> getUserGroupPaged(int limit, int offset)
         {

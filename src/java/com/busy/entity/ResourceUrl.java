@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ResourceUrl implements Serializable
@@ -36,9 +37,15 @@
         
 
         private Integer resourceUrlId;
+                
         private String url;
+                
         private Integer templateId;
+        private Template template;        
         private Integer resourceTypeId;
+        private ResourceType resourceType;        
+                 
+        
         
 
         public ResourceUrl()
@@ -47,7 +54,9 @@
        this.url = ""; 
        this.templateId = 0; 
        this.resourceTypeId = 0; 
-        }
+        
+       
+       }
         
         public ResourceUrl(Integer ResourceUrlId, String Url, Integer TemplateId, Integer ResourceTypeId)
         {
@@ -55,7 +64,9 @@
        this.url = Url;
        this.templateId = TemplateId;
        this.resourceTypeId = ResourceTypeId;
-        } 
+              
+       
+       } 
         
              
         
@@ -68,6 +79,8 @@
             {
                 this.resourceUrlId = ResourceUrlId;
             }
+            
+            
         
             public String getUrl()
             {
@@ -78,6 +91,8 @@
             {
                 this.url = Url;
             }
+            
+            
         
             public Integer getTemplateId()
             {
@@ -88,6 +103,20 @@
             {
                 this.templateId = TemplateId;
             }
+            
+            
+                   
+            public Template getTemplate()
+                {
+                    return this.template;
+                }
+
+                public void setTemplate(Template template)
+                {
+                    this.template = template;
+                }
+                   
+            
         
             public Integer getResourceTypeId()
             {
@@ -98,7 +127,23 @@
             {
                 this.resourceTypeId = ResourceTypeId;
             }
-           
+            
+            
+                   
+            public ResourceType getResourceType()
+                {
+                    return this.resourceType;
+                }
+
+                public void setResourceType(ResourceType resourceType)
+                {
+                    this.resourceType = resourceType;
+                }
+                   
+            
+         
+        
+        
             
     }
 

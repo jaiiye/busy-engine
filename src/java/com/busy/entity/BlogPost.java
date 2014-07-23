@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class BlogPost implements Serializable
@@ -38,7 +39,7 @@
         public static final String PROP_RATING_SUM = "RatingSum";
         public static final String PROP_VOTE_COUNT = "VoteCount";
         public static final String PROP_COMMENT_COUNT = "CommentCount";
-        public static final String PROP_STATUS = "Status";
+        public static final String PROP_POST_STATUS = "PostStatus";
         public static final String PROP_EXCERPT = "Excerpt";
         public static final String PROP_LAST_MODIFIED = "LastModified";
         public static final String PROP_LOCALE = "Locale";
@@ -48,21 +49,41 @@
         
 
         private Integer blogPostId;
+                
         private String title;
+                
         private String content;
+                
         private String imageURL;
+                
         private String tags;
+                
         private Integer featured;
+                
         private Integer ratingSum;
+                
         private Integer voteCount;
+                
         private Integer commentCount;
-        private Integer status;
+                
+        private Integer postStatus;
+                
         private String excerpt;
+                
         private Date lastModified;
+                
         private String locale;
+                
         private Integer userId;
+        private User user;        
         private Integer blogId;
+        private Blog blog;        
         private Integer metaTagId;
+        private MetaTag metaTag;        
+                 
+        ArrayList<BlogPostCategory> blogPostCategoryList; 
+        ArrayList<Comment> commentList; 
+        
         
 
         public BlogPost()
@@ -76,16 +97,20 @@
        this.ratingSum = 0; 
        this.voteCount = 0; 
        this.commentCount = 0; 
-       this.status = 0; 
+       this.postStatus = 0; 
        this.excerpt = ""; 
        this.lastModified = null; 
        this.locale = ""; 
        this.userId = 0; 
        this.blogId = 0; 
        this.metaTagId = 0; 
-        }
         
-        public BlogPost(Integer BlogPostId, String Title, String Content, String ImageURL, String Tags, Integer Featured, Integer RatingSum, Integer VoteCount, Integer CommentCount, Integer Status, String Excerpt, Date LastModified, String Locale, Integer UserId, Integer BlogId, Integer MetaTagId)
+       blogPostCategoryList = null; 
+        commentList = null; 
+        
+       }
+        
+        public BlogPost(Integer BlogPostId, String Title, String Content, String ImageURL, String Tags, Integer Featured, Integer RatingSum, Integer VoteCount, Integer CommentCount, Integer PostStatus, String Excerpt, Date LastModified, String Locale, Integer UserId, Integer BlogId, Integer MetaTagId)
         {
             this.blogPostId = BlogPostId;
        this.title = Title;
@@ -96,14 +121,18 @@
        this.ratingSum = RatingSum;
        this.voteCount = VoteCount;
        this.commentCount = CommentCount;
-       this.status = Status;
+       this.postStatus = PostStatus;
        this.excerpt = Excerpt;
        this.lastModified = LastModified;
        this.locale = Locale;
        this.userId = UserId;
        this.blogId = BlogId;
        this.metaTagId = MetaTagId;
-        } 
+              
+       blogPostCategoryList = null; 
+        commentList = null; 
+        
+       } 
         
              
         
@@ -116,6 +145,8 @@
             {
                 this.blogPostId = BlogPostId;
             }
+            
+            
         
             public String getTitle()
             {
@@ -126,6 +157,8 @@
             {
                 this.title = Title;
             }
+            
+            
         
             public String getContent()
             {
@@ -136,6 +169,8 @@
             {
                 this.content = Content;
             }
+            
+            
         
             public String getImageURL()
             {
@@ -146,6 +181,8 @@
             {
                 this.imageURL = ImageURL;
             }
+            
+            
         
             public String getTags()
             {
@@ -156,6 +193,8 @@
             {
                 this.tags = Tags;
             }
+            
+            
         
             public Integer getFeatured()
             {
@@ -166,6 +205,8 @@
             {
                 this.featured = Featured;
             }
+            
+            
         
             public Integer getRatingSum()
             {
@@ -176,6 +217,8 @@
             {
                 this.ratingSum = RatingSum;
             }
+            
+            
         
             public Integer getVoteCount()
             {
@@ -186,6 +229,8 @@
             {
                 this.voteCount = VoteCount;
             }
+            
+            
         
             public Integer getCommentCount()
             {
@@ -196,16 +241,20 @@
             {
                 this.commentCount = CommentCount;
             }
+            
+            
         
-            public Integer getStatus()
+            public Integer getPostStatus()
             {
-                return this.status;
+                return this.postStatus;
             }
             
-            public void setStatus(Integer Status)
+            public void setPostStatus(Integer PostStatus)
             {
-                this.status = Status;
+                this.postStatus = PostStatus;
             }
+            
+            
         
             public String getExcerpt()
             {
@@ -216,6 +265,8 @@
             {
                 this.excerpt = Excerpt;
             }
+            
+            
         
             public Date getLastModified()
             {
@@ -226,6 +277,8 @@
             {
                 this.lastModified = LastModified;
             }
+            
+            
         
             public String getLocale()
             {
@@ -236,6 +289,8 @@
             {
                 this.locale = Locale;
             }
+            
+            
         
             public Integer getUserId()
             {
@@ -246,6 +301,20 @@
             {
                 this.userId = UserId;
             }
+            
+            
+                   
+            public User getUser()
+                {
+                    return this.user;
+                }
+
+                public void setUser(User user)
+                {
+                    this.user = user;
+                }
+                   
+            
         
             public Integer getBlogId()
             {
@@ -256,6 +325,20 @@
             {
                 this.blogId = BlogId;
             }
+            
+            
+                   
+            public Blog getBlog()
+                {
+                    return this.blog;
+                }
+
+                public void setBlog(Blog blog)
+                {
+                    this.blog = blog;
+                }
+                   
+            
         
             public Integer getMetaTagId()
             {
@@ -266,7 +349,43 @@
             {
                 this.metaTagId = MetaTagId;
             }
-           
+            
+            
+                   
+            public MetaTag getMetaTag()
+                {
+                    return this.metaTag;
+                }
+
+                public void setMetaTag(MetaTag metaTag)
+                {
+                    this.metaTag = metaTag;
+                }
+                   
+            
+         
+        
+        
+            public ArrayList<BlogPostCategory> getBlogPostCategoryList()
+            {
+                return this.blogPostCategoryList;
+            }
+            
+            public void setBlogPostCategoryList(ArrayList<BlogPostCategory> blogPostCategoryList)
+            {
+                this.blogPostCategoryList = blogPostCategoryList;
+            }
+        
+            public ArrayList<Comment> getCommentList()
+            {
+                return this.commentList;
+            }
+            
+            public void setCommentList(ArrayList<Comment> commentList)
+            {
+                this.commentList = commentList;
+            }
+        
             
     }
 

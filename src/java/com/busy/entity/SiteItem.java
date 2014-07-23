@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class SiteItem implements Serializable
@@ -35,8 +36,13 @@
         
 
         private Integer siteItemId;
+                
         private Integer siteId;
+        private Site site;        
         private Integer itemId;
+        private Item item;        
+                 
+        
         
 
         public SiteItem()
@@ -44,14 +50,18 @@
             this.siteItemId = 0; 
        this.siteId = 0; 
        this.itemId = 0; 
-        }
+        
+       
+       }
         
         public SiteItem(Integer SiteItemId, Integer SiteId, Integer ItemId)
         {
             this.siteItemId = SiteItemId;
        this.siteId = SiteId;
        this.itemId = ItemId;
-        } 
+              
+       
+       } 
         
              
         
@@ -64,6 +74,8 @@
             {
                 this.siteItemId = SiteItemId;
             }
+            
+            
         
             public Integer getSiteId()
             {
@@ -74,6 +86,20 @@
             {
                 this.siteId = SiteId;
             }
+            
+            
+                   
+            public Site getSite()
+                {
+                    return this.site;
+                }
+
+                public void setSite(Site site)
+                {
+                    this.site = site;
+                }
+                   
+            
         
             public Integer getItemId()
             {
@@ -84,7 +110,23 @@
             {
                 this.itemId = ItemId;
             }
-           
+            
+            
+                   
+            public Item getItem()
+                {
+                    return this.item;
+                }
+
+                public void setItem(Item item)
+                {
+                    this.item = item;
+                }
+                   
+            
+         
+        
+        
             
     }
 

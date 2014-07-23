@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Item implements Serializable
@@ -40,7 +41,7 @@
         public static final String PROP_RATING_SUM = "RatingSum";
         public static final String PROP_VOTE_COUNT = "VoteCount";
         public static final String PROP_RANK = "Rank";
-        public static final String PROP_STATUS = "Status";
+        public static final String PROP_ITEM_STATUS = "ItemStatus";
         public static final String PROP_LOCALE = "Locale";
         public static final String PROP_ITEM_TYPE_ID = "ItemTypeId";
         public static final String PROP_ITEM_BRAND_ID = "ItemBrandId";
@@ -50,23 +51,53 @@
         
 
         private Integer itemId;
+                
         private String itemName;
+                
         private String description;
+                
         private Double listPrice;
+                
         private Double price;
+                
         private String shortDescription;
+                
         private Integer adjustment;
+                
         private String sku;
+                
         private Integer ratingSum;
+                
         private Integer voteCount;
+                
         private Integer rank;
-        private Integer status;
+                
+        private Integer itemStatus;
+                
         private String locale;
+                
         private Integer itemTypeId;
+        private ItemType itemType;        
         private Integer itemBrandId;
+        private ItemBrand itemBrand;        
         private Integer metaTagId;
+        private MetaTag metaTag;        
         private Integer templateId;
+        private Template template;        
         private Integer vendorId;
+        private Vendor vendor;        
+                 
+        ArrayList<ItemAttribute> itemAttributeList; 
+        ArrayList<ItemCategory> itemCategoryList; 
+        ArrayList<ItemDiscount> itemDiscountList; 
+        ArrayList<ItemFile> itemFileList; 
+        ArrayList<ItemImage> itemImageList; 
+        ArrayList<ItemLocation> itemLocationList; 
+        ArrayList<ItemReview> itemReviewList; 
+        ArrayList<OptionAvailability> optionAvailabilityList; 
+        ArrayList<OrderItem> orderItemList; 
+        ArrayList<SiteItem> siteItemList; 
+        
         
 
         public Item()
@@ -82,16 +113,28 @@
        this.ratingSum = 0; 
        this.voteCount = 0; 
        this.rank = 0; 
-       this.status = 0; 
+       this.itemStatus = 0; 
        this.locale = ""; 
        this.itemTypeId = 0; 
        this.itemBrandId = 0; 
        this.metaTagId = 0; 
        this.templateId = 0; 
        this.vendorId = 0; 
-        }
         
-        public Item(Integer ItemId, String ItemName, String Description, Double ListPrice, Double Price, String ShortDescription, Integer Adjustment, String Sku, Integer RatingSum, Integer VoteCount, Integer Rank, Integer Status, String Locale, Integer ItemTypeId, Integer ItemBrandId, Integer MetaTagId, Integer TemplateId, Integer VendorId)
+       itemAttributeList = null; 
+        itemCategoryList = null; 
+        itemDiscountList = null; 
+        itemFileList = null; 
+        itemImageList = null; 
+        itemLocationList = null; 
+        itemReviewList = null; 
+        optionAvailabilityList = null; 
+        orderItemList = null; 
+        siteItemList = null; 
+        
+       }
+        
+        public Item(Integer ItemId, String ItemName, String Description, Double ListPrice, Double Price, String ShortDescription, Integer Adjustment, String Sku, Integer RatingSum, Integer VoteCount, Integer Rank, Integer ItemStatus, String Locale, Integer ItemTypeId, Integer ItemBrandId, Integer MetaTagId, Integer TemplateId, Integer VendorId)
         {
             this.itemId = ItemId;
        this.itemName = ItemName;
@@ -104,14 +147,26 @@
        this.ratingSum = RatingSum;
        this.voteCount = VoteCount;
        this.rank = Rank;
-       this.status = Status;
+       this.itemStatus = ItemStatus;
        this.locale = Locale;
        this.itemTypeId = ItemTypeId;
        this.itemBrandId = ItemBrandId;
        this.metaTagId = MetaTagId;
        this.templateId = TemplateId;
        this.vendorId = VendorId;
-        } 
+              
+       itemAttributeList = null; 
+        itemCategoryList = null; 
+        itemDiscountList = null; 
+        itemFileList = null; 
+        itemImageList = null; 
+        itemLocationList = null; 
+        itemReviewList = null; 
+        optionAvailabilityList = null; 
+        orderItemList = null; 
+        siteItemList = null; 
+        
+       } 
         
              
         
@@ -124,6 +179,8 @@
             {
                 this.itemId = ItemId;
             }
+            
+            
         
             public String getItemName()
             {
@@ -134,6 +191,8 @@
             {
                 this.itemName = ItemName;
             }
+            
+            
         
             public String getDescription()
             {
@@ -144,6 +203,8 @@
             {
                 this.description = Description;
             }
+            
+            
         
             public Double getListPrice()
             {
@@ -154,6 +215,8 @@
             {
                 this.listPrice = ListPrice;
             }
+            
+            
         
             public Double getPrice()
             {
@@ -164,6 +227,8 @@
             {
                 this.price = Price;
             }
+            
+            
         
             public String getShortDescription()
             {
@@ -174,6 +239,8 @@
             {
                 this.shortDescription = ShortDescription;
             }
+            
+            
         
             public Integer getAdjustment()
             {
@@ -184,6 +251,8 @@
             {
                 this.adjustment = Adjustment;
             }
+            
+            
         
             public String getSku()
             {
@@ -194,6 +263,8 @@
             {
                 this.sku = Sku;
             }
+            
+            
         
             public Integer getRatingSum()
             {
@@ -204,6 +275,8 @@
             {
                 this.ratingSum = RatingSum;
             }
+            
+            
         
             public Integer getVoteCount()
             {
@@ -214,6 +287,8 @@
             {
                 this.voteCount = VoteCount;
             }
+            
+            
         
             public Integer getRank()
             {
@@ -224,16 +299,20 @@
             {
                 this.rank = Rank;
             }
+            
+            
         
-            public Integer getStatus()
+            public Integer getItemStatus()
             {
-                return this.status;
+                return this.itemStatus;
             }
             
-            public void setStatus(Integer Status)
+            public void setItemStatus(Integer ItemStatus)
             {
-                this.status = Status;
+                this.itemStatus = ItemStatus;
             }
+            
+            
         
             public String getLocale()
             {
@@ -244,6 +323,8 @@
             {
                 this.locale = Locale;
             }
+            
+            
         
             public Integer getItemTypeId()
             {
@@ -254,6 +335,20 @@
             {
                 this.itemTypeId = ItemTypeId;
             }
+            
+            
+                   
+            public ItemType getItemType()
+                {
+                    return this.itemType;
+                }
+
+                public void setItemType(ItemType itemType)
+                {
+                    this.itemType = itemType;
+                }
+                   
+            
         
             public Integer getItemBrandId()
             {
@@ -264,6 +359,20 @@
             {
                 this.itemBrandId = ItemBrandId;
             }
+            
+            
+                   
+            public ItemBrand getItemBrand()
+                {
+                    return this.itemBrand;
+                }
+
+                public void setItemBrand(ItemBrand itemBrand)
+                {
+                    this.itemBrand = itemBrand;
+                }
+                   
+            
         
             public Integer getMetaTagId()
             {
@@ -274,6 +383,20 @@
             {
                 this.metaTagId = MetaTagId;
             }
+            
+            
+                   
+            public MetaTag getMetaTag()
+                {
+                    return this.metaTag;
+                }
+
+                public void setMetaTag(MetaTag metaTag)
+                {
+                    this.metaTag = metaTag;
+                }
+                   
+            
         
             public Integer getTemplateId()
             {
@@ -284,6 +407,20 @@
             {
                 this.templateId = TemplateId;
             }
+            
+            
+                   
+            public Template getTemplate()
+                {
+                    return this.template;
+                }
+
+                public void setTemplate(Template template)
+                {
+                    this.template = template;
+                }
+                   
+            
         
             public Integer getVendorId()
             {
@@ -294,7 +431,123 @@
             {
                 this.vendorId = VendorId;
             }
-           
+            
+            
+                   
+            public Vendor getVendor()
+                {
+                    return this.vendor;
+                }
+
+                public void setVendor(Vendor vendor)
+                {
+                    this.vendor = vendor;
+                }
+                   
+            
+         
+        
+        
+            public ArrayList<ItemAttribute> getItemAttributeList()
+            {
+                return this.itemAttributeList;
+            }
+            
+            public void setItemAttributeList(ArrayList<ItemAttribute> itemAttributeList)
+            {
+                this.itemAttributeList = itemAttributeList;
+            }
+        
+            public ArrayList<ItemCategory> getItemCategoryList()
+            {
+                return this.itemCategoryList;
+            }
+            
+            public void setItemCategoryList(ArrayList<ItemCategory> itemCategoryList)
+            {
+                this.itemCategoryList = itemCategoryList;
+            }
+        
+            public ArrayList<ItemDiscount> getItemDiscountList()
+            {
+                return this.itemDiscountList;
+            }
+            
+            public void setItemDiscountList(ArrayList<ItemDiscount> itemDiscountList)
+            {
+                this.itemDiscountList = itemDiscountList;
+            }
+        
+            public ArrayList<ItemFile> getItemFileList()
+            {
+                return this.itemFileList;
+            }
+            
+            public void setItemFileList(ArrayList<ItemFile> itemFileList)
+            {
+                this.itemFileList = itemFileList;
+            }
+        
+            public ArrayList<ItemImage> getItemImageList()
+            {
+                return this.itemImageList;
+            }
+            
+            public void setItemImageList(ArrayList<ItemImage> itemImageList)
+            {
+                this.itemImageList = itemImageList;
+            }
+        
+            public ArrayList<ItemLocation> getItemLocationList()
+            {
+                return this.itemLocationList;
+            }
+            
+            public void setItemLocationList(ArrayList<ItemLocation> itemLocationList)
+            {
+                this.itemLocationList = itemLocationList;
+            }
+        
+            public ArrayList<ItemReview> getItemReviewList()
+            {
+                return this.itemReviewList;
+            }
+            
+            public void setItemReviewList(ArrayList<ItemReview> itemReviewList)
+            {
+                this.itemReviewList = itemReviewList;
+            }
+        
+            public ArrayList<OptionAvailability> getOptionAvailabilityList()
+            {
+                return this.optionAvailabilityList;
+            }
+            
+            public void setOptionAvailabilityList(ArrayList<OptionAvailability> optionAvailabilityList)
+            {
+                this.optionAvailabilityList = optionAvailabilityList;
+            }
+        
+            public ArrayList<OrderItem> getOrderItemList()
+            {
+                return this.orderItemList;
+            }
+            
+            public void setOrderItemList(ArrayList<OrderItem> orderItemList)
+            {
+                this.orderItemList = orderItemList;
+            }
+        
+            public ArrayList<SiteItem> getSiteItemList()
+            {
+                return this.siteItemList;
+            }
+            
+            public void setSiteItemList(ArrayList<SiteItem> siteItemList)
+            {
+                this.siteItemList = siteItemList;
+            }
+        
             
     }
 

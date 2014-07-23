@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.Mailinglist;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Mailinglist.PROP_MAILINGLIST_ID) || column.equals(Mailinglist.PROP_LIST_NAME) || column.equals(Mailinglist.PROP_EMAIL) || column.equals(Mailinglist.PROP_STATUS) || column.equals(Mailinglist.PROP_USER_ID) )
+            if(column.equals(Mailinglist.PROP_MAILINGLIST_ID) || column.equals(Mailinglist.PROP_FULL_NAME) || column.equals(Mailinglist.PROP_EMAIL) || column.equals(Mailinglist.PROP_LIST_STATUS) || column.equals(Mailinglist.PROP_USER_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Mailinglist.PROP_MAILINGLIST_ID) || column.equals(Mailinglist.PROP_STATUS) || column.equals(Mailinglist.PROP_USER_ID) )
+            if (column.equals(Mailinglist.PROP_MAILINGLIST_ID) || column.equals(Mailinglist.PROP_LIST_STATUS) || column.equals(Mailinglist.PROP_USER_ID) )
             {
                 return true;
             }        
@@ -78,22 +87,22 @@
             return new Mailinglist(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5));
         }
         
-        public static int addMailinglist(String ListName, String Email, Integer Status, Integer UserId)
+        public static int addMailinglist(String FullName, String Email, Integer ListStatus, Integer UserId)
         {   
             int id = 0;
             try
             {
                 
-                checkColumnSize(ListName, 45);
+                checkColumnSize(FullName, 45);
                 checkColumnSize(Email, 245);
                 
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO mailinglist(ListName,Email,Status,UserId) VALUES (?,?,?,?);");                    
-                preparedStatement.setString(1, ListName);
+                prepareStatement("INSERT INTO mailinglist(FullName,Email,ListStatus,UserId) VALUES (?,?,?,?);");                    
+                preparedStatement.setString(1, FullName);
                 preparedStatement.setString(2, Email);
-                preparedStatement.setInt(3, Status);
+                preparedStatement.setInt(3, ListStatus);
                 preparedStatement.setInt(4, UserId);
                 
                 preparedStatement.executeUpdate();
@@ -141,6 +150,73 @@
             }
             return mailinglist;
         }
+        
+        public static ArrayList<Mailinglist> getAllMailinglistWithRelatedInfo()
+        {
+            ArrayList<Mailinglist> mailinglistList = new ArrayList<Mailinglist>();
+            try
+            {
+                getAllRecordsByTableName("mailinglist");
+                while (rs.next())
+                {
+                    mailinglistList.add(processMailinglist(rs));
+                }
+
+                
+                    for(Mailinglist mailinglist : mailinglistList)
+                    {
+                        
+                            getRecordById("User", mailinglist.getUserId().toString());
+                            mailinglist.setUser(UserDAO.processUser(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllMailinglistWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return mailinglistList;
+        }
+        
+        
+        public static Mailinglist getRelatedInfo(Mailinglist mailinglist)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("User", mailinglist.getUserId().toString());
+                            mailinglist.setUser(UserDAO.processUser(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return mailinglist;
+        }
+        
+        public static Mailinglist getAllRelatedObjects(Mailinglist mailinglist)
+        {           
+                         
+            return mailinglist;
+        }
+        
+        
+        
                 
         public static ArrayList<Mailinglist> getMailinglistPaged(int limit, int offset)
         {
@@ -208,21 +284,21 @@
             return mailinglist;
         }                
                 
-        public static void updateMailinglist(Integer MailinglistId,String ListName,String Email,Integer Status,Integer UserId)
+        public static void updateMailinglist(Integer MailinglistId,String FullName,String Email,Integer ListStatus,Integer UserId)
         {  
             try
             {   
                 
-                checkColumnSize(ListName, 45);
+                checkColumnSize(FullName, 45);
                 checkColumnSize(Email, 245);
                 
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE mailinglist SET ListName=?,Email=?,Status=?,UserId=? WHERE MailinglistId=?;");                    
-                preparedStatement.setString(1, ListName);
+                prepareStatement("UPDATE mailinglist SET FullName=?,Email=?,ListStatus=?,UserId=? WHERE MailinglistId=?;");                    
+                preparedStatement.setString(1, FullName);
                 preparedStatement.setString(2, Email);
-                preparedStatement.setInt(3, Status);
+                preparedStatement.setInt(3, ListStatus);
                 preparedStatement.setInt(4, UserId);
                 preparedStatement.setInt(5, MailinglistId);
                 preparedStatement.executeUpdate();

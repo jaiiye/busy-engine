@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ItemReview;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -141,6 +150,80 @@
             }
             return item_review;
         }
+        
+        public static ArrayList<ItemReview> getAllItemReviewWithRelatedInfo()
+        {
+            ArrayList<ItemReview> item_reviewList = new ArrayList<ItemReview>();
+            try
+            {
+                getAllRecordsByTableName("item_review");
+                while (rs.next())
+                {
+                    item_reviewList.add(processItemReview(rs));
+                }
+
+                
+                    for(ItemReview item_review : item_reviewList)
+                    {
+                        
+                            getRecordById("Item", item_review.getItemId().toString());
+                            item_review.setItem(ItemDAO.processItem(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemReviewWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return item_reviewList;
+        }
+        
+        
+        public static ItemReview getRelatedInfo(ItemReview item_review)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Item", item_review.getItemId().toString());
+                            item_review.setItem(ItemDAO.processItem(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return item_review;
+        }
+        
+        public static ItemReview getAllRelatedObjects(ItemReview item_review)
+        {           
+            item_review.setCommentList(CommentDAO.getAllCommentByColumn("ItemReviewId", item_review.getItemReviewId().toString()));
+             
+            return item_review;
+        }
+        
+        
+                    
+        public static ItemReview getRelatedCommentList(ItemReview item_review)
+        {           
+            item_review.setCommentList(CommentDAO.getAllCommentByColumn("ItemReviewId", item_review.getItemReviewId().toString()));
+            return item_review;
+        }        
+        
                 
         public static ArrayList<ItemReview> getItemReviewPaged(int limit, int offset)
         {

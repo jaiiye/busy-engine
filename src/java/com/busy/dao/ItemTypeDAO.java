@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ItemType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,55 @@
             }
             return item_type;
         }
+        
+        public static ArrayList<ItemType> getAllItemTypeWithRelatedInfo()
+        {
+            ArrayList<ItemType> item_typeList = new ArrayList<ItemType>();
+            try
+            {
+                getAllRecordsByTableName("item_type");
+                while (rs.next())
+                {
+                    item_typeList.add(processItemType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return item_typeList;
+        }
+        
+        
+        public static ItemType getRelatedInfo(ItemType item_type)
+        {
+           
+                  
+            
+            return item_type;
+        }
+        
+        public static ItemType getAllRelatedObjects(ItemType item_type)
+        {           
+            item_type.setItemList(ItemDAO.getAllItemByColumn("ItemTypeId", item_type.getItemTypeId().toString()));
+             
+            return item_type;
+        }
+        
+        
+                    
+        public static ItemType getRelatedItemList(ItemType item_type)
+        {           
+            item_type.setItemList(ItemDAO.getAllItemByColumn("ItemTypeId", item_type.getItemTypeId().toString()));
+            return item_type;
+        }        
+        
                 
         public static ArrayList<ItemType> getItemTypePaged(int limit, int offset)
         {

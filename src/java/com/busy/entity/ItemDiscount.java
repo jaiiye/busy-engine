@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemDiscount implements Serializable
@@ -36,9 +37,15 @@
         
 
         private Integer itemDiscountId;
+                
         private Integer itemId;
+        private Item item;        
         private Integer discountId;
-        private Boolean applyToOptions;
+        private Discount discount;        
+        private Integer applyToOptions;
+                
+                 
+        
         
 
         public ItemDiscount()
@@ -46,16 +53,20 @@
             this.itemDiscountId = 0; 
        this.itemId = 0; 
        this.discountId = 0; 
-       this.applyToOptions = null; 
-        }
+       this.applyToOptions = 0; 
         
-        public ItemDiscount(Integer ItemDiscountId, Integer ItemId, Integer DiscountId, Boolean ApplyToOptions)
+       
+       }
+        
+        public ItemDiscount(Integer ItemDiscountId, Integer ItemId, Integer DiscountId, Integer ApplyToOptions)
         {
             this.itemDiscountId = ItemDiscountId;
        this.itemId = ItemId;
        this.discountId = DiscountId;
        this.applyToOptions = ApplyToOptions;
-        } 
+              
+       
+       } 
         
              
         
@@ -68,6 +79,8 @@
             {
                 this.itemDiscountId = ItemDiscountId;
             }
+            
+            
         
             public Integer getItemId()
             {
@@ -78,6 +91,20 @@
             {
                 this.itemId = ItemId;
             }
+            
+            
+                   
+            public Item getItem()
+                {
+                    return this.item;
+                }
+
+                public void setItem(Item item)
+                {
+                    this.item = item;
+                }
+                   
+            
         
             public Integer getDiscountId()
             {
@@ -88,17 +115,35 @@
             {
                 this.discountId = DiscountId;
             }
+            
+            
+                   
+            public Discount getDiscount()
+                {
+                    return this.discount;
+                }
+
+                public void setDiscount(Discount discount)
+                {
+                    this.discount = discount;
+                }
+                   
+            
         
-            public Boolean getApplyToOptions()
+            public Integer getApplyToOptions()
             {
                 return this.applyToOptions;
             }
             
-            public void setApplyToOptions(Boolean ApplyToOptions)
+            public void setApplyToOptions(Integer ApplyToOptions)
             {
                 this.applyToOptions = ApplyToOptions;
             }
-           
+            
+            
+         
+        
+        
             
     }
 

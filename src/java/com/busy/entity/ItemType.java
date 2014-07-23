@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemType implements Serializable
@@ -35,8 +36,14 @@
         
 
         private Integer itemTypeId;
+                
         private String typeName;
+                
         private Integer rank;
+                
+                 
+        ArrayList<Item> itemList; 
+        
         
 
         public ItemType()
@@ -44,14 +51,20 @@
             this.itemTypeId = 0; 
        this.typeName = ""; 
        this.rank = 0; 
-        }
+        
+       itemList = null; 
+        
+       }
         
         public ItemType(Integer ItemTypeId, String TypeName, Integer Rank)
         {
             this.itemTypeId = ItemTypeId;
        this.typeName = TypeName;
        this.rank = Rank;
-        } 
+              
+       itemList = null; 
+        
+       } 
         
              
         
@@ -64,6 +77,8 @@
             {
                 this.itemTypeId = ItemTypeId;
             }
+            
+            
         
             public String getTypeName()
             {
@@ -74,6 +89,8 @@
             {
                 this.typeName = TypeName;
             }
+            
+            
         
             public Integer getRank()
             {
@@ -84,7 +101,21 @@
             {
                 this.rank = Rank;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<Item> getItemList()
+            {
+                return this.itemList;
+            }
+            
+            public void setItemList(ArrayList<Item> itemList)
+            {
+                this.itemList = itemList;
+            }
+        
             
     }
 

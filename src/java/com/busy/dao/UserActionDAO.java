@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.UserAction;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(UserAction.PROP_USER_ACTION_ID) || column.equals(UserAction.PROP_DATE) || column.equals(UserAction.PROP_DETAIL) || column.equals(UserAction.PROP_ACTION_TYPE_ID) || column.equals(UserAction.PROP_USER_ID) )
+            if(column.equals(UserAction.PROP_USER_ACTION_ID) || column.equals(UserAction.PROP_DATE) || column.equals(UserAction.PROP_DETAIL) || column.equals(UserAction.PROP_USER_ACTION_TYPE_ID) || column.equals(UserAction.PROP_USER_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(UserAction.PROP_USER_ACTION_ID) || column.equals(UserAction.PROP_ACTION_TYPE_ID) || column.equals(UserAction.PROP_USER_ID) )
+            if (column.equals(UserAction.PROP_USER_ACTION_ID) || column.equals(UserAction.PROP_USER_ACTION_TYPE_ID) || column.equals(UserAction.PROP_USER_ID) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new UserAction(rs.getInt(1), rs.getDate(2), rs.getString(3), rs.getInt(4), rs.getInt(5));
         }
         
-        public static int addUserAction(Date Date, String Detail, Integer ActionTypeId, Integer UserId)
+        public static int addUserAction(Date Date, String Detail, Integer UserActionTypeId, Integer UserId)
         {   
             int id = 0;
             try
@@ -90,10 +99,10 @@
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO user_action(Date,Detail,ActionTypeId,UserId) VALUES (?,?,?,?);");                    
+                prepareStatement("INSERT INTO user_action(Date,Detail,UserActionTypeId,UserId) VALUES (?,?,?,?);");                    
                 preparedStatement.setDate(1, new java.sql.Date(Date.getTime()));
                 preparedStatement.setString(2, Detail);
-                preparedStatement.setInt(3, ActionTypeId);
+                preparedStatement.setInt(3, UserActionTypeId);
                 preparedStatement.setInt(4, UserId);
                 
                 preparedStatement.executeUpdate();
@@ -141,6 +150,79 @@
             }
             return user_action;
         }
+        
+        public static ArrayList<UserAction> getAllUserActionWithRelatedInfo()
+        {
+            ArrayList<UserAction> user_actionList = new ArrayList<UserAction>();
+            try
+            {
+                getAllRecordsByTableName("user_action");
+                while (rs.next())
+                {
+                    user_actionList.add(processUserAction(rs));
+                }
+
+                
+                    for(UserAction user_action : user_actionList)
+                    {
+                        
+                            getRecordById("UserActionType", user_action.getUserActionTypeId().toString());
+                            user_action.setUserActionType(UserActionTypeDAO.processUserActionType(rs));               
+                        
+                            getRecordById("User", user_action.getUserId().toString());
+                            user_action.setUser(UserDAO.processUser(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllUserActionWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return user_actionList;
+        }
+        
+        
+        public static UserAction getRelatedInfo(UserAction user_action)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("UserActionType", user_action.getUserActionTypeId().toString());
+                            user_action.setUserActionType(UserActionTypeDAO.processUserActionType(rs));               
+                        
+                            getRecordById("User", user_action.getUserId().toString());
+                            user_action.setUser(UserDAO.processUser(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return user_action;
+        }
+        
+        public static UserAction getAllRelatedObjects(UserAction user_action)
+        {           
+                         
+            return user_action;
+        }
+        
+        
+        
                 
         public static ArrayList<UserAction> getUserActionPaged(int limit, int offset)
         {
@@ -208,7 +290,7 @@
             return user_action;
         }                
                 
-        public static void updateUserAction(Integer UserActionId,Date Date,String Detail,Integer ActionTypeId,Integer UserId)
+        public static void updateUserAction(Integer UserActionId,Date Date,String Detail,Integer UserActionTypeId,Integer UserId)
         {  
             try
             {   
@@ -219,10 +301,10 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_action SET Date=?,Detail=?,ActionTypeId=?,UserId=? WHERE UserActionId=?;");                    
+                prepareStatement("UPDATE user_action SET Date=?,Detail=?,UserActionTypeId=?,UserId=? WHERE UserActionId=?;");                    
                 preparedStatement.setDate(1, new java.sql.Date(Date.getTime()));
                 preparedStatement.setString(2, Detail);
-                preparedStatement.setInt(3, ActionTypeId);
+                preparedStatement.setInt(3, UserActionTypeId);
                 preparedStatement.setInt(4, UserId);
                 preparedStatement.setInt(5, UserActionId);
                 preparedStatement.executeUpdate();

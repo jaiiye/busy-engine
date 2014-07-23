@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ResourceUrl;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -139,6 +148,79 @@
             }
             return resource_url;
         }
+        
+        public static ArrayList<ResourceUrl> getAllResourceUrlWithRelatedInfo()
+        {
+            ArrayList<ResourceUrl> resource_urlList = new ArrayList<ResourceUrl>();
+            try
+            {
+                getAllRecordsByTableName("resource_url");
+                while (rs.next())
+                {
+                    resource_urlList.add(processResourceUrl(rs));
+                }
+
+                
+                    for(ResourceUrl resource_url : resource_urlList)
+                    {
+                        
+                            getRecordById("Template", resource_url.getTemplateId().toString());
+                            resource_url.setTemplate(TemplateDAO.processTemplate(rs));               
+                        
+                            getRecordById("ResourceType", resource_url.getResourceTypeId().toString());
+                            resource_url.setResourceType(ResourceTypeDAO.processResourceType(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllResourceUrlWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return resource_urlList;
+        }
+        
+        
+        public static ResourceUrl getRelatedInfo(ResourceUrl resource_url)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Template", resource_url.getTemplateId().toString());
+                            resource_url.setTemplate(TemplateDAO.processTemplate(rs));               
+                        
+                            getRecordById("ResourceType", resource_url.getResourceTypeId().toString());
+                            resource_url.setResourceType(ResourceTypeDAO.processResourceType(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return resource_url;
+        }
+        
+        public static ResourceUrl getAllRelatedObjects(ResourceUrl resource_url)
+        {           
+                         
+            return resource_url;
+        }
+        
+        
+        
                 
         public static ArrayList<ResourceUrl> getResourceUrlPaged(int limit, int offset)
         {

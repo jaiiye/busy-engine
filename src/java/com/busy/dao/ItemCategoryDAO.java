@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ItemCategory;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -137,6 +146,79 @@
             }
             return item_category;
         }
+        
+        public static ArrayList<ItemCategory> getAllItemCategoryWithRelatedInfo()
+        {
+            ArrayList<ItemCategory> item_categoryList = new ArrayList<ItemCategory>();
+            try
+            {
+                getAllRecordsByTableName("item_category");
+                while (rs.next())
+                {
+                    item_categoryList.add(processItemCategory(rs));
+                }
+
+                
+                    for(ItemCategory item_category : item_categoryList)
+                    {
+                        
+                            getRecordById("Category", item_category.getCategoryId().toString());
+                            item_category.setCategory(CategoryDAO.processCategory(rs));               
+                        
+                            getRecordById("Item", item_category.getItemId().toString());
+                            item_category.setItem(ItemDAO.processItem(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemCategoryWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return item_categoryList;
+        }
+        
+        
+        public static ItemCategory getRelatedInfo(ItemCategory item_category)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Category", item_category.getCategoryId().toString());
+                            item_category.setCategory(CategoryDAO.processCategory(rs));               
+                        
+                            getRecordById("Item", item_category.getItemId().toString());
+                            item_category.setItem(ItemDAO.processItem(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return item_category;
+        }
+        
+        public static ItemCategory getAllRelatedObjects(ItemCategory item_category)
+        {           
+                         
+            return item_category;
+        }
+        
+        
+        
                 
         public static ArrayList<ItemCategory> getItemCategoryPaged(int limit, int offset)
         {

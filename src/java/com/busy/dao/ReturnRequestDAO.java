@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ReturnRequest;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(ReturnRequest.PROP_RETURN_REQUEST_ID) || column.equals(ReturnRequest.PROP_QUANTITY) || column.equals(ReturnRequest.PROP_REQUEST_DATE) || column.equals(ReturnRequest.PROP_RETURN_REASON) || column.equals(ReturnRequest.PROP_REQUESTED_ACTION) || column.equals(ReturnRequest.PROP_NOTES) || column.equals(ReturnRequest.PROP_STATUS) || column.equals(ReturnRequest.PROP_ORDER_ITEM_ID) )
+            if(column.equals(ReturnRequest.PROP_RETURN_REQUEST_ID) || column.equals(ReturnRequest.PROP_QUANTITY) || column.equals(ReturnRequest.PROP_REQUEST_DATE) || column.equals(ReturnRequest.PROP_RETURN_REASON) || column.equals(ReturnRequest.PROP_REQUESTED_ACTION) || column.equals(ReturnRequest.PROP_NOTES) || column.equals(ReturnRequest.PROP_REQUEST_STATUS) || column.equals(ReturnRequest.PROP_ORDER_ITEM_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ReturnRequest.PROP_RETURN_REQUEST_ID) || column.equals(ReturnRequest.PROP_QUANTITY) || column.equals(ReturnRequest.PROP_STATUS) || column.equals(ReturnRequest.PROP_ORDER_ITEM_ID) )
+            if (column.equals(ReturnRequest.PROP_RETURN_REQUEST_ID) || column.equals(ReturnRequest.PROP_QUANTITY) || column.equals(ReturnRequest.PROP_REQUEST_STATUS) || column.equals(ReturnRequest.PROP_ORDER_ITEM_ID) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new ReturnRequest(rs.getInt(1), rs.getInt(2), rs.getDate(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getInt(8));
         }
         
-        public static int addReturnRequest(Integer Quantity, Date RequestDate, String ReturnReason, String RequestedAction, String Notes, Integer Status, Integer OrderItemId)
+        public static int addReturnRequest(Integer Quantity, Date RequestDate, String ReturnReason, String RequestedAction, String Notes, Integer RequestStatus, Integer OrderItemId)
         {   
             int id = 0;
             try
@@ -93,13 +102,13 @@
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO return_request(Quantity,RequestDate,ReturnReason,RequestedAction,Notes,Status,OrderItemId) VALUES (?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO return_request(Quantity,RequestDate,ReturnReason,RequestedAction,Notes,RequestStatus,OrderItemId) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setInt(1, Quantity);
                 preparedStatement.setDate(2, new java.sql.Date(RequestDate.getTime()));
                 preparedStatement.setString(3, ReturnReason);
                 preparedStatement.setString(4, RequestedAction);
                 preparedStatement.setString(5, Notes);
-                preparedStatement.setInt(6, Status);
+                preparedStatement.setInt(6, RequestStatus);
                 preparedStatement.setInt(7, OrderItemId);
                 
                 preparedStatement.executeUpdate();
@@ -147,6 +156,73 @@
             }
             return return_request;
         }
+        
+        public static ArrayList<ReturnRequest> getAllReturnRequestWithRelatedInfo()
+        {
+            ArrayList<ReturnRequest> return_requestList = new ArrayList<ReturnRequest>();
+            try
+            {
+                getAllRecordsByTableName("return_request");
+                while (rs.next())
+                {
+                    return_requestList.add(processReturnRequest(rs));
+                }
+
+                
+                    for(ReturnRequest return_request : return_requestList)
+                    {
+                        
+                            getRecordById("OrderItem", return_request.getOrderItemId().toString());
+                            return_request.setOrderItem(OrderItemDAO.processOrderItem(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllReturnRequestWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return return_requestList;
+        }
+        
+        
+        public static ReturnRequest getRelatedInfo(ReturnRequest return_request)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("OrderItem", return_request.getOrderItemId().toString());
+                            return_request.setOrderItem(OrderItemDAO.processOrderItem(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return return_request;
+        }
+        
+        public static ReturnRequest getAllRelatedObjects(ReturnRequest return_request)
+        {           
+                         
+            return return_request;
+        }
+        
+        
+        
                 
         public static ArrayList<ReturnRequest> getReturnRequestPaged(int limit, int offset)
         {
@@ -214,7 +290,7 @@
             return return_request;
         }                
                 
-        public static void updateReturnRequest(Integer ReturnRequestId,Integer Quantity,Date RequestDate,String ReturnReason,String RequestedAction,String Notes,Integer Status,Integer OrderItemId)
+        public static void updateReturnRequest(Integer ReturnRequestId,Integer Quantity,Date RequestDate,String ReturnReason,String RequestedAction,String Notes,Integer RequestStatus,Integer OrderItemId)
         {  
             try
             {   
@@ -228,13 +304,13 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE return_request SET Quantity=?,RequestDate=?,ReturnReason=?,RequestedAction=?,Notes=?,Status=?,OrderItemId=? WHERE ReturnRequestId=?;");                    
+                prepareStatement("UPDATE return_request SET Quantity=?,RequestDate=?,ReturnReason=?,RequestedAction=?,Notes=?,RequestStatus=?,OrderItemId=? WHERE ReturnRequestId=?;");                    
                 preparedStatement.setInt(1, Quantity);
                 preparedStatement.setDate(2, new java.sql.Date(RequestDate.getTime()));
                 preparedStatement.setString(3, ReturnReason);
                 preparedStatement.setString(4, RequestedAction);
                 preparedStatement.setString(5, Notes);
-                preparedStatement.setInt(6, Status);
+                preparedStatement.setInt(6, RequestStatus);
                 preparedStatement.setInt(7, OrderItemId);
                 preparedStatement.setInt(8, ReturnRequestId);
                 preparedStatement.executeUpdate();

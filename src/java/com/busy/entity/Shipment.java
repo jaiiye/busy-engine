@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class Shipment implements Serializable
@@ -40,13 +41,23 @@
         
 
         private Integer shipmentId;
+                
         private Date createdOn;
+                
         private String trackingNumber;
+                
         private Double totalWeight;
+                
         private Date shipDate;
+                
         private Date deliveryDate;
+                
         private Integer itemQuantity;
+                
         private Integer orderId;
+        private Order order;        
+                 
+        
         
 
         public Shipment()
@@ -59,7 +70,9 @@
        this.deliveryDate = null; 
        this.itemQuantity = 0; 
        this.orderId = 0; 
-        }
+        
+       
+       }
         
         public Shipment(Integer ShipmentId, Date CreatedOn, String TrackingNumber, Double TotalWeight, Date ShipDate, Date DeliveryDate, Integer ItemQuantity, Integer OrderId)
         {
@@ -71,7 +84,9 @@
        this.deliveryDate = DeliveryDate;
        this.itemQuantity = ItemQuantity;
        this.orderId = OrderId;
-        } 
+              
+       
+       } 
         
              
         
@@ -84,6 +99,8 @@
             {
                 this.shipmentId = ShipmentId;
             }
+            
+            
         
             public Date getCreatedOn()
             {
@@ -94,6 +111,8 @@
             {
                 this.createdOn = CreatedOn;
             }
+            
+            
         
             public String getTrackingNumber()
             {
@@ -104,6 +123,8 @@
             {
                 this.trackingNumber = TrackingNumber;
             }
+            
+            
         
             public Double getTotalWeight()
             {
@@ -114,6 +135,8 @@
             {
                 this.totalWeight = TotalWeight;
             }
+            
+            
         
             public Date getShipDate()
             {
@@ -124,6 +147,8 @@
             {
                 this.shipDate = ShipDate;
             }
+            
+            
         
             public Date getDeliveryDate()
             {
@@ -134,6 +159,8 @@
             {
                 this.deliveryDate = DeliveryDate;
             }
+            
+            
         
             public Integer getItemQuantity()
             {
@@ -144,6 +171,8 @@
             {
                 this.itemQuantity = ItemQuantity;
             }
+            
+            
         
             public Integer getOrderId()
             {
@@ -154,7 +183,23 @@
             {
                 this.orderId = OrderId;
             }
-           
+            
+            
+                   
+            public Order getOrder()
+                {
+                    return this.order;
+                }
+
+                public void setOrder(Order order)
+                {
+                    this.order = order;
+                }
+                   
+            
+         
+        
+        
             
     }
 

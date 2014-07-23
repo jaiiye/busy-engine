@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ItemReview implements Serializable
@@ -37,10 +38,18 @@
         
 
         private Integer itemReviewId;
+                
         private Integer itemId;
+        private Item item;        
         private Integer rating;
+                
         private Integer helpfulYes;
+                
         private Integer helpfulNo;
+                
+                 
+        ArrayList<Comment> commentList; 
+        
         
 
         public ItemReview()
@@ -50,7 +59,10 @@
        this.rating = 0; 
        this.helpfulYes = 0; 
        this.helpfulNo = 0; 
-        }
+        
+       commentList = null; 
+        
+       }
         
         public ItemReview(Integer ItemReviewId, Integer ItemId, Integer Rating, Integer HelpfulYes, Integer HelpfulNo)
         {
@@ -59,7 +71,10 @@
        this.rating = Rating;
        this.helpfulYes = HelpfulYes;
        this.helpfulNo = HelpfulNo;
-        } 
+              
+       commentList = null; 
+        
+       } 
         
              
         
@@ -72,6 +87,8 @@
             {
                 this.itemReviewId = ItemReviewId;
             }
+            
+            
         
             public Integer getItemId()
             {
@@ -82,6 +99,20 @@
             {
                 this.itemId = ItemId;
             }
+            
+            
+                   
+            public Item getItem()
+                {
+                    return this.item;
+                }
+
+                public void setItem(Item item)
+                {
+                    this.item = item;
+                }
+                   
+            
         
             public Integer getRating()
             {
@@ -92,6 +123,8 @@
             {
                 this.rating = Rating;
             }
+            
+            
         
             public Integer getHelpfulYes()
             {
@@ -102,6 +135,8 @@
             {
                 this.helpfulYes = HelpfulYes;
             }
+            
+            
         
             public Integer getHelpfulNo()
             {
@@ -112,7 +147,21 @@
             {
                 this.helpfulNo = HelpfulNo;
             }
-           
+            
+            
+         
+        
+        
+            public ArrayList<Comment> getCommentList()
+            {
+                return this.commentList;
+            }
+            
+            public void setCommentList(ArrayList<Comment> commentList)
+            {
+                this.commentList = commentList;
+            }
+        
             
     }
 

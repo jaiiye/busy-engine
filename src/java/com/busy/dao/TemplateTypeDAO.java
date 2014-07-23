@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.TemplateType;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(TemplateType.PROP_TEMPLATE_TYPE_ID) || column.equals(TemplateType.PROP_TYPE_NAME) || column.equals(TemplateType.PROP_VALUE) )
+            if(column.equals(TemplateType.PROP_TEMPLATE_TYPE_ID) || column.equals(TemplateType.PROP_TYPE_NAME) || column.equals(TemplateType.PROP_TYPE_VALUE) )
             {
                 return column;
             }
@@ -78,19 +87,19 @@
             return new TemplateType(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
         
-        public static int addTemplateType(String TypeName, String Value)
+        public static int addTemplateType(String TypeName, String TypeValue)
         {   
             int id = 0;
             try
             {
                 
                 checkColumnSize(TypeName, 45);
-                checkColumnSize(Value, 45);
+                checkColumnSize(TypeValue, 45);
                                             
                 openConnection();
-                prepareStatement("INSERT INTO template_type(TypeName,Value) VALUES (?,?);");                    
+                prepareStatement("INSERT INTO template_type(TypeName,TypeValue) VALUES (?,?);");                    
                 preparedStatement.setString(1, TypeName);
-                preparedStatement.setString(2, Value);
+                preparedStatement.setString(2, TypeValue);
                 
                 preparedStatement.executeUpdate();
             
@@ -137,6 +146,55 @@
             }
             return template_type;
         }
+        
+        public static ArrayList<TemplateType> getAllTemplateTypeWithRelatedInfo()
+        {
+            ArrayList<TemplateType> template_typeList = new ArrayList<TemplateType>();
+            try
+            {
+                getAllRecordsByTableName("template_type");
+                while (rs.next())
+                {
+                    template_typeList.add(processTemplateType(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllTemplateTypeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return template_typeList;
+        }
+        
+        
+        public static TemplateType getRelatedInfo(TemplateType template_type)
+        {
+           
+                  
+            
+            return template_type;
+        }
+        
+        public static TemplateType getAllRelatedObjects(TemplateType template_type)
+        {           
+            template_type.setTemplateList(TemplateDAO.getAllTemplateByColumn("TemplateTypeId", template_type.getTemplateTypeId().toString()));
+             
+            return template_type;
+        }
+        
+        
+                    
+        public static TemplateType getRelatedTemplateList(TemplateType template_type)
+        {           
+            template_type.setTemplateList(TemplateDAO.getAllTemplateByColumn("TemplateTypeId", template_type.getTemplateTypeId().toString()));
+            return template_type;
+        }        
+        
                 
         public static ArrayList<TemplateType> getTemplateTypePaged(int limit, int offset)
         {
@@ -204,18 +262,18 @@
             return template_type;
         }                
                 
-        public static void updateTemplateType(Integer TemplateTypeId,String TypeName,String Value)
+        public static void updateTemplateType(Integer TemplateTypeId,String TypeName,String TypeValue)
         {  
             try
             {   
                 
                 checkColumnSize(TypeName, 45);
-                checkColumnSize(Value, 45);
+                checkColumnSize(TypeValue, 45);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE template_type SET TypeName=?,Value=? WHERE TemplateTypeId=?;");                    
+                prepareStatement("UPDATE template_type SET TypeName=?,TypeValue=? WHERE TemplateTypeId=?;");                    
                 preparedStatement.setString(1, TypeName);
-                preparedStatement.setString(2, Value);
+                preparedStatement.setString(2, TypeValue);
                 preparedStatement.setInt(3, TemplateTypeId);
                 preparedStatement.executeUpdate();
             }

@@ -1,7 +1,6 @@
 
 
 
- 
 
 
 
@@ -12,6 +11,8 @@
 
 
  
+
+
 
 
 
@@ -22,8 +23,8 @@
 
     package com.busy.entity;
 
-    import com.transitionsoft.*;
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class ServiceCharge implements Serializable
@@ -39,12 +40,22 @@
         
 
         private Integer serviceChargeId;
+                
         private String chargeName;
+                
         private String description;
+                
         private String rate;
+                
         private String units;
+                
         private Date date;
+                
         private Integer userServiceId;
+        private UserService userService;        
+                 
+        ArrayList<Service> serviceList; 
+        
         
 
         public ServiceCharge()
@@ -56,7 +67,10 @@
        this.units = ""; 
        this.date = null; 
        this.userServiceId = 0; 
-        }
+        
+       serviceList = null; 
+        
+       }
         
         public ServiceCharge(Integer ServiceChargeId, String ChargeName, String Description, String Rate, String Units, Date Date, Integer UserServiceId)
         {
@@ -67,7 +81,10 @@
        this.units = Units;
        this.date = Date;
        this.userServiceId = UserServiceId;
-        } 
+              
+       serviceList = null; 
+        
+       } 
         
              
         
@@ -80,6 +97,8 @@
             {
                 this.serviceChargeId = ServiceChargeId;
             }
+            
+            
         
             public String getChargeName()
             {
@@ -90,6 +109,8 @@
             {
                 this.chargeName = ChargeName;
             }
+            
+            
         
             public String getDescription()
             {
@@ -100,6 +121,8 @@
             {
                 this.description = Description;
             }
+            
+            
         
             public String getRate()
             {
@@ -110,6 +133,8 @@
             {
                 this.rate = Rate;
             }
+            
+            
         
             public String getUnits()
             {
@@ -120,6 +145,8 @@
             {
                 this.units = Units;
             }
+            
+            
         
             public Date getDate()
             {
@@ -130,6 +157,8 @@
             {
                 this.date = Date;
             }
+            
+            
         
             public Integer getUserServiceId()
             {
@@ -140,7 +169,33 @@
             {
                 this.userServiceId = UserServiceId;
             }
-           
+            
+            
+                   
+            public UserService getUserService()
+                {
+                    return this.userService;
+                }
+
+                public void setUserService(UserService userService)
+                {
+                    this.userService = userService;
+                }
+                   
+            
+         
+        
+        
+            public ArrayList<Service> getServiceList()
+            {
+                return this.serviceList;
+            }
+            
+            public void setServiceList(ArrayList<Service> serviceList)
+            {
+                this.serviceList = serviceList;
+            }
+        
             
     }
 

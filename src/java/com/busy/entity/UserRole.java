@@ -19,9 +19,12 @@
 
 
 
+
+
     package com.busy.entity;
 
     import java.io.Serializable;
+    import java.util.ArrayList;
     import java.util.Date;
     
     public class UserRole implements Serializable
@@ -32,20 +35,28 @@
         
 
         private String userName;
+                
         private String roleName;
+                
+                 
+        
         
 
         public UserRole()
         {
             this.userName = ""; 
        this.roleName = ""; 
-        }
+        
+       
+       }
         
         public UserRole(String UserName, String RoleName)
         {
             this.userName = UserName;
        this.roleName = RoleName;
-        } 
+              
+       
+       } 
         
              
         
@@ -58,6 +69,8 @@
             {
                 this.userName = UserName;
             }
+            
+            
         
             public String getRoleName()
             {
@@ -68,7 +81,11 @@
             {
                 this.roleName = RoleName;
             }
-           
+            
+            
+         
+        
+        
             
     }
 

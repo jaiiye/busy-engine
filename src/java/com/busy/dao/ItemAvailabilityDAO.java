@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ItemAvailability;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -135,6 +144,55 @@
             }
             return item_availability;
         }
+        
+        public static ArrayList<ItemAvailability> getAllItemAvailabilityWithRelatedInfo()
+        {
+            ArrayList<ItemAvailability> item_availabilityList = new ArrayList<ItemAvailability>();
+            try
+            {
+                getAllRecordsByTableName("item_availability");
+                while (rs.next())
+                {
+                    item_availabilityList.add(processItemAvailability(rs));
+                }
+
+                
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemAvailabilityWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return item_availabilityList;
+        }
+        
+        
+        public static ItemAvailability getRelatedInfo(ItemAvailability item_availability)
+        {
+           
+                  
+            
+            return item_availability;
+        }
+        
+        public static ItemAvailability getAllRelatedObjects(ItemAvailability item_availability)
+        {           
+            item_availability.setOptionAvailabilityList(OptionAvailabilityDAO.getAllOptionAvailabilityByColumn("ItemAvailabilityId", item_availability.getItemAvailabilityId().toString()));
+             
+            return item_availability;
+        }
+        
+        
+                    
+        public static ItemAvailability getRelatedOptionAvailabilityList(ItemAvailability item_availability)
+        {           
+            item_availability.setOptionAvailabilityList(OptionAvailabilityDAO.getAllOptionAvailabilityByColumn("ItemAvailabilityId", item_availability.getItemAvailabilityId().toString()));
+            return item_availability;
+        }        
+        
                 
         public static ArrayList<ItemAvailability> getItemAvailabilityPaged(int limit, int offset)
         {

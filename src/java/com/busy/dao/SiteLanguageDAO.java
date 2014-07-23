@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.SiteLanguage;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -75,10 +84,10 @@
                                
         public static SiteLanguage processSiteLanguage(ResultSet rs) throws SQLException
         {        
-            return new SiteLanguage(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getBoolean(4), rs.getString(5), rs.getInt(6));
+            return new SiteLanguage(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getInt(6));
         }
         
-        public static int addSiteLanguage(String LanguageName, String Locale, Boolean Rtl, String FlagFileName, Integer SiteId)
+        public static int addSiteLanguage(String LanguageName, String Locale, Integer Rtl, String FlagFileName, Integer SiteId)
         {   
             int id = 0;
             try
@@ -94,7 +103,7 @@
                 prepareStatement("INSERT INTO site_language(LanguageName,Locale,Rtl,FlagFileName,SiteId) VALUES (?,?,?,?,?);");                    
                 preparedStatement.setString(1, LanguageName);
                 preparedStatement.setString(2, Locale);
-                preparedStatement.setBoolean(3, Rtl);
+                preparedStatement.setInt(3, Rtl);
                 preparedStatement.setString(4, FlagFileName);
                 preparedStatement.setInt(5, SiteId);
                 
@@ -143,6 +152,73 @@
             }
             return site_language;
         }
+        
+        public static ArrayList<SiteLanguage> getAllSiteLanguageWithRelatedInfo()
+        {
+            ArrayList<SiteLanguage> site_languageList = new ArrayList<SiteLanguage>();
+            try
+            {
+                getAllRecordsByTableName("site_language");
+                while (rs.next())
+                {
+                    site_languageList.add(processSiteLanguage(rs));
+                }
+
+                
+                    for(SiteLanguage site_language : site_languageList)
+                    {
+                        
+                            getRecordById("Site", site_language.getSiteId().toString());
+                            site_language.setSite(SiteDAO.processSite(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllSiteLanguageWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return site_languageList;
+        }
+        
+        
+        public static SiteLanguage getRelatedInfo(SiteLanguage site_language)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("Site", site_language.getSiteId().toString());
+                            site_language.setSite(SiteDAO.processSite(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return site_language;
+        }
+        
+        public static SiteLanguage getAllRelatedObjects(SiteLanguage site_language)
+        {           
+                         
+            return site_language;
+        }
+        
+        
+        
                 
         public static ArrayList<SiteLanguage> getSiteLanguagePaged(int limit, int offset)
         {
@@ -210,7 +286,7 @@
             return site_language;
         }                
                 
-        public static void updateSiteLanguage(Integer SiteLanguageId,String LanguageName,String Locale,Boolean Rtl,String FlagFileName,Integer SiteId)
+        public static void updateSiteLanguage(Integer SiteLanguageId,String LanguageName,String Locale,Integer Rtl,String FlagFileName,Integer SiteId)
         {  
             try
             {   
@@ -225,7 +301,7 @@
                 prepareStatement("UPDATE site_language SET LanguageName=?,Locale=?,Rtl=?,FlagFileName=?,SiteId=? WHERE SiteLanguageId=?;");                    
                 preparedStatement.setString(1, LanguageName);
                 preparedStatement.setString(2, Locale);
-                preparedStatement.setBoolean(3, Rtl);
+                preparedStatement.setInt(3, Rtl);
                 preparedStatement.setString(4, FlagFileName);
                 preparedStatement.setInt(5, SiteId);
                 preparedStatement.setInt(6, SiteLanguageId);

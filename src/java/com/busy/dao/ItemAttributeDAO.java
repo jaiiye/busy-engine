@@ -10,7 +10,16 @@
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,7 +39,7 @@
     package com.busy.dao;
 
     import com.transitionsoft.BasicConnection;
-    import com.busy.entity.ItemAttribute;
+    import com.busy.entity.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.ResultSet;
@@ -43,7 +52,7 @@
                
         public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_ID) || column.equals(ItemAttribute.PROP_KEY) || column.equals(ItemAttribute.PROP_VALUE) || column.equals(ItemAttribute.PROP_LOCALE) || column.equals(ItemAttribute.PROP_ATTRIBUTE_TYPE_ID) || column.equals(ItemAttribute.PROP_ITEM_ID) )
+            if(column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_ID) || column.equals(ItemAttribute.PROP_KEY) || column.equals(ItemAttribute.PROP_VALUE) || column.equals(ItemAttribute.PROP_LOCALE) || column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_TYPE_ID) || column.equals(ItemAttribute.PROP_ITEM_ID) )
             {
                 return column;
             }
@@ -63,7 +72,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_ID) || column.equals(ItemAttribute.PROP_ATTRIBUTE_TYPE_ID) || column.equals(ItemAttribute.PROP_ITEM_ID) )
+            if (column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_ID) || column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_TYPE_ID) || column.equals(ItemAttribute.PROP_ITEM_ID) )
             {
                 return true;
             }        
@@ -78,7 +87,7 @@
             return new ItemAttribute(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
         }
         
-        public static int addItemAttribute(String Key, String Value, String Locale, Integer AttributeTypeId, Integer ItemId)
+        public static int addItemAttribute(String Key, String Value, String Locale, Integer ItemAttributeTypeId, Integer ItemId)
         {   
             int id = 0;
             try
@@ -91,11 +100,11 @@
                 
                                             
                 openConnection();
-                prepareStatement("INSERT INTO item_attribute(Key,Value,Locale,AttributeTypeId,ItemId) VALUES (?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO item_attribute(Key,Value,Locale,ItemAttributeTypeId,ItemId) VALUES (?,?,?,?,?);");                    
                 preparedStatement.setString(1, Key);
                 preparedStatement.setString(2, Value);
                 preparedStatement.setString(3, Locale);
-                preparedStatement.setInt(4, AttributeTypeId);
+                preparedStatement.setInt(4, ItemAttributeTypeId);
                 preparedStatement.setInt(5, ItemId);
                 
                 preparedStatement.executeUpdate();
@@ -143,6 +152,79 @@
             }
             return item_attribute;
         }
+        
+        public static ArrayList<ItemAttribute> getAllItemAttributeWithRelatedInfo()
+        {
+            ArrayList<ItemAttribute> item_attributeList = new ArrayList<ItemAttribute>();
+            try
+            {
+                getAllRecordsByTableName("item_attribute");
+                while (rs.next())
+                {
+                    item_attributeList.add(processItemAttribute(rs));
+                }
+
+                
+                    for(ItemAttribute item_attribute : item_attributeList)
+                    {
+                        
+                            getRecordById("ItemAttributeType", item_attribute.getItemAttributeTypeId().toString());
+                            item_attribute.setItemAttributeType(ItemAttributeTypeDAO.processItemAttributeType(rs));               
+                        
+                            getRecordById("Item", item_attribute.getItemId().toString());
+                            item_attribute.setItem(ItemDAO.processItem(rs));               
+                        
+                    }
+             
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAllItemAttributeWithRelatedInfo error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+            return item_attributeList;
+        }
+        
+        
+        public static ItemAttribute getRelatedInfo(ItemAttribute item_attribute)
+        {
+           
+                
+                    try
+                    { 
+                        
+                            getRecordById("ItemAttributeType", item_attribute.getItemAttributeTypeId().toString());
+                            item_attribute.setItemAttributeType(ItemAttributeTypeDAO.processItemAttributeType(rs));               
+                        
+                            getRecordById("Item", item_attribute.getItemId().toString());
+                            item_attribute.setItem(ItemDAO.processItem(rs));               
+                        
+
+                        }
+                    catch (SQLException ex)
+                    {
+                        System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }                    
+               
+            
+            return item_attribute;
+        }
+        
+        public static ItemAttribute getAllRelatedObjects(ItemAttribute item_attribute)
+        {           
+                         
+            return item_attribute;
+        }
+        
+        
+        
                 
         public static ArrayList<ItemAttribute> getItemAttributePaged(int limit, int offset)
         {
@@ -210,7 +292,7 @@
             return item_attribute;
         }                
                 
-        public static void updateItemAttribute(Integer ItemAttributeId,String Key,String Value,String Locale,Integer AttributeTypeId,Integer ItemId)
+        public static void updateItemAttribute(Integer ItemAttributeId,String Key,String Value,String Locale,Integer ItemAttributeTypeId,Integer ItemId)
         {  
             try
             {   
@@ -222,11 +304,11 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_attribute SET Key=?,Value=?,Locale=?,AttributeTypeId=?,ItemId=? WHERE ItemAttributeId=?;");                    
+                prepareStatement("UPDATE item_attribute SET Key=?,Value=?,Locale=?,ItemAttributeTypeId=?,ItemId=? WHERE ItemAttributeId=?;");                    
                 preparedStatement.setString(1, Key);
                 preparedStatement.setString(2, Value);
                 preparedStatement.setString(3, Locale);
-                preparedStatement.setInt(4, AttributeTypeId);
+                preparedStatement.setInt(4, ItemAttributeTypeId);
                 preparedStatement.setInt(5, ItemId);
                 preparedStatement.setInt(6, ItemAttributeId);
                 preparedStatement.executeUpdate();
