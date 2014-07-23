@@ -1,5 +1,7 @@
 package com.busy;
 
+import com.busy.dao.DashboardDAO;
+import com.busy.dao.UserActionDAO;
 import com.busy.entity.Dashboard;
 import com.busy.entity.UserAction;
 import java.util.ArrayList;
@@ -31,5 +33,13 @@ public class DashboardInfo extends Dashboard
         this.activities = activities;
     }
     
+    public static DashboardInfo getInfo(){
+        ArrayList<Dashboard> d = DashboardDAO.getAllDashboardByColumn(Dashboard.PROP_DASHBOARD_ID, "1");
+        ArrayList<UserAction> a = UserActionDAO.getUserActionPaged(50, 0);
+        Dashboard db = d.get(0);        
+        DashboardInfo di = new DashboardInfo(db.getDashboardId(), db.getUserCount(), db.getBlogPostCount(), db.getItemCount(), db.getOrderCount(), db.getSiteFileCount(), db.getImageCount(), db.getBlogCount(), db.getCommentCount(), db.getPageCount(), db.getFormCount(), db.getSliderCount(), db.getItemBrandCount(), db.getCategoryCount(), db.getItemOptionCount());
+        di.setActivities(a);
+        return di;
+    }
     
 }
