@@ -137,6 +137,47 @@ public class BasicConnection
             System.out.println("getAllRecordsByTableNameWithLimitAndOffset error: " + ex.getMessage());
         }   
     }
+    
+    public static void getRecordsByTableNameWithLimitOrOffset(String tableName, Integer limit, Integer offset)
+    {
+        try
+        {       
+            openConnection();
+            String query = "SELECT * FROM " + tableName;
+            if(limit == null && offset == null)
+            {
+                query += ";";            
+                prepareStatement(query);
+                rs = preparedStatement.executeQuery(query);
+            }
+            else if(limit == null && offset != null)
+            {                
+                query += " OFFSET ?;";   
+                prepareStatement(query);
+                preparedStatement.setInt(1, offset);
+                rs = preparedStatement.executeQuery(query);
+            }
+            else if(limit != null && offset == null)
+            {                
+                query += " LIMIT ?;";   
+                prepareStatement(query);
+                preparedStatement.setInt(1, limit);
+                rs = preparedStatement.executeQuery(query);
+            }
+            else
+            {                
+                query += " LIMIT ? OFFSET ?;";   
+                prepareStatement(query);
+                preparedStatement.setInt(1, limit);
+                preparedStatement.setInt(2, offset);
+                rs = preparedStatement.executeQuery(query);
+            }
+        }
+        catch (Exception ex) 
+        {
+            System.out.println("getRecordsByTableNameWithLimitOrOffset error: " + ex.getMessage());
+        }   
+    }
         
     public static int getAllRecordsCountByTableName(String tableName)
     {
@@ -238,6 +279,38 @@ public class BasicConnection
         catch (Exception ex) 
         {
             System.out.println("getRecordsByColumnWithLimitAndOffset error: " + ex.getMessage());
+        }   
+    }
+    
+    public static void getRecordsByColumnWithLimitOrOffset(String tableName, String columnName, String columnValue, boolean isNumeric, Integer limit, Integer offset)
+    {
+        try
+        {       
+            openConnection();
+            String query = "SELECT * FROM " + tableName + " WHERE " + columnName + "="  + (isNumeric?"":"'") + columnValue + (isNumeric?"":"'");
+            
+            if(limit == null && offset == null)
+            {
+                query += ";";
+            }
+            else if(limit == null && offset != null)
+            {                
+                query += " OFFSET " + offset + ";";   
+            }
+            else if(limit != null && offset == null)
+            {                
+                query += " LIMIT " + limit + ";";   
+            }
+            else
+            {                
+                query += " LIMIT " + limit + " OFFSET " + offset + ";"; 
+            }
+            System.out.println("Query: " + query);
+            rs = statement.executeQuery(query);
+        }
+        catch (Exception ex) 
+        {
+            System.out.println("getRecordsByColumnWithLimitOrOffset error: " + ex.getMessage());
         }   
     }
     

@@ -1,7 +1,7 @@
 
 package com.transitionsoft;
 
-import com.busy.entity.Address;
+import com.busy.engine.domain.Address;
 import static com.transitionsoft.BasicConnection.connection;
 import static com.transitionsoft.BasicConnection.rs;
 import static com.transitionsoft.BasicConnection.statement;

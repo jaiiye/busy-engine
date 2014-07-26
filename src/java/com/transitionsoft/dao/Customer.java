@@ -1,6 +1,6 @@
 package com.transitionsoft.dao;
 
-import com.busy.entity.Address;
+import com.busy.engine.domain.Address;
 import java.io.Serializable;
 
 public class Customer implements Serializable
