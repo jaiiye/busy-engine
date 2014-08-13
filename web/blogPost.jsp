@@ -28,12 +28,12 @@
         <meta name="description" content="">
         <meta name="keywords" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-        <%@include file="main_includes.jsp" %>
+        <%@include file="multipurpose_styles.jsp" %>
     </head>
     
     <body class="home">	
         <div class="root">	
-            <%@include file="main_header.jsp" %>       
+            <%@include file="multipurpose_header.jsp" %>       
             <section class="content"> 
 		<section class="main single">
         <%
@@ -121,9 +121,9 @@
 		</aside>
 		
             </section>    
-            <%@include file="main_footer.jsp" %>    
+            <%@include file="multipurpose_footer.jsp" %>    
         </div>
     
-        <%@include file="main_scripts.jsp" %>
+        <%@include file="multipurpose_scripts.jsp" %>
     </body>
 </html>

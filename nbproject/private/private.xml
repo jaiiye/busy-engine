@@ -4,11 +4,24 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/transitionsoft/dao/ShoppingCart.java</file>
-            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/dao/AddressDAO.java</file>
-            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/dao/AffiliateDAO.java</file>
-            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/dao/UserRoleDAO.java</file>
-            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/entity/Affiliate.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/domain/Item.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/dao/base/IGenericDao.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/ShoppingCart.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/domain/AbstractEntity.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/store/UpdateQuantities.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/store/Checkout.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/data/Operations.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/store/PayPalFunctions.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/Upload.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/store/Order.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/store/ExpressCheckout.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/data/BasicConnection.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/domain/ItemType.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/data/Database.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/DownloadCounter.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/mail/EmailComposer.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/mail/ConfirmUserEmail.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/dao/impl/ItemDaoImpl.java</file>
         </group>
     </open-files>
 </project-private>

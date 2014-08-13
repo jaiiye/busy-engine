@@ -1,65 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Define the roles we want to use in the application -->
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <servlet>
         <servlet-name>AddToShoppingCart</servlet-name>
-        <servlet-class>com.transitionsoft.AddToShoppingCart</servlet-class>
+        <servlet-class>com.busy.engine.store.AddToShoppingCart</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>RemoveFromShoppingCart</servlet-name>
-        <servlet-class>com.transitionsoft.RemoveFromShoppingCart</servlet-class>
+        <servlet-class>com.busy.engine.store.RemoveFromShoppingCart</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Checkout</servlet-name>
-        <servlet-class>com.transitionsoft.Checkout</servlet-class>
+        <servlet-class>com.busy.engine.store.Checkout</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UpdateQuantities</servlet-name>
-        <servlet-class>com.transitionsoft.UpdateQuantities</servlet-class>
+        <servlet-class>com.busy.engine.store.UpdateQuantities</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Order</servlet-name>
-        <servlet-class>com.transitionsoft.Order</servlet-class>
+        <servlet-class>com.busy.engine.store.Order</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ProcessForm</servlet-name>
-        <servlet-class>com.transitionsoft.ProcessForm</servlet-class>
+        <servlet-class>com.busy.engine.mail.ProcessForm</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>LogOut</servlet-name>
-        <servlet-class>com.transitionsoft.LogOut</servlet-class>
+        <servlet-class>com.busy.engine.LogOut</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>MakePdf</servlet-name>
-        <servlet-class>com.transitionsoft.MakePdf</servlet-class>
+        <servlet-class>com.busy.engine.MakePdf</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>FillPdf</servlet-name>
-        <servlet-class>com.transitionsoft.FillPdf</servlet-class>
+        <servlet-class>com.busy.engine.FillPdf</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ConfirmUserEmail</servlet-name>
-        <servlet-class>com.transitionsoft.ConfirmUserEmail</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ParseData</servlet-name>
-        <servlet-class>com.transitionsoft.ParseData</servlet-class>
+        <servlet-class>com.busy.engine.mail.ConfirmUserEmail</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ExpressCheckout</servlet-name>
-        <servlet-class>com.transitionsoft.ExpressCheckout</servlet-class>
+        <servlet-class>com.busy.engine.store.ExpressCheckout</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DownloadCounter</servlet-name>
-        <servlet-class>com.transitionsoft.DownloadCounter</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>GenerateUI</servlet-name>
-        <servlet-class>com.transitionsoft.GenerateUI</servlet-class>
+        <servlet-class>com.busy.engine.DownloadCounter</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Operations</servlet-name>
-        <servlet-class>com.transitionsoft.Operations</servlet-class>
+        <servlet-class>com.busy.engine.data.Operations</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Add</servlet-name>
+        <servlet-class>com.busy.engine.data.Add</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>aAS</servlet-name>
+        <servlet-class>com.busy.engine.aAS</servlet-class>
+        <init-param>
+            <param-name>ASDSS</param-name>
+            <param-value>Value</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>AddToShoppingCart</servlet-name>
@@ -102,10 +105,6 @@
         <url-pattern>/ConfirmUserEmail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ParseData</servlet-name>
-        <url-pattern>/ParseData</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ExpressCheckout</servlet-name>
         <url-pattern>/ExpressCheckout</url-pattern>
     </servlet-mapping>
@@ -114,12 +113,16 @@
         <url-pattern>/DownloadCounter</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GenerateUI</servlet-name>
-        <url-pattern>/GenerateUI</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>Operations</servlet-name>
         <url-pattern>/Operations</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Add</servlet-name>
+        <url-pattern>/Add</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>aAS</servlet-name>
+        <url-pattern>/aAS</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -129,47 +132,6 @@
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
-    <login-config>
-        <auth-method>FORM</auth-method>
-        <realm-name>Secure Area</realm-name>
-        <form-login-config>
-            <form-login-page>/login.jsp</form-login-page>
-            <form-error-page>/error.jsp?msg=Login Failed</form-error-page>
-        </form-login-config>
-    </login-config>
-    <security-role>
-        <role-name>admin</role-name>
-    </security-role>
-    <security-role>
-        <role-name>member</role-name>
-    </security-role>
-    <security-constraint>
-        <display-name>Security constraint for the /member folder</display-name>
-        <!-- Define the resource, a /members folder -->
-        <web-resource-collection>
-            <web-resource-name>Members Only</web-resource-name>
-            <url-pattern>/members/*</url-pattern>
-        </web-resource-collection>
-        <!-- Only administrators and members can access this resource -->
-        <auth-constraint>
-            <role-name>admin</role-name>
-            <role-name>member</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <display-name>Security constraint for the /admin folder</display-name>
-        <!-- Define the resource, a /admin folder -->
-        <web-resource-collection>
-            <web-resource-name>Administration</web-resource-name>
-            <description/>
-            <url-pattern>/admin/*</url-pattern>
-        </web-resource-collection>
-        <!-- Only administrators can access this resource -->
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <!-- Use BASIC security -->
     <error-page>
         <error-code>404</error-code>
         <location>/error.jsp?code=404</location>
@@ -188,6 +150,118 @@
             <page-encoding>UTF-8</page-encoding>
         </jsp-property-group>
     </jsp-config>
+    <security-constraint>
+        <display-name>Security constraint for the /admin folder</display-name>
+        <web-resource-collection>
+            <web-resource-name>Administration</web-resource-name>
+            <description/>
+            <url-pattern>/admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>Security constraint for the /member folder</display-name>
+        <web-resource-collection>
+            <web-resource-name>Members Only</web-resource-name>
+            <url-pattern>/members/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+            <role-name>member</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>Security constraint for the /customer folder</display-name>
+        <web-resource-collection>
+            <web-resource-name>Customer</web-resource-name>
+            <description/>
+            <url-pattern>/customer/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+            <role-name>customer</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>Security constraint for the /affiliate folder</display-name>
+        <web-resource-collection>
+            <web-resource-name>Affiliate</web-resource-name>
+            <description/>
+            <url-pattern>/affiliate/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+            <role-name>affiliate</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>Security constraint for the /vendor folder</display-name>
+        <web-resource-collection>
+            <web-resource-name>Vendor</web-resource-name>
+            <description/>
+            <url-pattern>/vendor/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+            <role-name>vendor</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>Security constraint for the /staff folder</display-name>
+        <web-resource-collection>
+            <web-resource-name>Staff</web-resource-name>
+            <description/>
+            <url-pattern>/staff/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+            <role-name>staff</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>Security constraint for the /promo folder</display-name>
+        <web-resource-collection>
+            <web-resource-name>Promotional</web-resource-name>
+            <description/>
+            <url-pattern>/promo/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+            <role-name>member</role-name>
+            <role-name>customer</role-name>
+            <role-name>affiliate</role-name>
+            <role-name>vendor</role-name>
+            <role-name>staff</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>Secure Area</realm-name>
+        <form-login-config>
+            <form-login-page>/login.jsp</form-login-page>
+            <form-error-page>/error.jsp?msg=Login Failed</form-error-page>
+        </form-login-config>
+    </login-config>
+    <security-role>
+        <role-name>admin</role-name>
+    </security-role>
+    <security-role>
+        <role-name>member</role-name>
+    </security-role>
+    <security-role>
+        <role-name>customer</role-name>
+    </security-role>
+    <security-role>
+        <role-name>affiliate</role-name>
+    </security-role>
+    <security-role>
+        <role-name>vendor</role-name>
+    </security-role>
+    <security-role>
+        <role-name>staff</role-name>
+    </security-role>
     <security-role>
         <description/>
         <role-name>manager</role-name>

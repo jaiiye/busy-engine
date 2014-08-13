@@ -29,7 +29,7 @@
         unlink: 'Treure enllaç',
         edit: 'Editar',
         textToDisplay: 'Text per mostrar',
-        url: 'Cap a quina URL porta l'enllaç?',
+        url: 'Cap a quina URL porta lenllaç?',
         openInNewWindow: 'Obrir en una finestra nova'
       },
       video: {
@@ -70,7 +70,7 @@
         paragraph: 'Paràgraf',
         outdent: 'Menys tabulació',
         indent: 'Més tabulació',
-        left: 'Alinear a l'esquerra',
+        left: 'Alinear a lesquerra',
         center: 'Alinear al mig',
         right: 'Alinear a la dreta',
         justify: 'Justificar'
