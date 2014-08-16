@@ -95,6 +95,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("formId", formId).add("formName", formName).add("description", description).add("submissionEmail", submissionEmail).add("submissionMethod", submissionMethod).add("action", action).add("resettable", resettable).add("fileUpload", fileUpload);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

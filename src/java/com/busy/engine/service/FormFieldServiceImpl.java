@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.FormFieldDao;
@@ -67,28 +83,41 @@ public class FormFieldServiceImpl extends AbstractService implements FormFieldSe
     @Override
     public Result<FormField> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(formFieldDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(formFieldDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<FormField>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<FormField> formFieldList =  formFieldDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(formFieldList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<FormField> formFieldList =  formFieldDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(formFieldList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -187,11 +216,7 @@ public class FormFieldServiceImpl extends AbstractService implements FormFieldSe
             else 
             {
                 return ResultFactory.getFailResult("FormField is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

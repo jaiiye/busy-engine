@@ -81,6 +81,9 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("siteLanguageId", siteLanguageId).add("languageName", languageName).add("locale", locale).add("rtl", rtl).add("flagFileName", flagFileName).add("siteId", siteId);
+        
+    if(site != null) site.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

@@ -1,3 +1,57 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.AddressDao;
@@ -14,14 +68,14 @@ import com.busy.engine.vo.ResultFactory;
 import java.util.List;
 import java.util.Date;
 
-public class AddressServiceImpl extends AbstractService implements AddressService
+public class AddressServiceImpl extends AbstractService implements AddressService 
 {
-
-    protected AddressDao addressDao = new AddressDaoImpl();    
+    protected AddressDao addressDao = new AddressDaoImpl();
     protected UserDao userDao = new UserDaoImpl();
     protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    
 
-    public AddressServiceImpl()
+    public AddressServiceImpl() 
     {
         super();
     }
@@ -29,52 +83,66 @@ public class AddressServiceImpl extends AbstractService implements AddressServic
     @Override
     public Result<Address> find(String userName, Integer id)
     {
-        if (isValidUser(userName))
+        try
         {
-            return ResultFactory.getSuccessResult(addressDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(addressDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
-
+    
     @Override
-    public Result<List<Address>> findAll(String userName)
+    public Result<List<Address>> findAll(String userName) 
     {
-        if (isValidUser(userName))
+        try
         {
-            List<Address> addressList = addressDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(addressList);
+            if (isValidUser(userName)) 
+            {
+                List<Address> addressList =  addressDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(addressList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
     @Override
     public Result<Address> store(String userName, Integer id, String recipient, String address1, String address2, String city, String stateProvince, String zipPostalCode, String country, String region, Integer addressStatus, String locale)
-    {
+    {        
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
-
-        if (!checkUserRoles(roles))
+                        
+        if (! checkUserRoles(roles)) 
         {
             return ResultFactory.getFailResult(ROLE_INVALID);
         }
 
         Address address;
 
-        if (id == null)
+        if (id == null) 
         {
             address = new Address();
-        }
-        else
+        } 
+        else 
         {
             address = addressDao.find(id);
 
-            if (address == null)
+            if (address == null) 
             {
                 return ResultFactory.getFailResult("Unable to find Address instance with Id=" + id);
             }
@@ -90,12 +158,13 @@ public class AddressServiceImpl extends AbstractService implements AddressServic
         address.setRegion(region);
         address.setAddressStatus(addressStatus);
         address.setLocale(locale);
-
-        if (address.getId() == null)
+        
+        
+        if (address.getId() == null) 
         {
             addressDao.add(address);
-        }
-        else
+        } 
+        else 
         {
             address = addressDao.update(address);
         }
@@ -103,69 +172,68 @@ public class AddressServiceImpl extends AbstractService implements AddressServic
         return ResultFactory.getSuccessResult(address);
 
     }
-
+  
     @Override
     public Result<Address> remove(String userName, Integer id)
     {
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
-
-        if (!checkUserRoles(roles))
+                        
+        if (! checkUserRoles(roles)) 
         {
             return ResultFactory.getFailResult(ROLE_INVALID);
         }
 
-        if (id == null)
+        if (id == null) 
         {
             return ResultFactory.getFailResult("Unable to remove Address [null id]");
-        }
+        } 
 
         Address address = addressDao.find(id);
 
-        if (address == null)
+        if (address == null) 
         {
             return ResultFactory.getFailResult("Unable to load Address for removal with id=" + id);
-        }
-        else
+        } 
+        else 
         {
             //if all related objects are empty for the given object then we can erase this object
             addressDao.getRelatedObjects(address);
-
+            
             String relatedObjectNames = "";
             boolean canBeDeleted = true;
-
-            if (address.getAffiliateList().size() != 0)
+            
+                        
+            if(address.getAffiliateList().size() != 0)
             {
-                relatedObjectNames += "Affiliate ";
+                relatedObjectNames += "Affiliate ";  
                 canBeDeleted = false;
             }
-
-            if (address.getItemLocationList().size() != 0)
+                        
+            if(address.getItemLocationList().size() != 0)
             {
-                relatedObjectNames += "ItemLocation ";
+                relatedObjectNames += "ItemLocation ";  
                 canBeDeleted = false;
             }
-
-            if (address.getUserList().size() != 0)
+                        
+            if(address.getUserList().size() != 0)
             {
-                relatedObjectNames += "User ";
+                relatedObjectNames += "User ";  
                 canBeDeleted = false;
             }
-
-            if (canBeDeleted)
-            {
+                          
+            
+            if(canBeDeleted)
+            {                
                 addressDao.remove(address);
-
+                
                 String msg = "Address with Id: " + address.getId() + " was deleted by " + userName;
-                return ResultFactory.getSuccessResultMsg(msg);
+                return ResultFactory.getSuccessResultMsg(msg);                
             }
-            else
+            else 
             {
                 return ResultFactory.getFailResult("Address is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-
+            }            
         }
-
     }
-
 }

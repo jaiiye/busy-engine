@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.RelatedItemDao;
@@ -67,28 +83,41 @@ public class RelatedItemServiceImpl extends AbstractService implements RelatedIt
     @Override
     public Result<RelatedItem> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(relatedItemDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(relatedItemDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<RelatedItem>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<RelatedItem> relatedItemList =  relatedItemDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(relatedItemList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<RelatedItem> relatedItemList =  relatedItemDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(relatedItemList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -178,11 +207,7 @@ public class RelatedItemServiceImpl extends AbstractService implements RelatedIt
             else 
             {
                 return ResultFactory.getFailResult("RelatedItem is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

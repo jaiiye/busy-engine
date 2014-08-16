@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.SliderItemDao;
@@ -67,28 +83,41 @@ public class SliderItemServiceImpl extends AbstractService implements SliderItem
     @Override
     public Result<SliderItem> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(sliderItemDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(sliderItemDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<SliderItem>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<SliderItem> sliderItemList =  sliderItemDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(sliderItemList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<SliderItem> sliderItemList =  sliderItemDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(sliderItemList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -183,11 +212,7 @@ public class SliderItemServiceImpl extends AbstractService implements SliderItem
             else 
             {
                 return ResultFactory.getFailResult("SliderItem is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

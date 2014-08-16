@@ -107,6 +107,11 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("affiliateId", affiliateId).add("companyName", companyName).add("email", email).add("phone", phone).add("fax", fax).add("webUrl", webUrl).add("details", details).add("serviceHours", serviceHours).add("affiliateStatus", affiliateStatus).add("userId", userId).add("contactId", contactId).add("addressId", addressId);
+        
+    if(user != null) user.addJson(builder);
+        if(contact != null) contact.addJson(builder);
+        if(address != null) address.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

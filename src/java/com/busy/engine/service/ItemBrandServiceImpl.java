@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemBrandDao;
@@ -67,28 +83,41 @@ public class ItemBrandServiceImpl extends AbstractService implements ItemBrandSe
     @Override
     public Result<ItemBrand> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(itemBrandDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(itemBrandDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<ItemBrand>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<ItemBrand> itemBrandList =  itemBrandDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(itemBrandList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<ItemBrand> itemBrandList =  itemBrandDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(itemBrandList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -190,11 +219,7 @@ public class ItemBrandServiceImpl extends AbstractService implements ItemBrandSe
             else 
             {
                 return ResultFactory.getFailResult("ItemBrand is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

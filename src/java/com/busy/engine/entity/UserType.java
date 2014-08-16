@@ -75,6 +75,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("userTypeId", userTypeId).add("typeName", typeName).add("description", description).add("redirectUrl", redirectUrl);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

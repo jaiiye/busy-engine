@@ -71,6 +71,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("templateTypeId", templateTypeId).add("typeName", typeName).add("typeValue", typeValue);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

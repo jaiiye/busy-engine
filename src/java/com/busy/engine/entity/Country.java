@@ -83,6 +83,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("countryId", countryId).add("name", name).add("isoCode", isoCode).add("isoNumber", isoNumber).add("hasVat", hasVat);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

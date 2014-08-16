@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.PaypalDao;
@@ -67,28 +83,41 @@ public class PaypalServiceImpl extends AbstractService implements PaypalService
     @Override
     public Result<Paypal> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(paypalDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(paypalDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<Paypal>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<Paypal> paypalList =  paypalDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(paypalList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<Paypal> paypalList =  paypalDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(paypalList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -187,11 +216,7 @@ public class PaypalServiceImpl extends AbstractService implements PaypalService
             else 
             {
                 return ResultFactory.getFailResult("Paypal is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

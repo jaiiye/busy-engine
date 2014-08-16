@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.SiteFolderDao;
@@ -67,28 +83,41 @@ public class SiteFolderServiceImpl extends AbstractService implements SiteFolder
     @Override
     public Result<SiteFolder> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(siteFolderDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(siteFolderDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<SiteFolder>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<SiteFolder> siteFolderList =  siteFolderDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(siteFolderList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<SiteFolder> siteFolderList =  siteFolderDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(siteFolderList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -186,11 +215,7 @@ public class SiteFolderServiceImpl extends AbstractService implements SiteFolder
             else 
             {
                 return ResultFactory.getFailResult("SiteFolder is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

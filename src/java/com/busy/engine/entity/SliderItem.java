@@ -89,6 +89,9 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("sliderItemId", sliderItemId).add("title", title).add("description", description).add("url", url).add("imageName", imageName).add("alternateText", alternateText).add("rank", rank).add("sliderId", sliderId);
+        
+    if(slider != null) slider.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

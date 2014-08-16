@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemDiscountDao;
@@ -67,28 +83,41 @@ public class ItemDiscountServiceImpl extends AbstractService implements ItemDisc
     @Override
     public Result<ItemDiscount> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(itemDiscountDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(itemDiscountDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<ItemDiscount>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<ItemDiscount> itemDiscountList =  itemDiscountDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(itemDiscountList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<ItemDiscount> itemDiscountList =  itemDiscountDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(itemDiscountList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -179,11 +208,7 @@ public class ItemDiscountServiceImpl extends AbstractService implements ItemDisc
             else 
             {
                 return ResultFactory.getFailResult("ItemDiscount is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.AffiliateDao;
@@ -67,28 +83,41 @@ public class AffiliateServiceImpl extends AbstractService implements AffiliateSe
     @Override
     public Result<Affiliate> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(affiliateDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(affiliateDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<Affiliate>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<Affiliate> affiliateList =  affiliateDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(affiliateList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<Affiliate> affiliateList =  affiliateDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(affiliateList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -193,11 +222,7 @@ public class AffiliateServiceImpl extends AbstractService implements AffiliateSe
             else 
             {
                 return ResultFactory.getFailResult("Affiliate is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

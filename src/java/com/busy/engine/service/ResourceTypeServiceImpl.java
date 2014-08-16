@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ResourceTypeDao;
@@ -67,28 +83,41 @@ public class ResourceTypeServiceImpl extends AbstractService implements Resource
     @Override
     public Result<ResourceType> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(resourceTypeDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(resourceTypeDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<ResourceType>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<ResourceType> resourceTypeList =  resourceTypeDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(resourceTypeList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<ResourceType> resourceTypeList =  resourceTypeDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(resourceTypeList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -184,11 +213,7 @@ public class ResourceTypeServiceImpl extends AbstractService implements Resource
             else 
             {
                 return ResultFactory.getFailResult("ResourceType is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

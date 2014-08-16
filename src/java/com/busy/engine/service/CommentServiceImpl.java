@@ -1,3 +1,57 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.CommentDao;
@@ -14,14 +68,14 @@ import com.busy.engine.vo.ResultFactory;
 import java.util.List;
 import java.util.Date;
 
-public class CommentServiceImpl extends AbstractService implements CommentService
+public class CommentServiceImpl extends AbstractService implements CommentService 
 {
-
     protected CommentDao commentDao = new CommentDaoImpl();
     protected UserDao userDao = new UserDaoImpl();
     protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    
 
-    public CommentServiceImpl()
+    public CommentServiceImpl() 
     {
         super();
     }
@@ -29,53 +83,66 @@ public class CommentServiceImpl extends AbstractService implements CommentServic
     @Override
     public Result<Comment> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName))
+        try
         {
-            return ResultFactory.getSuccessResult(commentDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(commentDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
-
+    
     @Override
-    public Result<List<Comment>> findAll(String userName)
+    public Result<List<Comment>> findAll(String userName) 
     {
-        if (isValidUser(userName))
+        try
         {
-            List<Comment> commentList = commentDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(commentList);
+            if (isValidUser(userName)) 
+            {
+                List<Comment> commentList =  commentDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(commentList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
     @Override
     public Result<Comment> store(String userName, Integer id, String title, String content, Date date, Integer commentStatus, Integer userId, Integer blogPostId, Integer itemReviewId)
-    {
+    {        
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
-
-        if (!checkUserRoles(roles))
+                        
+        if (! checkUserRoles(roles)) 
         {
             return ResultFactory.getFailResult(ROLE_INVALID);
         }
 
         Comment comment;
 
-        if (id == null)
+        if (id == null) 
         {
             comment = new Comment();
-        }
-        else
+        } 
+        else 
         {
             comment = commentDao.find(id);
 
-            if (comment == null)
+            if (comment == null) 
             {
                 return ResultFactory.getFailResult("Unable to find Comment instance with Id=" + id);
             }
@@ -88,12 +155,13 @@ public class CommentServiceImpl extends AbstractService implements CommentServic
         comment.setUserId(userId);
         comment.setBlogPostId(blogPostId);
         comment.setItemReviewId(itemReviewId);
-
-        if (comment.getId() == null)
+        
+        
+        if (comment.getId() == null) 
         {
             commentDao.add(comment);
-        }
-        else
+        } 
+        else 
         {
             comment = commentDao.update(comment);
         }
@@ -101,51 +169,50 @@ public class CommentServiceImpl extends AbstractService implements CommentServic
         return ResultFactory.getSuccessResult(comment);
 
     }
-
+  
     @Override
     public Result<Comment> remove(String userName, Integer id)
     {
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
-
-        if (!checkUserRoles(roles))
+                        
+        if (! checkUserRoles(roles)) 
         {
             return ResultFactory.getFailResult(ROLE_INVALID);
         }
 
-        if (id == null)
+        if (id == null) 
         {
             return ResultFactory.getFailResult("Unable to remove Comment [null id]");
-        }
+        } 
 
         Comment comment = commentDao.find(id);
 
-        if (comment == null)
+        if (comment == null) 
         {
             return ResultFactory.getFailResult("Unable to load Comment for removal with id=" + id);
-        }
-        else
+        } 
+        else 
         {
             //if all related objects are empty for the given object then we can erase this object
             commentDao.getRelatedObjects(comment);
-
+            
             String relatedObjectNames = "";
             boolean canBeDeleted = true;
-
-            if (canBeDeleted)
-            {
+            
+                          
+            
+            if(canBeDeleted)
+            {                
                 commentDao.remove(comment);
-
+                
                 String msg = "Comment with Id: " + comment.getId() + " was deleted by " + userName;
-                return ResultFactory.getSuccessResultMsg(msg);
+                return ResultFactory.getSuccessResultMsg(msg);                
             }
-            else
+            else 
             {
                 return ResultFactory.getFailResult("Comment is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-
+            }            
         }
-
     }
-
 }

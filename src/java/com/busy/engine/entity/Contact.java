@@ -109,6 +109,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("contactId", contactId).add("title", title).add("firstName", firstName).add("lastName", lastName).add("position", position).add("phone", phone).add("fax", fax).add("email", email).add("contactStatus", contactStatus).add("webUrl", webUrl).add("info", info);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

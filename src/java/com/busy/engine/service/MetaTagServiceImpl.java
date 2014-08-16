@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.MetaTagDao;
@@ -67,28 +83,41 @@ public class MetaTagServiceImpl extends AbstractService implements MetaTagServic
     @Override
     public Result<MetaTag> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(metaTagDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(metaTagDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<MetaTag>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<MetaTag> metaTagList =  metaTagDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(metaTagList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<MetaTag> metaTagList =  metaTagDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(metaTagList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -203,11 +232,7 @@ public class MetaTagServiceImpl extends AbstractService implements MetaTagServic
             else 
             {
                 return ResultFactory.getFailResult("MetaTag is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

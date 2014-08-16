@@ -103,6 +103,11 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("userServiceId", userServiceId).add("startDate", new SimpleDateFormat("yyyyMMdd").format(startDate)).add("endDate", new SimpleDateFormat("yyyyMMdd").format(endDate)).add("details", details).add("contractUrl", contractUrl).add("deliverableUrl", deliverableUrl).add("depositAmount", depositAmount).add("userRank", userRank).add("blogId", blogId).add("userId", userId).add("serviceId", serviceId);
+        
+    if(blog != null) blog.addJson(builder);
+        if(user != null) user.addJson(builder);
+        if(service != null) service.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

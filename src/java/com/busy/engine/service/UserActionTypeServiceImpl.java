@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.UserActionTypeDao;
@@ -67,28 +83,41 @@ public class UserActionTypeServiceImpl extends AbstractService implements UserAc
     @Override
     public Result<UserActionType> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(userActionTypeDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(userActionTypeDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<UserActionType>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<UserActionType> userActionTypeList =  userActionTypeDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(userActionTypeList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<UserActionType> userActionTypeList =  userActionTypeDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(userActionTypeList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -183,11 +212,7 @@ public class UserActionTypeServiceImpl extends AbstractService implements UserAc
             else 
             {
                 return ResultFactory.getFailResult("UserActionType is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

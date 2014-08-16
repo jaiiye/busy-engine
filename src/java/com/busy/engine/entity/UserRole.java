@@ -12,7 +12,6 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
     public static final String PROP_ROLE_NAME = "RoleName";
 
     private String userName;
-
     private String roleName;
 
     public UserRole()
@@ -24,14 +23,14 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
     @Override
     public String getId()
     {
-
-        return userName +  "" + roleName;
+        return userName + roleName;
     }
 
     @Override
     public void addJson(JsonObjectBuilder builder)
     {
         builder.add("userName", userName).add("roleName", roleName);
+
     }
 
     public static String checkColumnName(String column) throws SQLException
@@ -56,7 +55,7 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
 
     public static boolean isColumnNumeric(String column)
     {
-        return false;
+        return false;     
     }
 
     public static UserRole process(ResultSet rs) throws SQLException
@@ -68,7 +67,6 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
     {
         this.userName = UserName;
         this.roleName = RoleName;
-
     }
 
     public String getUserName()

@@ -105,6 +105,10 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("formFieldId", formFieldId).add("fieldName", fieldName).add("label", label).add("errorText", errorText).add("validationRegex", validationRegex).add("rank", rank).add("defaultValue", defaultValue).add("options", options).add("groupName", groupName).add("optional", optional).add("formFieldTypeId", formFieldTypeId).add("formId", formId);
+        
+    if(formFieldType != null) formFieldType.addJson(builder);
+        if(form != null) form.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

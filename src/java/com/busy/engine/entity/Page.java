@@ -91,6 +91,12 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("pageId", pageId).add("pageName", pageName).add("content", content).add("pageStatus", pageStatus).add("formId", formId).add("sliderId", sliderId).add("metaTagId", metaTagId).add("templateId", templateId);
+        
+    if(form != null) form.addJson(builder);
+        if(slider != null) slider.addJson(builder);
+        if(metaTag != null) metaTag.addJson(builder);
+        if(template != null) template.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

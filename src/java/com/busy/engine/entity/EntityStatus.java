@@ -73,6 +73,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("entityStatusId", entityStatusId).add("statusCode", statusCode).add("statusName", statusName).add("appliesTo", appliesTo);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

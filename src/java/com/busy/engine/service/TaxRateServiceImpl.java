@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.TaxRateDao;
@@ -67,28 +83,41 @@ public class TaxRateServiceImpl extends AbstractService implements TaxRateServic
     @Override
     public Result<TaxRate> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(taxRateDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(taxRateDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<TaxRate>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<TaxRate> taxRateList =  taxRateDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(taxRateList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<TaxRate> taxRateList =  taxRateDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(taxRateList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -181,11 +210,7 @@ public class TaxRateServiceImpl extends AbstractService implements TaxRateServic
             else 
             {
                 return ResultFactory.getFailResult("TaxRate is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

@@ -91,6 +91,10 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("templateId", templateId).add("templateName", templateName).add("markup", markup).add("templateStatus", templateStatus).add("templateTypeId", templateTypeId).add("parentTemplateId", parentTemplateId);
+        
+    if(templateType != null) templateType.addJson(builder);
+        if(parentTemplate != null) parentTemplate.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

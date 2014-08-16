@@ -17,6 +17,13 @@ public class Result<T> implements Serializable
         this.msg = null;
     }
 
+    Result(boolean success, T data, String msg)
+    {
+        this.success = success;
+        this.data = data;
+        this.msg = msg;
+    }
+    
     Result(boolean success, String msg)
     {
         this.success = success;

@@ -2,8 +2,11 @@ package com.busy.engine.service;
 
 import com.busy.engine.dao.UserDao;
 import com.busy.engine.dao.UserDaoImpl;
+import com.busy.engine.dao.UserDao;
+import com.busy.engine.dao.UserDaoImpl;
 import com.busy.engine.dao.UserRoleDao;
 import com.busy.engine.dao.UserRoleDaoImpl;
+import com.busy.engine.entity.User;
 import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
@@ -13,6 +16,7 @@ import java.util.Date;
 
 public class UserServiceImpl extends AbstractService implements UserService
 {
+
     protected UserDao userDao = new UserDaoImpl();
     protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
 
@@ -24,33 +28,46 @@ public class UserServiceImpl extends AbstractService implements UserService
     @Override
     public Result<User> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName))
+        try
         {
-            return ResultFactory.getSuccessResult(userDao.find(id));
+            if (isValidUser(userName))
+            {
+                return ResultFactory.getSuccessResult(userDao.find(id));
+            }
+            else
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
     @Override
     public Result<List<User>> findAll(String userName)
     {
-        if (isValidUser(userName))
+        try
         {
-            List<User> userList = userDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(userList);
+            if (isValidUser(userName))
+            {
+                List<User> userList = userDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(userList);
+            }
+            else
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
     @Override
-    public Result<User> store(String userName, Integer id, String username, String password, String email, String securityQuestion, String securityAnswer, Date registerDate, String imageURL, Integer userStatus, Integer rank, String webUrl, Integer itemBrandId, Integer userTypeId, Integer addressId, Integer contactId, Integer userGroupId)
+    public Result<User> store(String userName, Integer id, String username, String password, String email, String securityQuestion, String securityAnswer, Date registerDate, String imageUrl, Integer userStatus, Integer rank, String webUrl, Integer itemBrandId, Integer userTypeId, Integer addressId, Integer contactId, Integer userGroupId)
     {
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
@@ -82,7 +99,7 @@ public class UserServiceImpl extends AbstractService implements UserService
         user.setSecurityQuestion(securityQuestion);
         user.setSecurityAnswer(securityAnswer);
         user.setRegisterDate(registerDate);
-        user.setImageURL(imageURL);
+        user.setImageUrl(imageUrl);
         user.setUserStatus(userStatus);
         user.setRank(rank);
         user.setWebUrl(webUrl);
@@ -188,31 +205,12 @@ public class UserServiceImpl extends AbstractService implements UserService
             {
                 return ResultFactory.getFailResult("User is used with to [" + relatedObjectNames + "] and could not be deleted");
             }
-
         }
-
     }
-    
+
     @Override
-    public Result<User> findByUsernamePassword(String userName, String password)
+    public Result<User> findByUsernamePassword(String username, String password)
     {
-        User user = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
-        
-        if(user == null)
-        {
-            return ResultFactory.getFailResult("Unable to verify user/password combination!");
-        } 
-        else 
-        {
-            if(user.getPassword().equals(password))
-            {
-                return ResultFactory.getSuccessResult(user);
-            }
-            else
-            {                
-                return ResultFactory.getFailResult("Unable to verify user/password combination!");
-            }            
-        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }

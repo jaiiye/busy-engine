@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.SiteAttributeDao;
@@ -67,28 +83,41 @@ public class SiteAttributeServiceImpl extends AbstractService implements SiteAtt
     @Override
     public Result<SiteAttribute> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(siteAttributeDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(siteAttributeDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<SiteAttribute>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<SiteAttribute> siteAttributeList =  siteAttributeDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(siteAttributeList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<SiteAttribute> siteAttributeList =  siteAttributeDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(siteAttributeList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -180,11 +209,7 @@ public class SiteAttributeServiceImpl extends AbstractService implements SiteAtt
             else 
             {
                 return ResultFactory.getFailResult("SiteAttribute is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

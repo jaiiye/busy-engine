@@ -75,6 +75,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("siteFileId", siteFileId).add("fileName", fileName).add("description", description).add("label", label);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

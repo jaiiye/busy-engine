@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.VendorDao;
@@ -67,28 +83,41 @@ public class VendorServiceImpl extends AbstractService implements VendorService
     @Override
     public Result<Vendor> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(vendorDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(vendorDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<Vendor>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<Vendor> vendorList =  vendorDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(vendorList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<Vendor> vendorList =  vendorDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(vendorList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -189,11 +218,7 @@ public class VendorServiceImpl extends AbstractService implements VendorService
             else 
             {
                 return ResultFactory.getFailResult("Vendor is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

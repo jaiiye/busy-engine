@@ -69,6 +69,10 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("siteItemId", siteItemId).add("siteId", siteId).add("itemId", itemId);
+        
+    if(site != null) site.addJson(builder);
+        if(item != null) item.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

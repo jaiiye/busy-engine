@@ -1,41 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.SiteDao;
@@ -52,14 +14,14 @@ import com.busy.engine.vo.ResultFactory;
 import java.util.List;
 import java.util.Date;
 
-public class SiteServiceImpl extends AbstractService implements SiteService 
+public class SiteServiceImpl extends AbstractService implements SiteService
 {
+
     protected SiteDao siteDao = new SiteDaoImpl();
     protected UserDao userDao = new UserDaoImpl();
     protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
-    
 
-    public SiteServiceImpl() 
+    public SiteServiceImpl()
     {
         super();
     }
@@ -67,53 +29,66 @@ public class SiteServiceImpl extends AbstractService implements SiteService
     @Override
     public Result<Site> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(siteDao.find(id));
+            if (isValidUser(userName))
+            {
+                return ResultFactory.getSuccessResult(siteDao.find(id));
+            }
+            else
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
-        {            
-            return ResultFactory.getFailResult(USER_INVALID);
+        catch (Exception ex)
+        {
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
-    
+
     @Override
-    public Result<List<Site>> findAll(String userName) 
+    public Result<List<Site>> findAll(String userName)
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<Site> siteList =  siteDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(siteList);
-        } 
-        else 
+            if (isValidUser(userName))
+            {
+                List<Site> siteList = siteDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(siteList);
+            }
+            else
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
         {
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
     @Override
     public Result<Site> store(String userName, Integer id, String siteName, String domain, Integer mode, String url, String logoTitle, String logoImage, Integer useAsStore, String emailHost, Integer emailPort, String emailUsername, String emailPassword, Integer siteStatus, String locale, Integer templateId)
-    {        
+    {
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
-                        
-        if (! checkUserRoles(roles)) 
+
+        if (!checkUserRoles(roles))
         {
             return ResultFactory.getFailResult(ROLE_INVALID);
         }
 
         Site site;
 
-        if (id == null) 
+        if (id == null)
         {
             site = new Site();
-        } 
-        else 
+        }
+        else
         {
             site = siteDao.find(id);
 
-            if (site == null) 
+            if (site == null)
             {
                 return ResultFactory.getFailResult("Unable to find Site instance with Id=" + id);
             }
@@ -133,13 +108,12 @@ public class SiteServiceImpl extends AbstractService implements SiteService
         site.setSiteStatus(siteStatus);
         site.setLocale(locale);
         site.setTemplateId(templateId);
-        
-        
-        if (site.getId() == null) 
+
+        if (site.getId() == null)
         {
             siteDao.add(site);
-        } 
-        else 
+        }
+        else
         {
             site = siteDao.update(site);
         }
@@ -147,96 +121,90 @@ public class SiteServiceImpl extends AbstractService implements SiteService
         return ResultFactory.getSuccessResult(site);
 
     }
-  
+
     @Override
     public Result<Site> remove(String userName, Integer id)
     {
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
-                        
-        if (! checkUserRoles(roles)) 
+
+        if (!checkUserRoles(roles))
         {
             return ResultFactory.getFailResult(ROLE_INVALID);
         }
 
-        if (id == null) 
+        if (id == null)
         {
             return ResultFactory.getFailResult("Unable to remove Site [null id]");
-        } 
+        }
 
         Site site = siteDao.find(id);
 
-        if (site == null) 
+        if (site == null)
         {
             return ResultFactory.getFailResult("Unable to load Site for removal with id=" + id);
-        } 
-        else 
+        }
+        else
         {
             //if all related objects are empty for the given object then we can erase this object
             siteDao.getRelatedObjects(site);
-            
+
             String relatedObjectNames = "";
             boolean canBeDeleted = true;
-            
-                        
-            if(site.getSiteAttributeList().size() != 0)
+
+            if (site.getSiteAttributeList().size() != 0)
             {
-                relatedObjectNames += "SiteAttribute ";  
+                relatedObjectNames += "SiteAttribute ";
                 canBeDeleted = false;
             }
-                        
-            if(site.getSiteFolderList().size() != 0)
+
+            if (site.getSiteFolderList().size() != 0)
             {
-                relatedObjectNames += "SiteFolder ";  
+                relatedObjectNames += "SiteFolder ";
                 canBeDeleted = false;
             }
-                        
-            if(site.getSiteImageList().size() != 0)
+
+            if (site.getSiteImageList().size() != 0)
             {
-                relatedObjectNames += "SiteImage ";  
+                relatedObjectNames += "SiteImage ";
                 canBeDeleted = false;
             }
-                        
-            if(site.getSiteItemList().size() != 0)
+
+            if (site.getSiteItemList().size() != 0)
             {
-                relatedObjectNames += "SiteItem ";  
+                relatedObjectNames += "SiteItem ";
                 canBeDeleted = false;
             }
-                        
-            if(site.getSiteLanguageList().size() != 0)
+
+            if (site.getSiteLanguageList().size() != 0)
             {
-                relatedObjectNames += "SiteLanguage ";  
+                relatedObjectNames += "SiteLanguage ";
                 canBeDeleted = false;
             }
-                        
-            if(site.getSitePageList().size() != 0)
+
+            if (site.getSitePageList().size() != 0)
             {
-                relatedObjectNames += "SitePage ";  
+                relatedObjectNames += "SitePage ";
                 canBeDeleted = false;
             }
-                        
-            if(site.getUserGroupList().size() != 0)
+
+            if (site.getUserGroupList().size() != 0)
             {
-                relatedObjectNames += "UserGroup ";  
+                relatedObjectNames += "UserGroup ";
                 canBeDeleted = false;
             }
-                          
-            
-            if(canBeDeleted)
-            {                
+
+            if (canBeDeleted)
+            {
                 siteDao.remove(site);
-                
+
                 String msg = "Site with Id: " + site.getId() + " was deleted by " + userName;
-                return ResultFactory.getSuccessResultMsg(msg);                
+                return ResultFactory.getSuccessResultMsg(msg);
             }
-            else 
+            else
             {
                 return ResultFactory.getFailResult("Site is used with to [" + relatedObjectNames + "] and could not be deleted");
             }
-            
         }
-
     }
-
 }
-

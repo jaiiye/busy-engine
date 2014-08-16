@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemCategoryDao;
@@ -67,28 +83,41 @@ public class ItemCategoryServiceImpl extends AbstractService implements ItemCate
     @Override
     public Result<ItemCategory> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(itemCategoryDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(itemCategoryDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<ItemCategory>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<ItemCategory> itemCategoryList =  itemCategoryDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(itemCategoryList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<ItemCategory> itemCategoryList =  itemCategoryDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(itemCategoryList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -178,11 +207,7 @@ public class ItemCategoryServiceImpl extends AbstractService implements ItemCate
             else 
             {
                 return ResultFactory.getFailResult("ItemCategory is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

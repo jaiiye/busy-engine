@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.VendorTypeDao;
@@ -67,28 +83,41 @@ public class VendorTypeServiceImpl extends AbstractService implements VendorType
     @Override
     public Result<VendorType> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(vendorTypeDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(vendorTypeDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<VendorType>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<VendorType> vendorTypeList =  vendorTypeDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(vendorTypeList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<VendorType> vendorTypeList =  vendorTypeDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(vendorTypeList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -183,11 +212,7 @@ public class VendorTypeServiceImpl extends AbstractService implements VendorType
             else 
             {
                 return ResultFactory.getFailResult("VendorType is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

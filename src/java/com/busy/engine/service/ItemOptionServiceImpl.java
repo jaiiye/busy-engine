@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemOptionDao;
@@ -67,28 +83,41 @@ public class ItemOptionServiceImpl extends AbstractService implements ItemOption
     @Override
     public Result<ItemOption> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(itemOptionDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(itemOptionDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<ItemOption>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<ItemOption> itemOptionList =  itemOptionDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(itemOptionList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<ItemOption> itemOptionList =  itemOptionDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(itemOptionList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -184,11 +213,7 @@ public class ItemOptionServiceImpl extends AbstractService implements ItemOption
             else 
             {
                 return ResultFactory.getFailResult("ItemOption is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

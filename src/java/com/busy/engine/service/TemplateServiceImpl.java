@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.TemplateDao;
@@ -67,28 +83,41 @@ public class TemplateServiceImpl extends AbstractService implements TemplateServ
     @Override
     public Result<Template> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(templateDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(templateDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<Template>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<Template> templateList =  templateDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(templateList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<Template> templateList =  templateDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(templateList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -211,11 +240,7 @@ public class TemplateServiceImpl extends AbstractService implements TemplateServ
             else 
             {
                 return ResultFactory.getFailResult("Template is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

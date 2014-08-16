@@ -69,6 +69,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("localeId", localeId).add("localeString", localeString).add("localeCharacterSet", localeCharacterSet);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

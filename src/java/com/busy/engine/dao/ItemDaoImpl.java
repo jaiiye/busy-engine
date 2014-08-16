@@ -133,6 +133,10 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
                     {
                         itemList.add((Item) e.getValue());
                     }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
             if (limit == null && offset != null)
@@ -156,6 +160,10 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
                     if (offsetCount++ > offset && limitCount++ != limit)
                     {
                         itemList.add((Item) e.getValue());
+                    }
+                    if(limitCount >= limit)
+                    {
+                        break;
                     }
                 }
             }
@@ -207,6 +215,10 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
                     {
                         itemList.add((Item) e.getValue());
                     }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
             if (limit == null && offset != null)
@@ -230,6 +242,10 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
                     if (offsetCount++ > offset && limitCount++ != limit)
                     {
                         itemList.add((Item) e.getValue());
+                    }
+                    if(limitCount >= limit)
+                    {
+                        break;
                     }
                 }
             }

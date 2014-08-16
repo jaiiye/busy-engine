@@ -125,7 +125,7 @@ public class UserDaoImpl extends BasicConnection implements Serializable, UserDa
             User.checkColumnSize(obj.getEmail(), 255);
             User.checkColumnSize(obj.getSecurityQuestion(), 100);
             User.checkColumnSize(obj.getSecurityAnswer(), 30);
-            User.checkColumnSize(obj.getImageURL(), 255);
+            User.checkColumnSize(obj.getImageUrl(), 255);
             User.checkColumnSize(obj.getWebUrl(), 255);
 
             openConnection();
@@ -136,7 +136,7 @@ public class UserDaoImpl extends BasicConnection implements Serializable, UserDa
             preparedStatement.setString(4, obj.getSecurityQuestion());
             preparedStatement.setString(5, obj.getSecurityAnswer());
             preparedStatement.setDate(6, new java.sql.Date(obj.getRegisterDate().getTime()));
-            preparedStatement.setString(7, obj.getImageURL());
+            preparedStatement.setString(7, obj.getImageUrl());
             preparedStatement.setInt(8, obj.getUserStatus());
             preparedStatement.setInt(9, obj.getRank());
             preparedStatement.setString(10, obj.getWebUrl());
@@ -176,7 +176,7 @@ public class UserDaoImpl extends BasicConnection implements Serializable, UserDa
             User.checkColumnSize(obj.getSecurityQuestion(), 100);
             User.checkColumnSize(obj.getSecurityAnswer(), 30);
 
-            User.checkColumnSize(obj.getImageURL(), 255);
+            User.checkColumnSize(obj.getImageUrl(), 255);
 
             User.checkColumnSize(obj.getWebUrl(), 255);
 
@@ -188,7 +188,7 @@ public class UserDaoImpl extends BasicConnection implements Serializable, UserDa
             preparedStatement.setString(4, obj.getSecurityQuestion());
             preparedStatement.setString(5, obj.getSecurityAnswer());
             preparedStatement.setDate(6, new java.sql.Date(obj.getRegisterDate().getTime()));
-            preparedStatement.setString(7, obj.getImageURL());
+            preparedStatement.setString(7, obj.getImageUrl());
             preparedStatement.setInt(8, obj.getUserStatus());
             preparedStatement.setInt(9, obj.getRank());
             preparedStatement.setString(10, obj.getWebUrl());

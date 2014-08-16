@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ServiceTypeDao;
@@ -67,28 +83,41 @@ public class ServiceTypeServiceImpl extends AbstractService implements ServiceTy
     @Override
     public Result<ServiceType> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(serviceTypeDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(serviceTypeDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<ServiceType>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<ServiceType> serviceTypeList =  serviceTypeDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(serviceTypeList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<ServiceType> serviceTypeList =  serviceTypeDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(serviceTypeList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -184,11 +213,7 @@ public class ServiceTypeServiceImpl extends AbstractService implements ServiceTy
             else 
             {
                 return ResultFactory.getFailResult("ServiceType is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

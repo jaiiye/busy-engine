@@ -67,6 +67,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("textStringId", textStringId).add("key", key);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

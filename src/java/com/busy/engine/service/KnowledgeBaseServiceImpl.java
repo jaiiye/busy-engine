@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.KnowledgeBaseDao;
@@ -67,28 +83,41 @@ public class KnowledgeBaseServiceImpl extends AbstractService implements Knowled
     @Override
     public Result<KnowledgeBase> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(knowledgeBaseDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(knowledgeBaseDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<KnowledgeBase>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<KnowledgeBase> knowledgeBaseList =  knowledgeBaseDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(knowledgeBaseList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<KnowledgeBase> knowledgeBaseList =  knowledgeBaseDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(knowledgeBaseList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -188,11 +217,7 @@ public class KnowledgeBaseServiceImpl extends AbstractService implements Knowled
             else 
             {
                 return ResultFactory.getFailResult("KnowledgeBase is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

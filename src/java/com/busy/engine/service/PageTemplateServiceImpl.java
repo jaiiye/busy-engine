@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.PageTemplateDao;
@@ -67,28 +83,41 @@ public class PageTemplateServiceImpl extends AbstractService implements PageTemp
     @Override
     public Result<PageTemplate> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(pageTemplateDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(pageTemplateDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<PageTemplate>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<PageTemplate> pageTemplateList =  pageTemplateDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(pageTemplateList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<PageTemplate> pageTemplateList =  pageTemplateDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(pageTemplateList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -178,11 +207,7 @@ public class PageTemplateServiceImpl extends AbstractService implements PageTemp
             else 
             {
                 return ResultFactory.getFailResult("PageTemplate is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

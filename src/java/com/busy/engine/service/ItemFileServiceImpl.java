@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemFileDao;
@@ -67,28 +83,41 @@ public class ItemFileServiceImpl extends AbstractService implements ItemFileServ
     @Override
     public Result<ItemFile> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(itemFileDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(itemFileDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<ItemFile>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<ItemFile> itemFileList =  itemFileDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(itemFileList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<ItemFile> itemFileList =  itemFileDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(itemFileList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -181,11 +210,7 @@ public class ItemFileServiceImpl extends AbstractService implements ItemFileServ
             else 
             {
                 return ResultFactory.getFailResult("ItemFile is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

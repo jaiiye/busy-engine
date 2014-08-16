@@ -81,6 +81,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("metaTagId", metaTagId).add("title", title).add("description", description).add("keywords", keywords);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

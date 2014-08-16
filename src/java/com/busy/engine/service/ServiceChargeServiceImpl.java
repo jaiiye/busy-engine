@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ServiceChargeDao;
@@ -67,28 +83,41 @@ public class ServiceChargeServiceImpl extends AbstractService implements Service
     @Override
     public Result<ServiceCharge> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(serviceChargeDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(serviceChargeDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<ServiceCharge>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<ServiceCharge> serviceChargeList =  serviceChargeDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(serviceChargeList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<ServiceCharge> serviceChargeList =  serviceChargeDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(serviceChargeList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -188,11 +217,7 @@ public class ServiceChargeServiceImpl extends AbstractService implements Service
             else 
             {
                 return ResultFactory.getFailResult("ServiceCharge is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

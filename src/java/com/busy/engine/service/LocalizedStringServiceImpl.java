@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.LocalizedStringDao;
@@ -67,28 +83,41 @@ public class LocalizedStringServiceImpl extends AbstractService implements Local
     @Override
     public Result<LocalizedString> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(localizedStringDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(localizedStringDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<LocalizedString>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<LocalizedString> localizedStringList =  localizedStringDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(localizedStringList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<LocalizedString> localizedStringList =  localizedStringDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(localizedStringList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -179,11 +208,7 @@ public class LocalizedStringServiceImpl extends AbstractService implements Local
             else 
             {
                 return ResultFactory.getFailResult("LocalizedString is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

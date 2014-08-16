@@ -77,6 +77,9 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("stateProvinceId", stateProvinceId).add("name", name).add("abbreviation", abbreviation).add("countryId", countryId);
+        
+    if(country != null) country.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

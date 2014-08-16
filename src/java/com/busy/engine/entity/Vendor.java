@@ -91,6 +91,11 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("vendorId", vendorId).add("vendorName", vendorName).add("description", description).add("rank", rank).add("vendorStatus", vendorStatus).add("metaTagId", metaTagId).add("templateId", templateId).add("vendorTypeId", vendorTypeId);
+        
+    if(metaTag != null) metaTag.addJson(builder);
+        if(template != null) template.addJson(builder);
+        if(vendorType != null) vendorType.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

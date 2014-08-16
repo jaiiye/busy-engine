@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ContactDao;
@@ -67,28 +83,41 @@ public class ContactServiceImpl extends AbstractService implements ContactServic
     @Override
     public Result<Contact> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(contactDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(contactDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<Contact>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<Contact> contactList =  contactDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(contactList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<Contact> contactList =  contactDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(contactList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -210,11 +239,7 @@ public class ContactServiceImpl extends AbstractService implements ContactServic
             else 
             {
                 return ResultFactory.getFailResult("Contact is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

@@ -71,6 +71,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("formFieldTypeId", formFieldTypeId).add("typeName", typeName).add("inputType", inputType);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

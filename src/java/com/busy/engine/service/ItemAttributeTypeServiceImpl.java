@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemAttributeTypeDao;
@@ -67,28 +83,41 @@ public class ItemAttributeTypeServiceImpl extends AbstractService implements Ite
     @Override
     public Result<ItemAttributeType> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(itemAttributeTypeDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(itemAttributeTypeDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<ItemAttributeType>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<ItemAttributeType> itemAttributeTypeList =  itemAttributeTypeDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(itemAttributeTypeList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<ItemAttributeType> itemAttributeTypeList =  itemAttributeTypeDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(itemAttributeTypeList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -184,11 +213,7 @@ public class ItemAttributeTypeServiceImpl extends AbstractService implements Ite
             else 
             {
                 return ResultFactory.getFailResult("ItemAttributeType is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

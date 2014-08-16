@@ -131,6 +131,9 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("siteId", siteId).add("siteName", siteName).add("domain", domain).add("mode", mode).add("url", url).add("logoTitle", logoTitle).add("logoImage", logoImage).add("useAsStore", useAsStore).add("emailHost", emailHost).add("emailPort", emailPort).add("emailUsername", emailUsername).add("emailPassword", emailPassword).add("siteStatus", siteStatus).add("locale", locale).add("templateId", templateId);
+        
+    if(template != null) template.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

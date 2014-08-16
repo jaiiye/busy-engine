@@ -81,6 +81,10 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("taxRateId", taxRateId).add("taxCategory", taxCategory).add("percentage", percentage).add("zipPostalCode", zipPostalCode).add("stateProvinceId", stateProvinceId).add("countryId", countryId);
+        
+    if(stateProvince != null) stateProvince.addJson(builder);
+        if(country != null) country.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

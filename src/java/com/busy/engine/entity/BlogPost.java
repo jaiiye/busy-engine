@@ -125,6 +125,11 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("blogPostId", blogPostId).add("title", title).add("content", content).add("imageURL", imageURL).add("tags", tags).add("featured", featured).add("ratingSum", ratingSum).add("voteCount", voteCount).add("commentCount", commentCount).add("postStatus", postStatus).add("excerpt", excerpt).add("lastModified", new SimpleDateFormat("yyyyMMdd").format(lastModified)).add("locale", locale).add("userId", userId).add("blogId", blogId).add("metaTagId", metaTagId);
+        
+    if(user != null) user.addJson(builder);
+        if(blog != null) blog.addJson(builder);
+        if(metaTag != null) metaTag.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

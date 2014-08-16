@@ -81,6 +81,11 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("itemLocationId", itemLocationId).add("latitude", latitude).add("longitude", longitude).add("itemId", itemId).add("addressId", addressId).add("contactId", contactId);
+        
+    if(item != null) item.addJson(builder);
+        if(address != null) address.addJson(builder);
+        if(contact != null) contact.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

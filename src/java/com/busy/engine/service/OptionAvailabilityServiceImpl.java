@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.OptionAvailabilityDao;
@@ -67,28 +83,41 @@ public class OptionAvailabilityServiceImpl extends AbstractService implements Op
     @Override
     public Result<OptionAvailability> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(optionAvailabilityDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(optionAvailabilityDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<OptionAvailability>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<OptionAvailability> optionAvailabilityList =  optionAvailabilityDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(optionAvailabilityList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<OptionAvailability> optionAvailabilityList =  optionAvailabilityDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(optionAvailabilityList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -184,11 +213,7 @@ public class OptionAvailabilityServiceImpl extends AbstractService implements Op
             else 
             {
                 return ResultFactory.getFailResult("OptionAvailability is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

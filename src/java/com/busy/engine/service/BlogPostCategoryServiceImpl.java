@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.BlogPostCategoryDao;
@@ -67,28 +83,41 @@ public class BlogPostCategoryServiceImpl extends AbstractService implements Blog
     @Override
     public Result<BlogPostCategory> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(blogPostCategoryDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(blogPostCategoryDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<BlogPostCategory>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<BlogPostCategory> blogPostCategoryList =  blogPostCategoryDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(blogPostCategoryList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<BlogPostCategory> blogPostCategoryList =  blogPostCategoryDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(blogPostCategoryList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -178,11 +207,7 @@ public class BlogPostCategoryServiceImpl extends AbstractService implements Blog
             else 
             {
                 return ResultFactory.getFailResult("BlogPostCategory is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

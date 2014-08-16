@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.DiscountDao;
@@ -67,28 +83,41 @@ public class DiscountServiceImpl extends AbstractService implements DiscountServ
     @Override
     public Result<Discount> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(discountDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(discountDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<Discount>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<Discount> discountList =  discountDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(discountList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<Discount> discountList =  discountDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(discountList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -209,11 +238,7 @@ public class DiscountServiceImpl extends AbstractService implements DiscountServ
             else 
             {
                 return ResultFactory.getFailResult("Discount is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

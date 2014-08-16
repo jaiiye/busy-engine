@@ -69,6 +69,10 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("fileFolderId", fileFolderId).add("siteFileId", siteFileId).add("siteFolderId", siteFolderId);
+        
+    if(siteFile != null) siteFile.addJson(builder);
+        if(siteFolder != null) siteFolder.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

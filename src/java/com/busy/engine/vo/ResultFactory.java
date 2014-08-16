@@ -9,7 +9,7 @@ public class ResultFactory
 
     public static <T> Result<T> getSuccessResult(T data, String msg)
     {
-        return new Result(true, msg);
+        return new Result(true, data, msg);
     }
 
     public static <T> Result<T> getSuccessResultMsg(String msg)

@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.CountryDao;
@@ -67,28 +83,41 @@ public class CountryServiceImpl extends AbstractService implements CountryServic
     @Override
     public Result<Country> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(countryDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(countryDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<Country>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<Country> countryList =  countryDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(countryList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<Country> countryList =  countryDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(countryList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -198,11 +227,7 @@ public class CountryServiceImpl extends AbstractService implements CountryServic
             else 
             {
                 return ResultFactory.getFailResult("Country is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

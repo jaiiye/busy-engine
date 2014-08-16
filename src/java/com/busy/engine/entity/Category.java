@@ -75,6 +75,10 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("categoryId", categoryId).add("categoryName", categoryName).add("discountId", discountId).add("parentCategoryId", parentCategoryId);
+        
+    if(discount != null) discount.addJson(builder);
+        if(parentCategory != null) parentCategory.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.MailinglistDao;
@@ -67,28 +83,41 @@ public class MailinglistServiceImpl extends AbstractService implements Mailingli
     @Override
     public Result<Mailinglist> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(mailinglistDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(mailinglistDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<Mailinglist>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<Mailinglist> mailinglistList =  mailinglistDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(mailinglistList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<Mailinglist> mailinglistList =  mailinglistDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(mailinglistList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -180,11 +209,7 @@ public class MailinglistServiceImpl extends AbstractService implements Mailingli
             else 
             {
                 return ResultFactory.getFailResult("Mailinglist is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

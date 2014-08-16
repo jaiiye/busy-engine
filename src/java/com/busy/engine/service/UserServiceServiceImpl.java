@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.UserServiceDao;
@@ -67,28 +83,41 @@ public class UserServiceServiceImpl extends AbstractService implements UserServi
     @Override
     public Result<UserService> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(userServiceDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(userServiceDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<UserService>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<UserService> userServiceList =  userServiceDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(userServiceList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<UserService> userServiceList =  userServiceDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(userServiceList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -192,11 +221,7 @@ public class UserServiceServiceImpl extends AbstractService implements UserServi
             else 
             {
                 return ResultFactory.getFailResult("UserService is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.SliderTypeDao;
@@ -67,28 +83,41 @@ public class SliderTypeServiceImpl extends AbstractService implements SliderType
     @Override
     public Result<SliderType> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(sliderTypeDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(sliderTypeDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<SliderType>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<SliderType> sliderTypeList =  sliderTypeDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(sliderTypeList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<SliderType> sliderTypeList =  sliderTypeDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(sliderTypeList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -184,11 +213,7 @@ public class SliderTypeServiceImpl extends AbstractService implements SliderType
             else 
             {
                 return ResultFactory.getFailResult("SliderType is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

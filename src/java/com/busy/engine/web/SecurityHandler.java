@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet("/rest/security/*")
+@WebServlet("/security/*")
 public class SecurityHandler extends AbstractHandler 
 {
     protected UserService userService = new UserServiceImpl();

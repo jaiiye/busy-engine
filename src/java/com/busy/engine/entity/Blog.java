@@ -77,6 +77,10 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("blogId", blogId).add("topic", topic).add("blogTypeId", blogTypeId).add("knowledgeBaseId", knowledgeBaseId);
+        
+    if(blogType != null) blogType.addJson(builder);
+        if(knowledgeBase != null) knowledgeBase.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.LocaleDao;
@@ -67,28 +83,41 @@ public class LocaleServiceImpl extends AbstractService implements LocaleService
     @Override
     public Result<Locale> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(localeDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(localeDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<Locale>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<Locale> localeList =  localeDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(localeList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<Locale> localeList =  localeDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(localeList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -178,11 +207,7 @@ public class LocaleServiceImpl extends AbstractService implements LocaleService
             else 
             {
                 return ResultFactory.getFailResult("Locale is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

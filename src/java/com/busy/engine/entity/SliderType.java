@@ -71,6 +71,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("sliderTypeId", sliderTypeId).add("typeName", typeName).add("code", code);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

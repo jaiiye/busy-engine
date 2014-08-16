@@ -105,6 +105,8 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("paypalId", paypalId).add("payPalUrl", payPalUrl).add("currencyCode", currencyCode).add("apiUsername", apiUsername).add("apiPassword", apiPassword).add("apiSignature", apiSignature).add("apiEndpoint", apiEndpoint).add("activeProfile", activeProfile).add("returnUrl", returnUrl).add("cancelUrl", cancelUrl).add("paymentType", paymentType).add("environment", environment);
+        
+             
         }
        
        public static String checkColumnName(String column) throws SQLException

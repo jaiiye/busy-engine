@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemAvailabilityDao;
@@ -67,28 +83,41 @@ public class ItemAvailabilityServiceImpl extends AbstractService implements Item
     @Override
     public Result<ItemAvailability> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(itemAvailabilityDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(itemAvailabilityDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<ItemAvailability>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<ItemAvailability> itemAvailabilityList =  itemAvailabilityDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(itemAvailabilityList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<ItemAvailability> itemAvailabilityList =  itemAvailabilityDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(itemAvailabilityList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -183,11 +212,7 @@ public class ItemAvailabilityServiceImpl extends AbstractService implements Item
             else 
             {
                 return ResultFactory.getFailResult("ItemAvailability is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

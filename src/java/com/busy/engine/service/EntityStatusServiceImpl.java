@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.EntityStatusDao;
@@ -67,28 +83,41 @@ public class EntityStatusServiceImpl extends AbstractService implements EntitySt
     @Override
     public Result<EntityStatus> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(entityStatusDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(entityStatusDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<EntityStatus>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<EntityStatus> entityStatusList =  entityStatusDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(entityStatusList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<EntityStatus> entityStatusList =  entityStatusDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(entityStatusList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -179,11 +208,7 @@ public class EntityStatusServiceImpl extends AbstractService implements EntitySt
             else 
             {
                 return ResultFactory.getFailResult("EntityStatus is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.TextStringDao;
@@ -67,28 +83,41 @@ public class TextStringServiceImpl extends AbstractService implements TextString
     @Override
     public Result<TextString> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(textStringDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(textStringDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<TextString>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<TextString> textStringList =  textStringDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(textStringList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<TextString> textStringList =  textStringDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(textStringList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -183,11 +212,7 @@ public class TextStringServiceImpl extends AbstractService implements TextString
             else 
             {
                 return ResultFactory.getFailResult("TextString is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

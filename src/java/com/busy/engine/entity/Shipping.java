@@ -91,6 +91,10 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("shippingId", shippingId).add("methodName", methodName).add("quantity", quantity).add("unitOfMeasure", unitOfMeasure).add("ratePerUnitCost", ratePerUnitCost).add("additionalCost", additionalCost).add("stateProvinceId", stateProvinceId).add("countryId", countryId);
+        
+    if(stateProvince != null) stateProvince.addJson(builder);
+        if(country != null) country.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException

@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.FileFolderDao;
@@ -67,28 +83,41 @@ public class FileFolderServiceImpl extends AbstractService implements FileFolder
     @Override
     public Result<FileFolder> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(fileFolderDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(fileFolderDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<FileFolder>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<FileFolder> fileFolderList =  fileFolderDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(fileFolderList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<FileFolder> fileFolderList =  fileFolderDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(fileFolderList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -178,11 +207,7 @@ public class FileFolderServiceImpl extends AbstractService implements FileFolder
             else 
             {
                 return ResultFactory.getFailResult("FileFolder is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

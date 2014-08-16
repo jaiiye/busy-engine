@@ -1,15 +1,12 @@
 package com.busy.engine.entity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.json.JsonObjectBuilder;
-import java.text.SimpleDateFormat;
 
 public class Customer extends AbstractEntity implements EntityItem<Integer>
 {
-
     private static final long serialVersionUID = 1L;
     public static final String PROP_CUSTOMER_ID = "CustomerId";
     public static final String PROP_CONTACT_ID = "ContactId";
@@ -19,7 +16,6 @@ public class Customer extends AbstractEntity implements EntityItem<Integer>
     public static final String PROP_CUSTOMER_STATUS = "CustomerStatus";
 
     private Integer customerId;
-
     private Integer contactId;
     private Contact contact;
     private Integer userId;
@@ -42,13 +38,11 @@ public class Customer extends AbstractEntity implements EntityItem<Integer>
         this.customerStatus = 0;
 
         customerOrderList = null;
-
     }
 
     @Override
     public Integer getId()
     {
-
         return customerId;
     }
 
@@ -56,6 +50,23 @@ public class Customer extends AbstractEntity implements EntityItem<Integer>
     public void addJson(JsonObjectBuilder builder)
     {
         builder.add("customerId", customerId).add("contactId", contactId).add("userId", userId).add("billingAddressId", billingAddressId).add("shippingAddressId", shippingAddressId).add("customerStatus", customerStatus);
+
+        if (contact != null)
+        {
+            contact.addJson(builder);
+        }
+        if (user != null)
+        {
+            user.addJson(builder);
+        }
+        if (billingAddress != null)
+        {
+            billingAddress.addJson(builder);
+        }
+        if (shippingAddress != null)
+        {
+            shippingAddress.addJson(builder);
+        }
     }
 
     public static String checkColumnName(String column) throws SQLException
@@ -105,7 +116,6 @@ public class Customer extends AbstractEntity implements EntityItem<Integer>
         this.customerStatus = CustomerStatus;
 
         customerOrderList = null;
-
     }
 
     public Integer getCustomerId()
@@ -217,5 +227,4 @@ public class Customer extends AbstractEntity implements EntityItem<Integer>
     {
         this.customerOrderList = customerOrderList;
     }
-
 }

@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.FormFieldTypeDao;
@@ -67,28 +83,41 @@ public class FormFieldTypeServiceImpl extends AbstractService implements FormFie
     @Override
     public Result<FormFieldType> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(formFieldTypeDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(formFieldTypeDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<FormFieldType>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<FormFieldType> formFieldTypeList =  formFieldTypeDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(formFieldTypeList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<FormFieldType> formFieldTypeList =  formFieldTypeDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(formFieldTypeList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -184,11 +213,7 @@ public class FormFieldTypeServiceImpl extends AbstractService implements FormFie
             else 
             {
                 return ResultFactory.getFailResult("FormFieldType is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

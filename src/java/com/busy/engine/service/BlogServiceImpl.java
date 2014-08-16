@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.BlogDao;
@@ -67,28 +83,41 @@ public class BlogServiceImpl extends AbstractService implements BlogService
     @Override
     public Result<Blog> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(blogDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(blogDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<Blog>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<Blog> blogList =  blogDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(blogList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<Blog> blogList =  blogDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(blogList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -191,11 +220,7 @@ public class BlogServiceImpl extends AbstractService implements BlogService
             else 
             {
                 return ResultFactory.getFailResult("Blog is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

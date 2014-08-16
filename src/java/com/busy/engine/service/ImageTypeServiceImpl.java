@@ -36,6 +36,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ImageTypeDao;
@@ -67,28 +83,41 @@ public class ImageTypeServiceImpl extends AbstractService implements ImageTypeSe
     @Override
     public Result<ImageType> find(String userName, Integer id)
     {
-
-        if (isValidUser(userName)) 
+        try
         {
-            return ResultFactory.getSuccessResult(imageTypeDao.find(id));
+            if (isValidUser(userName)) 
+            {
+                return ResultFactory.getSuccessResult(imageTypeDao.find(id));
+            }
+            else 
+            {            
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
         }
-        else 
+        catch (Exception ex)
         {            
-            return ResultFactory.getFailResult(USER_INVALID);
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
     
     @Override
     public Result<List<ImageType>> findAll(String userName) 
     {
-        if (isValidUser(userName)) 
+        try
         {
-            List<ImageType> imageTypeList =  imageTypeDao.findAll(null, null);
-            return ResultFactory.getSuccessResult(imageTypeList);
-        } 
-        else 
-        {
-            return ResultFactory.getFailResult(USER_INVALID);
+            if (isValidUser(userName)) 
+            {
+                List<ImageType> imageTypeList =  imageTypeDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(imageTypeList);
+            } 
+            else 
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {            
+            return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
@@ -184,11 +213,7 @@ public class ImageTypeServiceImpl extends AbstractService implements ImageTypeSe
             else 
             {
                 return ResultFactory.getFailResult("ImageType is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }
-            
+            }            
         }
-
     }
-
 }
-

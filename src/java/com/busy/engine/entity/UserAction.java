@@ -77,6 +77,10 @@
         public void addJson(JsonObjectBuilder builder)
         {
         builder.add("userActionId", userActionId).add("date", new SimpleDateFormat("yyyyMMdd").format(date)).add("detail", detail).add("userActionTypeId", userActionTypeId).add("userId", userId);
+        
+    if(userActionType != null) userActionType.addJson(builder);
+        if(user != null) user.addJson(builder);
+                 
         }
        
        public static String checkColumnName(String column) throws SQLException
