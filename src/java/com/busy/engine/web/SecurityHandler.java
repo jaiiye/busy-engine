@@ -24,6 +24,12 @@ public class SecurityHandler extends AbstractHandler
     {
         String pathInfo = request.getPathInfo();
         PrintWriter out = response.getWriter();
+               
+        if(pathInfo.contains("logon"))
+        {
+            response.setContentType("application/json");
+            out.print(getJsonErrorMsg("Invalid method"));            
+        }
         
         if(pathInfo.contains("logout"))
         {            

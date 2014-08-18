@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -80,10 +91,28 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("recurringPaymentId", recurringPaymentId).add("cycleLength", cycleLength).add("cyclePeriod", cyclePeriod).add("totalCycles", totalCycles).add("startDate", new SimpleDateFormat("yyyyMMdd").format(startDate)).add("orderId", orderId);
+                
+            builder.add("recurringPaymentId", recurringPaymentId == null ? 0 : recurringPaymentId);
+                
+            builder.add("cycleLength", cycleLength == null ? 0 : cycleLength);
+                
+            builder.add("cyclePeriod", cyclePeriod == null ? 0 : cyclePeriod);
+                
+            builder.add("totalCycles", totalCycles == null ? 0 : totalCycles);
+                
+            builder.add("startDate", startDate == null ? "" : new SimpleDateFormat("yyyyMMdd").format(startDate));
+                
+            builder.add("orderId", orderId == null ? 0 : orderId);
         
-    if(order != null) order.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     if(order != null) order.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

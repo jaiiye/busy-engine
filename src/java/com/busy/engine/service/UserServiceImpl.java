@@ -211,6 +211,22 @@ public class UserServiceImpl extends AbstractService implements UserService
     @Override
     public Result<User> findByUsernamePassword(String username, String password)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        User user = userDao.findByColumn(User.PROP_USERNAME, username, null, null).get(0);
+        
+        if(user == null)
+        {
+            return ResultFactory.getFailResult("Unable to verify user/password combination!");
+        } 
+        else 
+        {
+            if(user.getPassword().equals(password))
+            {
+                return ResultFactory.getSuccessResult(user);
+            }
+            else
+            {                
+                return ResultFactory.getFailResult("Unable to verify user/password combination!");
+            }            
+        }
     }
 }

@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -88,12 +99,36 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("commentId", commentId).add("title", title).add("content", content).add("date", new SimpleDateFormat("yyyyMMdd").format(date)).add("commentStatus", commentStatus).add("userId", userId).add("blogPostId", blogPostId).add("itemReviewId", itemReviewId);
+                
+            builder.add("commentId", commentId == null ? 0 : commentId);
+                
+            builder.add("title", title == null ? "" : title);
+                
+            builder.add("content", content == null ? "" : content);
+                
+            builder.add("date", date == null ? "" : new SimpleDateFormat("yyyyMMdd").format(date));
+                
+            builder.add("commentStatus", commentStatus == null ? 0 : commentStatus);
+                
+            builder.add("userId", userId == null ? 0 : userId);
+                
+            builder.add("blogPostId", blogPostId == null ? 0 : blogPostId);
+                
+            builder.add("itemReviewId", itemReviewId == null ? 0 : itemReviewId);
         
-    if(user != null) user.addJson(builder);
-        if(blogPost != null) blogPost.addJson(builder);
-        if(itemReview != null) itemReview.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     if(user != null) user.addJson(builder);
+        
+     if(blogPost != null) blogPost.addJson(builder);
+        
+     if(itemReview != null) itemReview.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

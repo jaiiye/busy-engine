@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -74,11 +85,23 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("userGroupId", userGroupId).add("groupName", groupName).add("siteId", siteId).add("discountId", discountId);
+                
+            builder.add("userGroupId", userGroupId == null ? 0 : userGroupId);
+                
+            builder.add("groupName", groupName == null ? "" : groupName);
+                
+            builder.add("siteId", siteId == null ? 0 : siteId);
+                
+            builder.add("discountId", discountId == null ? 0 : discountId);
         
-    if(site != null) site.addJson(builder);
-        if(discount != null) discount.addJson(builder);
-                 
+        
+    
+     
+     if(site != null) site.addJson(builder);
+        
+     if(discount != null) discount.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

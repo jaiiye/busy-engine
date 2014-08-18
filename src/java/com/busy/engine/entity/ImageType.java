@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -70,9 +81,18 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("imageTypeId", imageTypeId).add("typeName", typeName).add("description", description);
+                
+            builder.add("imageTypeId", imageTypeId == null ? 0 : imageTypeId);
+                
+            builder.add("typeName", typeName == null ? "" : typeName);
+                
+            builder.add("description", description == null ? "" : description);
         
-             
+        
+    
+     
+     
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

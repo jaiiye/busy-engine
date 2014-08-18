@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -90,13 +101,37 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("pageId", pageId).add("pageName", pageName).add("content", content).add("pageStatus", pageStatus).add("formId", formId).add("sliderId", sliderId).add("metaTagId", metaTagId).add("templateId", templateId);
+                
+            builder.add("pageId", pageId == null ? 0 : pageId);
+                
+            builder.add("pageName", pageName == null ? "" : pageName);
+                
+            builder.add("content", content == null ? "" : content);
+                
+            builder.add("pageStatus", pageStatus == null ? 0 : pageStatus);
+                
+            builder.add("formId", formId == null ? 0 : formId);
+                
+            builder.add("sliderId", sliderId == null ? 0 : sliderId);
+                
+            builder.add("metaTagId", metaTagId == null ? 0 : metaTagId);
+                
+            builder.add("templateId", templateId == null ? 0 : templateId);
         
-    if(form != null) form.addJson(builder);
-        if(slider != null) slider.addJson(builder);
-        if(metaTag != null) metaTag.addJson(builder);
-        if(template != null) template.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     if(form != null) form.addJson(builder);
+        
+     if(slider != null) slider.addJson(builder);
+        
+     if(metaTag != null) metaTag.addJson(builder);
+        
+     if(template != null) template.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

@@ -18,6 +18,7 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
     {
         this.userName = "";
         this.roleName = "";
+
     }
 
     @Override
@@ -29,8 +30,8 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
     @Override
     public void addJson(JsonObjectBuilder builder)
     {
-        builder.add("userName", userName).add("roleName", roleName);
-
+        builder.add("userName", userName == null ? "" : userName);
+        builder.add("roleName", roleName == null ? "" : roleName);
     }
 
     public static String checkColumnName(String column) throws SQLException

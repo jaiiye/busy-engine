@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -90,11 +101,35 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("shippingId", shippingId).add("methodName", methodName).add("quantity", quantity).add("unitOfMeasure", unitOfMeasure).add("ratePerUnitCost", ratePerUnitCost).add("additionalCost", additionalCost).add("stateProvinceId", stateProvinceId).add("countryId", countryId);
+                
+            builder.add("shippingId", shippingId == null ? 0 : shippingId);
+                
+            builder.add("methodName", methodName == null ? "" : methodName);
+                
+            builder.add("quantity", quantity == null ? 0 : quantity);
+                
+            builder.add("unitOfMeasure", unitOfMeasure == null ? "" : unitOfMeasure);
+                
+            builder.add("ratePerUnitCost", ratePerUnitCost == null ? 0 : ratePerUnitCost);
+                
+            builder.add("additionalCost", additionalCost == null ? 0 : additionalCost);
+                
+            builder.add("stateProvinceId", stateProvinceId == null ? 0 : stateProvinceId);
+                
+            builder.add("countryId", countryId == null ? 0 : countryId);
         
-    if(stateProvince != null) stateProvince.addJson(builder);
-        if(country != null) country.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     
+     if(stateProvince != null) stateProvince.addJson(builder);
+        
+     if(country != null) country.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

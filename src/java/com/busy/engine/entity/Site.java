@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -130,10 +141,55 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("siteId", siteId).add("siteName", siteName).add("domain", domain).add("mode", mode).add("url", url).add("logoTitle", logoTitle).add("logoImage", logoImage).add("useAsStore", useAsStore).add("emailHost", emailHost).add("emailPort", emailPort).add("emailUsername", emailUsername).add("emailPassword", emailPassword).add("siteStatus", siteStatus).add("locale", locale).add("templateId", templateId);
+                
+            builder.add("siteId", siteId == null ? 0 : siteId);
+                
+            builder.add("siteName", siteName == null ? "" : siteName);
+                
+            builder.add("domain", domain == null ? "" : domain);
+                
+            builder.add("mode", mode == null ? 0 : mode);
+                
+            builder.add("url", url == null ? "" : url);
+                
+            builder.add("logoTitle", logoTitle == null ? "" : logoTitle);
+                
+            builder.add("logoImage", logoImage == null ? "" : logoImage);
+                
+            builder.add("useAsStore", useAsStore == null ? 0 : useAsStore);
+                
+            builder.add("emailHost", emailHost == null ? "" : emailHost);
+                
+            builder.add("emailPort", emailPort == null ? 0 : emailPort);
+                
+            builder.add("emailUsername", emailUsername == null ? "" : emailUsername);
+                
+            builder.add("emailPassword", emailPassword == null ? "" : emailPassword);
+                
+            builder.add("siteStatus", siteStatus == null ? 0 : siteStatus);
+                
+            builder.add("locale", locale == null ? "" : locale);
+                
+            builder.add("templateId", templateId == null ? 0 : templateId);
         
-    if(template != null) template.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     if(template != null) template.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -106,12 +117,48 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("affiliateId", affiliateId).add("companyName", companyName).add("email", email).add("phone", phone).add("fax", fax).add("webUrl", webUrl).add("details", details).add("serviceHours", serviceHours).add("affiliateStatus", affiliateStatus).add("userId", userId).add("contactId", contactId).add("addressId", addressId);
+                
+            builder.add("affiliateId", affiliateId == null ? 0 : affiliateId);
+                
+            builder.add("companyName", companyName == null ? "" : companyName);
+                
+            builder.add("email", email == null ? "" : email);
+                
+            builder.add("phone", phone == null ? "" : phone);
+                
+            builder.add("fax", fax == null ? "" : fax);
+                
+            builder.add("webUrl", webUrl == null ? "" : webUrl);
+                
+            builder.add("details", details == null ? "" : details);
+                
+            builder.add("serviceHours", serviceHours == null ? 0 : serviceHours);
+                
+            builder.add("affiliateStatus", affiliateStatus == null ? 0 : affiliateStatus);
+                
+            builder.add("userId", userId == null ? 0 : userId);
+                
+            builder.add("contactId", contactId == null ? 0 : contactId);
+                
+            builder.add("addressId", addressId == null ? 0 : addressId);
         
-    if(user != null) user.addJson(builder);
-        if(contact != null) contact.addJson(builder);
-        if(address != null) address.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     
+     
+     
+     
+     if(user != null) user.addJson(builder);
+        
+     if(contact != null) contact.addJson(builder);
+        
+     if(address != null) address.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

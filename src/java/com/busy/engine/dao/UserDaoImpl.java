@@ -169,15 +169,12 @@ public class UserDaoImpl extends BasicConnection implements Serializable, UserDa
     {
         try
         {
-
             User.checkColumnSize(obj.getUsername(), 30);
             User.checkColumnSize(obj.getPassword(), 15);
             User.checkColumnSize(obj.getEmail(), 255);
             User.checkColumnSize(obj.getSecurityQuestion(), 100);
             User.checkColumnSize(obj.getSecurityAnswer(), 30);
-
             User.checkColumnSize(obj.getImageUrl(), 255);
-
             User.checkColumnSize(obj.getWebUrl(), 255);
 
             openConnection();

@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -104,11 +115,47 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("formFieldId", formFieldId).add("fieldName", fieldName).add("label", label).add("errorText", errorText).add("validationRegex", validationRegex).add("rank", rank).add("defaultValue", defaultValue).add("options", options).add("groupName", groupName).add("optional", optional).add("formFieldTypeId", formFieldTypeId).add("formId", formId);
+                
+            builder.add("formFieldId", formFieldId == null ? 0 : formFieldId);
+                
+            builder.add("fieldName", fieldName == null ? "" : fieldName);
+                
+            builder.add("label", label == null ? "" : label);
+                
+            builder.add("errorText", errorText == null ? "" : errorText);
+                
+            builder.add("validationRegex", validationRegex == null ? "" : validationRegex);
+                
+            builder.add("rank", rank == null ? 0 : rank);
+                
+            builder.add("defaultValue", defaultValue == null ? "" : defaultValue);
+                
+            builder.add("options", options == null ? "" : options);
+                
+            builder.add("groupName", groupName == null ? "" : groupName);
+                
+            builder.add("optional", optional == null ? 0 : optional);
+                
+            builder.add("formFieldTypeId", formFieldTypeId == null ? 0 : formFieldTypeId);
+                
+            builder.add("formId", formId == null ? 0 : formId);
         
-    if(formFieldType != null) formFieldType.addJson(builder);
-        if(form != null) form.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     if(formFieldType != null) formFieldType.addJson(builder);
+        
+     if(form != null) form.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

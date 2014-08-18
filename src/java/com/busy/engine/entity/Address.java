@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -106,9 +117,42 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("addressId", addressId).add("recipient", recipient).add("address1", address1).add("address2", address2).add("city", city).add("stateProvince", stateProvince).add("zipPostalCode", zipPostalCode).add("country", country).add("region", region).add("addressStatus", addressStatus).add("locale", locale);
+                
+            builder.add("addressId", addressId == null ? 0 : addressId);
+                
+            builder.add("recipient", recipient == null ? "" : recipient);
+                
+            builder.add("address1", address1 == null ? "" : address1);
+                
+            builder.add("address2", address2 == null ? "" : address2);
+                
+            builder.add("city", city == null ? "" : city);
+                
+            builder.add("stateProvince", stateProvince == null ? "" : stateProvince);
+                
+            builder.add("zipPostalCode", zipPostalCode == null ? "" : zipPostalCode);
+                
+            builder.add("country", country == null ? "" : country);
+                
+            builder.add("region", region == null ? "" : region);
+                
+            builder.add("addressStatus", addressStatus == null ? 0 : addressStatus);
+                
+            builder.add("locale", locale == null ? "" : locale);
         
-             
+        
+    
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

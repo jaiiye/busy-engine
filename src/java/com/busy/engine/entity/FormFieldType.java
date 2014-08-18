@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -70,9 +81,18 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("formFieldTypeId", formFieldTypeId).add("typeName", typeName).add("inputType", inputType);
+                
+            builder.add("formFieldTypeId", formFieldTypeId == null ? 0 : formFieldTypeId);
+                
+            builder.add("typeName", typeName == null ? "" : typeName);
+                
+            builder.add("inputType", inputType == null ? "" : inputType);
         
-             
+        
+    
+     
+     
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

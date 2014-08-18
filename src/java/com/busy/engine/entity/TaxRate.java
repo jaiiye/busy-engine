@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -80,11 +91,29 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("taxRateId", taxRateId).add("taxCategory", taxCategory).add("percentage", percentage).add("zipPostalCode", zipPostalCode).add("stateProvinceId", stateProvinceId).add("countryId", countryId);
+                
+            builder.add("taxRateId", taxRateId == null ? 0 : taxRateId);
+                
+            builder.add("taxCategory", taxCategory == null ? "" : taxCategory);
+                
+            builder.add("percentage", percentage == null ? 0 : percentage);
+                
+            builder.add("zipPostalCode", zipPostalCode == null ? "" : zipPostalCode);
+                
+            builder.add("stateProvinceId", stateProvinceId == null ? 0 : stateProvinceId);
+                
+            builder.add("countryId", countryId == null ? 0 : countryId);
         
-    if(stateProvince != null) stateProvince.addJson(builder);
-        if(country != null) country.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     if(stateProvince != null) stateProvince.addJson(builder);
+        
+     if(country != null) country.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

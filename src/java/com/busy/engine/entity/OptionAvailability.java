@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -92,12 +103,39 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("optionAvailabilityId", optionAvailabilityId).add("itemId", itemId).add("itemOptionId", itemOptionId).add("itemAvailabilityId", itemAvailabilityId).add("availableQuantity", availableQuantity).add("price", price).add("availableFrom", new SimpleDateFormat("yyyyMMdd").format(availableFrom)).add("availableTo", new SimpleDateFormat("yyyyMMdd").format(availableTo)).add("maximumQuantity", maximumQuantity);
+                
+            builder.add("optionAvailabilityId", optionAvailabilityId == null ? 0 : optionAvailabilityId);
+                
+            builder.add("itemId", itemId == null ? 0 : itemId);
+                
+            builder.add("itemOptionId", itemOptionId == null ? 0 : itemOptionId);
+                
+            builder.add("itemAvailabilityId", itemAvailabilityId == null ? 0 : itemAvailabilityId);
+                
+            builder.add("availableQuantity", availableQuantity == null ? 0 : availableQuantity);
+                
+            builder.add("price", price == null ? 0 : price);
+                
+            builder.add("availableFrom", availableFrom == null ? "" : new SimpleDateFormat("yyyyMMdd").format(availableFrom));
+                
+            builder.add("availableTo", availableTo == null ? "" : new SimpleDateFormat("yyyyMMdd").format(availableTo));
+                
+            builder.add("maximumQuantity", maximumQuantity == null ? 0 : maximumQuantity);
         
-    if(item != null) item.addJson(builder);
-        if(itemOption != null) itemOption.addJson(builder);
-        if(itemAvailability != null) itemAvailability.addJson(builder);
-                 
+        
+    
+     if(item != null) item.addJson(builder);
+        
+     if(itemOption != null) itemOption.addJson(builder);
+        
+     if(itemAvailability != null) itemAvailability.addJson(builder);
+        
+     
+     
+     
+     
+     
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -76,11 +87,23 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("blogId", blogId).add("topic", topic).add("blogTypeId", blogTypeId).add("knowledgeBaseId", knowledgeBaseId);
+                
+            builder.add("blogId", blogId == null ? 0 : blogId);
+                
+            builder.add("topic", topic == null ? "" : topic);
+                
+            builder.add("blogTypeId", blogTypeId == null ? 0 : blogTypeId);
+                
+            builder.add("knowledgeBaseId", knowledgeBaseId == null ? 0 : knowledgeBaseId);
         
-    if(blogType != null) blogType.addJson(builder);
-        if(knowledgeBase != null) knowledgeBase.addJson(builder);
-                 
+        
+    
+     
+     if(blogType != null) blogType.addJson(builder);
+        
+     if(knowledgeBase != null) knowledgeBase.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

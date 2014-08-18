@@ -7,7 +7,6 @@ import java.util.Date;
 
 public interface UserService
 {
-
     public Result<User> find(String userName, Integer id);
 
     public Result<List<User>> findAll(String userName);

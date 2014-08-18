@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -154,11 +165,80 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("orderId", orderId).add("orderDate", new SimpleDateFormat("yyyyMMdd").format(orderDate)).add("shipDate", new SimpleDateFormat("yyyyMMdd").format(shipDate)).add("paymentMethod", paymentMethod).add("purchaseOrder", purchaseOrder).add("transactionId", transactionId).add("amountBilled", amountBilled).add("paymentStatus", paymentStatus).add("pendingReason", pendingReason).add("paymentType", paymentType).add("transactionFee", transactionFee).add("currencyCode", currencyCode).add("payerId", payerId).add("subtotalAmount", subtotalAmount).add("discountAmount", discountAmount).add("taxAmount", taxAmount).add("shippingAmount", shippingAmount).add("totalAmount", totalAmount).add("refundAmount", refundAmount).add("notes", notes).add("orderStatus", orderStatus).add("shippingId", shippingId).add("affiliateId", affiliateId);
+                
+            builder.add("orderId", orderId == null ? 0 : orderId);
+                
+            builder.add("orderDate", orderDate == null ? "" : new SimpleDateFormat("yyyyMMdd").format(orderDate));
+                
+            builder.add("shipDate", shipDate == null ? "" : new SimpleDateFormat("yyyyMMdd").format(shipDate));
+                
+            builder.add("paymentMethod", paymentMethod == null ? "" : paymentMethod);
+                
+            builder.add("purchaseOrder", purchaseOrder == null ? "" : purchaseOrder);
+                
+            builder.add("transactionId", transactionId == null ? "" : transactionId);
+                
+            builder.add("amountBilled", amountBilled == null ? 0 : amountBilled);
+                
+            builder.add("paymentStatus", paymentStatus == null ? "" : paymentStatus);
+                
+            builder.add("pendingReason", pendingReason == null ? "" : pendingReason);
+                
+            builder.add("paymentType", paymentType == null ? "" : paymentType);
+                
+            builder.add("transactionFee", transactionFee == null ? 0 : transactionFee);
+                
+            builder.add("currencyCode", currencyCode == null ? "" : currencyCode);
+                
+            builder.add("payerId", payerId == null ? "" : payerId);
+                
+            builder.add("subtotalAmount", subtotalAmount == null ? 0 : subtotalAmount);
+                
+            builder.add("discountAmount", discountAmount == null ? 0 : discountAmount);
+                
+            builder.add("taxAmount", taxAmount == null ? 0 : taxAmount);
+                
+            builder.add("shippingAmount", shippingAmount == null ? 0 : shippingAmount);
+                
+            builder.add("totalAmount", totalAmount == null ? 0 : totalAmount);
+                
+            builder.add("refundAmount", refundAmount == null ? 0 : refundAmount);
+                
+            builder.add("notes", notes == null ? "" : notes);
+                
+            builder.add("orderStatus", orderStatus == null ? 0 : orderStatus);
+                
+            builder.add("shippingId", shippingId == null ? 0 : shippingId);
+                
+            builder.add("affiliateId", affiliateId == null ? 0 : affiliateId);
         
-    if(shipping != null) shipping.addJson(builder);
-        if(affiliate != null) affiliate.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     if(shipping != null) shipping.addJson(builder);
+        
+     if(affiliate != null) affiliate.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

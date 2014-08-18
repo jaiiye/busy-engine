@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -90,12 +101,36 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("vendorId", vendorId).add("vendorName", vendorName).add("description", description).add("rank", rank).add("vendorStatus", vendorStatus).add("metaTagId", metaTagId).add("templateId", templateId).add("vendorTypeId", vendorTypeId);
+                
+            builder.add("vendorId", vendorId == null ? 0 : vendorId);
+                
+            builder.add("vendorName", vendorName == null ? "" : vendorName);
+                
+            builder.add("description", description == null ? "" : description);
+                
+            builder.add("rank", rank == null ? 0 : rank);
+                
+            builder.add("vendorStatus", vendorStatus == null ? 0 : vendorStatus);
+                
+            builder.add("metaTagId", metaTagId == null ? 0 : metaTagId);
+                
+            builder.add("templateId", templateId == null ? 0 : templateId);
+                
+            builder.add("vendorTypeId", vendorTypeId == null ? 0 : vendorTypeId);
         
-    if(metaTag != null) metaTag.addJson(builder);
-        if(template != null) template.addJson(builder);
-        if(vendorType != null) vendorType.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     if(metaTag != null) metaTag.addJson(builder);
+        
+     if(template != null) template.addJson(builder);
+        
+     if(vendorType != null) vendorType.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

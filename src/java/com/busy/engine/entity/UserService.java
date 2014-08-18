@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -102,12 +113,45 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("userServiceId", userServiceId).add("startDate", new SimpleDateFormat("yyyyMMdd").format(startDate)).add("endDate", new SimpleDateFormat("yyyyMMdd").format(endDate)).add("details", details).add("contractUrl", contractUrl).add("deliverableUrl", deliverableUrl).add("depositAmount", depositAmount).add("userRank", userRank).add("blogId", blogId).add("userId", userId).add("serviceId", serviceId);
+                
+            builder.add("userServiceId", userServiceId == null ? 0 : userServiceId);
+                
+            builder.add("startDate", startDate == null ? "" : new SimpleDateFormat("yyyyMMdd").format(startDate));
+                
+            builder.add("endDate", endDate == null ? "" : new SimpleDateFormat("yyyyMMdd").format(endDate));
+                
+            builder.add("details", details == null ? "" : details);
+                
+            builder.add("contractUrl", contractUrl == null ? "" : contractUrl);
+                
+            builder.add("deliverableUrl", deliverableUrl == null ? "" : deliverableUrl);
+                
+            builder.add("depositAmount", depositAmount == null ? 0 : depositAmount);
+                
+            builder.add("userRank", userRank == null ? 0 : userRank);
+                
+            builder.add("blogId", blogId == null ? 0 : blogId);
+                
+            builder.add("userId", userId == null ? 0 : userId);
+                
+            builder.add("serviceId", serviceId == null ? 0 : serviceId);
         
-    if(blog != null) blog.addJson(builder);
-        if(user != null) user.addJson(builder);
-        if(service != null) service.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     
+     
+     
+     if(blog != null) blog.addJson(builder);
+        
+     if(user != null) user.addJson(builder);
+        
+     if(service != null) service.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

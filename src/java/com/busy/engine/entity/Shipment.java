@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -88,10 +99,34 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("shipmentId", shipmentId).add("createdOn", new SimpleDateFormat("yyyyMMdd").format(createdOn)).add("trackingNumber", trackingNumber).add("totalWeight", totalWeight).add("shipDate", new SimpleDateFormat("yyyyMMdd").format(shipDate)).add("deliveryDate", new SimpleDateFormat("yyyyMMdd").format(deliveryDate)).add("itemQuantity", itemQuantity).add("orderId", orderId);
+                
+            builder.add("shipmentId", shipmentId == null ? 0 : shipmentId);
+                
+            builder.add("createdOn", createdOn == null ? "" : new SimpleDateFormat("yyyyMMdd").format(createdOn));
+                
+            builder.add("trackingNumber", trackingNumber == null ? "" : trackingNumber);
+                
+            builder.add("totalWeight", totalWeight == null ? 0 : totalWeight);
+                
+            builder.add("shipDate", shipDate == null ? "" : new SimpleDateFormat("yyyyMMdd").format(shipDate));
+                
+            builder.add("deliveryDate", deliveryDate == null ? "" : new SimpleDateFormat("yyyyMMdd").format(deliveryDate));
+                
+            builder.add("itemQuantity", itemQuantity == null ? 0 : itemQuantity);
+                
+            builder.add("orderId", orderId == null ? 0 : orderId);
         
-    if(order != null) order.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     
+     
+     if(order != null) order.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

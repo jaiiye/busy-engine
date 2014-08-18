@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -86,9 +97,30 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("knowledgeBaseId", knowledgeBaseId).add("knowledgeBaseName", knowledgeBaseName).add("description", description).add("rank", rank).add("lastModified", new SimpleDateFormat("yyyyMMdd").format(lastModified)).add("latestTopic", latestTopic).add("latestPost", latestPost);
+                
+            builder.add("knowledgeBaseId", knowledgeBaseId == null ? 0 : knowledgeBaseId);
+                
+            builder.add("knowledgeBaseName", knowledgeBaseName == null ? "" : knowledgeBaseName);
+                
+            builder.add("description", description == null ? "" : description);
+                
+            builder.add("rank", rank == null ? 0 : rank);
+                
+            builder.add("lastModified", lastModified == null ? "" : new SimpleDateFormat("yyyyMMdd").format(lastModified));
+                
+            builder.add("latestTopic", latestTopic == null ? 0 : latestTopic);
+                
+            builder.add("latestPost", latestPost == null ? 0 : latestPost);
         
-             
+        
+    
+     
+     
+     
+     
+     
+     
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

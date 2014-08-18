@@ -36,7 +36,7 @@ public class ServiceHandler extends AbstractHandler
         SimpleDateFormat operatingDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         User sessionUser = getSessionUser(request);
-        if (sessionUser != null)
+        if (sessionUser == null)
         {
             out.print(getJsonErrorMsg("User is not logged on"));
         }
@@ -1375,8 +1375,7 @@ public class ServiceHandler extends AbstractHandler
                                 generateFindServiceResult(new SiteServiceImpl().find(sessionUser.getUsername(), Integer.parseInt(getRequiredParameter(request, "siteId"))), out);
                                 break;
                             case "findAll":
-                                //generateFindAllServiceResult(new SiteServiceImpl().findAll(sessionUser.getUsername()), out);
-                                generateFindAllServiceResult(new SiteServiceImpl().findAll("admin"), out);
+                                generateFindAllServiceResult(new SiteServiceImpl().findAll(sessionUser.getUsername()), out);                                
                                 break;
                             default:
                                 out.print(getJsonErrorMsg("Invalid Operation"));

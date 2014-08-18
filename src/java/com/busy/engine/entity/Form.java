@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -94,9 +105,33 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("formId", formId).add("formName", formName).add("description", description).add("submissionEmail", submissionEmail).add("submissionMethod", submissionMethod).add("action", action).add("resettable", resettable).add("fileUpload", fileUpload);
+                
+            builder.add("formId", formId == null ? 0 : formId);
+                
+            builder.add("formName", formName == null ? "" : formName);
+                
+            builder.add("description", description == null ? "" : description);
+                
+            builder.add("submissionEmail", submissionEmail == null ? "" : submissionEmail);
+                
+            builder.add("submissionMethod", submissionMethod == null ? "" : submissionMethod);
+                
+            builder.add("action", action == null ? "" : action);
+                
+            builder.add("resettable", resettable == null ? 0 : resettable);
+                
+            builder.add("fileUpload", fileUpload == null ? 0 : fileUpload);
         
-             
+        
+    
+     
+     
+     
+     
+     
+     
+     
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

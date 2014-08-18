@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -116,9 +127,54 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("dashboardId", dashboardId).add("userCount", userCount).add("blogPostCount", blogPostCount).add("itemCount", itemCount).add("orderCount", orderCount).add("siteFileCount", siteFileCount).add("imageCount", imageCount).add("blogCount", blogCount).add("commentCount", commentCount).add("pageCount", pageCount).add("formCount", formCount).add("sliderCount", sliderCount).add("itemBrandCount", itemBrandCount).add("categoryCount", categoryCount).add("itemOptionCount", itemOptionCount);
+                
+            builder.add("dashboardId", dashboardId == null ? 0 : dashboardId);
+                
+            builder.add("userCount", userCount == null ? 0 : userCount);
+                
+            builder.add("blogPostCount", blogPostCount == null ? 0 : blogPostCount);
+                
+            builder.add("itemCount", itemCount == null ? 0 : itemCount);
+                
+            builder.add("orderCount", orderCount == null ? 0 : orderCount);
+                
+            builder.add("siteFileCount", siteFileCount == null ? 0 : siteFileCount);
+                
+            builder.add("imageCount", imageCount == null ? 0 : imageCount);
+                
+            builder.add("blogCount", blogCount == null ? 0 : blogCount);
+                
+            builder.add("commentCount", commentCount == null ? 0 : commentCount);
+                
+            builder.add("pageCount", pageCount == null ? 0 : pageCount);
+                
+            builder.add("formCount", formCount == null ? 0 : formCount);
+                
+            builder.add("sliderCount", sliderCount == null ? 0 : sliderCount);
+                
+            builder.add("itemBrandCount", itemBrandCount == null ? 0 : itemBrandCount);
+                
+            builder.add("categoryCount", categoryCount == null ? 0 : categoryCount);
+                
+            builder.add("itemOptionCount", itemOptionCount == null ? 0 : itemOptionCount);
         
-             
+        
+    
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

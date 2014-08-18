@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -68,9 +79,18 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("localeId", localeId).add("localeString", localeString).add("localeCharacterSet", localeCharacterSet);
+                
+            builder.add("localeId", localeId == null ? 0 : localeId);
+                
+            builder.add("localeString", localeString == null ? "" : localeString);
+                
+            builder.add("localeCharacterSet", localeCharacterSet == null ? "" : localeCharacterSet);
         
-             
+        
+    
+     
+     
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

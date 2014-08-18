@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -86,10 +97,31 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("serviceChargeId", serviceChargeId).add("chargeName", chargeName).add("description", description).add("rate", rate).add("units", units).add("date", new SimpleDateFormat("yyyyMMdd").format(date)).add("userServiceId", userServiceId);
+                
+            builder.add("serviceChargeId", serviceChargeId == null ? 0 : serviceChargeId);
+                
+            builder.add("chargeName", chargeName == null ? "" : chargeName);
+                
+            builder.add("description", description == null ? "" : description);
+                
+            builder.add("rate", rate == null ? "" : rate);
+                
+            builder.add("units", units == null ? "" : units);
+                
+            builder.add("date", date == null ? "" : new SimpleDateFormat("yyyyMMdd").format(date));
+                
+            builder.add("userServiceId", userServiceId == null ? 0 : userServiceId);
         
-    if(userService != null) userService.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     
+     if(userService != null) userService.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

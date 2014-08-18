@@ -1,12 +1,15 @@
 package com.busy.engine.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.json.JsonObjectBuilder;
+import java.text.SimpleDateFormat;
 
 public class Customer extends AbstractEntity implements EntityItem<Integer>
 {
+
     private static final long serialVersionUID = 1L;
     public static final String PROP_CUSTOMER_ID = "CustomerId";
     public static final String PROP_CONTACT_ID = "ContactId";
@@ -16,6 +19,7 @@ public class Customer extends AbstractEntity implements EntityItem<Integer>
     public static final String PROP_CUSTOMER_STATUS = "CustomerStatus";
 
     private Integer customerId;
+
     private Integer contactId;
     private Contact contact;
     private Integer userId;
@@ -38,35 +42,52 @@ public class Customer extends AbstractEntity implements EntityItem<Integer>
         this.customerStatus = 0;
 
         customerOrderList = null;
+
     }
 
     @Override
     public Integer getId()
     {
+
         return customerId;
     }
 
     @Override
     public void addJson(JsonObjectBuilder builder)
     {
-        builder.add("customerId", customerId).add("contactId", contactId).add("userId", userId).add("billingAddressId", billingAddressId).add("shippingAddressId", shippingAddressId).add("customerStatus", customerStatus);
+
+        builder.add("customerId", customerId == null ? 0 : customerId);
+
+        builder.add("contactId", contactId == null ? 0 : contactId);
+
+        builder.add("userId", userId == null ? 0 : userId);
+
+        builder.add("billingAddressId", billingAddressId == null ? 0 : billingAddressId);
+
+        builder.add("shippingAddressId", shippingAddressId == null ? 0 : shippingAddressId);
+
+        builder.add("customerStatus", customerStatus == null ? 0 : customerStatus);
 
         if (contact != null)
         {
             contact.addJson(builder);
         }
+
         if (user != null)
         {
             user.addJson(builder);
         }
+
         if (billingAddress != null)
         {
             billingAddress.addJson(builder);
         }
+
         if (shippingAddress != null)
         {
             shippingAddress.addJson(builder);
         }
+
     }
 
     public static String checkColumnName(String column) throws SQLException
@@ -116,6 +137,7 @@ public class Customer extends AbstractEntity implements EntityItem<Integer>
         this.customerStatus = CustomerStatus;
 
         customerOrderList = null;
+
     }
 
     public Integer getCustomerId()
@@ -227,4 +249,5 @@ public class Customer extends AbstractEntity implements EntityItem<Integer>
     {
         this.customerOrderList = customerOrderList;
     }
+
 }

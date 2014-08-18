@@ -7,5 +7,4 @@ public interface JsonItem
 {
     public JsonObject toJson();
     public void addJson(JsonObjectBuilder builder);
-
 }

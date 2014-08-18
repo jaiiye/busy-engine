@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -124,12 +135,60 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("blogPostId", blogPostId).add("title", title).add("content", content).add("imageURL", imageURL).add("tags", tags).add("featured", featured).add("ratingSum", ratingSum).add("voteCount", voteCount).add("commentCount", commentCount).add("postStatus", postStatus).add("excerpt", excerpt).add("lastModified", new SimpleDateFormat("yyyyMMdd").format(lastModified)).add("locale", locale).add("userId", userId).add("blogId", blogId).add("metaTagId", metaTagId);
+                
+            builder.add("blogPostId", blogPostId == null ? 0 : blogPostId);
+                
+            builder.add("title", title == null ? "" : title);
+                
+            builder.add("content", content == null ? "" : content);
+                
+            builder.add("imageURL", imageURL == null ? "" : imageURL);
+                
+            builder.add("tags", tags == null ? "" : tags);
+                
+            builder.add("featured", featured == null ? 0 : featured);
+                
+            builder.add("ratingSum", ratingSum == null ? 0 : ratingSum);
+                
+            builder.add("voteCount", voteCount == null ? 0 : voteCount);
+                
+            builder.add("commentCount", commentCount == null ? 0 : commentCount);
+                
+            builder.add("postStatus", postStatus == null ? 0 : postStatus);
+                
+            builder.add("excerpt", excerpt == null ? "" : excerpt);
+                
+            builder.add("lastModified", lastModified == null ? "" : new SimpleDateFormat("yyyyMMdd").format(lastModified));
+                
+            builder.add("locale", locale == null ? "" : locale);
+                
+            builder.add("userId", userId == null ? 0 : userId);
+                
+            builder.add("blogId", blogId == null ? 0 : blogId);
+                
+            builder.add("metaTagId", metaTagId == null ? 0 : metaTagId);
         
-    if(user != null) user.addJson(builder);
-        if(blog != null) blog.addJson(builder);
-        if(metaTag != null) metaTag.addJson(builder);
-                 
+        
+    
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     if(user != null) user.addJson(builder);
+        
+     if(blog != null) blog.addJson(builder);
+        
+     if(metaTag != null) metaTag.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException

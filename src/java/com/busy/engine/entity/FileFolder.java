@@ -10,12 +10,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
-
-
-
-
-
 
 
 
@@ -68,11 +79,20 @@
         @Override
         public void addJson(JsonObjectBuilder builder)
         {
-        builder.add("fileFolderId", fileFolderId).add("siteFileId", siteFileId).add("siteFolderId", siteFolderId);
+                
+            builder.add("fileFolderId", fileFolderId == null ? 0 : fileFolderId);
+                
+            builder.add("siteFileId", siteFileId == null ? 0 : siteFileId);
+                
+            builder.add("siteFolderId", siteFolderId == null ? 0 : siteFolderId);
         
-    if(siteFile != null) siteFile.addJson(builder);
-        if(siteFolder != null) siteFolder.addJson(builder);
-                 
+        
+    
+     if(siteFile != null) siteFile.addJson(builder);
+        
+     if(siteFolder != null) siteFolder.addJson(builder);
+        
+              
         }
        
        public static String checkColumnName(String column) throws SQLException
