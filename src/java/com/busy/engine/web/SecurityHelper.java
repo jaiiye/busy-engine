@@ -6,7 +6,7 @@ import javax.servlet.http.HttpSession;
 
 public class SecurityHelper 
 {
-    static final String SESSION_ATTRIB_USER = "sessionuser";
+    public static final String SESSION_ATTRIB_USER = "sessionuser";
 
     public static User getSessionUser(HttpServletRequest request) 
     {
@@ -20,6 +20,12 @@ public class SecurityHelper
         }
 
         return user;
+    }
+    
+    public static void setSessionUser(HttpServletRequest request, User user) 
+    {        
+        HttpSession session = request.getSession(true);
+        session.setAttribute(SESSION_ATTRIB_USER, user);
     }
 
 }
