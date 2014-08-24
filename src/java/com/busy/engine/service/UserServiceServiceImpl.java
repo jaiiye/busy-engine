@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.UserServiceDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class UserServiceServiceImpl extends AbstractService implements UserServiceService 
 {
-    protected UserServiceDao userServiceDao = new UserServiceDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected UserServiceDao userServiceDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public UserServiceServiceImpl() 
     {
         super();
+        
+        userServiceDao = new UserServiceDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public UserServiceServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        userServiceDao = (UserServiceDao) context.getAttribute("userServiceDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class UserServiceServiceImpl extends AbstractService implements UserServi
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(userServiceDao.find(id));
             }
@@ -105,7 +100,7 @@ public class UserServiceServiceImpl extends AbstractService implements UserServi
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<UserService> userServiceList =  userServiceDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(userServiceList);

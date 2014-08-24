@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.UserActionTypeDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class UserActionTypeServiceImpl extends AbstractService implements UserActionTypeService 
 {
-    protected UserActionTypeDao userActionTypeDao = new UserActionTypeDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected UserActionTypeDao userActionTypeDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public UserActionTypeServiceImpl() 
     {
         super();
+        
+        userActionTypeDao = new UserActionTypeDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public UserActionTypeServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        userActionTypeDao = (UserActionTypeDao) context.getAttribute("userActionTypeDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class UserActionTypeServiceImpl extends AbstractService implements UserAc
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(userActionTypeDao.find(id));
             }
@@ -105,7 +100,7 @@ public class UserActionTypeServiceImpl extends AbstractService implements UserAc
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<UserActionType> userActionTypeList =  userActionTypeDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(userActionTypeList);

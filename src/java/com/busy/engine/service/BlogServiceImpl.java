@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.BlogDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class BlogServiceImpl extends AbstractService implements BlogService 
 {
-    protected BlogDao blogDao = new BlogDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected BlogDao blogDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public BlogServiceImpl() 
     {
         super();
+        
+        blogDao = new BlogDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public BlogServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        blogDao = (BlogDao) context.getAttribute("blogDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class BlogServiceImpl extends AbstractService implements BlogService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(blogDao.find(id));
             }
@@ -105,7 +100,7 @@ public class BlogServiceImpl extends AbstractService implements BlogService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Blog> blogList =  blogDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(blogList);

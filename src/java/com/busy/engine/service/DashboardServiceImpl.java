@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.DashboardDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class DashboardServiceImpl extends AbstractService implements DashboardService 
 {
-    protected DashboardDao dashboardDao = new DashboardDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected DashboardDao dashboardDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public DashboardServiceImpl() 
     {
         super();
+        
+        dashboardDao = new DashboardDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public DashboardServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        dashboardDao = (DashboardDao) context.getAttribute("dashboardDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class DashboardServiceImpl extends AbstractService implements DashboardSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(dashboardDao.find(id));
             }
@@ -105,7 +100,7 @@ public class DashboardServiceImpl extends AbstractService implements DashboardSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Dashboard> dashboardList =  dashboardDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(dashboardList);

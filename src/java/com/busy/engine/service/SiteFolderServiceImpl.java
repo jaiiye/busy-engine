@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.SiteFolderDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class SiteFolderServiceImpl extends AbstractService implements SiteFolderService 
 {
-    protected SiteFolderDao siteFolderDao = new SiteFolderDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected SiteFolderDao siteFolderDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public SiteFolderServiceImpl() 
     {
         super();
+        
+        siteFolderDao = new SiteFolderDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public SiteFolderServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        siteFolderDao = (SiteFolderDao) context.getAttribute("siteFolderDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class SiteFolderServiceImpl extends AbstractService implements SiteFolder
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(siteFolderDao.find(id));
             }
@@ -105,7 +100,7 @@ public class SiteFolderServiceImpl extends AbstractService implements SiteFolder
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<SiteFolder> siteFolderList =  siteFolderDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(siteFolderList);

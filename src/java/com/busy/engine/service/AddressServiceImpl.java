@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.AddressDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class AddressServiceImpl extends AbstractService implements AddressService 
 {
-    protected AddressDao addressDao = new AddressDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected AddressDao addressDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public AddressServiceImpl() 
     {
         super();
+        
+        addressDao = new AddressDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public AddressServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        addressDao = (AddressDao) context.getAttribute("addressDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class AddressServiceImpl extends AbstractService implements AddressServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(addressDao.find(id));
             }
@@ -105,7 +100,7 @@ public class AddressServiceImpl extends AbstractService implements AddressServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Address> addressList =  addressDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(addressList);

@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.StateProvinceDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class StateProvinceServiceImpl extends AbstractService implements StateProvinceService 
 {
-    protected StateProvinceDao stateProvinceDao = new StateProvinceDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected StateProvinceDao stateProvinceDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public StateProvinceServiceImpl() 
     {
         super();
+        
+        stateProvinceDao = new StateProvinceDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public StateProvinceServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        stateProvinceDao = (StateProvinceDao) context.getAttribute("stateProvinceDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class StateProvinceServiceImpl extends AbstractService implements StatePr
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(stateProvinceDao.find(id));
             }
@@ -105,7 +100,7 @@ public class StateProvinceServiceImpl extends AbstractService implements StatePr
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<StateProvince> stateProvinceList =  stateProvinceDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(stateProvinceList);

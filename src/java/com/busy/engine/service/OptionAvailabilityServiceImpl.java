@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.OptionAvailabilityDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class OptionAvailabilityServiceImpl extends AbstractService implements OptionAvailabilityService 
 {
-    protected OptionAvailabilityDao optionAvailabilityDao = new OptionAvailabilityDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected OptionAvailabilityDao optionAvailabilityDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public OptionAvailabilityServiceImpl() 
     {
         super();
+        
+        optionAvailabilityDao = new OptionAvailabilityDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public OptionAvailabilityServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        optionAvailabilityDao = (OptionAvailabilityDao) context.getAttribute("optionAvailabilityDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class OptionAvailabilityServiceImpl extends AbstractService implements Op
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(optionAvailabilityDao.find(id));
             }
@@ -105,7 +100,7 @@ public class OptionAvailabilityServiceImpl extends AbstractService implements Op
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<OptionAvailability> optionAvailabilityList =  optionAvailabilityDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(optionAvailabilityList);

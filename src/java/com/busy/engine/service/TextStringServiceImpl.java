@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.TextStringDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class TextStringServiceImpl extends AbstractService implements TextStringService 
 {
-    protected TextStringDao textStringDao = new TextStringDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected TextStringDao textStringDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public TextStringServiceImpl() 
     {
         super();
+        
+        textStringDao = new TextStringDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public TextStringServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        textStringDao = (TextStringDao) context.getAttribute("textStringDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class TextStringServiceImpl extends AbstractService implements TextString
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(textStringDao.find(id));
             }
@@ -105,7 +100,7 @@ public class TextStringServiceImpl extends AbstractService implements TextString
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<TextString> textStringList =  textStringDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(textStringList);

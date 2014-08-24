@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.MetaTagDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class MetaTagServiceImpl extends AbstractService implements MetaTagService 
 {
-    protected MetaTagDao metaTagDao = new MetaTagDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected MetaTagDao metaTagDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public MetaTagServiceImpl() 
     {
         super();
+        
+        metaTagDao = new MetaTagDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public MetaTagServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        metaTagDao = (MetaTagDao) context.getAttribute("metaTagDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class MetaTagServiceImpl extends AbstractService implements MetaTagServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(metaTagDao.find(id));
             }
@@ -105,7 +100,7 @@ public class MetaTagServiceImpl extends AbstractService implements MetaTagServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<MetaTag> metaTagList =  metaTagDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(metaTagList);

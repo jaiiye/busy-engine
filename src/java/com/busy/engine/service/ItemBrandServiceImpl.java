@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemBrandDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ItemBrandServiceImpl extends AbstractService implements ItemBrandService 
 {
-    protected ItemBrandDao itemBrandDao = new ItemBrandDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ItemBrandDao itemBrandDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ItemBrandServiceImpl() 
     {
         super();
+        
+        itemBrandDao = new ItemBrandDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ItemBrandServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        itemBrandDao = (ItemBrandDao) context.getAttribute("itemBrandDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ItemBrandServiceImpl extends AbstractService implements ItemBrandSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(itemBrandDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ItemBrandServiceImpl extends AbstractService implements ItemBrandSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ItemBrand> itemBrandList =  itemBrandDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(itemBrandList);

@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.TemplateTypeDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class TemplateTypeServiceImpl extends AbstractService implements TemplateTypeService 
 {
-    protected TemplateTypeDao templateTypeDao = new TemplateTypeDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected TemplateTypeDao templateTypeDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public TemplateTypeServiceImpl() 
     {
         super();
+        
+        templateTypeDao = new TemplateTypeDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public TemplateTypeServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        templateTypeDao = (TemplateTypeDao) context.getAttribute("templateTypeDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class TemplateTypeServiceImpl extends AbstractService implements Template
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(templateTypeDao.find(id));
             }
@@ -105,7 +100,7 @@ public class TemplateTypeServiceImpl extends AbstractService implements Template
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<TemplateType> templateTypeList =  templateTypeDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(templateTypeList);

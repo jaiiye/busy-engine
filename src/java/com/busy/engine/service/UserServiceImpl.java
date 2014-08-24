@@ -1,28 +1,34 @@
 package com.busy.engine.service;
-
-import com.busy.engine.dao.UserDao;
-import com.busy.engine.dao.UserDaoImpl;
 import com.busy.engine.dao.UserDao;
 import com.busy.engine.dao.UserDaoImpl;
 import com.busy.engine.dao.UserRoleDao;
 import com.busy.engine.dao.UserRoleDaoImpl;
 import com.busy.engine.entity.User;
-import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class UserServiceImpl extends AbstractService implements UserService
 {
 
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
 
     public UserServiceImpl()
     {
         super();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+
+    public UserServiceImpl(ServletContext context)
+    {
+        super();
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -30,7 +36,7 @@ public class UserServiceImpl extends AbstractService implements UserService
     {
         try
         {
-            if (isValidUser(userName))
+            if (isValidUser(userName, userDao))
             {
                 return ResultFactory.getSuccessResult(userDao.find(id));
             }
@@ -50,7 +56,7 @@ public class UserServiceImpl extends AbstractService implements UserService
     {
         try
         {
-            if (isValidUser(userName))
+            if (isValidUser(userName, userDao))
             {
                 List<User> userList = userDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(userList);
@@ -212,21 +218,21 @@ public class UserServiceImpl extends AbstractService implements UserService
     public Result<User> findByUsernamePassword(String username, String password)
     {
         User user = userDao.findByColumn(User.PROP_USERNAME, username, null, null).get(0);
-        
-        if(user == null)
+
+        if (user == null)
         {
             return ResultFactory.getFailResult("Unable to verify user/password combination!");
-        } 
-        else 
+        }
+        else
         {
-            if(user.getPassword().equals(password))
+            if (user.getPassword().equals(password))
             {
                 return ResultFactory.getSuccessResult(user);
             }
             else
-            {                
+            {
                 return ResultFactory.getFailResult("Unable to verify user/password combination!");
-            }            
+            }
         }
     }
 }

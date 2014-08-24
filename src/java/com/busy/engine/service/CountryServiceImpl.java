@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.CountryDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class CountryServiceImpl extends AbstractService implements CountryService 
 {
-    protected CountryDao countryDao = new CountryDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected CountryDao countryDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public CountryServiceImpl() 
     {
         super();
+        
+        countryDao = new CountryDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public CountryServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        countryDao = (CountryDao) context.getAttribute("countryDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class CountryServiceImpl extends AbstractService implements CountryServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(countryDao.find(id));
             }
@@ -105,7 +100,7 @@ public class CountryServiceImpl extends AbstractService implements CountryServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Country> countryList =  countryDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(countryList);

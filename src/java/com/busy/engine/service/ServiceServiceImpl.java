@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ServiceDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ServiceServiceImpl extends AbstractService implements ServiceService 
 {
-    protected ServiceDao serviceDao = new ServiceDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ServiceDao serviceDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ServiceServiceImpl() 
     {
         super();
+        
+        serviceDao = new ServiceDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ServiceServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        serviceDao = (ServiceDao) context.getAttribute("serviceDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ServiceServiceImpl extends AbstractService implements ServiceServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(serviceDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ServiceServiceImpl extends AbstractService implements ServiceServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Service> serviceList =  serviceDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(serviceList);

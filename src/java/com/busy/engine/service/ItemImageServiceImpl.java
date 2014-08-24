@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemImageDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ItemImageServiceImpl extends AbstractService implements ItemImageService 
 {
-    protected ItemImageDao itemImageDao = new ItemImageDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ItemImageDao itemImageDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ItemImageServiceImpl() 
     {
         super();
+        
+        itemImageDao = new ItemImageDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ItemImageServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        itemImageDao = (ItemImageDao) context.getAttribute("itemImageDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ItemImageServiceImpl extends AbstractService implements ItemImageSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(itemImageDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ItemImageServiceImpl extends AbstractService implements ItemImageSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ItemImage> itemImageList =  itemImageDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(itemImageList);

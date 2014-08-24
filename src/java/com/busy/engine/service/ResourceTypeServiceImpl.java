@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ResourceTypeDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ResourceTypeServiceImpl extends AbstractService implements ResourceTypeService 
 {
-    protected ResourceTypeDao resourceTypeDao = new ResourceTypeDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ResourceTypeDao resourceTypeDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ResourceTypeServiceImpl() 
     {
         super();
+        
+        resourceTypeDao = new ResourceTypeDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ResourceTypeServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        resourceTypeDao = (ResourceTypeDao) context.getAttribute("resourceTypeDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ResourceTypeServiceImpl extends AbstractService implements Resource
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(resourceTypeDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ResourceTypeServiceImpl extends AbstractService implements Resource
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ResourceType> resourceTypeList =  resourceTypeDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(resourceTypeList);

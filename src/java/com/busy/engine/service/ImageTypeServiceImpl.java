@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ImageTypeDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ImageTypeServiceImpl extends AbstractService implements ImageTypeService 
 {
-    protected ImageTypeDao imageTypeDao = new ImageTypeDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ImageTypeDao imageTypeDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ImageTypeServiceImpl() 
     {
         super();
+        
+        imageTypeDao = new ImageTypeDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ImageTypeServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        imageTypeDao = (ImageTypeDao) context.getAttribute("imageTypeDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ImageTypeServiceImpl extends AbstractService implements ImageTypeSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(imageTypeDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ImageTypeServiceImpl extends AbstractService implements ImageTypeSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ImageType> imageTypeList =  imageTypeDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(imageTypeList);

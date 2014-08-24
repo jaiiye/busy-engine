@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemAvailabilityDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ItemAvailabilityServiceImpl extends AbstractService implements ItemAvailabilityService 
 {
-    protected ItemAvailabilityDao itemAvailabilityDao = new ItemAvailabilityDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ItemAvailabilityDao itemAvailabilityDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ItemAvailabilityServiceImpl() 
     {
         super();
+        
+        itemAvailabilityDao = new ItemAvailabilityDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ItemAvailabilityServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        itemAvailabilityDao = (ItemAvailabilityDao) context.getAttribute("itemAvailabilityDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ItemAvailabilityServiceImpl extends AbstractService implements Item
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(itemAvailabilityDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ItemAvailabilityServiceImpl extends AbstractService implements Item
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ItemAvailability> itemAvailabilityList =  itemAvailabilityDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(itemAvailabilityList);

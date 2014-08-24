@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.SliderDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class SliderServiceImpl extends AbstractService implements SliderService 
 {
-    protected SliderDao sliderDao = new SliderDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected SliderDao sliderDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public SliderServiceImpl() 
     {
         super();
+        
+        sliderDao = new SliderDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public SliderServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        sliderDao = (SliderDao) context.getAttribute("sliderDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class SliderServiceImpl extends AbstractService implements SliderService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(sliderDao.find(id));
             }
@@ -105,7 +100,7 @@ public class SliderServiceImpl extends AbstractService implements SliderService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Slider> sliderList =  sliderDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(sliderList);

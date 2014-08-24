@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.CommentDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class CommentServiceImpl extends AbstractService implements CommentService 
 {
-    protected CommentDao commentDao = new CommentDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected CommentDao commentDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public CommentServiceImpl() 
     {
         super();
+        
+        commentDao = new CommentDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public CommentServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        commentDao = (CommentDao) context.getAttribute("commentDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class CommentServiceImpl extends AbstractService implements CommentServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(commentDao.find(id));
             }
@@ -105,7 +100,7 @@ public class CommentServiceImpl extends AbstractService implements CommentServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Comment> commentList =  commentDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(commentList);

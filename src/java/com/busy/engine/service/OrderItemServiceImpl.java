@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.OrderItemDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class OrderItemServiceImpl extends AbstractService implements OrderItemService 
 {
-    protected OrderItemDao orderItemDao = new OrderItemDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected OrderItemDao orderItemDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public OrderItemServiceImpl() 
     {
         super();
+        
+        orderItemDao = new OrderItemDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public OrderItemServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        orderItemDao = (OrderItemDao) context.getAttribute("orderItemDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class OrderItemServiceImpl extends AbstractService implements OrderItemSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(orderItemDao.find(id));
             }
@@ -105,7 +100,7 @@ public class OrderItemServiceImpl extends AbstractService implements OrderItemSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<OrderItem> orderItemList =  orderItemDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(orderItemList);

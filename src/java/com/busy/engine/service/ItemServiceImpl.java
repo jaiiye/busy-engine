@@ -1,57 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemDao;
@@ -65,19 +11,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
-public class ItemServiceImpl extends AbstractService implements ItemService 
+public class ItemServiceImpl extends AbstractService implements ItemService
 {
-    protected ItemDao itemDao = new ItemDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
-    
 
-    public ItemServiceImpl() 
+    protected ItemDao itemDao;
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
+
+    public ItemServiceImpl()
     {
         super();
+
+        itemDao = new ItemDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+
+    public ItemServiceImpl(ServletContext context)
+    {
+        super();
+
+        itemDao = (ItemDao) context.getAttribute("itemDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,64 +45,64 @@ public class ItemServiceImpl extends AbstractService implements ItemService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao))
             {
                 return ResultFactory.getSuccessResult(itemDao.find(id));
             }
-            else 
-            {            
+            else
+            {
                 return ResultFactory.getFailResult(USER_INVALID);
             }
         }
         catch (Exception ex)
-        {            
+        {
             return ResultFactory.getFailResult(ex.getMessage());
         }
     }
-    
+
     @Override
-    public Result<List<Item>> findAll(String userName) 
+    public Result<List<Item>> findAll(String userName)
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao))
             {
-                List<Item> itemList =  itemDao.findAll(null, null);
+                List<Item> itemList = itemDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(itemList);
-            } 
-            else 
+            }
+            else
             {
                 return ResultFactory.getFailResult(USER_INVALID);
             }
         }
         catch (Exception ex)
-        {            
+        {
             return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
     @Override
     public Result<Item> store(String userName, Integer id, String itemName, String description, Double listPrice, Double price, String shortDescription, Integer adjustment, String sku, Integer ratingSum, Integer voteCount, Integer rank, Integer itemStatus, String locale, Integer itemTypeId, Integer itemBrandId, Integer metaTagId, Integer templateId, Integer vendorId)
-    {        
+    {
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
-                        
-        if (! checkUserRoles(roles)) 
+
+        if (!checkUserRoles(roles))
         {
             return ResultFactory.getFailResult(ROLE_INVALID);
         }
 
         Item item;
 
-        if (id == null) 
+        if (id == null)
         {
             item = new Item();
-        } 
-        else 
+        }
+        else
         {
             item = itemDao.find(id);
 
-            if (item == null) 
+            if (item == null)
             {
                 return ResultFactory.getFailResult("Unable to find Item instance with Id=" + id);
             }
@@ -165,13 +125,12 @@ public class ItemServiceImpl extends AbstractService implements ItemService
         item.setMetaTagId(metaTagId);
         item.setTemplateId(templateId);
         item.setVendorId(vendorId);
-        
-        
-        if (item.getId() == null) 
+
+        if (item.getId() == null)
         {
             itemDao.add(item);
-        } 
-        else 
+        }
+        else
         {
             item = itemDao.update(item);
         }
@@ -179,110 +138,108 @@ public class ItemServiceImpl extends AbstractService implements ItemService
         return ResultFactory.getSuccessResult(item);
 
     }
-  
+
     @Override
     public Result<Item> remove(String userName, Integer id)
     {
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
-                        
-        if (! checkUserRoles(roles)) 
+
+        if (!checkUserRoles(roles))
         {
             return ResultFactory.getFailResult(ROLE_INVALID);
         }
 
-        if (id == null) 
+        if (id == null)
         {
             return ResultFactory.getFailResult("Unable to remove Item [null id]");
-        } 
+        }
 
         Item item = itemDao.find(id);
 
-        if (item == null) 
+        if (item == null)
         {
             return ResultFactory.getFailResult("Unable to load Item for removal with id=" + id);
-        } 
-        else 
+        }
+        else
         {
             //if all related objects are empty for the given object then we can erase this object
             itemDao.getRelatedObjects(item);
-            
+
             String relatedObjectNames = "";
             boolean canBeDeleted = true;
-            
-                        
-            if(item.getItemAttributeList().size() != 0)
+
+            if (item.getItemAttributeList().size() != 0)
             {
-                relatedObjectNames += "ItemAttribute ";  
+                relatedObjectNames += "ItemAttribute ";
                 canBeDeleted = false;
             }
-                        
-            if(item.getItemCategoryList().size() != 0)
+
+            if (item.getItemCategoryList().size() != 0)
             {
-                relatedObjectNames += "ItemCategory ";  
+                relatedObjectNames += "ItemCategory ";
                 canBeDeleted = false;
             }
-                        
-            if(item.getItemDiscountList().size() != 0)
+
+            if (item.getItemDiscountList().size() != 0)
             {
-                relatedObjectNames += "ItemDiscount ";  
+                relatedObjectNames += "ItemDiscount ";
                 canBeDeleted = false;
             }
-                        
-            if(item.getItemFileList().size() != 0)
+
+            if (item.getItemFileList().size() != 0)
             {
-                relatedObjectNames += "ItemFile ";  
+                relatedObjectNames += "ItemFile ";
                 canBeDeleted = false;
             }
-                        
-            if(item.getItemImageList().size() != 0)
+
+            if (item.getItemImageList().size() != 0)
             {
-                relatedObjectNames += "ItemImage ";  
+                relatedObjectNames += "ItemImage ";
                 canBeDeleted = false;
             }
-                        
-            if(item.getItemLocationList().size() != 0)
+
+            if (item.getItemLocationList().size() != 0)
             {
-                relatedObjectNames += "ItemLocation ";  
+                relatedObjectNames += "ItemLocation ";
                 canBeDeleted = false;
             }
-                        
-            if(item.getItemReviewList().size() != 0)
+
+            if (item.getItemReviewList().size() != 0)
             {
-                relatedObjectNames += "ItemReview ";  
+                relatedObjectNames += "ItemReview ";
                 canBeDeleted = false;
             }
-                        
-            if(item.getOptionAvailabilityList().size() != 0)
+
+            if (item.getOptionAvailabilityList().size() != 0)
             {
-                relatedObjectNames += "OptionAvailability ";  
+                relatedObjectNames += "OptionAvailability ";
                 canBeDeleted = false;
             }
-                        
-            if(item.getOrderItemList().size() != 0)
+
+            if (item.getOrderItemList().size() != 0)
             {
-                relatedObjectNames += "OrderItem ";  
+                relatedObjectNames += "OrderItem ";
                 canBeDeleted = false;
             }
-                        
-            if(item.getSiteItemList().size() != 0)
+
+            if (item.getSiteItemList().size() != 0)
             {
-                relatedObjectNames += "SiteItem ";  
+                relatedObjectNames += "SiteItem ";
                 canBeDeleted = false;
             }
-                          
-            
-            if(canBeDeleted)
-            {                
+
+            if (canBeDeleted)
+            {
                 itemDao.remove(item);
-                
+
                 String msg = "Item with Id: " + item.getId() + " was deleted by " + userName;
-                return ResultFactory.getSuccessResultMsg(msg);                
+                return ResultFactory.getSuccessResultMsg(msg);
             }
-            else 
+            else
             {
                 return ResultFactory.getFailResult("Item is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }            
+            }
         }
     }
 }

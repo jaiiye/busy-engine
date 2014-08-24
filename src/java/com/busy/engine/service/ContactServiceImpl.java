@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ContactDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ContactServiceImpl extends AbstractService implements ContactService 
 {
-    protected ContactDao contactDao = new ContactDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ContactDao contactDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ContactServiceImpl() 
     {
         super();
+        
+        contactDao = new ContactDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ContactServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        contactDao = (ContactDao) context.getAttribute("contactDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ContactServiceImpl extends AbstractService implements ContactServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(contactDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ContactServiceImpl extends AbstractService implements ContactServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Contact> contactList =  contactDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(contactList);

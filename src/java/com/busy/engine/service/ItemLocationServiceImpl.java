@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemLocationDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ItemLocationServiceImpl extends AbstractService implements ItemLocationService 
 {
-    protected ItemLocationDao itemLocationDao = new ItemLocationDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ItemLocationDao itemLocationDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ItemLocationServiceImpl() 
     {
         super();
+        
+        itemLocationDao = new ItemLocationDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ItemLocationServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        itemLocationDao = (ItemLocationDao) context.getAttribute("itemLocationDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ItemLocationServiceImpl extends AbstractService implements ItemLoca
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(itemLocationDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ItemLocationServiceImpl extends AbstractService implements ItemLoca
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ItemLocation> itemLocationList =  itemLocationDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(itemLocationList);

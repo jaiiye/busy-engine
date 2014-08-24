@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.SliderTypeDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class SliderTypeServiceImpl extends AbstractService implements SliderTypeService 
 {
-    protected SliderTypeDao sliderTypeDao = new SliderTypeDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected SliderTypeDao sliderTypeDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public SliderTypeServiceImpl() 
     {
         super();
+        
+        sliderTypeDao = new SliderTypeDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public SliderTypeServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        sliderTypeDao = (SliderTypeDao) context.getAttribute("sliderTypeDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class SliderTypeServiceImpl extends AbstractService implements SliderType
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(sliderTypeDao.find(id));
             }
@@ -105,7 +100,7 @@ public class SliderTypeServiceImpl extends AbstractService implements SliderType
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<SliderType> sliderTypeList =  sliderTypeDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(sliderTypeList);

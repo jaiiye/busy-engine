@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemCategoryDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ItemCategoryServiceImpl extends AbstractService implements ItemCategoryService 
 {
-    protected ItemCategoryDao itemCategoryDao = new ItemCategoryDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ItemCategoryDao itemCategoryDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ItemCategoryServiceImpl() 
     {
         super();
+        
+        itemCategoryDao = new ItemCategoryDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ItemCategoryServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        itemCategoryDao = (ItemCategoryDao) context.getAttribute("itemCategoryDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ItemCategoryServiceImpl extends AbstractService implements ItemCate
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(itemCategoryDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ItemCategoryServiceImpl extends AbstractService implements ItemCate
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ItemCategory> itemCategoryList =  itemCategoryDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(itemCategoryList);

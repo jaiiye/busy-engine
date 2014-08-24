@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.BlogPostCategoryDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class BlogPostCategoryServiceImpl extends AbstractService implements BlogPostCategoryService 
 {
-    protected BlogPostCategoryDao blogPostCategoryDao = new BlogPostCategoryDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected BlogPostCategoryDao blogPostCategoryDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public BlogPostCategoryServiceImpl() 
     {
         super();
+        
+        blogPostCategoryDao = new BlogPostCategoryDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public BlogPostCategoryServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        blogPostCategoryDao = (BlogPostCategoryDao) context.getAttribute("blogPostCategoryDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class BlogPostCategoryServiceImpl extends AbstractService implements Blog
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(blogPostCategoryDao.find(id));
             }
@@ -105,7 +100,7 @@ public class BlogPostCategoryServiceImpl extends AbstractService implements Blog
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<BlogPostCategory> blogPostCategoryList =  blogPostCategoryDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(blogPostCategoryList);

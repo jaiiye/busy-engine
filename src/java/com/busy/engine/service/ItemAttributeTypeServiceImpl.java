@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemAttributeTypeDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ItemAttributeTypeServiceImpl extends AbstractService implements ItemAttributeTypeService 
 {
-    protected ItemAttributeTypeDao itemAttributeTypeDao = new ItemAttributeTypeDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ItemAttributeTypeDao itemAttributeTypeDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ItemAttributeTypeServiceImpl() 
     {
         super();
+        
+        itemAttributeTypeDao = new ItemAttributeTypeDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ItemAttributeTypeServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        itemAttributeTypeDao = (ItemAttributeTypeDao) context.getAttribute("itemAttributeTypeDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ItemAttributeTypeServiceImpl extends AbstractService implements Ite
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(itemAttributeTypeDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ItemAttributeTypeServiceImpl extends AbstractService implements Ite
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ItemAttributeType> itemAttributeTypeList =  itemAttributeTypeDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(itemAttributeTypeList);

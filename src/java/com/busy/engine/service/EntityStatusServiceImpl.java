@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.EntityStatusDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class EntityStatusServiceImpl extends AbstractService implements EntityStatusService 
 {
-    protected EntityStatusDao entityStatusDao = new EntityStatusDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected EntityStatusDao entityStatusDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public EntityStatusServiceImpl() 
     {
         super();
+        
+        entityStatusDao = new EntityStatusDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public EntityStatusServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        entityStatusDao = (EntityStatusDao) context.getAttribute("entityStatusDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class EntityStatusServiceImpl extends AbstractService implements EntitySt
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(entityStatusDao.find(id));
             }
@@ -105,7 +100,7 @@ public class EntityStatusServiceImpl extends AbstractService implements EntitySt
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<EntityStatus> entityStatusList =  entityStatusDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(entityStatusList);

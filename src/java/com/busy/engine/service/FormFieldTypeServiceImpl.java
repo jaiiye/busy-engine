@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.FormFieldTypeDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class FormFieldTypeServiceImpl extends AbstractService implements FormFieldTypeService 
 {
-    protected FormFieldTypeDao formFieldTypeDao = new FormFieldTypeDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected FormFieldTypeDao formFieldTypeDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public FormFieldTypeServiceImpl() 
     {
         super();
+        
+        formFieldTypeDao = new FormFieldTypeDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public FormFieldTypeServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        formFieldTypeDao = (FormFieldTypeDao) context.getAttribute("formFieldTypeDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class FormFieldTypeServiceImpl extends AbstractService implements FormFie
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(formFieldTypeDao.find(id));
             }
@@ -105,7 +100,7 @@ public class FormFieldTypeServiceImpl extends AbstractService implements FormFie
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<FormFieldType> formFieldTypeList =  formFieldTypeDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(formFieldTypeList);

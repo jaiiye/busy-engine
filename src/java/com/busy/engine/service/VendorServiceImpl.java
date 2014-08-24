@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.VendorDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class VendorServiceImpl extends AbstractService implements VendorService 
 {
-    protected VendorDao vendorDao = new VendorDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected VendorDao vendorDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public VendorServiceImpl() 
     {
         super();
+        
+        vendorDao = new VendorDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public VendorServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        vendorDao = (VendorDao) context.getAttribute("vendorDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class VendorServiceImpl extends AbstractService implements VendorService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(vendorDao.find(id));
             }
@@ -105,7 +100,7 @@ public class VendorServiceImpl extends AbstractService implements VendorService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Vendor> vendorList =  vendorDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(vendorList);

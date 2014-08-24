@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemOptionDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ItemOptionServiceImpl extends AbstractService implements ItemOptionService 
 {
-    protected ItemOptionDao itemOptionDao = new ItemOptionDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ItemOptionDao itemOptionDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ItemOptionServiceImpl() 
     {
         super();
+        
+        itemOptionDao = new ItemOptionDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ItemOptionServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        itemOptionDao = (ItemOptionDao) context.getAttribute("itemOptionDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ItemOptionServiceImpl extends AbstractService implements ItemOption
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(itemOptionDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ItemOptionServiceImpl extends AbstractService implements ItemOption
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ItemOption> itemOptionList =  itemOptionDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(itemOptionList);

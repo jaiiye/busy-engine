@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.PageDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class PageServiceImpl extends AbstractService implements PageService 
 {
-    protected PageDao pageDao = new PageDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected PageDao pageDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public PageServiceImpl() 
     {
         super();
+        
+        pageDao = new PageDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public PageServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        pageDao = (PageDao) context.getAttribute("pageDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class PageServiceImpl extends AbstractService implements PageService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(pageDao.find(id));
             }
@@ -105,7 +100,7 @@ public class PageServiceImpl extends AbstractService implements PageService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Page> pageList =  pageDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(pageList);

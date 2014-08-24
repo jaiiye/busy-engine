@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.SiteAttributeDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class SiteAttributeServiceImpl extends AbstractService implements SiteAttributeService 
 {
-    protected SiteAttributeDao siteAttributeDao = new SiteAttributeDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected SiteAttributeDao siteAttributeDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public SiteAttributeServiceImpl() 
     {
         super();
+        
+        siteAttributeDao = new SiteAttributeDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public SiteAttributeServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        siteAttributeDao = (SiteAttributeDao) context.getAttribute("siteAttributeDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class SiteAttributeServiceImpl extends AbstractService implements SiteAtt
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(siteAttributeDao.find(id));
             }
@@ -105,7 +100,7 @@ public class SiteAttributeServiceImpl extends AbstractService implements SiteAtt
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<SiteAttribute> siteAttributeList =  siteAttributeDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(siteAttributeList);

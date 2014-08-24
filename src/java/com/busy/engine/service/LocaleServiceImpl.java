@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.LocaleDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class LocaleServiceImpl extends AbstractService implements LocaleService 
 {
-    protected LocaleDao localeDao = new LocaleDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected LocaleDao localeDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public LocaleServiceImpl() 
     {
         super();
+        
+        localeDao = new LocaleDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public LocaleServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        localeDao = (LocaleDao) context.getAttribute("localeDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class LocaleServiceImpl extends AbstractService implements LocaleService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(localeDao.find(id));
             }
@@ -105,7 +100,7 @@ public class LocaleServiceImpl extends AbstractService implements LocaleService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Locale> localeList =  localeDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(localeList);

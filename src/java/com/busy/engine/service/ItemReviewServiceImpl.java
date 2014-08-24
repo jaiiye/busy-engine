@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemReviewDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ItemReviewServiceImpl extends AbstractService implements ItemReviewService 
 {
-    protected ItemReviewDao itemReviewDao = new ItemReviewDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ItemReviewDao itemReviewDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ItemReviewServiceImpl() 
     {
         super();
+        
+        itemReviewDao = new ItemReviewDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ItemReviewServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        itemReviewDao = (ItemReviewDao) context.getAttribute("itemReviewDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ItemReviewServiceImpl extends AbstractService implements ItemReview
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(itemReviewDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ItemReviewServiceImpl extends AbstractService implements ItemReview
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ItemReview> itemReviewList =  itemReviewDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(itemReviewList);

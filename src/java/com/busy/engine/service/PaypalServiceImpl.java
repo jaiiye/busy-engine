@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.PaypalDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class PaypalServiceImpl extends AbstractService implements PaypalService 
 {
-    protected PaypalDao paypalDao = new PaypalDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected PaypalDao paypalDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public PaypalServiceImpl() 
     {
         super();
+        
+        paypalDao = new PaypalDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public PaypalServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        paypalDao = (PaypalDao) context.getAttribute("paypalDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class PaypalServiceImpl extends AbstractService implements PaypalService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(paypalDao.find(id));
             }
@@ -105,7 +100,7 @@ public class PaypalServiceImpl extends AbstractService implements PaypalService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Paypal> paypalList =  paypalDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(paypalList);

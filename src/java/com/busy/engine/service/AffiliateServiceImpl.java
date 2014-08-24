@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.AffiliateDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class AffiliateServiceImpl extends AbstractService implements AffiliateService 
 {
-    protected AffiliateDao affiliateDao = new AffiliateDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected AffiliateDao affiliateDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public AffiliateServiceImpl() 
     {
         super();
+        
+        affiliateDao = new AffiliateDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public AffiliateServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        affiliateDao = (AffiliateDao) context.getAttribute("affiliateDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class AffiliateServiceImpl extends AbstractService implements AffiliateSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(affiliateDao.find(id));
             }
@@ -105,7 +100,7 @@ public class AffiliateServiceImpl extends AbstractService implements AffiliateSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Affiliate> affiliateList =  affiliateDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(affiliateList);

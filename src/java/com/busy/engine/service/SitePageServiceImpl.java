@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.SitePageDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class SitePageServiceImpl extends AbstractService implements SitePageService 
 {
-    protected SitePageDao sitePageDao = new SitePageDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected SitePageDao sitePageDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public SitePageServiceImpl() 
     {
         super();
+        
+        sitePageDao = new SitePageDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public SitePageServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        sitePageDao = (SitePageDao) context.getAttribute("sitePageDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class SitePageServiceImpl extends AbstractService implements SitePageServ
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(sitePageDao.find(id));
             }
@@ -105,7 +100,7 @@ public class SitePageServiceImpl extends AbstractService implements SitePageServ
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<SitePage> sitePageList =  sitePageDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(sitePageList);

@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.FormDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class FormServiceImpl extends AbstractService implements FormService 
 {
-    protected FormDao formDao = new FormDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected FormDao formDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public FormServiceImpl() 
     {
         super();
+        
+        formDao = new FormDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public FormServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        formDao = (FormDao) context.getAttribute("formDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class FormServiceImpl extends AbstractService implements FormService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(formDao.find(id));
             }
@@ -105,7 +100,7 @@ public class FormServiceImpl extends AbstractService implements FormService
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<Form> formList =  formDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(formList);

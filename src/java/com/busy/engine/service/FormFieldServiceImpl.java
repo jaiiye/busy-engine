@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.FormFieldDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class FormFieldServiceImpl extends AbstractService implements FormFieldService 
 {
-    protected FormFieldDao formFieldDao = new FormFieldDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected FormFieldDao formFieldDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public FormFieldServiceImpl() 
     {
         super();
+        
+        formFieldDao = new FormFieldDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public FormFieldServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        formFieldDao = (FormFieldDao) context.getAttribute("formFieldDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class FormFieldServiceImpl extends AbstractService implements FormFieldSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(formFieldDao.find(id));
             }
@@ -105,7 +100,7 @@ public class FormFieldServiceImpl extends AbstractService implements FormFieldSe
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<FormField> formFieldList =  formFieldDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(formFieldList);

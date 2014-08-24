@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.PageTemplateDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class PageTemplateServiceImpl extends AbstractService implements PageTemplateService 
 {
-    protected PageTemplateDao pageTemplateDao = new PageTemplateDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected PageTemplateDao pageTemplateDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public PageTemplateServiceImpl() 
     {
         super();
+        
+        pageTemplateDao = new PageTemplateDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public PageTemplateServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        pageTemplateDao = (PageTemplateDao) context.getAttribute("pageTemplateDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class PageTemplateServiceImpl extends AbstractService implements PageTemp
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(pageTemplateDao.find(id));
             }
@@ -105,7 +100,7 @@ public class PageTemplateServiceImpl extends AbstractService implements PageTemp
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<PageTemplate> pageTemplateList =  pageTemplateDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(pageTemplateList);

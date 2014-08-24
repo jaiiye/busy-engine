@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.TaxRateDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class TaxRateServiceImpl extends AbstractService implements TaxRateService 
 {
-    protected TaxRateDao taxRateDao = new TaxRateDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected TaxRateDao taxRateDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public TaxRateServiceImpl() 
     {
         super();
+        
+        taxRateDao = new TaxRateDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public TaxRateServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        taxRateDao = (TaxRateDao) context.getAttribute("taxRateDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class TaxRateServiceImpl extends AbstractService implements TaxRateServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(taxRateDao.find(id));
             }
@@ -105,7 +100,7 @@ public class TaxRateServiceImpl extends AbstractService implements TaxRateServic
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<TaxRate> taxRateList =  taxRateDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(taxRateList);

@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ResourceUrlDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ResourceUrlServiceImpl extends AbstractService implements ResourceUrlService 
 {
-    protected ResourceUrlDao resourceUrlDao = new ResourceUrlDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ResourceUrlDao resourceUrlDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ResourceUrlServiceImpl() 
     {
         super();
+        
+        resourceUrlDao = new ResourceUrlDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ResourceUrlServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        resourceUrlDao = (ResourceUrlDao) context.getAttribute("resourceUrlDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ResourceUrlServiceImpl extends AbstractService implements ResourceU
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(resourceUrlDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ResourceUrlServiceImpl extends AbstractService implements ResourceU
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ResourceUrl> resourceUrlList =  resourceUrlDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(resourceUrlList);

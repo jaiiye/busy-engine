@@ -1,7 +1,6 @@
 package com.busy.engine.service;
 
 import com.busy.engine.dao.UserDao;
-import com.busy.engine.dao.UserDaoImpl;
 import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import java.util.ArrayList;
@@ -10,13 +9,12 @@ import java.util.List;
 
 public abstract class AbstractService 
 {
-    protected UserDao userDao = new UserDaoImpl();
     protected ArrayList<String> allowedRoles = new ArrayList<String>(Arrays.asList("admin","manager"));
     
     String USER_INVALID = "Did not provide a valid user.";
     String ROLE_INVALID = "User does not have proper credentials to perform the operation.";
 
-    protected boolean isValidUser(String username) throws Exception
+    protected boolean isValidUser(String username, UserDao userDao) throws Exception
     {    
         ArrayList<User> results = userDao.findByColumn(User.PROP_USERNAME, username, null, null);
         

@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ServiceChargeDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ServiceChargeServiceImpl extends AbstractService implements ServiceChargeService 
 {
-    protected ServiceChargeDao serviceChargeDao = new ServiceChargeDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ServiceChargeDao serviceChargeDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ServiceChargeServiceImpl() 
     {
         super();
+        
+        serviceChargeDao = new ServiceChargeDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ServiceChargeServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        serviceChargeDao = (ServiceChargeDao) context.getAttribute("serviceChargeDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ServiceChargeServiceImpl extends AbstractService implements Service
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(serviceChargeDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ServiceChargeServiceImpl extends AbstractService implements Service
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ServiceCharge> serviceChargeList =  serviceChargeDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(serviceChargeList);

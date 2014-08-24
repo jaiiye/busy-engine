@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.KnowledgeBaseDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class KnowledgeBaseServiceImpl extends AbstractService implements KnowledgeBaseService 
 {
-    protected KnowledgeBaseDao knowledgeBaseDao = new KnowledgeBaseDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected KnowledgeBaseDao knowledgeBaseDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public KnowledgeBaseServiceImpl() 
     {
         super();
+        
+        knowledgeBaseDao = new KnowledgeBaseDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public KnowledgeBaseServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        knowledgeBaseDao = (KnowledgeBaseDao) context.getAttribute("knowledgeBaseDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class KnowledgeBaseServiceImpl extends AbstractService implements Knowled
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(knowledgeBaseDao.find(id));
             }
@@ -105,7 +100,7 @@ public class KnowledgeBaseServiceImpl extends AbstractService implements Knowled
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<KnowledgeBase> knowledgeBaseList =  knowledgeBaseDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(knowledgeBaseList);

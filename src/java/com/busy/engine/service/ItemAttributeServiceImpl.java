@@ -33,25 +33,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.ItemAttributeDao;
@@ -65,19 +46,33 @@ import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
 import com.busy.engine.vo.ResultFactory;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
 public class ItemAttributeServiceImpl extends AbstractService implements ItemAttributeService 
 {
-    protected ItemAttributeDao itemAttributeDao = new ItemAttributeDaoImpl();
-    protected UserDao userDao = new UserDaoImpl();
-    protected UserRoleDao userRoleDao = new UserRoleDaoImpl();
+    protected ItemAttributeDao itemAttributeDao;    
+    protected UserDao userDao;
+    protected UserRoleDao userRoleDao;
     
 
     public ItemAttributeServiceImpl() 
     {
         super();
+        
+        itemAttributeDao = new ItemAttributeDaoImpl();
+        userDao = new UserDaoImpl();
+        userRoleDao = new UserRoleDaoImpl();
+    }
+    
+    public ItemAttributeServiceImpl(ServletContext context) 
+    {
+        super();
+        
+        itemAttributeDao = (ItemAttributeDao) context.getAttribute("itemAttributeDao");
+        userDao = (UserDao) context.getAttribute("userDao");
+        userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
@@ -85,7 +80,7 @@ public class ItemAttributeServiceImpl extends AbstractService implements ItemAtt
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 return ResultFactory.getSuccessResult(itemAttributeDao.find(id));
             }
@@ -105,7 +100,7 @@ public class ItemAttributeServiceImpl extends AbstractService implements ItemAtt
     {
         try
         {
-            if (isValidUser(userName)) 
+            if (isValidUser(userName, userDao)) 
             {
                 List<ItemAttribute> itemAttributeList =  itemAttributeDao.findAll(null, null);
                 return ResultFactory.getSuccessResult(itemAttributeList);
