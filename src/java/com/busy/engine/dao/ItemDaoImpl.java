@@ -1,18 +1,18 @@
 package com.busy.engine.dao;
 
+import com.busy.engine.data.BasicConnection;
+import com.busy.engine.entity.Item;
+import com.busy.engine.entity.ItemBrand;
 import com.busy.engine.entity.ItemType;
 import com.busy.engine.entity.MetaTag;
 import com.busy.engine.entity.Template;
-import com.busy.engine.entity.ItemBrand;
 import com.busy.engine.entity.Vendor;
-import com.busy.engine.entity.Item;
-import com.busy.engine.data.BasicConnection;
+import com.busy.engine.util.ConcurrentLruCache;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDao
 {
@@ -32,7 +32,7 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
     
     private static class ItemCache
     {
-        public static final ConcurrentHashMap<Integer, Item> itemCache = buildCache(findAll());
+        public static final ConcurrentLruCache<Integer, Item> itemCache = buildCache(findAll());
     }
 
     private void checkCacheState()
@@ -42,12 +42,12 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
             System.out.println("Found the cache empty, rebuilding...");
             for (Item i : findAll())
             {
-                getCache().putIfAbsent(i.getItemId(), i);
+                getCache().put(i.getItemId(), i);
             } 
         }
     }
     
-    public static ConcurrentHashMap<Integer, Item> getCache()
+    public static ConcurrentLruCache<Integer, Item> getCache()
     {
         return ItemCache.itemCache;
     }
@@ -57,12 +57,12 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
         return getCache();
     }
 
-    public static ConcurrentHashMap<Integer, Item> buildCache(ArrayList<Item> items)
+    public static ConcurrentLruCache<Integer, Item> buildCache(ArrayList<Item> items)
     {
-        ConcurrentHashMap<Integer, Item> cache = new ConcurrentHashMap<Integer, Item>(16, 0.9f, 1);
+        ConcurrentLruCache<Integer, Item> cache = new ConcurrentLruCache<Integer, Item>(1000);
         for (Item i : items)
         {
-            cache.putIfAbsent(i.getItemId(), i);
+            cache.put(i.getItemId(), i);
         }
         return cache;
     }
@@ -104,7 +104,7 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
         if (result == null)
         {
             result = findByColumn("ItemId", id.toString(), null, null).get(0);
-            getCache().putIfAbsent(id, result);
+            getCache().put(id, result);
         }
         return result;
     }
@@ -113,66 +113,28 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
     public ArrayList<Item> findAll(Integer limit, Integer offset)
     {
         ArrayList<Item> itemList = new ArrayList<Item>();
-
+        boolean cacheNotUsed = false;
+        
         //check cache first
         if (cachingEnabled)
         {
             checkCacheState();
             
-            if (limit == null && offset == null)
+            if(limit == null && offset == null)
             {
-                itemList = new ArrayList<Item>(getCache().values());
+                itemList = new ArrayList<Item>(getCache().getValues());
             }
-            if (limit != null && offset == null)
+            else
             {
-                int count = 0;
-                itemList = new ArrayList<Item>(limit);
-                for (Entry e : getCache().entrySet())
-                {
-                    if (count++ != limit)
-                    {
-                        itemList.add((Item) e.getValue());
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            if (limit == null && offset != null)
-            {
-                int count = 0;
-                for (Entry e : getCache().entrySet())
-                {
-                    if (count++ > offset)
-                    {
-                        itemList.add((Item) e.getValue());
-                    }
-                }
-            }
-            if (limit != null && offset != null)
-            {
-                int limitCount = 0;
-                int offsetCount = 0;
-                itemList = new ArrayList<Item>(limit);
-                for (Entry e : getCache().entrySet())
-                {
-                    if (offsetCount++ > offset && limitCount++ != limit)
-                    {
-                        itemList.add((Item) e.getValue());
-                    }
-                    if(limitCount >= limit)
-                    {
-                        break;
-                    }
-                }
+                cacheNotUsed = true;
             }
         }
-        else
+        
+        if( !cachingEnabled || cacheNotUsed)
         {
             try
             {
-                getAllRecordsByTableName("item");
+                getRecordsByTableNameWithLimitOrOffset("item", limit, offset);
                 while (rs.next())
                 {
                     itemList.add(Item.process(rs));
@@ -195,7 +157,8 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
     public ArrayList<Item> findAllWithInfo(Integer limit, Integer offset)
     {
         ArrayList<Item> itemList = new ArrayList<Item>();
-
+        boolean cacheNotUsed = false;
+        
         //check cache first
         if (cachingEnabled)
         {            
@@ -203,56 +166,16 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
             
             if (limit == null && offset == null)
             {
-                itemList = new ArrayList<Item>(getCache().values());
+                itemList = new ArrayList<Item>(getCache().getValues());
             }
-            if (limit != null && offset == null)
-            {
-                int count = 0;
-                itemList = new ArrayList<Item>(limit);
-                for (Entry e : getCache().entrySet())
-                {
-                    if (count++ != limit)
-                    {
-                        itemList.add((Item) e.getValue());
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            if (limit == null && offset != null)
-            {
-                int count = 0;
-                for (Entry e : getCache().entrySet())
-                {
-                    if (count++ > offset)
-                    {
-                        itemList.add((Item) e.getValue());
-                    }
-                }
-            }
-            if (limit != null && offset != null)
-            {
-                int limitCount = 0;
-                int offsetCount = 0;
-                itemList = new ArrayList<Item>(limit);
-                for (Entry e : getCache().entrySet())
-                {
-                    if (offsetCount++ > offset && limitCount++ != limit)
-                    {
-                        itemList.add((Item) e.getValue());
-                    }
-                    if(limitCount >= limit)
-                    {
-                        break;
-                    }
-                }
+            else
+            {                
+                cacheNotUsed = true;
             }
 
             try
             {
-                for (Entry e : getCache().entrySet())
+                for (Entry e : getCache().getEntries())
                 {
                     Item item = (Item) e.getValue();
 
@@ -281,7 +204,8 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
                 closeConnection();
             }
         }
-        else
+        
+        if( !cachingEnabled || cacheNotUsed)
         {
             itemList = new ArrayList<Item>();
             try
@@ -321,45 +245,18 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
         }
         return itemList;
     }
-
-//    public Object invokeMethod(Method[] methods, String columnName, String columnValue, Item i)
-//    {       
-//        Object ret = null;
-//        for(Method method : methods)
-//        {                        
-//            System.out.println("Checking Method " + method.getName() + " to see if it equals " +  "get" + columnName);
-//            
-//            //example method name: Item.getPrice, must disregard class name
-//            //if(method.getName().substring(method.getName().indexOf(".")+1, method.getName().length()).equals("get" + columnName))
-//            if(method.getName().endsWith("get" + columnName))
-//            {                
-//                System.out.println("Found!");
-//                try 
-//                {
-//                    ret = method.invoke(i);
-//                    System.out.println("Called method and got a return value of " + (String) ret);
-//                }
-//                catch (Exception e) 
-//                {
-//                    e.printStackTrace();
-//                }                
-//                break;
-//            }                                    
-//        }
-//        
-//        return ret;
-//    }
     
     @Override
     public ArrayList<Item> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
     {
         ArrayList<Item> itemList = new ArrayList<>();
+        boolean cacheNotUsed = false;
 
         if (cachingEnabled)
         {
             if (limit == null && offset == null)
             {
-                for (Entry e : getCache().entrySet())
+                for (Entry e : getCache().getEntries())
                 {
                     try
                     {
@@ -376,74 +273,13 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
                     }
                 }
             }
-            if (limit != null && offset == null)
+            else
             {
-                int count = 0;
-                itemList = new ArrayList<Item>(limit);
-
-                for (Entry e : getCache().entrySet())
-                {
-                    try
-                    {
-                        Item i = (Item) e.getValue();
-                        if (count++ != limit && i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
-                        {
-                            itemList.add(i);
-                        }
-                    }
-                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
-                    {
-                        ex.printStackTrace();
-                        itemList = null;
-                    }
-                }
-            }
-            if (limit == null && offset != null)
-            {
-                int count = 0;
-
-                for (Entry e : getCache().entrySet())
-                {
-                    try
-                    {
-                        Item i = (Item) e.getValue();
-                        if (count++ > offset && i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
-                        {
-                            itemList.add(i);
-                        }
-                    }
-                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
-                    {
-                        ex.printStackTrace();
-                        itemList = null;
-                    }
-                }
-            }
-            if (limit != null && offset != null)
-            {
-                int limitCount = 0;
-                int offsetCount = 0;
-                itemList = new ArrayList<Item>(limit);
-
-                for (Entry e : getCache().entrySet())
-                {
-                    try
-                    {
-                        Item i = (Item) e.getValue();
-                        if (offsetCount++ > offset && limitCount++ != limit && i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
-                        {
-                            itemList.add(i);
-                        }
-                    }
-                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
-                    {
-                        ex.printStackTrace();
-                        itemList = null;
-                    }
-                }
+                cacheNotUsed = true;
             }
         }
-        else
+        
+        if( !cachingEnabled || cacheNotUsed)
         {
             try
             {
@@ -507,7 +343,7 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
             if (cachingEnabled)
             {
                 obj.setItemId(id);
-                getCache().putIfAbsent(id, obj); //synchronizing between local cache and database
+                getCache().put(id, obj); //synchronizing between local cache and database
             }
         }
         catch (Exception ex)
@@ -556,7 +392,7 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
 
             if (cachingEnabled)
             {
-                getCache().replace(obj.getItemId(), obj);
+                getCache().put(obj.getItemId(), obj);
             }
         }
         catch (Exception ex)
@@ -733,7 +569,7 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
         {
             ArrayList<Integer> keys = new ArrayList<Integer>();
             
-            for (Entry e : getCache().entrySet())
+            for (Entry e : getCache().getEntries())
             {
                 try
                 {
