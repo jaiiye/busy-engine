@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Slider> sliderList = new ArrayList<Slider>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    sliderList = Slider.getAllSliderByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    sliderList = new SliderDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    sliderList = Slider.getAllSlider();
+    sliderList = new SliderDaoImpl().findAll(null, null);
 }
 request.setAttribute("sliderList", sliderList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "content"); %>
-        <% request.setAttribute("subCategory", "sliders"); %>
+        <% request.setAttribute("category", "Content"); %>
+        <% request.setAttribute("subCategory", "Slider"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -82,18 +142,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- BEGIN PAGE TITLE & BREADCRUMB-->
-                                <h3 class="page-title"> Sliders </h3>
+                                <h3 class="page-title"> Slider </h3>
                                 <ul class="page-breadcrumb breadcrumb">                                
                                     <li>
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Content </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">Sliders</a>
+                                        <a href="#">Slider</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -196,21 +256,29 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=slider&action=2" method="post">
 
-                                                <input type="hidden" name="sliderId" value="${slider.sliderId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="sliderName">Slider Name:</label>
+                                                    <label class="col-md-2 control-label" for="sliderId">Slider:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="sliderId" class="form-control" value="${slider.sliderId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="sliderName">SliderName:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="sliderName" class="form-control maxlength-handler" maxlength="100" value="${slider.sliderName}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="sliderTypeId">Slider Type:</label>
+                                                    <label class="col-md-2 control-label" for="sliderTypeId">SliderType:</label>
                                                     <div  class="col-md-10">
+                                                        <input type="text" name="sliderTypeId" class="form-control" value="${slider.sliderTypeId}" />
                                                         <select name="sliderTypeId" class="form-control">
-                                                            <% Slider s = (Slider) pageContext.getAttribute("slider"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("slider_type", s.getSliderTypeId().toString(), 2)%>
+                                                            <%Slider x = (Slider) pageContext.getAttribute("slider"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("slider_type", x.getSliderTypeId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -218,8 +286,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="formId">Form:</label>
                                                     <div  class="col-md-10">
+                                                        <input type="text" name="formId" class="form-control" value="${slider.formId}" />
                                                         <select name="formId" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("form", s.getFormId().toString(), 2)%>
+                                                            <%Slider x = (Slider) pageContext.getAttribute("slider"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("form", x.getFormId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -264,7 +334,21 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Slider Name</label>
+                                                        <label class="col-md-2 control-label">SliderId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="sliderId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("slider", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">SliderName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
@@ -276,7 +360,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Slider Type</label>
+                                                        <label class="col-md-2 control-label">SliderTypeId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
@@ -290,7 +374,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Form</label>
+                                                        <label class="col-md-2 control-label">FormId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
@@ -338,7 +422,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
                                                     <label><input type="checkbox" checked data-column="1">Name</label> 
-                                                    <label><input type="checkbox" checked data-column="2">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="2">TypeId</label> 
+                                                    <label><input type="checkbox" checked data-column="3">FormId</label> 
+                                                    
+                                                    <label><input type="checkbox" checked data-column="4">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -351,7 +438,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>Name</th>                                       
+                                                    <th>Name</th> 
+                                                    <th>TypeId</th> 
+                                                    <th>FormId</th> 
+                                                                                                        
                                                     <th>Actions</th> 
                                                 </tr>                                
                                             </thead>
@@ -360,9 +450,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>                                                    
                                                     <td>${slider.sliderId}</td> 
                                                     <td>${slider.sliderName}</td> 
+                                                    <td>${slider.sliderTypeId}</td> 
+                                                    <td>${slider.formId}</td> 
+                                                    
                                                     <td>
                                                         <button id="edit-item${slider.sliderId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
-                                                        <button id="view-items${slider.sliderId}" class="btn btn-sm grey filter-cancel"><i class="fa fa-eye"></i> View Items</button>  
                                                         <button id="delete-item${slider.sliderId}" class="btn btn-sm red filter-cancel"><span class="glyphicon glyphicon-trash"></span></button> 
                                                     </td>
                                                 </tr>  
@@ -371,9 +463,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         toggleVisibility('itemBox${slider.sliderId}');                                                        
                                                         document.getElementById('itemBox${slider.sliderId}').scrollIntoView();
                                                         window.scrollBy(0,-80);
-                                                    });
-                                                    $("#view-items${slider.sliderId}").button().click(function() {
-                                                        window.location = 'SliderItemUI.jsp?column=SliderId&columnValue=${slider.sliderId}';
                                                     });
                                                     $("#delete-item${slider.sliderId}").button().click(function() {
                                                         window.location = '../Operations?form=slider&action=3&id=${slider.sliderId}';
@@ -449,8 +538,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({

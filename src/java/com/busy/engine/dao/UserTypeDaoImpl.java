@@ -36,35 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.UserType;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class UserTypeDaoImpl extends BasicConnection implements Serializable, UserTypeDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public UserType find(Integer id)
+        public UserTypeDaoImpl()
         {
-            return findByColumn("UserTypeId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<UserType> findAll(Integer limit, Integer offset)
+
+        public UserTypeDaoImpl(boolean enableCache)
         {
-            ArrayList<UserType> user_type = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class UserTypeCache
+        {
+            public static final ConcurrentLruCache<Integer, UserType> userTypeCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (UserType i : findAll())
+                {
+                    getCache().put(i.getUserTypeId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, UserType> getCache()
+        {
+            return UserTypeCache.userTypeCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, UserType> buildCache(ArrayList<UserType> userTypeList)
+        {        
+            ConcurrentLruCache<Integer, UserType> cache = new ConcurrentLruCache<Integer, UserType>(userTypeList.size() + 1000);
+            for (UserType i : userTypeList)
+            {
+                cache.put(i.getUserTypeId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<UserType> findAll()
+        {
+            ArrayList<UserType> userType = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("user_type");
-                while(rs.next())
+                getAllRecordsByTableName("userType");
+                while (rs.next())
                 {
-                    user_type.add(UserType.process(rs));
+                    userType.add(UserType.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -75,82 +137,197 @@ import com.busy.engine.entity.UserType;
             {
                 closeConnection();
             }
-            return user_type;
+            return userType;
+        }
+        
+        @Override
+        public UserType find(Integer id)
+        {
+            return findByColumn("UserTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<UserType> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<UserType> userTypeList = new ArrayList<UserType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for UserType, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    userTypeList = new ArrayList<UserType>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("user_type", limit, offset);
+                    while (rs.next())
+                    {
+                        userTypeList.add(UserType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("UserType object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return userTypeList;
          
         }
         
         @Override
         public ArrayList<UserType> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<UserType> user_typeList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("user_type", limit, offset);
-                while (rs.next())
+            ArrayList<UserType> userTypeList = new ArrayList<UserType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for UserType, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    user_typeList.add(UserType.process(rs));
+                    userTypeList = new ArrayList<UserType>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object UserType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                userTypeList = new ArrayList<UserType>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("user_type", limit, offset);
+                    while (rs.next())
+                    {
+                        userTypeList.add(UserType.process(rs));
+                    }
+
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object UserType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return user_typeList;
+            return userTypeList;            
         }
         
         @Override
         public ArrayList<UserType> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<UserType> user_type = new ArrayList<>();
-            try
+            ArrayList<UserType> userTypeList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("user_type", UserType.checkColumnName(columnName), columnValue, UserType.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   user_type.add(UserType.process(rs));
+
+                    System.out.println("Find by column for UserType(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            UserType i = (UserType) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                userTypeList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            userTypeList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("UserType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("user_type", UserType.checkColumnName(columnName), columnValue, UserType.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        userTypeList.add(UserType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("UserType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return user_type;
+            return userTypeList;
         } 
     
         @Override
         public int add(UserType obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 UserType.checkColumnSize(obj.getTypeName(), 45);
                 UserType.checkColumnSize(obj.getDescription(), 255);
                 UserType.checkColumnSize(obj.getRedirectUrl(), 255);
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO user_type(TypeName,Description,RedirectUrl) VALUES (?,?,?);");                    
+                prepareStatement("INSERT INTO user_type(UserTypeId,TypeName,Description,RedirectUrl,) VALUES (?,?,?);");                    
+                preparedStatement.setInt(0, obj.getUserTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getRedirectUrl());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from user_type;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -160,6 +337,13 @@ import com.busy.engine.entity.UserType;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setUserTypeId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -174,12 +358,18 @@ import com.busy.engine.entity.UserType;
                 UserType.checkColumnSize(obj.getRedirectUrl(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_type SET TypeName=?,Description=?,RedirectUrl=? WHERE UserTypeId=?;");                    
+                prepareStatement("UPDATE user_type SET com.busy.util.DatabaseColumn@1e700e7d=?,com.busy.util.DatabaseColumn@731ef163=?,com.busy.util.DatabaseColumn@1fed7005=? WHERE UserTypeId=?;");                    
+                preparedStatement.setInt(0, obj.getUserTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getRedirectUrl());
                 preparedStatement.setInt(4, obj.getUserTypeId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getUserTypeId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -195,7 +385,16 @@ import com.busy.engine.entity.UserType;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("user_type");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("user_type");
+            }
+            return count;
         }
         
         
@@ -229,7 +428,13 @@ import com.busy.engine.entity.UserType;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getUserTypeId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -249,6 +454,12 @@ import com.busy.engine.entity.UserType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -269,6 +480,12 @@ import com.busy.engine.entity.UserType;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -289,7 +506,44 @@ import com.busy.engine.entity.UserType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        UserType i = (UserType) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getUserTypeId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

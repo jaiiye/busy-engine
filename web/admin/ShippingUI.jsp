@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Shipping> shippingList = new ArrayList<Shipping>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    shippingList = Shipping.getAllShippingByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    shippingList = new ShippingDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    shippingList = Shipping.getAllShipping();
+    shippingList = new ShippingDaoImpl().findAll(null, null);
 }
 request.setAttribute("shippingList", shippingList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -53,7 +113,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
         <%@include file="index_global_scripts.jsp"%>
 
-		<script type="text/javascript" src="../uploadify/jquery.uploadify3.2.min.js"></script> 
+        
+	<script type="text/javascript" src="../uploadify/jquery.uploadify3.2.min.js"></script> 
 
         <link rel="shortcut icon" href="favicon.ico"/>
     </head>
@@ -137,10 +198,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="ShippingId" ${param.column == 'ShippingId' ? "selected" : "" } >ShippingId</option>                                                            
-                                                           <option value="ShippingRegion" ${param.column == 'ShippingRegion' ? "selected" : "" } >ShippingRegion</option>                                                            
-                                                           <option value="ShippingMethod" ${param.column == 'ShippingMethod' ? "selected" : "" } >ShippingMethod</option>                                                            
-                                                           <option value="ShippingRate" ${param.column == 'ShippingRate' ? "selected" : "" } >ShippingRate</option>                                                            
-                                                           <option value="ShippingAdditional" ${param.column == 'ShippingAdditional' ? "selected" : "" } >ShippingAdditional</option>                                                            
+                                                           <option value="MethodName" ${param.column == 'MethodName' ? "selected" : "" } >MethodName</option>                                                            
+                                                           <option value="Quantity" ${param.column == 'Quantity' ? "selected" : "" } >Quantity</option>                                                            
+                                                           <option value="UnitOfMeasure" ${param.column == 'UnitOfMeasure' ? "selected" : "" } >UnitOfMeasure</option>                                                            
+                                                           <option value="RatePerUnitCost" ${param.column == 'RatePerUnitCost' ? "selected" : "" } >RatePerUnitCost</option>                                                            
+                                                           <option value="AdditionalCost" ${param.column == 'AdditionalCost' ? "selected" : "" } >AdditionalCost</option>                                                            
+                                                           <option value="StateProvinceId" ${param.column == 'StateProvinceId' ? "selected" : "" } >StateProvinceId</option>                                                            
+                                                           <option value="CountryId" ${param.column == 'CountryId' ? "selected" : "" } >CountryId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -196,33 +260,69 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=shipping&action=2" method="post">
 
-                                                <input type="hidden" name="shippingId" value="${shipping.shippingId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="shippingRegion">ShippingRegion:</label>
+                                                    <label class="col-md-2 control-label" for="shippingId">Shipping:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="shippingRegion" class="form-control maxlength-handler" maxlength="100" value="${shipping.shippingRegion}" />
+                                                        <input type="text" name="shippingId" class="form-control" value="${shipping.shippingId}" />
+
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="shippingMethod">ShippingMethod:</label>
+                                                    <label class="col-md-2 control-label" for="methodName">MethodName:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="shippingMethod" class="form-control maxlength-handler" maxlength="45" value="${shipping.shippingMethod}" />
+                                                        <input type="text" name="methodName" class="form-control maxlength-handler" maxlength="100" value="${shipping.methodName}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="shippingRate">ShippingRate:</label>
+                                                    <label class="col-md-2 control-label" for="quantity">Quantity:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="shippingRate" class="form-control" value="${shipping.shippingRate}" />
+                                                        <input type="text" name="quantity" class="form-control" value="${shipping.quantity}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="shippingAdditional">ShippingAdditional:</label>
+                                                    <label class="col-md-2 control-label" for="unitOfMeasure">UnitOfMeasure:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="shippingAdditional" class="form-control" value="${shipping.shippingAdditional}" />
+                                                        <input type="text" name="unitOfMeasure" class="form-control maxlength-handler" maxlength="100" value="${shipping.unitOfMeasure}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="ratePerUnitCost">RatePerUnitCost:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="ratePerUnitCost" class="form-control" value="${shipping.ratePerUnitCost}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="additionalCost">AdditionalCost:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="additionalCost" class="form-control" value="${shipping.additionalCost}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="stateProvinceId">StateProvince:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="stateProvinceId" class="form-control" value="${shipping.stateProvinceId}" />
+                                                        <select name="stateProvinceId" class="form-control">
+                                                            <%Shipping x = (Shipping) pageContext.getAttribute("shipping"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("state_province", x.getStateProvinceId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="countryId">Country:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="countryId" class="form-control" value="${shipping.countryId}" />
+                                                        <select name="countryId" class="form-control">
+                                                            <%Shipping x = (Shipping) pageContext.getAttribute("shipping"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("country", x.getCountryId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
@@ -266,11 +366,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ShippingRegion</label>
+                                                        <label class="col-md-2 control-label">ShippingId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="shippingRegion" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                                <select name="shippingId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("shipping", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -278,11 +380,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ShippingMethod</label>
+                                                        <label class="col-md-2 control-label">MethodName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="shippingMethod" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <input type="text" name="methodName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -290,11 +392,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ShippingRate</label>
+                                                        <label class="col-md-2 control-label">Quantity</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="shippingRate" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                                <input type="text" name="quantity" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -302,11 +404,63 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ShippingAdditional</label>
+                                                        <label class="col-md-2 control-label">UnitOfMeasure</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="shippingAdditional" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                                <input type="text" name="unitOfMeasure" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">RatePerUnitCost</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="ratePerUnitCost" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">AdditionalCost</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="additionalCost" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">StateProvinceId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="stateProvinceId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("state_province", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">CountryId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="countryId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("country", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -347,12 +501,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">Region</label> 
-                                                    <label><input type="checkbox" checked data-column="2">Method</label> 
-                                                    <label><input type="checkbox" checked data-column="3">Rate</label> 
-                                                    <label><input type="checkbox" checked data-column="4">Additional</label> 
+                                                    <label><input type="checkbox" checked data-column="1">MethodName</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Quantity</label> 
+                                                    <label><input type="checkbox" checked data-column="3">UnitOfMeasure</label> 
+                                                    <label><input type="checkbox" checked data-column="4">RatePerUnitCost</label> 
+                                                    <label><input type="checkbox" checked data-column="5">AdditionalCost</label> 
+                                                    <label><input type="checkbox" checked data-column="6">StateProvinceId</label> 
+                                                    <label><input type="checkbox" checked data-column="7">CountryId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="5">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="8">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -365,10 +522,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>Region</th> 
-                                                    <th>Method</th> 
-                                                    <th>Rate</th> 
-                                                    <th>Additional</th> 
+                                                    <th>MethodName</th> 
+                                                    <th>Quantity</th> 
+                                                    <th>UnitOfMeasure</th> 
+                                                    <th>RatePerUnitCost</th> 
+                                                    <th>AdditionalCost</th> 
+                                                    <th>StateProvinceId</th> 
+                                                    <th>CountryId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -377,10 +537,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="shipping" items="${shippingList}" >
                                                 <tr>                                                    
                                                     <td>${shipping.shippingId}</td> 
-                                                    <td>${shipping.shippingRegion}</td> 
-                                                    <td>${shipping.shippingMethod}</td> 
-                                                    <td>${shipping.shippingRate}</td> 
-                                                    <td>${shipping.shippingAdditional}</td> 
+                                                    <td>${shipping.methodName}</td> 
+                                                    <td>${shipping.quantity}</td> 
+                                                    <td>${shipping.unitOfMeasure}</td> 
+                                                    <td>${shipping.ratePerUnitCost}</td> 
+                                                    <td>${shipping.additionalCost}</td> 
+                                                    <td>${shipping.stateProvinceId}</td> 
+                                                    <td>${shipping.countryId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${shipping.shippingId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -467,8 +630,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -508,10 +672,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         shippingId:    { required: true, number: true }, 
-                        shippingRegion:    { required: true, minlength: 1, maxlength: 100}, 
-                        shippingMethod:    { required: true, minlength: 1, maxlength: 45}, 
-                        shippingRate:    { required: true, digits: true }, 
-                        shippingAdditional:    { required: true, digits: true } 
+                        methodName:    { required: true, minlength: 1, maxlength: 100}, 
+                        quantity:    { required: true, digits: true }, 
+                        unitOfMeasure:    { required: true, minlength: 1, maxlength: 100}, 
+                        ratePerUnitCost:    { required: true, digits: true }, 
+                        additionalCost:    { required: true, digits: true }, 
+                        stateProvinceId:    { required: true, number: true }, 
+                        countryId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

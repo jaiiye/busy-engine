@@ -36,37 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.SiteImage;
-import com.busy.engine.entity.Site;
-import com.busy.engine.entity.ImageType;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class SiteImageDaoImpl extends BasicConnection implements Serializable, SiteImageDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public SiteImage find(Integer id)
+        public SiteImageDaoImpl()
         {
-            return findByColumn("SiteImageId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<SiteImage> findAll(Integer limit, Integer offset)
+
+        public SiteImageDaoImpl(boolean enableCache)
         {
-            ArrayList<SiteImage> site_image = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class SiteImageCache
+        {
+            public static final ConcurrentLruCache<Integer, SiteImage> siteImageCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (SiteImage i : findAll())
+                {
+                    getCache().put(i.getSiteImageId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, SiteImage> getCache()
+        {
+            return SiteImageCache.siteImageCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, SiteImage> buildCache(ArrayList<SiteImage> siteImageList)
+        {        
+            ConcurrentLruCache<Integer, SiteImage> cache = new ConcurrentLruCache<Integer, SiteImage>(siteImageList.size() + 1000);
+            for (SiteImage i : siteImageList)
+            {
+                cache.put(i.getSiteImageId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<SiteImage> findAll()
+        {
+            ArrayList<SiteImage> siteImage = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("site_image");
-                while(rs.next())
+                getAllRecordsByTableName("siteImage");
+                while (rs.next())
                 {
-                    site_image.add(SiteImage.process(rs));
+                    siteImage.add(SiteImage.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -77,75 +137,211 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
-            return site_image;
+            return siteImage;
+        }
+        
+        @Override
+        public SiteImage find(Integer id)
+        {
+            return findByColumn("SiteImageId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<SiteImage> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<SiteImage> siteImageList = new ArrayList<SiteImage>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for SiteImage, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    siteImageList = new ArrayList<SiteImage>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("site_image", limit, offset);
+                    while (rs.next())
+                    {
+                        siteImageList.add(SiteImage.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("SiteImage object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return siteImageList;
          
         }
         
         @Override
         public ArrayList<SiteImage> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<SiteImage> site_imageList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("site_image", limit, offset);
-                while (rs.next())
+            ArrayList<SiteImage> siteImageList = new ArrayList<SiteImage>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for SiteImage, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    site_imageList.add(SiteImage.process(rs));
+                    siteImageList = new ArrayList<SiteImage>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(SiteImage site_image : site_imageList)
+                    try
                     {
-                        
-                            getRecordById("ImageType", site_image.getImageTypeId().toString());
-                            site_image.setImageType(ImageType.process(rs));               
-                        
-                            getRecordById("Site", site_image.getSiteId().toString());
-                            site_image.setSite(Site.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            SiteImage siteImage = (SiteImage) e.getValue();
+
+                            
+                                getRecordById("ImageType", siteImage.getImageTypeId().toString());
+                                siteImage.setImageType(ImageType.process(rs));               
+                            
+                                getRecordById("Site", siteImage.getSiteId().toString());
+                                siteImage.setSite(Site.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object SiteImage method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object SiteImage method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                siteImageList = new ArrayList<SiteImage>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("site_image", limit, offset);
+                    while (rs.next())
+                    {
+                        siteImageList.add(SiteImage.process(rs));
+                    }
+
+                    
+                    
+                        for (SiteImage siteImage : siteImageList)
+                        {                        
+                            
+                                getRecordById("ImageType", siteImage.getImageTypeId().toString());
+                                siteImage.setImageType(ImageType.process(rs));               
+                            
+                                getRecordById("Site", siteImage.getSiteId().toString());
+                                siteImage.setSite(Site.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object SiteImage method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return site_imageList;
+            return siteImageList;            
         }
         
         @Override
         public ArrayList<SiteImage> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<SiteImage> site_image = new ArrayList<>();
-            try
+            ArrayList<SiteImage> siteImageList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("site_image", SiteImage.checkColumnName(columnName), columnValue, SiteImage.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   site_image.add(SiteImage.process(rs));
+
+                    System.out.println("Find by column for SiteImage(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            SiteImage i = (SiteImage) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                siteImageList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            siteImageList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("SiteImage's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("site_image", SiteImage.checkColumnName(columnName), columnValue, SiteImage.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        siteImageList.add(SiteImage.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("SiteImage's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return site_image;
+            return siteImageList;
         } 
     
         @Override
         public int add(SiteImage obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 SiteImage.checkColumnSize(obj.getFileName(), 255);
                 SiteImage.checkColumnSize(obj.getDescription(), 255);
@@ -153,9 +349,11 @@ import com.busy.engine.entity.ImageType;
                 
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO site_image(FileName,Description,LinkUrl,Rank,ImageTypeId,SiteId) VALUES (?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO site_image(SiteImageId,FileName,Description,LinkUrl,Rank,ImageTypeId,SiteId,) VALUES (?,?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getSiteImageId());
                 preparedStatement.setString(1, obj.getFileName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getLinkUrl());
@@ -163,13 +361,15 @@ import com.busy.engine.entity.ImageType;
                 preparedStatement.setInt(5, obj.getImageTypeId());
                 preparedStatement.setInt(6, obj.getSiteId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from site_image;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -179,6 +379,13 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setSiteImageId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -196,7 +403,8 @@ import com.busy.engine.entity.ImageType;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_image SET FileName=?,Description=?,LinkUrl=?,Rank=?,ImageTypeId=?,SiteId=? WHERE SiteImageId=?;");                    
+                prepareStatement("UPDATE site_image SET com.busy.util.DatabaseColumn@261ea7b1=?,com.busy.util.DatabaseColumn@71800f20=?,com.busy.util.DatabaseColumn@4f5c078f=?,com.busy.util.DatabaseColumn@4d92b2cb=?,com.busy.util.DatabaseColumn@1e62b7e7=?,com.busy.util.DatabaseColumn@6fea5204=? WHERE SiteImageId=?;");                    
+                preparedStatement.setInt(0, obj.getSiteImageId());
                 preparedStatement.setString(1, obj.getFileName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getLinkUrl());
@@ -205,6 +413,11 @@ import com.busy.engine.entity.ImageType;
                 preparedStatement.setInt(6, obj.getSiteId());
                 preparedStatement.setInt(7, obj.getSiteImageId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getSiteImageId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -220,7 +433,16 @@ import com.busy.engine.entity.ImageType;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("site_image");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("site_image");
+            }
+            return count;
         }
         
         
@@ -272,7 +494,13 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getSiteImageId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -292,6 +520,12 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -312,6 +546,12 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -332,7 +572,44 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        SiteImage i = (SiteImage) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getSiteImageId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
         

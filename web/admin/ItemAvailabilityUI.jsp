@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<ItemAvailability> item_availabilityList = new ArrayList<ItemAvailability>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    item_availabilityList = ItemAvailability.getAllItemAvailabilityByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    item_availabilityList = new ItemAvailabilityDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    item_availabilityList = ItemAvailability.getAllItemAvailability();
+    item_availabilityList = new ItemAvailabilityDaoImpl().findAll(null, null);
 }
 request.setAttribute("item_availabilityList", item_availabilityList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -138,7 +198,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="ItemAvailabilityId" ${param.column == 'ItemAvailabilityId' ? "selected" : "" } >ItemAvailabilityId</option>                                                            
-                                                           <option value="ItemAvailabilityType" ${param.column == 'ItemAvailabilityType' ? "selected" : "" } >ItemAvailabilityType</option>                                                            
+                                                           <option value="Type" ${param.column == 'Type' ? "selected" : "" } >Type</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -193,12 +253,20 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                     <div class="portlet-body">	
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=item_availability&action=2" method="post">
-                                                <input type="hidden" name="itemAvailabilityId" value="${item_availability.itemAvailabilityId}" />
+
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemAvailabilityType">ItemAvailabilityType:</label>
+                                                    <label class="col-md-2 control-label" for="itemAvailabilityId">ItemAvailability:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="itemAvailabilityType" class="form-control maxlength-handler" maxlength="45" value="${item_availability.itemAvailabilityType}" />
+                                                        <input type="text" name="itemAvailabilityId" class="form-control" value="${item_availability.itemAvailabilityId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="type">Type:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="type" class="form-control maxlength-handler" maxlength="45" value="${item_availability.type}" />
                                                     </div>
                                                 </div>
                                                 
@@ -242,11 +310,25 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemAvailabilityType</label>
+                                                        <label class="col-md-2 control-label">ItemAvailabilityId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="itemAvailabilityType" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <select name="itemAvailabilityId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_availability", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Type</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="type" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -311,7 +393,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="item_availability" items="${item_availabilityList}" >
                                                 <tr>                                                    
                                                     <td>${item_availability.itemAvailabilityId}</td> 
-                                                    <td>${item_availability.itemAvailabilityType}</td> 
+                                                    <td>${item_availability.type}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${item_availability.itemAvailabilityId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -398,8 +480,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -439,7 +522,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         itemAvailabilityId:    { required: true, number: true }, 
-                        itemAvailabilityType:    { required: true, minlength: 1, maxlength: 45} 
+                        type:    { required: true, minlength: 1, maxlength: 45} 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

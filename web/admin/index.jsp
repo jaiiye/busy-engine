@@ -1,8 +1,10 @@
 <%@page import="java.text.*"%>
+<%@page import="com.busy.engine.data.*"%>
+<%@page import="com.busy.engine.domain.*"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 
 <%
-    request.setAttribute("info", Database.getDashboardInfo());
+    request.setAttribute("info", DashboardInfo.getInfo());
     NumberFormat formatter = NumberFormat.getCurrencyInstance();
 %>
 
@@ -20,7 +22,7 @@
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <title>Busy Administrator: Business Website Administration Portal</title>
 
-		<%@include file="index_global_styles.jsp" %> 
+            <%@include file="index_global_styles.jsp" %> 
 
         <!-- BEGIN PAGE LEVEL PLUGIN STYLES -->
         <link href="../assets/global/plugins/bootstrap-daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css"/>
@@ -168,7 +170,7 @@
                             </div>
                             <div class="details">
                                 <div class="number">
-                                     ${info.fileCount}
+                                     ${info.siteFileCount}
                                 </div>
                                 <div class="desc">
                                      Files
@@ -220,24 +222,24 @@
                                                 <div class="cont">
                                                     <div class="cont-col1">
                                                         <c:choose>
-                                                            <c:when test="${activity.actionTypeId==1}">
+                                                            <c:when test="${activity.userActionTypeId==1}">
                                                                 <div class="label label-sm label-success">
                                                                     <i class="fa fa-sign-in"></i>
                                                                 </div>
                                                             </c:when> 
-                                                            <c:when test="${activity.actionTypeId==2}"><div class="label label-sm label-default"><i class="fa fa-sign-out"></i></div></c:when> 
-                                                            <c:when test="${activity.actionTypeId==3}"><div class="label label-sm label-primary"><i class="fa fa-download"></i></div></c:when> 
-                                                            <c:when test="${activity.actionTypeId==4}"><div class="label label-sm label-success"><i class="fa fa-pencil"></i></div></c:when> 
-                                                            <c:when test="${activity.actionTypeId==5}"><div class="label label-sm label-success"><i class="fa fa-plus"></i></div></c:when> 
-                                                            <c:when test="${activity.actionTypeId==6}"><div class="label label-sm label-info"><i class="fa fa-pencil"></i></div></c:when> 
-                                                            <c:when test="${activity.actionTypeId==7}"><div class="label label-sm label-danger"><i class="fa fa-minus"></i></div></c:when> 
-                                                            <c:when test="${activity.actionTypeId==8}"><div class="label label-sm label-danger"><i class="fa fa-bolt"></i></div></c:when> 
+                                                            <c:when test="${activity.userActionTypeId==2}"><div class="label label-sm label-default"><i class="fa fa-sign-out"></i></div></c:when> 
+                                                            <c:when test="${activity.userActionTypeId==3}"><div class="label label-sm label-primary"><i class="fa fa-download"></i></div></c:when> 
+                                                            <c:when test="${activity.userActionTypeId==4}"><div class="label label-sm label-success"><i class="fa fa-pencil"></i></div></c:when> 
+                                                            <c:when test="${activity.userActionTypeId==5}"><div class="label label-sm label-success"><i class="fa fa-plus"></i></div></c:when> 
+                                                            <c:when test="${activity.userActionTypeId==6}"><div class="label label-sm label-info"><i class="fa fa-pencil"></i></div></c:when> 
+                                                            <c:when test="${activity.userActionTypeId==7}"><div class="label label-sm label-danger"><i class="fa fa-minus"></i></div></c:when> 
+                                                            <c:when test="${activity.userActionTypeId==8}"><div class="label label-sm label-danger"><i class="fa fa-bolt"></i></div></c:when> 
                                                             <c:otherwise><div class="label label-sm label-default"><i class="fa fa-exclamation"></i></div></c:otherwise>   
                                                          </c:choose>                                                            
                                                     </div>
                                                     <div class="cont-col2">
                                                         <div class="desc">
-                                                            ${activity.actionDetail} on ${activity.actionDate}
+                                                            ${activity.detail} on ${activity.date}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -373,7 +375,7 @@
                                          Brands
                                     </div>
                                     <div class="number">
-                                        ${info.brandCount}
+                                        ${info.itemBrandCount}
                                     </div>
                                 </div>
                             </div>
@@ -399,7 +401,7 @@
                                          Options
                                     </div>
                                     <div class="number">
-                                        ${info.optionCount}
+                                        ${info.itemOptionCount}
                                     </div>
                                 </div>
                             </div>

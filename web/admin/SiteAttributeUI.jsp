@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<SiteAttribute> site_attributeList = new ArrayList<SiteAttribute>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    site_attributeList = SiteAttribute.getAllSiteAttributeByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    site_attributeList = new SiteAttributeDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    site_attributeList = SiteAttribute.getAllSiteAttribute();
+    site_attributeList = new SiteAttributeDaoImpl().findAll(null, null);
 }
 request.setAttribute("site_attributeList", site_attributeList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "configuration"); %>
-        <% request.setAttribute("subCategory", "preferences"); %>
+        <% request.setAttribute("category", "Configuration"); %>
+        <% request.setAttribute("subCategory", "SiteAttribute"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -89,11 +149,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Configuration </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">Site Attribute</a>
+                                        <a href="#">SiteAttribute</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -141,6 +201,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                            <option value="AttributeKey" ${param.column == 'AttributeKey' ? "selected" : "" } >AttributeKey</option>                                                            
                                                            <option value="AttributeValue" ${param.column == 'AttributeValue' ? "selected" : "" } >AttributeValue</option>                                                            
                                                            <option value="AttributeType" ${param.column == 'AttributeType' ? "selected" : "" } >AttributeType</option>                                                            
+                                                           <option value="SiteId" ${param.column == 'SiteId' ? "selected" : "" } >SiteId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -195,7 +256,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                     <div class="portlet-body">	
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=site_attribute&action=2" method="post">
-                                                <input type="hidden" name="siteAttributeId" value="${site_attribute.siteAttributeId}" />
+
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="siteAttributeId">SiteAttribute:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="siteAttributeId" class="form-control" value="${site_attribute.siteAttributeId}" />
+
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="attributeKey">AttributeKey:</label>
@@ -215,6 +284,17 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label class="col-md-2 control-label" for="attributeType">AttributeType:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="attributeType" class="form-control maxlength-handler" maxlength="45" value="${site_attribute.attributeType}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="siteId">Site:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="siteId" class="form-control" value="${site_attribute.siteId}" />
+                                                        <select name="siteId" class="form-control">
+                                                            <%SiteAttribute x = (SiteAttribute) pageContext.getAttribute("site_attribute"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("site", x.getSiteId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
@@ -258,6 +338,20 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
+                                                        <label class="col-md-2 control-label">SiteAttributeId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="siteAttributeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("site_attribute", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
                                                         <label class="col-md-2 control-label">AttributeKey</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
@@ -287,6 +381,20 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <input type="text" name="attributeType" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">SiteId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="siteId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("site", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -330,8 +438,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label><input type="checkbox" checked data-column="1">AttributeKey</label> 
                                                     <label><input type="checkbox" checked data-column="2">AttributeValue</label> 
                                                     <label><input type="checkbox" checked data-column="3">AttributeType</label> 
+                                                    <label><input type="checkbox" checked data-column="4">SiteId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="4">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="5">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -347,6 +456,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <th>AttributeKey</th> 
                                                     <th>AttributeValue</th> 
                                                     <th>AttributeType</th> 
+                                                    <th>SiteId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -358,6 +468,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <td>${site_attribute.attributeKey}</td> 
                                                     <td>${site_attribute.attributeValue}</td> 
                                                     <td>${site_attribute.attributeType}</td> 
+                                                    <td>${site_attribute.siteId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${site_attribute.siteAttributeId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -444,8 +555,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -487,7 +599,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         siteAttributeId:    { required: true, number: true }, 
                         attributeKey:    { required: true, minlength: 1, maxlength: 100}, 
                         attributeValue:    { required: true, minlength: 1, maxlength: 255}, 
-                        attributeType:    { required: true, minlength: 1, maxlength: 45} 
+                        attributeType:    { required: true, minlength: 1, maxlength: 45}, 
+                        siteId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

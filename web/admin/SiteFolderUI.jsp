@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<SiteFolder> site_folderList = new ArrayList<SiteFolder>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    site_folderList = SiteFolder.getAllSiteFolderByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    site_folderList = new SiteFolderDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    site_folderList = SiteFolder.getAllSiteFolder();
+    site_folderList = new SiteFolderDaoImpl().findAll(null, null);
 }
 request.setAttribute("site_folderList", site_folderList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "content"); %>
-        <% request.setAttribute("subCategory", "folders"); %>
+        <% request.setAttribute("category", "Content"); %>
+        <% request.setAttribute("subCategory", "SiteFolder"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -82,18 +142,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- BEGIN PAGE TITLE & BREADCRUMB-->
-                                <h3 class="page-title"> Folders </h3>
+                                <h3 class="page-title"> SiteFolder </h3>
                                 <ul class="page-breadcrumb breadcrumb">                                
                                     <li>
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Content </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">Folders</a>
+                                        <a href="#">SiteFolder</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -138,9 +198,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="SiteFolderId" ${param.column == 'SiteFolderId' ? "selected" : "" } >SiteFolderId</option>                                                            
-                                                           <option value="SiteFolderName" ${param.column == 'SiteFolderName' ? "selected" : "" } >SiteFolderName</option>                                                            
-                                                           <option value="SiteFolderDescription" ${param.column == 'SiteFolderDescription' ? "selected" : "" } >SiteFolderDescription</option>                                                            
-                                                           <option value="SiteFolderRank" ${param.column == 'SiteFolderRank' ? "selected" : "" } >SiteFolderRank</option>                                                            
+                                                           <option value="FolderName" ${param.column == 'FolderName' ? "selected" : "" } >FolderName</option>                                                            
+                                                           <option value="Description" ${param.column == 'Description' ? "selected" : "" } >Description</option>                                                            
+                                                           <option value="Rank" ${param.column == 'Rank' ? "selected" : "" } >Rank</option>                                                            
+                                                           <option value="SiteId" ${param.column == 'SiteId' ? "selected" : "" } >SiteId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -196,26 +257,44 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=site_folder&action=2" method="post">
 
-                                                <input type="hidden" name="siteFolderId" value="${site_folder.siteFolderId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="siteFolderName">SiteFolderName:</label>
+                                                    <label class="col-md-2 control-label" for="siteFolderId">SiteFolder:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="siteFolderName" class="form-control maxlength-handler" maxlength="100" value="${site_folder.siteFolderName}" />
+                                                        <input type="text" name="siteFolderId" class="form-control" value="${site_folder.siteFolderId}" />
+
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="siteFolderDescription">SiteFolderDescription:</label>
+                                                    <label class="col-md-2 control-label" for="folderName">FolderName:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="siteFolderDescription" class="form-control maxlength-handler" maxlength="255" value="${site_folder.siteFolderDescription}" />
+                                                        <input type="text" name="folderName" class="form-control maxlength-handler" maxlength="100" value="${site_folder.folderName}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="siteFolderRank">SiteFolderRank:</label>
+                                                    <label class="col-md-2 control-label" for="description">Description:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="siteFolderRank" class="form-control" value="${site_folder.siteFolderRank}" />
+                                                        <input type="text" name="description" class="form-control maxlength-handler" maxlength="255" value="${site_folder.description}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="rank">Rank:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="rank" class="form-control" value="${site_folder.rank}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="siteId">Site:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="siteId" class="form-control" value="${site_folder.siteId}" />
+                                                        <select name="siteId" class="form-control">
+                                                            <%SiteFolder x = (SiteFolder) pageContext.getAttribute("site_folder"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("site", x.getSiteId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
@@ -259,11 +338,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">SiteFolderName</label>
+                                                        <label class="col-md-2 control-label">SiteFolderId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="siteFolderName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                                <select name="siteFolderId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("site_folder", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -271,11 +352,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">SiteFolderDescription</label>
+                                                        <label class="col-md-2 control-label">FolderName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="siteFolderDescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="folderName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -283,11 +364,37 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">SiteFolderRank</label>
+                                                        <label class="col-md-2 control-label">Description</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="siteFolderRank" class="form-control" placeholder="Enter Integer" />                                                            
+                                                                <input type="text" name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Rank</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="rank" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">SiteId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="siteId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("site", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -328,11 +435,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">Name</label> 
+                                                    <label><input type="checkbox" checked data-column="1">FolderName</label> 
                                                     <label><input type="checkbox" checked data-column="2">Description</label> 
                                                     <label><input type="checkbox" checked data-column="3">Rank</label> 
+                                                    <label><input type="checkbox" checked data-column="4">SiteId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="4">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="5">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -345,9 +453,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>Name</th> 
+                                                    <th>FolderName</th> 
                                                     <th>Description</th> 
                                                     <th>Rank</th> 
+                                                    <th>SiteId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -356,13 +465,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="site_folder" items="${site_folderList}" >
                                                 <tr>                                                    
                                                     <td>${site_folder.siteFolderId}</td> 
-                                                    <td>${site_folder.siteFolderName}</td> 
-                                                    <td>${site_folder.siteFolderDescription}</td> 
-                                                    <td>${site_folder.siteFolderRank}</td> 
+                                                    <td>${site_folder.folderName}</td> 
+                                                    <td>${site_folder.description}</td> 
+                                                    <td>${site_folder.rank}</td> 
+                                                    <td>${site_folder.siteId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${site_folder.siteFolderId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
-                                                        <button id="view-files${site_folder.siteFolderId}" class="btn btn-sm grey filter-cancel"><i class="fa fa-eye"></i> View Files</button>   
                                                         <button id="delete-item${site_folder.siteFolderId}" class="btn btn-sm red filter-cancel"><span class="glyphicon glyphicon-trash"></span></button> 
                                                     </td>
                                                 </tr>  
@@ -371,9 +480,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         toggleVisibility('itemBox${site_folder.siteFolderId}');                                                        
                                                         document.getElementById('itemBox${site_folder.siteFolderId}').scrollIntoView();
                                                         window.scrollBy(0,-80);
-                                                    });
-                                                    $("#view-files${site_folder.siteFolderId}").button().click(function() {
-                                                        window.location = 'SiteFileUI.jsp?column=FolderId&columnValue=${site_folder.siteFolderId}';
                                                     });
                                                     $("#delete-item${site_folder.siteFolderId}").button().click(function() {
                                                         window.location = '../Operations?form=site_folder&action=3&id=${site_folder.siteFolderId}';
@@ -449,8 +555,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -490,9 +597,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         siteFolderId:    { required: true, number: true }, 
-                        siteFolderName:    { required: true, minlength: 1, maxlength: 100}, 
-                        siteFolderDescription:    { required: true, minlength: 1, maxlength: 255}, 
-                        siteFolderRank:    { required: true, number: true } 
+                        folderName:    { required: true, minlength: 1, maxlength: 100}, 
+                        description:    { required: true, minlength: 1, maxlength: 255}, 
+                        rank:    { required: true, number: true }, 
+                        siteId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

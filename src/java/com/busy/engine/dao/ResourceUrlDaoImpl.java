@@ -36,37 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.ResourceType;
-import com.busy.engine.entity.ResourceUrl;
-import com.busy.engine.entity.Template;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class ResourceUrlDaoImpl extends BasicConnection implements Serializable, ResourceUrlDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public ResourceUrl find(Integer id)
+        public ResourceUrlDaoImpl()
         {
-            return findByColumn("ResourceUrlId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<ResourceUrl> findAll(Integer limit, Integer offset)
+
+        public ResourceUrlDaoImpl(boolean enableCache)
         {
-            ArrayList<ResourceUrl> resource_url = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class ResourceUrlCache
+        {
+            public static final ConcurrentLruCache<Integer, ResourceUrl> resourceUrlCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (ResourceUrl i : findAll())
+                {
+                    getCache().put(i.getResourceUrlId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, ResourceUrl> getCache()
+        {
+            return ResourceUrlCache.resourceUrlCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, ResourceUrl> buildCache(ArrayList<ResourceUrl> resourceUrlList)
+        {        
+            ConcurrentLruCache<Integer, ResourceUrl> cache = new ConcurrentLruCache<Integer, ResourceUrl>(resourceUrlList.size() + 1000);
+            for (ResourceUrl i : resourceUrlList)
+            {
+                cache.put(i.getResourceUrlId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<ResourceUrl> findAll()
+        {
+            ArrayList<ResourceUrl> resourceUrl = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("resource_url");
-                while(rs.next())
+                getAllRecordsByTableName("resourceUrl");
+                while (rs.next())
                 {
-                    resource_url.add(ResourceUrl.process(rs));
+                    resourceUrl.add(ResourceUrl.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -77,93 +137,233 @@ import com.busy.engine.entity.Template;
             {
                 closeConnection();
             }
-            return resource_url;
+            return resourceUrl;
+        }
+        
+        @Override
+        public ResourceUrl find(Integer id)
+        {
+            return findByColumn("ResourceUrlId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<ResourceUrl> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<ResourceUrl> resourceUrlList = new ArrayList<ResourceUrl>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for ResourceUrl, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    resourceUrlList = new ArrayList<ResourceUrl>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("resource_url", limit, offset);
+                    while (rs.next())
+                    {
+                        resourceUrlList.add(ResourceUrl.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ResourceUrl object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return resourceUrlList;
          
         }
         
         @Override
         public ArrayList<ResourceUrl> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<ResourceUrl> resource_urlList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("resource_url", limit, offset);
-                while (rs.next())
+            ArrayList<ResourceUrl> resourceUrlList = new ArrayList<ResourceUrl>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for ResourceUrl, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    resource_urlList.add(ResourceUrl.process(rs));
+                    resourceUrlList = new ArrayList<ResourceUrl>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(ResourceUrl resource_url : resource_urlList)
+                    try
                     {
-                        
-                            getRecordById("Template", resource_url.getTemplateId().toString());
-                            resource_url.setTemplate(Template.process(rs));               
-                        
-                            getRecordById("ResourceType", resource_url.getResourceTypeId().toString());
-                            resource_url.setResourceType(ResourceType.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            ResourceUrl resourceUrl = (ResourceUrl) e.getValue();
+
+                            
+                                getRecordById("Template", resourceUrl.getTemplateId().toString());
+                                resourceUrl.setTemplate(Template.process(rs));               
+                            
+                                getRecordById("ResourceType", resourceUrl.getResourceTypeId().toString());
+                                resourceUrl.setResourceType(ResourceType.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object ResourceUrl method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object ResourceUrl method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                resourceUrlList = new ArrayList<ResourceUrl>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("resource_url", limit, offset);
+                    while (rs.next())
+                    {
+                        resourceUrlList.add(ResourceUrl.process(rs));
+                    }
+
+                    
+                    
+                        for (ResourceUrl resourceUrl : resourceUrlList)
+                        {                        
+                            
+                                getRecordById("Template", resourceUrl.getTemplateId().toString());
+                                resourceUrl.setTemplate(Template.process(rs));               
+                            
+                                getRecordById("ResourceType", resourceUrl.getResourceTypeId().toString());
+                                resourceUrl.setResourceType(ResourceType.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object ResourceUrl method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return resource_urlList;
+            return resourceUrlList;            
         }
         
         @Override
         public ArrayList<ResourceUrl> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<ResourceUrl> resource_url = new ArrayList<>();
-            try
+            ArrayList<ResourceUrl> resourceUrlList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("resource_url", ResourceUrl.checkColumnName(columnName), columnValue, ResourceUrl.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   resource_url.add(ResourceUrl.process(rs));
+
+                    System.out.println("Find by column for ResourceUrl(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            ResourceUrl i = (ResourceUrl) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                resourceUrlList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            resourceUrlList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("ResourceUrl's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("resource_url", ResourceUrl.checkColumnName(columnName), columnValue, ResourceUrl.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        resourceUrlList.add(ResourceUrl.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ResourceUrl's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return resource_url;
+            return resourceUrlList;
         } 
     
         @Override
         public int add(ResourceUrl obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 ResourceUrl.checkColumnSize(obj.getUrl(), 255);
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO resource_url(Url,TemplateId,ResourceTypeId) VALUES (?,?,?);");                    
+                prepareStatement("INSERT INTO resource_url(ResourceUrlId,Url,TemplateId,ResourceTypeId,) VALUES (?,?,?);");                    
+                preparedStatement.setInt(0, obj.getResourceUrlId());
                 preparedStatement.setString(1, obj.getUrl());
                 preparedStatement.setInt(2, obj.getTemplateId());
                 preparedStatement.setInt(3, obj.getResourceTypeId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from resource_url;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -173,6 +373,13 @@ import com.busy.engine.entity.Template;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setResourceUrlId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -187,12 +394,18 @@ import com.busy.engine.entity.Template;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE resource_url SET Url=?,TemplateId=?,ResourceTypeId=? WHERE ResourceUrlId=?;");                    
+                prepareStatement("UPDATE resource_url SET com.busy.util.DatabaseColumn@7eeb0bb5=?,com.busy.util.DatabaseColumn@df69739=?,com.busy.util.DatabaseColumn@18e1bdac=? WHERE ResourceUrlId=?;");                    
+                preparedStatement.setInt(0, obj.getResourceUrlId());
                 preparedStatement.setString(1, obj.getUrl());
                 preparedStatement.setInt(2, obj.getTemplateId());
                 preparedStatement.setInt(3, obj.getResourceTypeId());
                 preparedStatement.setInt(4, obj.getResourceUrlId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getResourceUrlId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -208,7 +421,16 @@ import com.busy.engine.entity.Template;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("resource_url");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("resource_url");
+            }
+            return count;
         }
         
         
@@ -260,7 +482,13 @@ import com.busy.engine.entity.Template;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getResourceUrlId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -280,6 +508,12 @@ import com.busy.engine.entity.Template;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -300,6 +534,12 @@ import com.busy.engine.entity.Template;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -320,7 +560,44 @@ import com.busy.engine.entity.Template;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        ResourceUrl i = (ResourceUrl) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getResourceUrlId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
         

@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<SiteFile> site_fileList = new ArrayList<SiteFile>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    site_fileList = SiteFile.getAllSiteFileByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    site_fileList = new SiteFileDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    site_fileList = SiteFile.getAllSiteFile();
+    site_fileList = new SiteFileDaoImpl().findAll(null, null);
 }
 request.setAttribute("site_fileList", site_fileList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "content"); %>
-        <% request.setAttribute("subCategory", "files"); %>
+        <% request.setAttribute("category", "Content"); %>
+        <% request.setAttribute("subCategory", "SiteFile"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -82,18 +142,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- BEGIN PAGE TITLE & BREADCRUMB-->
-                                <h3 class="page-title"> Files </h3>
+                                <h3 class="page-title"> SiteFile </h3>
                                 <ul class="page-breadcrumb breadcrumb">                                
                                     <li>
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Content </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">Files</a>
+                                        <a href="#">SiteFile</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -139,9 +199,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <select name="column" class="form-control">
                                                             <option value="SiteFileId" ${param.column == 'SiteFileId' ? "selected" : "" } >SiteFileId</option>                                                            
                                                            <option value="FileName" ${param.column == 'FileName' ? "selected" : "" } >FileName</option>                                                            
-                                                           <option value="FileDescription" ${param.column == 'FileDescription' ? "selected" : "" } >FileDescription</option>                                                            
-                                                           <option value="FileLabel" ${param.column == 'FileLabel' ? "selected" : "" } >FileLabel</option>                                                            
-                                                           <option value="FolderId" ${param.column == 'FolderId' ? "selected" : "" } >FolderId</option>                                                            
+                                                           <option value="Description" ${param.column == 'Description' ? "selected" : "" } >Description</option>                                                            
+                                                           <option value="Label" ${param.column == 'Label' ? "selected" : "" } >Label</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -164,7 +223,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                 <div class="portlet">
                                     <div class="portlet-title">
                                         <div class="caption">
-                                            <i class="fa fa-cog"></i>Upload Files
+                                            <i class="fa fa-cog"></i>Operations
                                         </div>
                                         <div class="tools">
                                             <a href="javascript:;" class="collapse"></a>
@@ -172,28 +231,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         </div>
                                     </div>
                                     <div class="portlet-body">
-                                       <div style="float:right"><input type="file" name="file_upload" id="file_upload"></div>  
-                                        <script type="text/javascript">
-                                            $(function() {
-                                                $('#file_upload').uploadify({
-                                                    'swf'      : 'uploadify.swf',
-                                                    'uploader' : 'upload-file.jsp',
-                                                    'fileSizeLimit' : '30MB',
-                                                    'uploadLimit' : 15,
-                                                    'fileTypeDesc' : 'All Files...',
-                                                    'method'   : 'post',
-                                                    'onQueueComplete' : function(file, data, response) {
-                                                        window.location = "SiteFileUI.jsp";
-                                                    }
-                                                });
-                                            });
-                                        </script>
-                                        <ul>
-                                            <li>The maximum number of files for upload is <strong>15 at a time</strong>.</li>
-                                            <li>The maximum size for all files is <strong>30 MB</strong> (ex: Two 15MB files).</li>
-                                            <li>All file types (<strong>PDF, ZIP, DOCX, RAR, JPG, GIF, PNG, etc.</strong>) are allowed.</li>
-                                            <li>Uploaded files will remain on the server until deleted.</li>
-                                        </ul>  
+                                        
+                                        
                                     </div>
                                 </div>
                                 <!-- END OPERATIONS PORTLET-->
@@ -217,36 +256,33 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=site_file&action=2" method="post">
 
-                                                <input type="hidden" name="siteFileId" value="${site_file.siteFileId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fileName">Name:</label>
+                                                    <label class="col-md-2 control-label" for="siteFileId">SiteFile:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="siteFileId" class="form-control" value="${site_file.siteFileId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="fileName">FileName:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="fileName" class="form-control maxlength-handler" maxlength="255" value="${site_file.fileName}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fileDescription">Description:</label>
+                                                    <label class="col-md-2 control-label" for="description">Description:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fileDescription" class="form-control maxlength-handler" maxlength="255" value="${site_file.fileDescription}" />
+                                                        <input type="text" name="description" class="form-control maxlength-handler" maxlength="255" value="${site_file.description}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fileLabel">Label:</label>
+                                                    <label class="col-md-2 control-label" for="label">Label:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fileLabel" class="form-control maxlength-handler" maxlength="255" value="${site_file.fileLabel}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="folderId">Folder:</label>
-                                                    <div  class="col-md-10">
-                                                        <select name="folderId" class="form-control" >
-                                                           <% SiteFile sf = (SiteFile) pageContext.getAttribute("site_file"); %>
-                                                           <%= Database.generateSelectOptionsFromTableAndColumn("site_folder", sf.getFolderId().toString(), 2)%>
-                                                        </select>
+                                                        <input type="text" name="label" class="form-control maxlength-handler" maxlength="255" value="${site_file.label}" />
                                                     </div>
                                                 </div>
                                                 
@@ -272,7 +308,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                        <h4 class="modal-title">Add a new File</h4>
+                                        <h4 class="modal-title">Add a new SiteFile</h4>
                                     </div>
                                     <div class="modal-body form">
                                         <!-- BEGIN FORM-->
@@ -290,7 +326,21 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">File Name</label>
+                                                        <label class="col-md-2 control-label">SiteFileId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="siteFileId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("site_file", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">FileName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
@@ -302,11 +352,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">File Description</label>
+                                                        <label class="col-md-2 control-label">Description</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fileDescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -314,25 +364,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">File Label</label>
+                                                        <label class="col-md-2 control-label">Label</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fileLabel" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">Folder</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="folderId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("site_folder", "", 2)%>
-                                                               </select>                                                            
+                                                                <input type="text" name="label" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -361,7 +397,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                  <div class="portlet box red-flamingo">
                                     <div class="portlet-title">
                                         <div class="caption">
-                                            <i class="fa fa-list-alt"></i>File Listing
+                                            <i class="fa fa-list-alt"></i>SiteFile Listing
                                         </div>
                                         <div class="actions">
                                             <div class="btn-group">                                
@@ -374,8 +410,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
                                                     <label><input type="checkbox" checked data-column="1">FileName</label> 
-                                                    <label><input type="checkbox" checked data-column="2">FileDescription</label> 
-                                                    <label><input type="checkbox" checked data-column="3">FileLabel</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Description</label> 
+                                                    <label><input type="checkbox" checked data-column="3">Label</label> 
+                                                    
                                                     <label><input type="checkbox" checked data-column="4">Actions</label>
                                                 </div>
                                             </div>                                                 
@@ -390,8 +427,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>
                                                     <th>Id</th> 
                                                     <th>FileName</th> 
-                                                    <th>FileDescription</th> 
-                                                    <th>FileLabel</th>                                  
+                                                    <th>Description</th> 
+                                                    <th>Label</th> 
+                                                                                                        
                                                     <th>Actions</th> 
                                                 </tr>                                
                                             </thead>
@@ -400,11 +438,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>                                                    
                                                     <td>${site_file.siteFileId}</td> 
                                                     <td>${site_file.fileName}</td> 
-                                                    <td>${site_file.fileDescription}</td> 
-                                                    <td>${site_file.fileLabel}</td> 
+                                                    <td>${site_file.description}</td> 
+                                                    <td>${site_file.label}</td> 
+                                                    
                                                     <td>
                                                         <button id="edit-item${site_file.siteFileId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
-                                                        <button id="edit-folder${site_file.siteFileId}" class="btn btn-sm grey filter-cancel"><i class="fa fa-pencil"></i> Edit Folder</button>   
                                                         <button id="delete-item${site_file.siteFileId}" class="btn btn-sm red filter-cancel"><span class="glyphicon glyphicon-trash"></span></button> 
                                                     </td>
                                                 </tr>  
@@ -413,9 +451,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         toggleVisibility('itemBox${site_file.siteFileId}');                                                        
                                                         document.getElementById('itemBox${site_file.siteFileId}').scrollIntoView();
                                                         window.scrollBy(0,-80);
-                                                    });
-                                                    $("#edit-folder${site_file.siteFileId}").button().click(function() {
-                                                        window.location = 'SiteFolderUI.jsp?id=${site_file.folderId}';
                                                     });
                                                     $("#delete-item${site_file.siteFileId}").button().click(function() {
                                                         window.location = '../Operations?form=site_file&action=3&id=${site_file.siteFileId}';
@@ -491,8 +526,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -533,9 +569,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     rules: {                                
                         siteFileId:    { required: true, number: true }, 
                         fileName:    { required: true, minlength: 1, maxlength: 255}, 
-                        fileDescription:    { required: true, minlength: 1, maxlength: 255}, 
-                        fileLabel:    { required: true, minlength: 1, maxlength: 255}, 
-                        folderId:    { required: true, number: true } 
+                        description:    { required: true, minlength: 1, maxlength: 255}, 
+                        label:    { required: true, minlength: 1, maxlength: 255} 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

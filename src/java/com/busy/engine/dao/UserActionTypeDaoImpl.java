@@ -36,35 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.UserActionType;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class UserActionTypeDaoImpl extends BasicConnection implements Serializable, UserActionTypeDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public UserActionType find(Integer id)
+        public UserActionTypeDaoImpl()
         {
-            return findByColumn("UserActionTypeId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<UserActionType> findAll(Integer limit, Integer offset)
+
+        public UserActionTypeDaoImpl(boolean enableCache)
         {
-            ArrayList<UserActionType> user_action_type = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class UserActionTypeCache
+        {
+            public static final ConcurrentLruCache<Integer, UserActionType> userActionTypeCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (UserActionType i : findAll())
+                {
+                    getCache().put(i.getUserActionTypeId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, UserActionType> getCache()
+        {
+            return UserActionTypeCache.userActionTypeCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, UserActionType> buildCache(ArrayList<UserActionType> userActionTypeList)
+        {        
+            ConcurrentLruCache<Integer, UserActionType> cache = new ConcurrentLruCache<Integer, UserActionType>(userActionTypeList.size() + 1000);
+            for (UserActionType i : userActionTypeList)
+            {
+                cache.put(i.getUserActionTypeId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<UserActionType> findAll()
+        {
+            ArrayList<UserActionType> userActionType = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("user_action_type");
-                while(rs.next())
+                getAllRecordsByTableName("userActionType");
+                while (rs.next())
                 {
-                    user_action_type.add(UserActionType.process(rs));
+                    userActionType.add(UserActionType.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -75,78 +137,193 @@ import com.busy.engine.entity.UserActionType;
             {
                 closeConnection();
             }
-            return user_action_type;
+            return userActionType;
+        }
+        
+        @Override
+        public UserActionType find(Integer id)
+        {
+            return findByColumn("UserActionTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<UserActionType> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<UserActionType> userActionTypeList = new ArrayList<UserActionType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for UserActionType, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    userActionTypeList = new ArrayList<UserActionType>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("user_action_type", limit, offset);
+                    while (rs.next())
+                    {
+                        userActionTypeList.add(UserActionType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("UserActionType object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return userActionTypeList;
          
         }
         
         @Override
         public ArrayList<UserActionType> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<UserActionType> user_action_typeList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("user_action_type", limit, offset);
-                while (rs.next())
+            ArrayList<UserActionType> userActionTypeList = new ArrayList<UserActionType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for UserActionType, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    user_action_typeList.add(UserActionType.process(rs));
+                    userActionTypeList = new ArrayList<UserActionType>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object UserActionType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                userActionTypeList = new ArrayList<UserActionType>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("user_action_type", limit, offset);
+                    while (rs.next())
+                    {
+                        userActionTypeList.add(UserActionType.process(rs));
+                    }
+
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object UserActionType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return user_action_typeList;
+            return userActionTypeList;            
         }
         
         @Override
         public ArrayList<UserActionType> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<UserActionType> user_action_type = new ArrayList<>();
-            try
+            ArrayList<UserActionType> userActionTypeList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("user_action_type", UserActionType.checkColumnName(columnName), columnValue, UserActionType.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   user_action_type.add(UserActionType.process(rs));
+
+                    System.out.println("Find by column for UserActionType(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            UserActionType i = (UserActionType) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                userActionTypeList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            userActionTypeList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("UserActionType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("user_action_type", UserActionType.checkColumnName(columnName), columnValue, UserActionType.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        userActionTypeList.add(UserActionType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("UserActionType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return user_action_type;
+            return userActionTypeList;
         } 
     
         @Override
         public int add(UserActionType obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 UserActionType.checkColumnSize(obj.getTypeName(), 255);
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO user_action_type(TypeName) VALUES (?);");                    
+                prepareStatement("INSERT INTO user_action_type(UserActionTypeId,TypeName,) VALUES (?);");                    
+                preparedStatement.setInt(0, obj.getUserActionTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from user_action_type;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -156,6 +333,13 @@ import com.busy.engine.entity.UserActionType;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setUserActionTypeId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -168,10 +352,16 @@ import com.busy.engine.entity.UserActionType;
                 UserActionType.checkColumnSize(obj.getTypeName(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_action_type SET TypeName=? WHERE UserActionTypeId=?;");                    
+                prepareStatement("UPDATE user_action_type SET com.busy.util.DatabaseColumn@3d81090c=? WHERE UserActionTypeId=?;");                    
+                preparedStatement.setInt(0, obj.getUserActionTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setInt(2, obj.getUserActionTypeId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getUserActionTypeId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -187,7 +377,16 @@ import com.busy.engine.entity.UserActionType;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("user_action_type");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("user_action_type");
+            }
+            return count;
         }
         
         
@@ -221,7 +420,13 @@ import com.busy.engine.entity.UserActionType;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getUserActionTypeId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -241,6 +446,12 @@ import com.busy.engine.entity.UserActionType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -261,6 +472,12 @@ import com.busy.engine.entity.UserActionType;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -281,7 +498,44 @@ import com.busy.engine.entity.UserActionType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        UserActionType i = (UserActionType) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getUserActionTypeId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

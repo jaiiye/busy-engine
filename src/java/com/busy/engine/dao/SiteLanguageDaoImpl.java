@@ -36,36 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.SiteLanguage;
-import com.busy.engine.entity.Site;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class SiteLanguageDaoImpl extends BasicConnection implements Serializable, SiteLanguageDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public SiteLanguage find(Integer id)
+        public SiteLanguageDaoImpl()
         {
-            return findByColumn("SiteLanguageId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<SiteLanguage> findAll(Integer limit, Integer offset)
+
+        public SiteLanguageDaoImpl(boolean enableCache)
         {
-            ArrayList<SiteLanguage> site_language = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class SiteLanguageCache
+        {
+            public static final ConcurrentLruCache<Integer, SiteLanguage> siteLanguageCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (SiteLanguage i : findAll())
+                {
+                    getCache().put(i.getSiteLanguageId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, SiteLanguage> getCache()
+        {
+            return SiteLanguageCache.siteLanguageCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, SiteLanguage> buildCache(ArrayList<SiteLanguage> siteLanguageList)
+        {        
+            ConcurrentLruCache<Integer, SiteLanguage> cache = new ConcurrentLruCache<Integer, SiteLanguage>(siteLanguageList.size() + 1000);
+            for (SiteLanguage i : siteLanguageList)
+            {
+                cache.put(i.getSiteLanguageId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<SiteLanguage> findAll()
+        {
+            ArrayList<SiteLanguage> siteLanguage = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("site_language");
-                while(rs.next())
+                getAllRecordsByTableName("siteLanguage");
+                while (rs.next())
                 {
-                    site_language.add(SiteLanguage.process(rs));
+                    siteLanguage.add(SiteLanguage.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -76,94 +137,231 @@ import com.busy.engine.entity.Site;
             {
                 closeConnection();
             }
-            return site_language;
+            return siteLanguage;
+        }
+        
+        @Override
+        public SiteLanguage find(Integer id)
+        {
+            return findByColumn("SiteLanguageId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<SiteLanguage> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<SiteLanguage> siteLanguageList = new ArrayList<SiteLanguage>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for SiteLanguage, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    siteLanguageList = new ArrayList<SiteLanguage>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("site_language", limit, offset);
+                    while (rs.next())
+                    {
+                        siteLanguageList.add(SiteLanguage.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("SiteLanguage object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return siteLanguageList;
          
         }
         
         @Override
         public ArrayList<SiteLanguage> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<SiteLanguage> site_languageList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("site_language", limit, offset);
-                while (rs.next())
+            ArrayList<SiteLanguage> siteLanguageList = new ArrayList<SiteLanguage>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for SiteLanguage, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    site_languageList.add(SiteLanguage.process(rs));
+                    siteLanguageList = new ArrayList<SiteLanguage>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(SiteLanguage site_language : site_languageList)
+                    try
                     {
-                        
-                            getRecordById("Site", site_language.getSiteId().toString());
-                            site_language.setSite(Site.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            SiteLanguage siteLanguage = (SiteLanguage) e.getValue();
+
+                            
+                                getRecordById("Site", siteLanguage.getSiteId().toString());
+                                siteLanguage.setSite(Site.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object SiteLanguage method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object SiteLanguage method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                siteLanguageList = new ArrayList<SiteLanguage>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("site_language", limit, offset);
+                    while (rs.next())
+                    {
+                        siteLanguageList.add(SiteLanguage.process(rs));
+                    }
+
+                    
+                    
+                        for (SiteLanguage siteLanguage : siteLanguageList)
+                        {                        
+                            
+                                getRecordById("Site", siteLanguage.getSiteId().toString());
+                                siteLanguage.setSite(Site.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object SiteLanguage method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return site_languageList;
+            return siteLanguageList;            
         }
         
         @Override
         public ArrayList<SiteLanguage> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<SiteLanguage> site_language = new ArrayList<>();
-            try
+            ArrayList<SiteLanguage> siteLanguageList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("site_language", SiteLanguage.checkColumnName(columnName), columnValue, SiteLanguage.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   site_language.add(SiteLanguage.process(rs));
+
+                    System.out.println("Find by column for SiteLanguage(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            SiteLanguage i = (SiteLanguage) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                siteLanguageList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            siteLanguageList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("SiteLanguage's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("site_language", SiteLanguage.checkColumnName(columnName), columnValue, SiteLanguage.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        siteLanguageList.add(SiteLanguage.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("SiteLanguage's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return site_language;
+            return siteLanguageList;
         } 
     
         @Override
         public int add(SiteLanguage obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 SiteLanguage.checkColumnSize(obj.getLanguageName(), 100);
                 SiteLanguage.checkColumnSize(obj.getLocale(), 10);
                 
                 SiteLanguage.checkColumnSize(obj.getFlagFileName(), 255);
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO site_language(LanguageName,Locale,Rtl,FlagFileName,SiteId) VALUES (?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO site_language(SiteLanguageId,LanguageName,Locale,Rtl,FlagFileName,SiteId,) VALUES (?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getSiteLanguageId());
                 preparedStatement.setString(1, obj.getLanguageName());
                 preparedStatement.setString(2, obj.getLocale());
                 preparedStatement.setInt(3, obj.getRtl());
                 preparedStatement.setString(4, obj.getFlagFileName());
                 preparedStatement.setInt(5, obj.getSiteId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from site_language;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -173,6 +371,13 @@ import com.busy.engine.entity.Site;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setSiteLanguageId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -189,7 +394,8 @@ import com.busy.engine.entity.Site;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_language SET LanguageName=?,Locale=?,Rtl=?,FlagFileName=?,SiteId=? WHERE SiteLanguageId=?;");                    
+                prepareStatement("UPDATE site_language SET com.busy.util.DatabaseColumn@305b12cb=?,com.busy.util.DatabaseColumn@54755d8=?,com.busy.util.DatabaseColumn@7c571ce9=?,com.busy.util.DatabaseColumn@579582bf=?,com.busy.util.DatabaseColumn@3fb00fcc=? WHERE SiteLanguageId=?;");                    
+                preparedStatement.setInt(0, obj.getSiteLanguageId());
                 preparedStatement.setString(1, obj.getLanguageName());
                 preparedStatement.setString(2, obj.getLocale());
                 preparedStatement.setInt(3, obj.getRtl());
@@ -197,6 +403,11 @@ import com.busy.engine.entity.Site;
                 preparedStatement.setInt(5, obj.getSiteId());
                 preparedStatement.setInt(6, obj.getSiteLanguageId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getSiteLanguageId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -212,7 +423,16 @@ import com.busy.engine.entity.Site;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("site_language");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("site_language");
+            }
+            return count;
         }
         
         
@@ -261,7 +481,13 @@ import com.busy.engine.entity.Site;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getSiteLanguageId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -281,6 +507,12 @@ import com.busy.engine.entity.Site;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -301,6 +533,12 @@ import com.busy.engine.entity.Site;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -321,7 +559,44 @@ import com.busy.engine.entity.Site;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        SiteLanguage i = (SiteLanguage) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getSiteLanguageId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
         

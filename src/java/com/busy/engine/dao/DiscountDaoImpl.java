@@ -36,33 +36,95 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.Discount;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class DiscountDaoImpl extends BasicConnection implements Serializable, DiscountDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public Discount find(Integer id)
+        public DiscountDaoImpl()
         {
-            return findByColumn("DiscountId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<Discount> findAll(Integer limit, Integer offset)
+
+        public DiscountDaoImpl(boolean enableCache)
+        {
+            cachingEnabled = enableCache;
+        }
+
+        private static class DiscountCache
+        {
+            public static final ConcurrentLruCache<Integer, Discount> discountCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (Discount i : findAll())
+                {
+                    getCache().put(i.getDiscountId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, Discount> getCache()
+        {
+            return DiscountCache.discountCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, Discount> buildCache(ArrayList<Discount> discountList)
+        {        
+            ConcurrentLruCache<Integer, Discount> cache = new ConcurrentLruCache<Integer, Discount>(discountList.size() + 1000);
+            for (Discount i : discountList)
+            {
+                cache.put(i.getDiscountId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<Discount> findAll()
         {
             ArrayList<Discount> discount = new ArrayList<>();
             try
             {
                 getAllRecordsByTableName("discount");
-                while(rs.next())
+                while (rs.next())
                 {
                     discount.add(Discount.process(rs));
                 }
@@ -76,63 +138,174 @@ import com.busy.engine.entity.Discount;
                 closeConnection();
             }
             return discount;
+        }
+        
+        @Override
+        public Discount find(Integer id)
+        {
+            return findByColumn("DiscountId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<Discount> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<Discount> discountList = new ArrayList<Discount>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for Discount, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    discountList = new ArrayList<Discount>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("discount", limit, offset);
+                    while (rs.next())
+                    {
+                        discountList.add(Discount.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Discount object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return discountList;
          
         }
         
         @Override
         public ArrayList<Discount> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<Discount> discountList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("discount", limit, offset);
-                while (rs.next())
+            ArrayList<Discount> discountList = new ArrayList<Discount>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for Discount, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    discountList.add(Discount.process(rs));
+                    discountList = new ArrayList<Discount>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object Discount method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                discountList = new ArrayList<Discount>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("discount", limit, offset);
+                    while (rs.next())
+                    {
+                        discountList.add(Discount.process(rs));
+                    }
+
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object Discount method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return discountList;
+            return discountList;            
         }
         
         @Override
         public ArrayList<Discount> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<Discount> discount = new ArrayList<>();
-            try
+            ArrayList<Discount> discountList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("discount", Discount.checkColumnName(columnName), columnValue, Discount.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   discount.add(Discount.process(rs));
+
+                    System.out.println("Find by column for Discount(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            Discount i = (Discount) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                discountList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            discountList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Discount's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("discount", Discount.checkColumnName(columnName), columnValue, Discount.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        discountList.add(Discount.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Discount's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return discount;
+            return discountList;
         } 
     
         @Override
         public int add(Discount obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 Discount.checkColumnSize(obj.getDiscountName(), 100);
                 
@@ -143,9 +316,11 @@ import com.busy.engine.entity.Discount;
                 
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO discount(DiscountName,DiscountAmount,DiscountPercent,StartDate,EndDate,CouponCode,DiscountStatus,AskCouponCode,UsePercentage) VALUES (?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO discount(DiscountId,DiscountName,DiscountAmount,DiscountPercent,StartDate,EndDate,CouponCode,DiscountStatus,AskCouponCode,UsePercentage,) VALUES (?,?,?,?,?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getDiscountId());
                 preparedStatement.setString(1, obj.getDiscountName());
                 preparedStatement.setDouble(2, obj.getDiscountAmount());
                 preparedStatement.setDouble(3, obj.getDiscountPercent());
@@ -156,13 +331,15 @@ import com.busy.engine.entity.Discount;
                 preparedStatement.setInt(8, obj.getAskCouponCode());
                 preparedStatement.setInt(9, obj.getUsePercentage());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from discount;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -172,6 +349,13 @@ import com.busy.engine.entity.Discount;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setDiscountId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -192,7 +376,8 @@ import com.busy.engine.entity.Discount;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE discount SET DiscountName=?,DiscountAmount=?,DiscountPercent=?,StartDate=?,EndDate=?,CouponCode=?,DiscountStatus=?,AskCouponCode=?,UsePercentage=? WHERE DiscountId=?;");                    
+                prepareStatement("UPDATE discount SET com.busy.util.DatabaseColumn@193d9918=?,com.busy.util.DatabaseColumn@fb7c9db=?,com.busy.util.DatabaseColumn@1d81de06=?,com.busy.util.DatabaseColumn@3bc8bf6d=?,com.busy.util.DatabaseColumn@4ec80455=?,com.busy.util.DatabaseColumn@7f80e546=?,com.busy.util.DatabaseColumn@6ce2655e=?,com.busy.util.DatabaseColumn@122f9c78=?,com.busy.util.DatabaseColumn@1ccbd8c4=? WHERE DiscountId=?;");                    
+                preparedStatement.setInt(0, obj.getDiscountId());
                 preparedStatement.setString(1, obj.getDiscountName());
                 preparedStatement.setDouble(2, obj.getDiscountAmount());
                 preparedStatement.setDouble(3, obj.getDiscountPercent());
@@ -204,6 +389,11 @@ import com.busy.engine.entity.Discount;
                 preparedStatement.setInt(9, obj.getUsePercentage());
                 preparedStatement.setInt(10, obj.getDiscountId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getDiscountId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -219,7 +409,16 @@ import com.busy.engine.entity.Discount;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("discount");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("discount");
+            }
+            return count;
         }
         
         
@@ -256,7 +455,13 @@ discount.setUserGroupList(new UserGroupDaoImpl().findByColumn("DiscountId", disc
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getDiscountId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -276,6 +481,12 @@ discount.setUserGroupList(new UserGroupDaoImpl().findByColumn("DiscountId", disc
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -296,6 +507,12 @@ discount.setUserGroupList(new UserGroupDaoImpl().findByColumn("DiscountId", disc
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -316,7 +533,44 @@ discount.setUserGroupList(new UserGroupDaoImpl().findByColumn("DiscountId", disc
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        Discount i = (Discount) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getDiscountId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

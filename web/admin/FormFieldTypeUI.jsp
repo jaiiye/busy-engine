@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<FormFieldType> form_field_typeList = new ArrayList<FormFieldType>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    form_field_typeList = FormFieldType.getAllFormFieldTypeByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    form_field_typeList = new FormFieldTypeDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    form_field_typeList = FormFieldType.getAllFormFieldType();
+    form_field_typeList = new FormFieldTypeDaoImpl().findAll(null, null);
 }
 request.setAttribute("form_field_typeList", form_field_typeList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,7 +128,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "E-Commerce"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
         <% request.setAttribute("subCategory", "FormFieldType"); %>
         <%@include file="index_sidebar.jsp"%>
 
@@ -138,8 +198,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="FormFieldTypeId" ${param.column == 'FormFieldTypeId' ? "selected" : "" } >FormFieldTypeId</option>                                                            
-                                                           <option value="FieldTypeName" ${param.column == 'FieldTypeName' ? "selected" : "" } >FieldTypeName</option>                                                            
-                                                           <option value="FieldTypeInputType" ${param.column == 'FieldTypeInputType' ? "selected" : "" } >FieldTypeInputType</option>                                                            
+                                                           <option value="TypeName" ${param.column == 'TypeName' ? "selected" : "" } >TypeName</option>                                                            
+                                                           <option value="InputType" ${param.column == 'InputType' ? "selected" : "" } >InputType</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -194,20 +254,27 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                     <div class="portlet-body">	
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=form_field_type&action=2" method="post">
-                                            <input type="hidden" name="formFieldTypeId" value="${form_field_type.formFieldTypeId}" />
 
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldTypeName">Field Type Name:</label>
+                                                    <label class="col-md-2 control-label" for="formFieldTypeId">FormFieldType:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fieldTypeName" class="form-control maxlength-handler" maxlength="45" value="${form_field_type.fieldTypeName}" />
+                                                        <input type="text" name="formFieldTypeId" class="form-control" value="${form_field_type.formFieldTypeId}" />
+
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldTypeInputType">Field Type InputType:</label>
+                                                    <label class="col-md-2 control-label" for="typeName">TypeName:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fieldTypeInputType" class="form-control maxlength-handler" maxlength="45" value="${form_field_type.fieldTypeInputType}" />
+                                                        <input type="text" name="typeName" class="form-control maxlength-handler" maxlength="45" value="${form_field_type.typeName}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="inputType">InputType:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="inputType" class="form-control maxlength-handler" maxlength="45" value="${form_field_type.inputType}" />
                                                     </div>
                                                 </div>
                                                 
@@ -251,11 +318,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">FieldTypeName</label>
+                                                        <label class="col-md-2 control-label">FormFieldTypeId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fieldTypeName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <select name="formFieldTypeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("form_field_type", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -263,11 +332,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">FieldTypeInputType</label>
+                                                        <label class="col-md-2 control-label">TypeName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fieldTypeInputType" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <input type="text" name="typeName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">InputType</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="inputType" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -308,8 +389,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">FieldTypeName</label> 
-                                                    <label><input type="checkbox" checked data-column="2">FieldTypeInputType</label> 
+                                                    <label><input type="checkbox" checked data-column="1">TypeName</label> 
+                                                    <label><input type="checkbox" checked data-column="2">InputType</label> 
                                                     
                                                     <label><input type="checkbox" checked data-column="3">Actions</label>
                                                 </div>
@@ -324,8 +405,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>FieldTypeName</th> 
-                                                    <th>FieldTypeInputType</th> 
+                                                    <th>TypeName</th> 
+                                                    <th>InputType</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -334,8 +415,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="form_field_type" items="${form_field_typeList}" >
                                                 <tr>                                                    
                                                     <td>${form_field_type.formFieldTypeId}</td> 
-                                                    <td>${form_field_type.fieldTypeName}</td> 
-                                                    <td>${form_field_type.fieldTypeInputType}</td> 
+                                                    <td>${form_field_type.typeName}</td> 
+                                                    <td>${form_field_type.inputType}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${form_field_type.formFieldTypeId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -422,8 +503,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -463,8 +545,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         formFieldTypeId:    { required: true, number: true }, 
-                        fieldTypeName:    { required: true, minlength: 1, maxlength: 45}, 
-                        fieldTypeInputType:    { required: true, minlength: 1, maxlength: 45} 
+                        typeName:    { required: true, minlength: 1, maxlength: 45}, 
+                        inputType:    { required: true, minlength: 1, maxlength: 45} 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

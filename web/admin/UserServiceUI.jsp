@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<UserService> user_serviceList = new ArrayList<UserService>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    user_serviceList = UserService.getAllUserServiceByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    user_serviceList = new UserServiceDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    user_serviceList = UserService.getAllUserService();
+    user_serviceList = new UserServiceDaoImpl().findAll(null, null);
 }
 request.setAttribute("user_serviceList", user_serviceList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,7 +128,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "E-Commerce"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
         <% request.setAttribute("subCategory", "UserService"); %>
         <%@include file="index_sidebar.jsp"%>
 
@@ -138,15 +198,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="UserServiceId" ${param.column == 'UserServiceId' ? "selected" : "" } >UserServiceId</option>                                                            
-                                                           <option value="ServiceId" ${param.column == 'ServiceId' ? "selected" : "" } >ServiceId</option>                                                            
-                                                           <option value="UserId" ${param.column == 'UserId' ? "selected" : "" } >UserId</option>                                                            
-                                                           <option value="BlogId" ${param.column == 'BlogId' ? "selected" : "" } >BlogId</option>                                                            
                                                            <option value="StartDate" ${param.column == 'StartDate' ? "selected" : "" } >StartDate</option>                                                            
                                                            <option value="EndDate" ${param.column == 'EndDate' ? "selected" : "" } >EndDate</option>                                                            
                                                            <option value="Details" ${param.column == 'Details' ? "selected" : "" } >Details</option>                                                            
                                                            <option value="ContractUrl" ${param.column == 'ContractUrl' ? "selected" : "" } >ContractUrl</option>                                                            
                                                            <option value="DeliverableUrl" ${param.column == 'DeliverableUrl' ? "selected" : "" } >DeliverableUrl</option>                                                            
                                                            <option value="DepositAmount" ${param.column == 'DepositAmount' ? "selected" : "" } >DepositAmount</option>                                                            
+                                                           <option value="UserRank" ${param.column == 'UserRank' ? "selected" : "" } >UserRank</option>                                                            
+                                                           <option value="BlogId" ${param.column == 'BlogId' ? "selected" : "" } >BlogId</option>                                                            
+                                                           <option value="UserId" ${param.column == 'UserId' ? "selected" : "" } >UserId</option>                                                            
+                                                           <option value="ServiceId" ${param.column == 'ServiceId' ? "selected" : "" } >ServiceId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -202,36 +263,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=user_service&action=2" method="post">
 
-                                               <input type="hidden" name="userServiceId" value="${user_service.userServiceId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="serviceId">Service:</label>
+                                                    <label class="col-md-2 control-label" for="userServiceId">UserService:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="serviceId" class="form-control" value="${user_service.serviceId}" />
-                                                        <select name="serviceId" class="form-control">
-                                                            <%UserService x = (UserService) pageContext.getAttribute("user_service"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("service", x.getServiceId().toString(), 2)%>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userId">User:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="userId" class="form-control" value="${user_service.userId}" />
-                                                        <select name="userId" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("user", x.getUserId().toString(), 2)%>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="blogId">Blog:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="blogId" class="form-control" value="${user_service.blogId}" />
-                                                        <select name="blogId" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Blog", x.getBlogId().toString(), 2)%>
-                                                        </select>
+                                                        <input type="text" name="userServiceId" class="form-control" value="${user_service.userServiceId}" />
+
                                                     </div>
                                                 </div>
                                                 
@@ -277,6 +314,46 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     </div>
                                                 </div>
                                                 
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="userRank">UserRank:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="userRank" class="form-control" value="${user_service.userRank}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="blogId">Blog:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="blogId" class="form-control" value="${user_service.blogId}" />
+                                                        <select name="blogId" class="form-control">
+                                                            <%UserService x = (UserService) pageContext.getAttribute("user_service"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("blog", x.getBlogId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="userId">User:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="userId" class="form-control" value="${user_service.userId}" />
+                                                        <select name="userId" class="form-control">
+                                                            <%UserService x = (UserService) pageContext.getAttribute("user_service"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("user", x.getUserId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="serviceId">Service:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="serviceId" class="form-control" value="${user_service.serviceId}" />
+                                                        <select name="serviceId" class="form-control">
+                                                            <%UserService x = (UserService) pageContext.getAttribute("user_service"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("service", x.getServiceId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
 
                                                 <div class="form-actions right">
                                                     <input type="submit" value="Save Changes" class="btn green" />
@@ -317,40 +394,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ServiceId</label>
+                                                        <label class="col-md-2 control-label">UserServiceId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="serviceId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Service", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">UserId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="userId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:User", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">BlogId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="blogId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Blog", "", 2)%>
+                                                                <select name="userServiceId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user_service", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -429,6 +478,60 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     </div>
                                                 </div>
                                                 
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">UserRank</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="userRank" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">BlogId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="blogId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("blog", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">UserId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="userId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ServiceId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="serviceId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("service", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
 
                                             </div>
 
@@ -464,17 +567,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">ServiceId</label> 
-                                                    <label><input type="checkbox" checked data-column="2">UserId</label> 
-                                                    <label><input type="checkbox" checked data-column="3">BlogId</label> 
-                                                    <label><input type="checkbox" checked data-column="4">StartDate</label> 
-                                                    <label><input type="checkbox" checked data-column="5">EndDate</label> 
-                                                    <label><input type="checkbox" checked data-column="6">Details</label> 
-                                                    <label><input type="checkbox" checked data-column="7">ContractUrl</label> 
-                                                    <label><input type="checkbox" checked data-column="8">DeliverableUrl</label> 
-                                                    <label><input type="checkbox" checked data-column="9">DepositAmount</label> 
+                                                    <label><input type="checkbox" checked data-column="1">StartDate</label> 
+                                                    <label><input type="checkbox" checked data-column="2">EndDate</label> 
+                                                    <label><input type="checkbox" checked data-column="3">Details</label> 
+                                                    <label><input type="checkbox" checked data-column="4">ContractUrl</label> 
+                                                    <label><input type="checkbox" checked data-column="5">DeliverableUrl</label> 
+                                                    <label><input type="checkbox" checked data-column="6">DepositAmount</label> 
+                                                    <label><input type="checkbox" checked data-column="7">UserRank</label> 
+                                                    <label><input type="checkbox" checked data-column="8">BlogId</label> 
+                                                    <label><input type="checkbox" checked data-column="9">UserId</label> 
+                                                    <label><input type="checkbox" checked data-column="10">ServiceId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="10">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="11">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -487,15 +591,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>ServiceId</th> 
-                                                    <th>UserId</th> 
-                                                    <th>BlogId</th> 
                                                     <th>StartDate</th> 
                                                     <th>EndDate</th> 
                                                     <th>Details</th> 
                                                     <th>ContractUrl</th> 
                                                     <th>DeliverableUrl</th> 
                                                     <th>DepositAmount</th> 
+                                                    <th>UserRank</th> 
+                                                    <th>BlogId</th> 
+                                                    <th>UserId</th> 
+                                                    <th>ServiceId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -504,15 +609,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="user_service" items="${user_serviceList}" >
                                                 <tr>                                                    
                                                     <td>${user_service.userServiceId}</td> 
-                                                    <td>${user_service.serviceId}</td> 
-                                                    <td>${user_service.userId}</td> 
-                                                    <td>${user_service.blogId}</td> 
                                                     <td>${user_service.startDate}</td> 
                                                     <td>${user_service.endDate}</td> 
                                                     <td>${user_service.details}</td> 
                                                     <td>${user_service.contractUrl}</td> 
                                                     <td>${user_service.deliverableUrl}</td> 
                                                     <td>${user_service.depositAmount}</td> 
+                                                    <td>${user_service.userRank}</td> 
+                                                    <td>${user_service.blogId}</td> 
+                                                    <td>${user_service.userId}</td> 
+                                                    <td>${user_service.serviceId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${user_service.userServiceId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -600,73 +706,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
 
+                 <%@include file="index_common_scripts.jsp"%>
 
-                var table = $('#sample_2');
-                /* Table tools samples: https://www.datatables.net/release-datatables/extras/TableTools/ */
-                /* Set tabletools buttons and button container */
-                $.extend(true, $.fn.DataTable.TableTools.classes, {
-                    "container": "btn-group tabletools-dropdown-on-portlet",
-                    "buttons": {
-                        "normal": "btn btn-sm default",
-                        "disabled": "btn btn-sm default disabled"
-                    },
-                    "collection": {
-                        "container": "DTTT_dropdown dropdown-menu tabletools-dropdown-menu"
-                    }
-                });
-
-
-                if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) 
-                {
-                    var tableToolsButtons = [{
-                        "sExtends": "print",
-                        "sButtonText": "Print",
-                        "sInfo": 'Print View!'
-                    }];
-                }
-                else 
-                {
-                    var tableToolsButtons = [{
-                        "sExtends": "copy",
-                        "sButtonText": "Copy"
-                    }, {
-                        "sExtends": "print",
-                        "sButtonText": "Print",
-                        "sInfo": 'Please press "CTRL+P" to print or "ESC" to quit'
-                    }, {
-                        "sExtends": "pdf",
-                        "sButtonText": "PDF"
-                    }, {
-                        "sExtends": "xls",
-                        "sButtonText": "Excel"
-                    }];
-                }
-
-                var oTable = table.dataTable({					
-                    "aaSorting": [[0, 'asc']],
-                    "aLengthMenu": [ [10, 15, 25, 50, 100, 250, -1],	[10, 15, 25, 50, 100, 250, "All"] ],						
-                    "iDisplayLength": 10,   // set the initial value               
-                    "sPaginationType": "bootstrap_full_number",
-                    "sDom": "<'row'<'col-md-3 col-sm-12'l><'col-md-4 col-sm-12'Tf><'col-md-5 col-sm-12'p>><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", 			
-                    // horizobtal scrollable datatable
-                    "oTableTools": {
-                        "sSwfPath": "../assets/global/plugins/data-tables/tabletools/swf/copy_csv_xls_pdf.swf",
-                        "aButtons": tableToolsButtons
-                    }
-                });
-
-                var tableWrapper = $('#sample_1_wrapper'); // datatable creates the table wrapper by adding with id {your_table_jd}_wrapper
-
-                jQuery('.dataTables_filter input', tableWrapper).addClass("form-control input-small input-inline"); // modify table search input
-                jQuery('.dataTables_length select', tableWrapper).addClass("form-control input-small"); // modify table per page dropdown
-                jQuery('.dataTables_length select', tableWrapper).select2(); // initialize select2 dropdown
-
-                $('#sample_2_column_toggler input[type="checkbox"]').change(function(){
-                    /* Get the DataTables object again - this is not a recreation, just a get of the object */
-                    var iCol = parseInt($(this).attr("data-column"));
-                    var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-                    oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-                });
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -706,15 +747,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         userServiceId:    { required: true, number: true }, 
-                        serviceId:    { required: true, number: true }, 
-                        userId:    { required: true, number: true }, 
-                        blogId:    { required: true, number: true }, 
                         startDate:    { required: true }, 
                         endDate:    { required: true }, 
                         details:    { required: true, minlength: 1, maxlength: 65535}, 
                         contractUrl:    { required: true, minlength: 1, maxlength: 255}, 
                         deliverableUrl:    { required: true, minlength: 1, maxlength: 255}, 
-                        depositAmount:    { required: true, digits: true } 
+                        depositAmount:    { required: true, digits: true }, 
+                        userRank:    { required: true, number: true }, 
+                        blogId:    { required: true, number: true }, 
+                        userId:    { required: true, number: true }, 
+                        serviceId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

@@ -36,33 +36,95 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.Contact;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class ContactDaoImpl extends BasicConnection implements Serializable, ContactDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public Contact find(Integer id)
+        public ContactDaoImpl()
         {
-            return findByColumn("ContactId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<Contact> findAll(Integer limit, Integer offset)
+
+        public ContactDaoImpl(boolean enableCache)
+        {
+            cachingEnabled = enableCache;
+        }
+
+        private static class ContactCache
+        {
+            public static final ConcurrentLruCache<Integer, Contact> contactCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (Contact i : findAll())
+                {
+                    getCache().put(i.getContactId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, Contact> getCache()
+        {
+            return ContactCache.contactCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, Contact> buildCache(ArrayList<Contact> contactList)
+        {        
+            ConcurrentLruCache<Integer, Contact> cache = new ConcurrentLruCache<Integer, Contact>(contactList.size() + 1000);
+            for (Contact i : contactList)
+            {
+                cache.put(i.getContactId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<Contact> findAll()
         {
             ArrayList<Contact> contact = new ArrayList<>();
             try
             {
                 getAllRecordsByTableName("contact");
-                while(rs.next())
+                while (rs.next())
                 {
                     contact.add(Contact.process(rs));
                 }
@@ -76,63 +138,174 @@ import com.busy.engine.entity.Contact;
                 closeConnection();
             }
             return contact;
+        }
+        
+        @Override
+        public Contact find(Integer id)
+        {
+            return findByColumn("ContactId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<Contact> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<Contact> contactList = new ArrayList<Contact>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for Contact, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    contactList = new ArrayList<Contact>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("contact", limit, offset);
+                    while (rs.next())
+                    {
+                        contactList.add(Contact.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Contact object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return contactList;
          
         }
         
         @Override
         public ArrayList<Contact> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<Contact> contactList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("contact", limit, offset);
-                while (rs.next())
+            ArrayList<Contact> contactList = new ArrayList<Contact>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for Contact, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    contactList.add(Contact.process(rs));
+                    contactList = new ArrayList<Contact>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object Contact method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                contactList = new ArrayList<Contact>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("contact", limit, offset);
+                    while (rs.next())
+                    {
+                        contactList.add(Contact.process(rs));
+                    }
+
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object Contact method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return contactList;
+            return contactList;            
         }
         
         @Override
         public ArrayList<Contact> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<Contact> contact = new ArrayList<>();
-            try
+            ArrayList<Contact> contactList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("contact", Contact.checkColumnName(columnName), columnValue, Contact.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   contact.add(Contact.process(rs));
+
+                    System.out.println("Find by column for Contact(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            Contact i = (Contact) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                contactList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            contactList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Contact's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("contact", Contact.checkColumnName(columnName), columnValue, Contact.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        contactList.add(Contact.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Contact's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return contact;
+            return contactList;
         } 
     
         @Override
         public int add(Contact obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 Contact.checkColumnSize(obj.getTitle(), 5);
                 Contact.checkColumnSize(obj.getFirstName(), 50);
@@ -144,9 +317,11 @@ import com.busy.engine.entity.Contact;
                 
                 Contact.checkColumnSize(obj.getWebUrl(), 255);
                 Contact.checkColumnSize(obj.getInfo(), 65535);
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO contact(Title,FirstName,LastName,Position,Phone,Fax,Email,ContactStatus,WebUrl,Info) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO contact(ContactId,Title,FirstName,LastName,Position,Phone,Fax,Email,ContactStatus,WebUrl,Info,) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getContactId());
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getFirstName());
                 preparedStatement.setString(3, obj.getLastName());
@@ -158,13 +333,15 @@ import com.busy.engine.entity.Contact;
                 preparedStatement.setString(9, obj.getWebUrl());
                 preparedStatement.setString(10, obj.getInfo());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from contact;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -174,6 +351,13 @@ import com.busy.engine.entity.Contact;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setContactId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -195,7 +379,8 @@ import com.busy.engine.entity.Contact;
                 Contact.checkColumnSize(obj.getInfo(), 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE contact SET Title=?,FirstName=?,LastName=?,Position=?,Phone=?,Fax=?,Email=?,ContactStatus=?,WebUrl=?,Info=? WHERE ContactId=?;");                    
+                prepareStatement("UPDATE contact SET com.busy.util.DatabaseColumn@1812c116=?,com.busy.util.DatabaseColumn@493ee261=?,com.busy.util.DatabaseColumn@7ca6227e=?,com.busy.util.DatabaseColumn@12c8d493=?,com.busy.util.DatabaseColumn@1c5cbdad=?,com.busy.util.DatabaseColumn@22cf69ad=?,com.busy.util.DatabaseColumn@6f370a58=?,com.busy.util.DatabaseColumn@3b0f2761=?,com.busy.util.DatabaseColumn@42c74478=?,com.busy.util.DatabaseColumn@1b1ccf8c=? WHERE ContactId=?;");                    
+                preparedStatement.setInt(0, obj.getContactId());
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getFirstName());
                 preparedStatement.setString(3, obj.getLastName());
@@ -208,6 +393,11 @@ import com.busy.engine.entity.Contact;
                 preparedStatement.setString(10, obj.getInfo());
                 preparedStatement.setInt(11, obj.getContactId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getContactId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -223,7 +413,16 @@ import com.busy.engine.entity.Contact;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("contact");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("contact");
+            }
+            return count;
         }
         
         
@@ -260,7 +459,13 @@ contact.setUserList(new UserDaoImpl().findByColumn("ContactId", contact.getConta
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getContactId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -280,6 +485,12 @@ contact.setUserList(new UserDaoImpl().findByColumn("ContactId", contact.getConta
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -300,6 +511,12 @@ contact.setUserList(new UserDaoImpl().findByColumn("ContactId", contact.getConta
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -320,7 +537,44 @@ contact.setUserList(new UserDaoImpl().findByColumn("ContactId", contact.getConta
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        Contact i = (Contact) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getContactId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Paypal> paypalList = new ArrayList<Paypal>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    paypalList = Paypal.getAllPaypalByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    paypalList = new PaypalDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    paypalList = Paypal.getAllPaypal();
+    paypalList = new PaypalDaoImpl().findAll(null, null);
 }
 request.setAttribute("paypalList", paypalList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "configuration"); %>
-        <% request.setAttribute("subCategory", "preferences"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
+        <% request.setAttribute("subCategory", "Paypal"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -89,7 +149,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Configuration </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
@@ -138,15 +198,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="PaypalId" ${param.column == 'PaypalId' ? "selected" : "" } >PaypalId</option>                                                            
-                                                           <option value="PayPalURL" ${param.column == 'PayPalURL' ? "selected" : "" } >PayPalURL</option>                                                            
+                                                           <option value="PayPalUrl" ${param.column == 'PayPalUrl' ? "selected" : "" } >PayPalUrl</option>                                                            
                                                            <option value="CurrencyCode" ${param.column == 'CurrencyCode' ? "selected" : "" } >CurrencyCode</option>                                                            
-                                                           <option value="ApiUserName" ${param.column == 'ApiUserName' ? "selected" : "" } >ApiUserName</option>                                                            
+                                                           <option value="ApiUsername" ${param.column == 'ApiUsername' ? "selected" : "" } >ApiUsername</option>                                                            
                                                            <option value="ApiPassword" ${param.column == 'ApiPassword' ? "selected" : "" } >ApiPassword</option>                                                            
                                                            <option value="ApiSignature" ${param.column == 'ApiSignature' ? "selected" : "" } >ApiSignature</option>                                                            
                                                            <option value="ApiEndpoint" ${param.column == 'ApiEndpoint' ? "selected" : "" } >ApiEndpoint</option>                                                            
                                                            <option value="ActiveProfile" ${param.column == 'ActiveProfile' ? "selected" : "" } >ActiveProfile</option>                                                            
-                                                           <option value="ReturnURL" ${param.column == 'ReturnURL' ? "selected" : "" } >ReturnURL</option>                                                            
-                                                           <option value="CancelURL" ${param.column == 'CancelURL' ? "selected" : "" } >CancelURL</option>                                                            
+                                                           <option value="ReturnUrl" ${param.column == 'ReturnUrl' ? "selected" : "" } >ReturnUrl</option>                                                            
+                                                           <option value="CancelUrl" ${param.column == 'CancelUrl' ? "selected" : "" } >CancelUrl</option>                                                            
                                                            <option value="PaymentType" ${param.column == 'PaymentType' ? "selected" : "" } >PaymentType</option>                                                            
                                                            <option value="Environment" ${param.column == 'Environment' ? "selected" : "" } >Environment</option>                                                            
                                                                                                                                                                                   
@@ -204,12 +264,19 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=paypal&action=2" method="post">
 
-                                                <input type="hidden" name="paypalId" value="${paypal.paypalId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="payPalURL">PayPalURL:</label>
+                                                    <label class="col-md-2 control-label" for="paypalId">Paypal:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="payPalURL" class="form-control maxlength-handler" maxlength="95" value="${paypal.payPalURL}" />
+                                                        <input type="text" name="paypalId" class="form-control" value="${paypal.paypalId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="payPalUrl">PayPalUrl:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="payPalUrl" class="form-control maxlength-handler" maxlength="95" value="${paypal.payPalUrl}" />
                                                     </div>
                                                 </div>
                                                 
@@ -221,9 +288,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="apiUserName">ApiUserName:</label>
+                                                    <label class="col-md-2 control-label" for="apiUsername">ApiUsername:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="apiUserName" class="form-control maxlength-handler" maxlength="80" value="${paypal.apiUserName}" />
+                                                        <input type="text" name="apiUsername" class="form-control maxlength-handler" maxlength="80" value="${paypal.apiUsername}" />
                                                     </div>
                                                 </div>
                                                 
@@ -256,16 +323,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="returnURL">ReturnURL:</label>
+                                                    <label class="col-md-2 control-label" for="returnUrl">ReturnUrl:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="returnURL" class="form-control maxlength-handler" maxlength="255" value="${paypal.returnURL}" />
+                                                        <input type="text" name="returnUrl" class="form-control maxlength-handler" maxlength="255" value="${paypal.returnUrl}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="cancelURL">CancelURL:</label>
+                                                    <label class="col-md-2 control-label" for="cancelUrl">CancelUrl:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="cancelURL" class="form-control maxlength-handler" maxlength="255" value="${paypal.cancelURL}" />
+                                                        <input type="text" name="cancelUrl" class="form-control maxlength-handler" maxlength="255" value="${paypal.cancelUrl}" />
                                                     </div>
                                                 </div>
                                                 
@@ -323,11 +390,25 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">PayPalURL</label>
+                                                        <label class="col-md-2 control-label">PaypalId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="payPalURL" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="95" />                                                            
+                                                                <select name="paypalId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("paypal", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">PayPalUrl</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="payPalUrl" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="95" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -347,11 +428,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ApiUserName</label>
+                                                        <label class="col-md-2 control-label">ApiUsername</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="apiUserName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="80" />                                                            
+                                                                <input type="text" name="apiUsername" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="80" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -407,11 +488,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ReturnURL</label>
+                                                        <label class="col-md-2 control-label">ReturnUrl</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="returnURL" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="returnUrl" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -419,11 +500,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">CancelURL</label>
+                                                        <label class="col-md-2 control-label">CancelUrl</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="cancelURL" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="cancelUrl" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -488,15 +569,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">PayPalURL</label> 
+                                                    <label><input type="checkbox" checked data-column="1">PayPalUrl</label> 
                                                     <label><input type="checkbox" checked data-column="2">CurrencyCode</label> 
-                                                    <label><input type="checkbox" checked data-column="3">ApiUserName</label> 
+                                                    <label><input type="checkbox" checked data-column="3">ApiUsername</label> 
                                                     <label><input type="checkbox" checked data-column="4">ApiPassword</label> 
                                                     <label><input type="checkbox" checked data-column="5">ApiSignature</label> 
                                                     <label><input type="checkbox" checked data-column="6">ApiEndpoint</label> 
                                                     <label><input type="checkbox" checked data-column="7">ActiveProfile</label> 
-                                                    <label><input type="checkbox" checked data-column="8">ReturnURL</label> 
-                                                    <label><input type="checkbox" checked data-column="9">CancelURL</label> 
+                                                    <label><input type="checkbox" checked data-column="8">ReturnUrl</label> 
+                                                    <label><input type="checkbox" checked data-column="9">CancelUrl</label> 
                                                     <label><input type="checkbox" checked data-column="10">PaymentType</label> 
                                                     <label><input type="checkbox" checked data-column="11">Environment</label> 
                                                     
@@ -513,15 +594,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>PayPalURL</th> 
+                                                    <th>PayPalUrl</th> 
                                                     <th>CurrencyCode</th> 
-                                                    <th>ApiUserName</th> 
+                                                    <th>ApiUsername</th> 
                                                     <th>ApiPassword</th> 
                                                     <th>ApiSignature</th> 
                                                     <th>ApiEndpoint</th> 
                                                     <th>ActiveProfile</th> 
-                                                    <th>ReturnURL</th> 
-                                                    <th>CancelURL</th> 
+                                                    <th>ReturnUrl</th> 
+                                                    <th>CancelUrl</th> 
                                                     <th>PaymentType</th> 
                                                     <th>Environment</th> 
                                                                                                         
@@ -532,15 +613,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="paypal" items="${paypalList}" >
                                                 <tr>                                                    
                                                     <td>${paypal.paypalId}</td> 
-                                                    <td>${paypal.payPalURL}</td> 
+                                                    <td>${paypal.payPalUrl}</td> 
                                                     <td>${paypal.currencyCode}</td> 
-                                                    <td>${paypal.apiUserName}</td> 
+                                                    <td>${paypal.apiUsername}</td> 
                                                     <td>${paypal.apiPassword}</td> 
                                                     <td>${paypal.apiSignature}</td> 
                                                     <td>${paypal.apiEndpoint}</td> 
                                                     <td>${paypal.activeProfile}</td> 
-                                                    <td>${paypal.returnURL}</td> 
-                                                    <td>${paypal.cancelURL}</td> 
+                                                    <td>${paypal.returnUrl}</td> 
+                                                    <td>${paypal.cancelUrl}</td> 
                                                     <td>${paypal.paymentType}</td> 
                                                     <td>${paypal.environment}</td> 
                                                     
@@ -629,8 +710,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -670,15 +752,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         paypalId:    { required: true, number: true }, 
-                        payPalURL:    { required: true, minlength: 1, maxlength: 95}, 
+                        payPalUrl:    { required: true, minlength: 1, maxlength: 95}, 
                         currencyCode:    { required: true, minlength: 1, maxlength: 5}, 
-                        apiUserName:    { required: true, minlength: 1, maxlength: 80}, 
+                        apiUsername:    { required: true, minlength: 1, maxlength: 80}, 
                         apiPassword:    { required: true, minlength: 1, maxlength: 25}, 
                         apiSignature:    { required: true, minlength: 1, maxlength: 65}, 
                         apiEndpoint:    { required: true, minlength: 1, maxlength: 125}, 
                         activeProfile:    { required: true }, 
-                        returnURL:    { required: true, minlength: 1, maxlength: 255}, 
-                        cancelURL:    { required: true, minlength: 1, maxlength: 255}, 
+                        returnUrl:    { required: true, minlength: 1, maxlength: 255}, 
+                        cancelUrl:    { required: true, minlength: 1, maxlength: 255}, 
                         paymentType:    { required: true, minlength: 1, maxlength: 15}, 
                         environment:    { required: true, minlength: 1, maxlength: 15} 
                         

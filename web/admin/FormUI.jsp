@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Form> formList = new ArrayList<Form>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    formList = Form.getAllFormByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    formList = new FormDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    formList = Form.getAllForm();
+    formList = new FormDaoImpl().findAll(null, null);
 }
 request.setAttribute("formList", formList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "content"); %>
-        <% request.setAttribute("subCategory", "forms"); %>
+        <% request.setAttribute("category", "Content"); %>
+        <% request.setAttribute("subCategory", "Form"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -82,18 +142,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- BEGIN PAGE TITLE & BREADCRUMB-->
-                                <h3 class="page-title"> Forms </h3>
+                                <h3 class="page-title"> Form </h3>
                                 <ul class="page-breadcrumb breadcrumb">                                
                                     <li>
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Content </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">Forms</a>
+                                        <a href="#">Form</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -139,12 +199,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <select name="column" class="form-control">
                                                             <option value="FormId" ${param.column == 'FormId' ? "selected" : "" } >FormId</option>                                                            
                                                            <option value="FormName" ${param.column == 'FormName' ? "selected" : "" } >FormName</option>                                                            
-                                                           <option value="FormDescription" ${param.column == 'FormDescription' ? "selected" : "" } >FormDescription</option>                                                            
-                                                           <option value="FormSubmissionEmail" ${param.column == 'FormSubmissionEmail' ? "selected" : "" } >FormSubmissionEmail</option>                                                            
-                                                           <option value="FormSubmissionMethod" ${param.column == 'FormSubmissionMethod' ? "selected" : "" } >FormSubmissionMethod</option>                                                            
-                                                           <option value="FormAction" ${param.column == 'FormAction' ? "selected" : "" } >FormAction</option>                                                            
-                                                           <option value="FormResetPresent" ${param.column == 'FormResetPresent' ? "selected" : "" } >FormResetPresent</option>                                                            
-                                                           <option value="FormFileUpload" ${param.column == 'FormFileUpload' ? "selected" : "" } >FormFileUpload</option>                                                            
+                                                           <option value="Description" ${param.column == 'Description' ? "selected" : "" } >Description</option>                                                            
+                                                           <option value="SubmissionEmail" ${param.column == 'SubmissionEmail' ? "selected" : "" } >SubmissionEmail</option>                                                            
+                                                           <option value="SubmissionMethod" ${param.column == 'SubmissionMethod' ? "selected" : "" } >SubmissionMethod</option>                                                            
+                                                           <option value="Action" ${param.column == 'Action' ? "selected" : "" } >Action</option>                                                            
+                                                           <option value="Resettable" ${param.column == 'Resettable' ? "selected" : "" } >Resettable</option>                                                            
+                                                           <option value="FileUpload" ${param.column == 'FileUpload' ? "selected" : "" } >FileUpload</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -200,57 +260,65 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=form&action=2" method="post">
 
-                                                <input type="hidden" name="formId" value="${form.formId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="formName">Name:</label>
+                                                    <label class="col-md-2 control-label" for="formId">Form:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="formId" class="form-control" value="${form.formId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="formName">FormName:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="formName" class="form-control maxlength-handler" maxlength="100" value="${form.formName}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="formDescription">Description:</label>
+                                                    <label class="col-md-2 control-label" for="description">Description:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="formDescription" class="form-control maxlength-handler" maxlength="255" value="${form.formDescription}" />
+                                                        <input type="text" name="description" class="form-control maxlength-handler" maxlength="255" value="${form.description}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="formSubmissionEmail">Submission Email:</label>
+                                                    <label class="col-md-2 control-label" for="submissionEmail">SubmissionEmail:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="formSubmissionEmail" class="form-control maxlength-handler" maxlength="255" value="${form.formSubmissionEmail}" />
+                                                        <input type="text" name="submissionEmail" class="form-control maxlength-handler" maxlength="255" value="${form.submissionEmail}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="formSubmissionMethod">Submission Method:</label>
+                                                    <label class="col-md-2 control-label" for="submissionMethod">SubmissionMethod:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="formSubmissionMethod" class="form-control maxlength-handler" maxlength="5" value="${form.formSubmissionMethod}" />
+                                                        <input type="text" name="submissionMethod" class="form-control maxlength-handler" maxlength="5" value="${form.submissionMethod}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="formAction">Action:</label>
+                                                    <label class="col-md-2 control-label" for="action">Action:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="formAction" class="form-control maxlength-handler" maxlength="255" value="${form.formAction}" />
+                                                        <input type="text" name="action" class="form-control maxlength-handler" maxlength="255" value="${form.action}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="formResetPresent">Reset Present:</label>
+                                                    <label class="col-md-2 control-label" for="resettable">Resettable:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="formResetPresent" class="form-control" value="${form.formResetPresent}" />
+                                                        <input type="text" name="resettable" class="form-control" value="${form.resettable}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="formFileUpload">File Upload:</label>
+                                                    <label class="col-md-2 control-label" for="fileUpload">FileUpload:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="formFileUpload" class="form-control" value="${form.formFileUpload}" />
+                                                        <input type="text" name="fileUpload" class="form-control" value="${form.fileUpload}" />
                                                     </div>
                                                 </div>
-                                                    
+                                                
+
                                                 <div class="form-actions right">
                                                     <input type="submit" value="Save Changes" class="btn green" />
                                                 </div>
@@ -290,7 +358,21 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Name</label>
+                                                        <label class="col-md-2 control-label">FormId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="formId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("form", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">FormName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
@@ -306,7 +388,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="formDescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -314,11 +396,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Submission Email</label>
+                                                        <label class="col-md-2 control-label">SubmissionEmail</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="formSubmissionEmail" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="submissionEmail" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -326,14 +408,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Submission Method</label>
+                                                        <label class="col-md-2 control-label">SubmissionMethod</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
-                                                                <i class="fa"></i>                                                                
-                                                                <select name="formSubmissionMethod" class="form-control" >
-                                                                    <option value="post" selected>POST</option>				
-                                                                    <option value="get">GET</option>
-                                                                </select>
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="submissionMethod" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="5" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -344,10 +423,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <label class="col-md-2 control-label">Action</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
-                                                                <i class="fa"></i>                                        
-                                                                <select name="formAction" class="form-control" >
-                                                                    <option value="ProcessForm" selected>Default Form Processor</option>				
-                                                                </select>                                                           
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="action" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -355,14 +432,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Reset Present</label>
+                                                        <label class="col-md-2 control-label">Resettable</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
-                                                                <i class="fa"></i>                                            
-                                                                <select name="formResetPresent" class="form-control" >
-                                                                    <option value="1" selected>True</option>				
-                                                                    <option value="0">False</option>
-                                                                </select>
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="resettable" class="form-control" placeholder="Enter Integer" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -370,13 +444,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">File Upload</label>
+                                                        <label class="col-md-2 control-label">FileUpload</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
-                                                                <i class="fa"></i>                   
-                                                                <select name="formFileUpload" class="form-control" >				
-                                                                    <option value="0" selected>False</option>
-                                                                </select>
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="fileUpload" class="form-control" placeholder="Enter Integer" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -422,7 +494,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label><input type="checkbox" checked data-column="3">SubmissionEmail</label> 
                                                     <label><input type="checkbox" checked data-column="4">SubmissionMethod</label> 
                                                     <label><input type="checkbox" checked data-column="5">Action</label> 
-                                                    <label><input type="checkbox" checked data-column="6">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="6">Resettable</label> 
+                                                    <label><input type="checkbox" checked data-column="7">FileUpload</label> 
+                                                    
+                                                    <label><input type="checkbox" checked data-column="8">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -439,7 +514,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <th>Description</th> 
                                                     <th>SubmissionEmail</th> 
                                                     <th>SubmissionMethod</th> 
-                                                    <th>Action</th>                                     
+                                                    <th>Action</th> 
+                                                    <th>Resettable</th> 
+                                                    <th>FileUpload</th> 
+                                                                                                        
                                                     <th>Actions</th> 
                                                 </tr>                                
                                             </thead>
@@ -448,13 +526,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>                                                    
                                                     <td>${form.formId}</td> 
                                                     <td>${form.formName}</td> 
-                                                    <td>${form.formDescription}</td> 
-                                                    <td>${form.formSubmissionEmail}</td> 
-                                                    <td>${form.formSubmissionMethod}</td> 
-                                                    <td>${form.formAction}</td>                                                     
+                                                    <td>${form.description}</td> 
+                                                    <td>${form.submissionEmail}</td> 
+                                                    <td>${form.submissionMethod}</td> 
+                                                    <td>${form.action}</td> 
+                                                    <td>${form.resettable}</td> 
+                                                    <td>${form.fileUpload}</td> 
+                                                    
                                                     <td>
                                                         <button id="edit-item${form.formId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
-                                                        <button id="view-fields${form.formId}" class="btn btn-sm grey filter-cancel"><i class="fa fa-eye"></i> View Fields</button>  
                                                         <button id="delete-item${form.formId}" class="btn btn-sm red filter-cancel"><span class="glyphicon glyphicon-trash"></span></button> 
                                                     </td>
                                                 </tr>  
@@ -463,9 +543,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         toggleVisibility('itemBox${form.formId}');                                                        
                                                         document.getElementById('itemBox${form.formId}').scrollIntoView();
                                                         window.scrollBy(0,-80);
-                                                    });
-                                                    $("#view-fields${form.formId}").button().click(function() {
-                                                        window.location = 'FormFieldUI.jsp?column=FormId&columnValue=${form.formId}';
                                                     });
                                                     $("#delete-item${form.formId}").button().click(function() {
                                                         window.location = '../Operations?form=form&action=3&id=${form.formId}';
@@ -541,8 +618,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -583,12 +661,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     rules: {                                
                         formId:    { required: true, number: true }, 
                         formName:    { required: true, minlength: 1, maxlength: 100}, 
-                        formDescription:    { required: true, minlength: 1, maxlength: 255}, 
-                        formSubmissionEmail:    { required: true, minlength: 1, maxlength: 255}, 
-                        formSubmissionMethod:    { required: true, minlength: 1, maxlength: 5}, 
-                        formAction:    { required: true, minlength: 1, maxlength: 255}, 
-                        formResetPresent:    { required: true, number: true }, 
-                        formFileUpload:    { required: true, number: true } 
+                        description:    { required: true, minlength: 1, maxlength: 255}, 
+                        submissionEmail:    { required: true, minlength: 1, maxlength: 255}, 
+                        submissionMethod:    { required: true, minlength: 1, maxlength: 5}, 
+                        action:    { required: true, minlength: 1, maxlength: 255}, 
+                        resettable:    { required: true, number: true }, 
+                        fileUpload:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

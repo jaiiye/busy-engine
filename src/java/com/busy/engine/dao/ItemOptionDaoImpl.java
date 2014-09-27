@@ -36,35 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.ItemOption;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class ItemOptionDaoImpl extends BasicConnection implements Serializable, ItemOptionDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public ItemOption find(Integer id)
+        public ItemOptionDaoImpl()
         {
-            return findByColumn("ItemOptionId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<ItemOption> findAll(Integer limit, Integer offset)
+
+        public ItemOptionDaoImpl(boolean enableCache)
         {
-            ArrayList<ItemOption> item_option = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class ItemOptionCache
+        {
+            public static final ConcurrentLruCache<Integer, ItemOption> itemOptionCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (ItemOption i : findAll())
+                {
+                    getCache().put(i.getItemOptionId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, ItemOption> getCache()
+        {
+            return ItemOptionCache.itemOptionCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, ItemOption> buildCache(ArrayList<ItemOption> itemOptionList)
+        {        
+            ConcurrentLruCache<Integer, ItemOption> cache = new ConcurrentLruCache<Integer, ItemOption>(itemOptionList.size() + 1000);
+            for (ItemOption i : itemOptionList)
+            {
+                cache.put(i.getItemOptionId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<ItemOption> findAll()
+        {
+            ArrayList<ItemOption> itemOption = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("item_option");
-                while(rs.next())
+                getAllRecordsByTableName("itemOption");
+                while (rs.next())
                 {
-                    item_option.add(ItemOption.process(rs));
+                    itemOption.add(ItemOption.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -75,80 +137,195 @@ import com.busy.engine.entity.ItemOption;
             {
                 closeConnection();
             }
-            return item_option;
+            return itemOption;
+        }
+        
+        @Override
+        public ItemOption find(Integer id)
+        {
+            return findByColumn("ItemOptionId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<ItemOption> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<ItemOption> itemOptionList = new ArrayList<ItemOption>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for ItemOption, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    itemOptionList = new ArrayList<ItemOption>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("item_option", limit, offset);
+                    while (rs.next())
+                    {
+                        itemOptionList.add(ItemOption.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ItemOption object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return itemOptionList;
          
         }
         
         @Override
         public ArrayList<ItemOption> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<ItemOption> item_optionList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("item_option", limit, offset);
-                while (rs.next())
+            ArrayList<ItemOption> itemOptionList = new ArrayList<ItemOption>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for ItemOption, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    item_optionList.add(ItemOption.process(rs));
+                    itemOptionList = new ArrayList<ItemOption>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object ItemOption method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                itemOptionList = new ArrayList<ItemOption>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("item_option", limit, offset);
+                    while (rs.next())
+                    {
+                        itemOptionList.add(ItemOption.process(rs));
+                    }
+
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object ItemOption method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return item_optionList;
+            return itemOptionList;            
         }
         
         @Override
         public ArrayList<ItemOption> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<ItemOption> item_option = new ArrayList<>();
-            try
+            ArrayList<ItemOption> itemOptionList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("item_option", ItemOption.checkColumnName(columnName), columnValue, ItemOption.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   item_option.add(ItemOption.process(rs));
+
+                    System.out.println("Find by column for ItemOption(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            ItemOption i = (ItemOption) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                itemOptionList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            itemOptionList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("ItemOption's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("item_option", ItemOption.checkColumnName(columnName), columnValue, ItemOption.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        itemOptionList.add(ItemOption.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ItemOption's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return item_option;
+            return itemOptionList;
         } 
     
         @Override
         public int add(ItemOption obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 ItemOption.checkColumnSize(obj.getOptionName(), 100);
                 ItemOption.checkColumnSize(obj.getDescription(), 65535);
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO item_option(OptionName,Description) VALUES (?,?);");                    
+                prepareStatement("INSERT INTO item_option(ItemOptionId,OptionName,Description,) VALUES (?,?);");                    
+                preparedStatement.setInt(0, obj.getItemOptionId());
                 preparedStatement.setString(1, obj.getOptionName());
                 preparedStatement.setString(2, obj.getDescription());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from item_option;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -158,6 +335,13 @@ import com.busy.engine.entity.ItemOption;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setItemOptionId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -171,11 +355,17 @@ import com.busy.engine.entity.ItemOption;
                 ItemOption.checkColumnSize(obj.getDescription(), 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_option SET OptionName=?,Description=? WHERE ItemOptionId=?;");                    
+                prepareStatement("UPDATE item_option SET com.busy.util.DatabaseColumn@13bdb150=?,com.busy.util.DatabaseColumn@41bcd48a=? WHERE ItemOptionId=?;");                    
+                preparedStatement.setInt(0, obj.getItemOptionId());
                 preparedStatement.setString(1, obj.getOptionName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getItemOptionId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getItemOptionId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -191,7 +381,16 @@ import com.busy.engine.entity.ItemOption;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("item_option");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("item_option");
+            }
+            return count;
         }
         
         
@@ -225,7 +424,13 @@ import com.busy.engine.entity.ItemOption;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getItemOptionId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -245,6 +450,12 @@ import com.busy.engine.entity.ItemOption;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -265,6 +476,12 @@ import com.busy.engine.entity.ItemOption;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -285,7 +502,44 @@ import com.busy.engine.entity.ItemOption;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        ItemOption i = (ItemOption) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getItemOptionId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

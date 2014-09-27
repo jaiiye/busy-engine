@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<PageTemplate> page_templateList = new ArrayList<PageTemplate>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    page_templateList = PageTemplate.getAllPageTemplateByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    page_templateList = new PageTemplateDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    page_templateList = PageTemplate.getAllPageTemplate();
+    page_templateList = new PageTemplateDaoImpl().findAll(null, null);
 }
 request.setAttribute("page_templateList", page_templateList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "templates"); %>
-        <% request.setAttribute("subCategory", "pageTemplates"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
+        <% request.setAttribute("subCategory", "PageTemplate"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -82,18 +142,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- BEGIN PAGE TITLE & BREADCRUMB-->
-                                <h3 class="page-title"> Page Templates </h3>
+                                <h3 class="page-title"> PageTemplate </h3>
                                 <ul class="page-breadcrumb breadcrumb">                                
                                     <li>
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Templates </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">Page Templatess</a>
+                                        <a href="#">PageTemplate</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -138,8 +198,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="PageTemplateId" ${param.column == 'PageTemplateId' ? "selected" : "" } >PageTemplateId</option>                                                            
-                                                           <option value="TemplateName" ${param.column == 'TemplateName' ? "selected" : "" } >TemplateName</option>                                                            
-                                                           <option value="TemplateMarkup" ${param.column == 'TemplateMarkup' ? "selected" : "" } >TemplateMarkup</option>                                                            
+                                                           <option value="Name" ${param.column == 'Name' ? "selected" : "" } >Name</option>                                                            
+                                                           <option value="Markup" ${param.column == 'Markup' ? "selected" : "" } >Markup</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -195,19 +255,26 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=page_template&action=2" method="post">
 
-                                                <input type="hidden" name="pageTemplateId" value="${page_template.pageTemplateId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="templateName">Name:</label>
+                                                    <label class="col-md-2 control-label" for="pageTemplateId">PageTemplate:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="templateName" class="form-control maxlength-handler" maxlength="45" value="${page_template.templateName}" />
+                                                        <input type="text" name="pageTemplateId" class="form-control" value="${page_template.pageTemplateId}" />
+
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="templateMarkup">Markup:</label>
+                                                    <label class="col-md-2 control-label" for="name">Name:</label>
                                                     <div  class="col-md-10">
-                                                        <textarea name="templateMarkup" class="ckeditor form-control" rows="4">${page_template.templateMarkup}</textarea>
+                                                        <input type="text" name="name" class="form-control maxlength-handler" maxlength="45" value="${page_template.name}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="markup">Markup:</label>
+                                                    <div  class="col-md-10">
+                                                        <textarea name="markup" class="ckeditor form-control" rows="4">${page_template.markup}</textarea>
                                                     </div>
                                                 </div>
                                                 
@@ -221,6 +288,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                 </div> 
                             </div>
                         </div>
+
+                        
                         </c:forEach>
                         <!-- END RECORD DETAILS-->
 
@@ -231,7 +300,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                        <h4 class="modal-title">Add a new Page Template</h4>
+                                        <h4 class="modal-title">Add a new PageTemplate</h4>
                                     </div>
                                     <div class="modal-body form">
                                         <!-- BEGIN FORM-->
@@ -249,11 +318,25 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
+                                                        <label class="col-md-2 control-label">PageTemplateId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="pageTemplateId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("page_template", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
                                                         <label class="col-md-2 control-label">Name</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="templateName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <input type="text" name="name" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -265,7 +348,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <textarea name="templateMarkup" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                                <textarea name="markup" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -294,7 +377,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                  <div class="portlet box red-flamingo">
                                     <div class="portlet-title">
                                         <div class="caption">
-                                            <i class="fa fa-list-alt"></i>Page Template Listing
+                                            <i class="fa fa-list-alt"></i>PageTemplate Listing
                                         </div>
                                         <div class="actions">
                                             <div class="btn-group">                                
@@ -307,7 +390,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
                                                     <label><input type="checkbox" checked data-column="1">Name</label> 
-                                                    <label><input type="checkbox" checked data-column="2">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="2">Markup</label> 
+                                                    
+                                                    <label><input type="checkbox" checked data-column="3">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -320,7 +405,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>Name</th>                               
+                                                    <th>Name</th> 
+                                                    <th>Markup</th> 
+                                                                                                        
                                                     <th>Actions</th> 
                                                 </tr>                                
                                             </thead>
@@ -328,7 +415,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="page_template" items="${page_templateList}" >
                                                 <tr>                                                    
                                                     <td>${page_template.pageTemplateId}</td> 
-                                                    <td>${page_template.templateName}</td> 
+                                                    <td>${page_template.name}</td> 
+                                                    <td>${page_template.markup}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${page_template.pageTemplateId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -415,8 +503,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -456,8 +545,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         pageTemplateId:    { required: true, number: true }, 
-                        templateName:    { required: true, minlength: 1, maxlength: 45}, 
-                        templateMarkup:    { required: true, minlength: 1, maxlength: 65535} 
+                        name:    { required: true, minlength: 1, maxlength: 45}, 
+                        markup:    { required: true, minlength: 1, maxlength: 65535} 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<ItemLocation> item_locationList = new ArrayList<ItemLocation>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    item_locationList = ItemLocation.getAllItemLocationByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    item_locationList = new ItemLocationDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    item_locationList = ItemLocation.getAllItemLocation();
+    item_locationList = new ItemLocationDaoImpl().findAll(null, null);
 }
 request.setAttribute("item_locationList", item_locationList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -138,10 +198,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="ItemLocationId" ${param.column == 'ItemLocationId' ? "selected" : "" } >ItemLocationId</option>                                                            
-                                                           <option value="ItemId" ${param.column == 'ItemId' ? "selected" : "" } >ItemId</option>                                                            
-                                                           <option value="AddressId" ${param.column == 'AddressId' ? "selected" : "" } >AddressId</option>                                                            
                                                            <option value="Latitude" ${param.column == 'Latitude' ? "selected" : "" } >Latitude</option>                                                            
                                                            <option value="Longitude" ${param.column == 'Longitude' ? "selected" : "" } >Longitude</option>                                                            
+                                                           <option value="ItemId" ${param.column == 'ItemId' ? "selected" : "" } >ItemId</option>                                                            
+                                                           <option value="AddressId" ${param.column == 'AddressId' ? "selected" : "" } >AddressId</option>                                                            
+                                                           <option value="ContactId" ${param.column == 'ContactId' ? "selected" : "" } >ContactId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -197,26 +258,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=item_location&action=2" method="post">
 
-                                                <input type="hidden" name="itemLocationId" value="${item_location.itemLocationId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemId">ItemId:</label>
+                                                    <label class="col-md-2 control-label" for="itemLocationId">ItemLocation:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="itemId" class="form-control" value="${item_location.itemId}" />
-                                                        <select name="itemId" class="form-control">
-                                                            <%ItemLocation x = (ItemLocation) pageContext.getAttribute("item_location"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item", x.getItemId().toString(), 2)%>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="addressId">AddressId:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="addressId" class="form-control" value="${item_location.addressId}" />
-                                                        <select name="addressId" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("address", x.getAddressId().toString(), 2)%>
-                                                        </select>
+                                                        <input type="text" name="itemLocationId" class="form-control" value="${item_location.itemLocationId}" />
+
                                                     </div>
                                                 </div>
                                                 
@@ -231,6 +278,39 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label class="col-md-2 control-label" for="longitude">Longitude:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="longitude" class="form-control maxlength-handler" maxlength="20" value="${item_location.longitude}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemId">Item:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="itemId" class="form-control" value="${item_location.itemId}" />
+                                                        <select name="itemId" class="form-control">
+                                                            <%ItemLocation x = (ItemLocation) pageContext.getAttribute("item_location"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item", x.getItemId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="addressId">Address:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="addressId" class="form-control" value="${item_location.addressId}" />
+                                                        <select name="addressId" class="form-control">
+                                                            <%ItemLocation x = (ItemLocation) pageContext.getAttribute("item_location"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("address", x.getAddressId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="contactId">Contact:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="contactId" class="form-control" value="${item_location.contactId}" />
+                                                        <select name="contactId" class="form-control">
+                                                            <%ItemLocation x = (ItemLocation) pageContext.getAttribute("item_location"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("contact", x.getContactId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
@@ -274,26 +354,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemId</label>
+                                                        <label class="col-md-2 control-label">ItemLocationId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="itemId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Item", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">AddressId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="addressId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Address", "", 2)%>
+                                                                <select name="itemLocationId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_location", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -319,6 +385,48 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <input type="text" name="longitude" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="20" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ItemId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="itemId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">AddressId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="addressId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("address", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ContactId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="contactId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("contact", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -359,12 +467,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">ItemId</label> 
-                                                    <label><input type="checkbox" checked data-column="2">AddressId</label> 
-                                                    <label><input type="checkbox" checked data-column="3">Latitude</label> 
-                                                    <label><input type="checkbox" checked data-column="4">Longitude</label> 
+                                                    <label><input type="checkbox" checked data-column="1">Latitude</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Longitude</label> 
+                                                    <label><input type="checkbox" checked data-column="3">ItemId</label> 
+                                                    <label><input type="checkbox" checked data-column="4">AddressId</label> 
+                                                    <label><input type="checkbox" checked data-column="5">ContactId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="5">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="6">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -377,10 +486,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>ItemId</th> 
-                                                    <th>AddressId</th> 
                                                     <th>Latitude</th> 
                                                     <th>Longitude</th> 
+                                                    <th>ItemId</th> 
+                                                    <th>AddressId</th> 
+                                                    <th>ContactId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -389,10 +499,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="item_location" items="${item_locationList}" >
                                                 <tr>                                                    
                                                     <td>${item_location.itemLocationId}</td> 
-                                                    <td>${item_location.itemId}</td> 
-                                                    <td>${item_location.addressId}</td> 
                                                     <td>${item_location.latitude}</td> 
                                                     <td>${item_location.longitude}</td> 
+                                                    <td>${item_location.itemId}</td> 
+                                                    <td>${item_location.addressId}</td> 
+                                                    <td>${item_location.contactId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${item_location.itemLocationId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -479,8 +590,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -520,10 +632,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         itemLocationId:    { required: true, number: true }, 
+                        latitude:    { required: true, minlength: 1, maxlength: 20}, 
+                        longitude:    { required: true, minlength: 1, maxlength: 20}, 
                         itemId:    { required: true, number: true }, 
                         addressId:    { required: true, number: true }, 
-                        latitude:    { required: true, minlength: 1, maxlength: 20}, 
-                        longitude:    { required: true, minlength: 1, maxlength: 20} 
+                        contactId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

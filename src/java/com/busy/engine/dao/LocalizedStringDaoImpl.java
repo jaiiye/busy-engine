@@ -36,36 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.TextString;
-import com.busy.engine.entity.LocalizedString;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class LocalizedStringDaoImpl extends BasicConnection implements Serializable, LocalizedStringDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public LocalizedString find(Integer id)
+        public LocalizedStringDaoImpl()
         {
-            return findByColumn("LocalizedStringId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<LocalizedString> findAll(Integer limit, Integer offset)
+
+        public LocalizedStringDaoImpl(boolean enableCache)
         {
-            ArrayList<LocalizedString> localized_string = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class LocalizedStringCache
+        {
+            public static final ConcurrentLruCache<Integer, LocalizedString> localizedStringCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (LocalizedString i : findAll())
+                {
+                    getCache().put(i.getLocalizedStringId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, LocalizedString> getCache()
+        {
+            return LocalizedStringCache.localizedStringCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, LocalizedString> buildCache(ArrayList<LocalizedString> localizedStringList)
+        {        
+            ConcurrentLruCache<Integer, LocalizedString> cache = new ConcurrentLruCache<Integer, LocalizedString>(localizedStringList.size() + 1000);
+            for (LocalizedString i : localizedStringList)
+            {
+                cache.put(i.getLocalizedStringId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<LocalizedString> findAll()
+        {
+            ArrayList<LocalizedString> localizedString = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("localized_string");
-                while(rs.next())
+                getAllRecordsByTableName("localizedString");
+                while (rs.next())
                 {
-                    localized_string.add(LocalizedString.process(rs));
+                    localizedString.add(LocalizedString.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -76,90 +137,227 @@ import com.busy.engine.entity.LocalizedString;
             {
                 closeConnection();
             }
-            return localized_string;
+            return localizedString;
+        }
+        
+        @Override
+        public LocalizedString find(Integer id)
+        {
+            return findByColumn("LocalizedStringId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<LocalizedString> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<LocalizedString> localizedStringList = new ArrayList<LocalizedString>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for LocalizedString, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    localizedStringList = new ArrayList<LocalizedString>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("localized_string", limit, offset);
+                    while (rs.next())
+                    {
+                        localizedStringList.add(LocalizedString.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("LocalizedString object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return localizedStringList;
          
         }
         
         @Override
         public ArrayList<LocalizedString> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<LocalizedString> localized_stringList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("localized_string", limit, offset);
-                while (rs.next())
+            ArrayList<LocalizedString> localizedStringList = new ArrayList<LocalizedString>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for LocalizedString, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    localized_stringList.add(LocalizedString.process(rs));
+                    localizedStringList = new ArrayList<LocalizedString>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(LocalizedString localized_string : localized_stringList)
+                    try
                     {
-                        
-                            getRecordById("TextString", localized_string.getTextStringId().toString());
-                            localized_string.setTextString(TextString.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            LocalizedString localizedString = (LocalizedString) e.getValue();
+
+                            
+                                getRecordById("TextString", localizedString.getTextStringId().toString());
+                                localizedString.setTextString(TextString.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object LocalizedString method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object LocalizedString method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                localizedStringList = new ArrayList<LocalizedString>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("localized_string", limit, offset);
+                    while (rs.next())
+                    {
+                        localizedStringList.add(LocalizedString.process(rs));
+                    }
+
+                    
+                    
+                        for (LocalizedString localizedString : localizedStringList)
+                        {                        
+                            
+                                getRecordById("TextString", localizedString.getTextStringId().toString());
+                                localizedString.setTextString(TextString.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object LocalizedString method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return localized_stringList;
+            return localizedStringList;            
         }
         
         @Override
         public ArrayList<LocalizedString> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<LocalizedString> localized_string = new ArrayList<>();
-            try
+            ArrayList<LocalizedString> localizedStringList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("localized_string", LocalizedString.checkColumnName(columnName), columnValue, LocalizedString.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   localized_string.add(LocalizedString.process(rs));
+
+                    System.out.println("Find by column for LocalizedString(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            LocalizedString i = (LocalizedString) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                localizedStringList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            localizedStringList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("LocalizedString's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("localized_string", LocalizedString.checkColumnName(columnName), columnValue, LocalizedString.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        localizedStringList.add(LocalizedString.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("LocalizedString's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return localized_string;
+            return localizedStringList;
         } 
     
         @Override
         public int add(LocalizedString obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 
                 LocalizedString.checkColumnSize(obj.getStringValue(), 255);
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO localized_string(Locale,StringValue,TextStringId) VALUES (?,?,?);");                    
+                prepareStatement("INSERT INTO localized_string(LocalizedStringId,Locale,StringValue,TextStringId,) VALUES (?,?,?);");                    
+                preparedStatement.setInt(0, obj.getLocalizedStringId());
                 preparedStatement.setInt(1, obj.getLocale());
                 preparedStatement.setString(2, obj.getStringValue());
                 preparedStatement.setInt(3, obj.getTextStringId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from localized_string;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -169,6 +367,13 @@ import com.busy.engine.entity.LocalizedString;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setLocalizedStringId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -183,12 +388,18 @@ import com.busy.engine.entity.LocalizedString;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE localized_string SET Locale=?,StringValue=?,TextStringId=? WHERE LocalizedStringId=?;");                    
+                prepareStatement("UPDATE localized_string SET com.busy.util.DatabaseColumn@41e91ee1=?,com.busy.util.DatabaseColumn@da75557=?,com.busy.util.DatabaseColumn@58d71f2f=? WHERE LocalizedStringId=?;");                    
+                preparedStatement.setInt(0, obj.getLocalizedStringId());
                 preparedStatement.setInt(1, obj.getLocale());
                 preparedStatement.setString(2, obj.getStringValue());
                 preparedStatement.setInt(3, obj.getTextStringId());
                 preparedStatement.setInt(4, obj.getLocalizedStringId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getLocalizedStringId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -204,7 +415,16 @@ import com.busy.engine.entity.LocalizedString;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("localized_string");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("localized_string");
+            }
+            return count;
         }
         
         
@@ -253,7 +473,13 @@ import com.busy.engine.entity.LocalizedString;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getLocalizedStringId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -273,6 +499,12 @@ import com.busy.engine.entity.LocalizedString;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -293,6 +525,12 @@ import com.busy.engine.entity.LocalizedString;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -313,7 +551,44 @@ import com.busy.engine.entity.LocalizedString;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        LocalizedString i = (LocalizedString) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getLocalizedStringId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
         

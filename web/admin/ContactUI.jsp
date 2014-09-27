@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Contact> contactList = new ArrayList<Contact>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    contactList = Contact.getAllContactByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    contactList = new ContactDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    contactList = Contact.getAllContact();
+    contactList = new ContactDaoImpl().findAll(null, null);
 }
 request.setAttribute("contactList", contactList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -54,7 +114,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <%@include file="index_global_scripts.jsp"%>
 
         
-		<script type="text/javascript" src="../uploadify/jquery.uploadify3.2.min.js"></script> 
+	<script type="text/javascript" src="../uploadify/jquery.uploadify3.2.min.js"></script> 
 
         <link rel="shortcut icon" href="favicon.ico"/>
     </head>
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "users"); %>
-        <% request.setAttribute("subCategory", "users"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
+        <% request.setAttribute("subCategory", "Contact"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -89,7 +149,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Users </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
@@ -145,9 +205,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                            <option value="Phone" ${param.column == 'Phone' ? "selected" : "" } >Phone</option>                                                            
                                                            <option value="Fax" ${param.column == 'Fax' ? "selected" : "" } >Fax</option>                                                            
                                                            <option value="Email" ${param.column == 'Email' ? "selected" : "" } >Email</option>                                                            
-                                                           <option value="EmailConfirmed" ${param.column == 'EmailConfirmed' ? "selected" : "" } >EmailConfirmed</option>                                                            
+                                                           <option value="ContactStatus" ${param.column == 'ContactStatus' ? "selected" : "" } >ContactStatus</option>                                                            
+                                                           <option value="WebUrl" ${param.column == 'WebUrl' ? "selected" : "" } >WebUrl</option>                                                            
                                                            <option value="Info" ${param.column == 'Info' ? "selected" : "" } >Info</option>                                                            
-                                                           <option value="UserId" ${param.column == 'UserId' ? "selected" : "" } >UserId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -203,8 +263,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=contact&action=2" method="post">
 
-                                                <input type="hidden" name="contactId" value="${contact.contactId}" />
-                                                <input type="hidden" name="userId" value="${contact.userId}" />
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="contactId">Contact:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="contactId" class="form-control" value="${contact.contactId}" />
+
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="title">Title:</label>
@@ -256,9 +322,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="emailConfirmed">EmailConfirmed:</label>
+                                                    <label class="col-md-2 control-label" for="contactStatus">ContactStatus:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="emailConfirmed" class="form-control" value="${contact.emailConfirmed}" />
+                                                        <input type="text" name="contactStatus" class="form-control" value="${contact.contactStatus}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="webUrl">WebUrl:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="webUrl" class="form-control maxlength-handler" maxlength="255" value="${contact.webUrl}" />
                                                     </div>
                                                 </div>
                                                 
@@ -269,6 +342,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     </div>
                                                 </div>
                                                 
+
                                                 <div class="form-actions right">
                                                     <input type="submit" value="Save Changes" class="btn green" />
                                                 </div>
@@ -305,6 +379,20 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     Your form validation is successful!
                                                 </div>
 
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ContactId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="contactId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("contact", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
@@ -392,11 +480,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">EmailConfirmed</label>
+                                                        <label class="col-md-2 control-label">ContactStatus</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="emailConfirmed" class="form-control" placeholder="Enter Integer" />                                                            
+                                                                <input type="text" name="contactStatus" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">WebUrl</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="webUrl" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -409,20 +509,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <textarea name="info" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">UserId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="userId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:User", "", 2)%>
-                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -470,9 +556,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label><input type="checkbox" checked data-column="5">Phone</label> 
                                                     <label><input type="checkbox" checked data-column="6">Fax</label> 
                                                     <label><input type="checkbox" checked data-column="7">Email</label> 
-                                                    <label><input type="checkbox" checked data-column="8">EmailConfirmed</label> 
-                                                    <label><input type="checkbox" checked data-column="9">Info</label> 
-                                                    <label><input type="checkbox" checked data-column="10">UserId</label> 
+                                                    <label><input type="checkbox" checked data-column="8">Status</label> 
+                                                    <label><input type="checkbox" checked data-column="9">WebUrl</label> 
+                                                    <label><input type="checkbox" checked data-column="10">Info</label> 
                                                     
                                                     <label><input type="checkbox" checked data-column="11">Actions</label>
                                                 </div>
@@ -494,9 +580,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <th>Phone</th> 
                                                     <th>Fax</th> 
                                                     <th>Email</th> 
-                                                    <th>EmailConfirmed</th> 
+                                                    <th>Status</th> 
+                                                    <th>WebUrl</th> 
                                                     <th>Info</th> 
-                                                    <th>UserId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -512,9 +598,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <td>${contact.phone}</td> 
                                                     <td>${contact.fax}</td> 
                                                     <td>${contact.email}</td> 
-                                                    <td>${contact.emailConfirmed}</td> 
+                                                    <td>${contact.contactStatus}</td> 
+                                                    <td>${contact.webUrl}</td> 
                                                     <td>${contact.info}</td> 
-                                                    <td>${contact.userId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${contact.contactId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -601,8 +687,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -649,9 +736,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         phone:    { required: true, minlength: 1, maxlength: 15}, 
                         fax:    { required: true, minlength: 1, maxlength: 15}, 
                         email:    { required: true, minlength: 1, maxlength: 255}, 
-                        emailConfirmed:    { required: true, number: true }, 
-                        info:    { required: true, minlength: 1, maxlength: 65535}, 
-                        userId:    { required: true, number: true } 
+                        contactStatus:    { required: true, number: true }, 
+                        webUrl:    { required: true, minlength: 1, maxlength: 255}, 
+                        info:    { required: true, minlength: 1, maxlength: 65535} 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

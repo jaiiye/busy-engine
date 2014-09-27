@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Customer> customerList = new ArrayList<Customer>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    customerList = Customer.getAllCustomerByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    customerList = new CustomerDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    customerList = Customer.getAllCustomer();
+    customerList = new CustomerDaoImpl().findAll(null, null);
 }
 request.setAttribute("customerList", customerList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,7 +128,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "E-Commerce"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
         <% request.setAttribute("subCategory", "Customer"); %>
         <%@include file="index_sidebar.jsp"%>
 
@@ -139,7 +199,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <select name="column" class="form-control">
                                                             <option value="CustomerId" ${param.column == 'CustomerId' ? "selected" : "" } >CustomerId</option>                                                            
                                                            <option value="ContactId" ${param.column == 'ContactId' ? "selected" : "" } >ContactId</option>                                                            
-                                                           <option value="AddressId" ${param.column == 'AddressId' ? "selected" : "" } >AddressId</option>                                                            
+                                                           <option value="UserId" ${param.column == 'UserId' ? "selected" : "" } >UserId</option>                                                            
+                                                           <option value="BillingAddressId" ${param.column == 'BillingAddressId' ? "selected" : "" } >BillingAddressId</option>                                                            
+                                                           <option value="ShippingAddressId" ${param.column == 'ShippingAddressId' ? "selected" : "" } >ShippingAddressId</option>                                                            
+                                                           <option value="CustomerStatus" ${param.column == 'CustomerStatus' ? "selected" : "" } >CustomerStatus</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -195,27 +258,63 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=customer&action=2" method="post">
 
-                                                <input type="hidden" name="customerId" class="form-control" value="${customer.customerId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="contactId">ContactId:</label>
+                                                    <label class="col-md-2 control-label" for="customerId">Customer:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="customerId" class="form-control" value="${customer.customerId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="contactId">Contact:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="contactId" class="form-control" value="${customer.contactId}" />
                                                         <select name="contactId" class="form-control">
                                                             <%Customer x = (Customer) pageContext.getAttribute("customer"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Contact", x.getcontactId().toString(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("contact", x.getContactId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="addressId">AddressId:</label>
+                                                    <label class="col-md-2 control-label" for="userId">User:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="addressId" class="form-control" value="${customer.addressId}" />
-                                                        <select name="addressId" class="form-control">
+                                                        <input type="text" name="userId" class="form-control" value="${customer.userId}" />
+                                                        <select name="userId" class="form-control">
                                                             <%Customer x = (Customer) pageContext.getAttribute("customer"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Address", x.getaddressId().toString(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("user", x.getUserId().toString(), 2)%>
                                                         </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="billingAddressId">BillingAddress:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="billingAddressId" class="form-control" value="${customer.billingAddressId}" />
+                                                        <select name="billingAddressId" class="form-control">
+                                                            <%Customer x = (Customer) pageContext.getAttribute("customer"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("billing_address", x.getBillingAddressId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="shippingAddressId">ShippingAddress:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="shippingAddressId" class="form-control" value="${customer.shippingAddressId}" />
+                                                        <select name="shippingAddressId" class="form-control">
+                                                            <%Customer x = (Customer) pageContext.getAttribute("customer"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("shipping_address", x.getShippingAddressId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="customerStatus">CustomerStatus:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="customerStatus" class="form-control" value="${customer.customerStatus}" />
                                                     </div>
                                                 </div>
                                                 
@@ -259,12 +358,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ContactId</label>
+                                                        <label class="col-md-2 control-label">CustomerId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="contactId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Contact", "", 2)%>
+                                                                <select name="customerId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("customer", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -273,13 +372,67 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">AddressId</label>
+                                                        <label class="col-md-2 control-label">ContactId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="addressId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Address", "", 2)%>
+                                                                <select name="contactId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("contact", "", 2)%>
                                                                </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">UserId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="userId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">BillingAddressId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="billingAddressId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("billing_address", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ShippingAddressId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="shippingAddressId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("shipping_address", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">CustomerStatus</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="customerStatus" class="form-control" placeholder="Enter Integer" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -321,9 +474,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
                                                     <label><input type="checkbox" checked data-column="1">ContactId</label> 
-                                                    <label><input type="checkbox" checked data-column="2">AddressId</label> 
+                                                    <label><input type="checkbox" checked data-column="2">UserId</label> 
+                                                    <label><input type="checkbox" checked data-column="3">BillingAddressId</label> 
+                                                    <label><input type="checkbox" checked data-column="4">ShippingAddressId</label> 
+                                                    <label><input type="checkbox" checked data-column="5">Status</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="3">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="6">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -337,7 +493,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>
                                                     <th>Id</th> 
                                                     <th>ContactId</th> 
-                                                    <th>AddressId</th> 
+                                                    <th>UserId</th> 
+                                                    <th>BillingAddressId</th> 
+                                                    <th>ShippingAddressId</th> 
+                                                    <th>Status</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -347,7 +506,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>                                                    
                                                     <td>${customer.customerId}</td> 
                                                     <td>${customer.contactId}</td> 
-                                                    <td>${customer.addressId}</td> 
+                                                    <td>${customer.userId}</td> 
+                                                    <td>${customer.billingAddressId}</td> 
+                                                    <td>${customer.shippingAddressId}</td> 
+                                                    <td>${customer.customerStatus}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${customer.customerId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -434,8 +596,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -476,7 +639,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     rules: {                                
                         customerId:    { required: true, number: true }, 
                         contactId:    { required: true, number: true }, 
-                        addressId:    { required: true, number: true } 
+                        userId:    { required: true, number: true }, 
+                        billingAddressId:    { required: true, number: true }, 
+                        shippingAddressId:    { required: true, number: true }, 
+                        customerStatus:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Blog> blogList = new ArrayList<Blog>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    blogList = Blog.getAllBlogByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    blogList = new BlogDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    blogList = Blog.getAllBlog();
+    blogList = new BlogDaoImpl().findAll(null, null);
 }
 request.setAttribute("blogList", blogList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "content"); %>
-        <% request.setAttribute("subCategory", "blogs"); %>
+        <% request.setAttribute("category", "Content"); %>
+        <% request.setAttribute("subCategory", "Blog"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -89,11 +149,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Content </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">Blogs</a>
+                                        <a href="#">Blog</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -138,8 +198,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="BlogId" ${param.column == 'BlogId' ? "selected" : "" } >BlogId</option>                                                            
-                                                           <option value="BlogName" ${param.column == 'BlogName' ? "selected" : "" } >BlogName</option>                                                            
-                                                           <option value="BlogLayoutType" ${param.column == 'BlogLayoutType' ? "selected" : "" } >BlogLayoutType</option>                                                            
+                                                           <option value="Topic" ${param.column == 'Topic' ? "selected" : "" } >Topic</option>                                                            
+                                                           <option value="BlogTypeId" ${param.column == 'BlogTypeId' ? "selected" : "" } >BlogTypeId</option>                                                            
+                                                           <option value="KnowledgeBaseId" ${param.column == 'KnowledgeBaseId' ? "selected" : "" } >KnowledgeBaseId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -195,21 +256,40 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=blog&action=2" method="post">
 
-                                                <input type="hidden" name="blogId" value="${blog.blogId}"/>
-
+                                                
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="blogName">Name:</label>
+                                                    <label class="col-md-2 control-label" for="blogId">Blog:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="blogName" class="form-control maxlength-handler" maxlength="100" value="${blog.blogName}" />
+                                                        <input type="text" name="blogId" class="form-control" value="${blog.blogId}" />
+
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="blogLayoutType">Layout Type:</label>
+                                                    <label class="col-md-2 control-label" for="topic">Topic:</label>
                                                     <div  class="col-md-10">
-                                                        <select name="blogLayoutType" class="form-control" >    
-                                                            <% Blog b = (Blog) pageContext.getAttribute("blog"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("blog_type", b.getBlogLayoutType().toString(), 2)%>
+                                                        <input type="text" name="topic" class="form-control maxlength-handler" maxlength="100" value="${blog.topic}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="blogTypeId">BlogType:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="blogTypeId" class="form-control" value="${blog.blogTypeId}" />
+                                                        <select name="blogTypeId" class="form-control">
+                                                            <%Blog x = (Blog) pageContext.getAttribute("blog"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("blog_type", x.getBlogTypeId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="knowledgeBaseId">KnowledgeBase:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="knowledgeBaseId" class="form-control" value="${blog.knowledgeBaseId}" />
+                                                        <select name="knowledgeBaseId" class="form-control">
+                                                            <%Blog x = (Blog) pageContext.getAttribute("blog"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("knowledge_base", x.getKnowledgeBaseId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -254,11 +334,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Name</label>
+                                                        <label class="col-md-2 control-label">BlogId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="blogName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                                <select name="blogId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("blog", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -266,13 +348,39 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Layout Type</label>
+                                                        <label class="col-md-2 control-label">Topic</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                    <select name="blogLayoutType" class="form-control" >    
-                                                                        <%= Database.generateSelectOptionsFromTableAndColumn("blog_type", "", 2)%>
-                                                                    </select>                                                          
+                                                                <input type="text" name="topic" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">BlogTypeId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="blogTypeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("blog_type", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">KnowledgeBaseId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="knowledgeBaseId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("knowledge_base", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -313,9 +421,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">Name</label> 
-                                                    <label><input type="checkbox" checked data-column="2">LayoutType</label>                                                     
-                                                    <label><input type="checkbox" checked data-column="3">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="1">Topic</label> 
+                                                    <label><input type="checkbox" checked data-column="2">TypeId</label> 
+                                                    <label><input type="checkbox" checked data-column="3">KnowledgeBaseId</label> 
+                                                    
+                                                    <label><input type="checkbox" checked data-column="4">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -328,8 +438,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>Name</th> 
-                                                    <th>LayoutType</th> 
+                                                    <th>Topic</th> 
+                                                    <th>TypeId</th> 
+                                                    <th>KnowledgeBaseId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -338,14 +449,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="blog" items="${blogList}" >
                                                 <tr>                                                    
                                                     <td>${blog.blogId}</td> 
-                                                    <td>${blog.blogName}</td> 
-                                                    <td>    
-                                                        <% Blog b2 = (Blog) pageContext.getAttribute("blog"); %>
-                                                        <%= Database.getSelectedColumnFromTableAndId("blog_type", b2.getBlogLayoutType().toString(), 2)%>                                                        
-                                                    </td> 
+                                                    <td>${blog.topic}</td> 
+                                                    <td>${blog.blogTypeId}</td> 
+                                                    <td>${blog.knowledgeBaseId}</td> 
+                                                    
                                                     <td>
                                                         <button id="edit-item${blog.blogId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
-                                                        <button id="view-posts${blog.blogId}" class="btn btn-sm grey filter-cancel"><i class="fa fa-eye"></i> View Posts</button>    
                                                         <button id="delete-item${blog.blogId}" class="btn btn-sm red filter-cancel"><span class="glyphicon glyphicon-trash"></span></button> 
                                                     </td>
                                                 </tr>  
@@ -354,9 +463,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         toggleVisibility('itemBox${blog.blogId}');                                                        
                                                         document.getElementById('itemBox${blog.blogId}').scrollIntoView();
                                                         window.scrollBy(0,-80);
-                                                    });
-                                                    $("#view-posts${blog.blogId}").button().click(function() {
-                                                        window.location = 'BlogPostUI.jsp?column=BlogId&columnValue=${blog.blogId}';
                                                     });
                                                     $("#delete-item${blog.blogId}").button().click(function() {
                                                         window.location = '../Operations?form=blog&action=3&id=${blog.blogId}';
@@ -432,8 +538,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -473,8 +580,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         blogId:    { required: true, number: true }, 
-                        blogName:    { required: true, minlength: 1, maxlength: 100}, 
-                        blogLayoutType:    { required: true, number: true } 
+                        topic:    { required: true, minlength: 1, maxlength: 100}, 
+                        blogTypeId:    { required: true, number: true }, 
+                        knowledgeBaseId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

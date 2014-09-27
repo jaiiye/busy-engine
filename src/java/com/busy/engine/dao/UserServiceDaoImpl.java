@@ -36,38 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.Service;
-import com.busy.engine.entity.UserService;
-import com.busy.engine.entity.User;
-import com.busy.engine.entity.Blog;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class UserServiceDaoImpl extends BasicConnection implements Serializable, UserServiceDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public UserService find(Integer id)
+        public UserServiceDaoImpl()
         {
-            return findByColumn("UserServiceId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<UserService> findAll(Integer limit, Integer offset)
+
+        public UserServiceDaoImpl(boolean enableCache)
         {
-            ArrayList<UserService> user_service = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class UserServiceCache
+        {
+            public static final ConcurrentLruCache<Integer, UserService> userServiceCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (UserService i : findAll())
+                {
+                    getCache().put(i.getUserServiceId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, UserService> getCache()
+        {
+            return UserServiceCache.userServiceCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, UserService> buildCache(ArrayList<UserService> userServiceList)
+        {        
+            ConcurrentLruCache<Integer, UserService> cache = new ConcurrentLruCache<Integer, UserService>(userServiceList.size() + 1000);
+            for (UserService i : userServiceList)
+            {
+                cache.put(i.getUserServiceId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<UserService> findAll()
+        {
+            ArrayList<UserService> userService = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("user_service");
-                while(rs.next())
+                getAllRecordsByTableName("userService");
+                while (rs.next())
                 {
-                    user_service.add(UserService.process(rs));
+                    userService.add(UserService.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -78,78 +137,217 @@ import com.busy.engine.entity.Blog;
             {
                 closeConnection();
             }
-            return user_service;
+            return userService;
+        }
+        
+        @Override
+        public UserService find(Integer id)
+        {
+            return findByColumn("UserServiceId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<UserService> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<UserService> userServiceList = new ArrayList<UserService>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for UserService, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    userServiceList = new ArrayList<UserService>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("user_service", limit, offset);
+                    while (rs.next())
+                    {
+                        userServiceList.add(UserService.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("UserService object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return userServiceList;
          
         }
         
         @Override
         public ArrayList<UserService> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<UserService> user_serviceList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("user_service", limit, offset);
-                while (rs.next())
+            ArrayList<UserService> userServiceList = new ArrayList<UserService>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for UserService, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    user_serviceList.add(UserService.process(rs));
+                    userServiceList = new ArrayList<UserService>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(UserService user_service : user_serviceList)
+                    try
                     {
-                        
-                            getRecordById("Blog", user_service.getBlogId().toString());
-                            user_service.setBlog(Blog.process(rs));               
-                        
-                            getRecordById("User", user_service.getUserId().toString());
-                            user_service.setUser(User.process(rs));               
-                        
-                            getRecordById("Service", user_service.getServiceId().toString());
-                            user_service.setService(Service.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            UserService userService = (UserService) e.getValue();
+
+                            
+                                getRecordById("Blog", userService.getBlogId().toString());
+                                userService.setBlog(Blog.process(rs));               
+                            
+                                getRecordById("User", userService.getUserId().toString());
+                                userService.setUser(User.process(rs));               
+                            
+                                getRecordById("Service", userService.getServiceId().toString());
+                                userService.setService(Service.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object UserService method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object UserService method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                userServiceList = new ArrayList<UserService>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("user_service", limit, offset);
+                    while (rs.next())
+                    {
+                        userServiceList.add(UserService.process(rs));
+                    }
+
+                    
+                    
+                        for (UserService userService : userServiceList)
+                        {                        
+                            
+                                getRecordById("Blog", userService.getBlogId().toString());
+                                userService.setBlog(Blog.process(rs));               
+                            
+                                getRecordById("User", userService.getUserId().toString());
+                                userService.setUser(User.process(rs));               
+                            
+                                getRecordById("Service", userService.getServiceId().toString());
+                                userService.setService(Service.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object UserService method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return user_serviceList;
+            return userServiceList;            
         }
         
         @Override
         public ArrayList<UserService> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<UserService> user_service = new ArrayList<>();
-            try
+            ArrayList<UserService> userServiceList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("user_service", UserService.checkColumnName(columnName), columnValue, UserService.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   user_service.add(UserService.process(rs));
+
+                    System.out.println("Find by column for UserService(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            UserService i = (UserService) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                userServiceList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            userServiceList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("UserService's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("user_service", UserService.checkColumnName(columnName), columnValue, UserService.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        userServiceList.add(UserService.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("UserService's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return user_service;
+            return userServiceList;
         } 
     
         @Override
         public int add(UserService obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 
                 
@@ -161,9 +359,11 @@ import com.busy.engine.entity.Blog;
                 
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO user_service(StartDate,EndDate,Details,ContractUrl,DeliverableUrl,DepositAmount,UserRank,BlogId,UserId,ServiceId) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO user_service(UserServiceId,StartDate,EndDate,Details,ContractUrl,DeliverableUrl,DepositAmount,UserRank,BlogId,UserId,ServiceId,) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getUserServiceId());
                 preparedStatement.setDate(1, new java.sql.Date(obj.getStartDate().getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(obj.getEndDate().getTime()));
                 preparedStatement.setString(3, obj.getDetails());
@@ -175,13 +375,15 @@ import com.busy.engine.entity.Blog;
                 preparedStatement.setInt(9, obj.getUserId());
                 preparedStatement.setInt(10, obj.getServiceId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from user_service;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -191,6 +393,13 @@ import com.busy.engine.entity.Blog;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setUserServiceId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -212,7 +421,8 @@ import com.busy.engine.entity.Blog;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_service SET StartDate=?,EndDate=?,Details=?,ContractUrl=?,DeliverableUrl=?,DepositAmount=?,UserRank=?,BlogId=?,UserId=?,ServiceId=? WHERE UserServiceId=?;");                    
+                prepareStatement("UPDATE user_service SET com.busy.util.DatabaseColumn@50082a89=?,com.busy.util.DatabaseColumn@1f6a9b48=?,com.busy.util.DatabaseColumn@5764bf5d=?,com.busy.util.DatabaseColumn@256d2a22=?,com.busy.util.DatabaseColumn@34201064=?,com.busy.util.DatabaseColumn@7fdb7d73=?,com.busy.util.DatabaseColumn@d37bb82=?,com.busy.util.DatabaseColumn@4147bc3c=?,com.busy.util.DatabaseColumn@75d02740=?,com.busy.util.DatabaseColumn@5144fc6c=? WHERE UserServiceId=?;");                    
+                preparedStatement.setInt(0, obj.getUserServiceId());
                 preparedStatement.setDate(1, new java.sql.Date(obj.getStartDate().getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(obj.getEndDate().getTime()));
                 preparedStatement.setString(3, obj.getDetails());
@@ -225,6 +435,11 @@ import com.busy.engine.entity.Blog;
                 preparedStatement.setInt(10, obj.getServiceId());
                 preparedStatement.setInt(11, obj.getUserServiceId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getUserServiceId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -240,7 +455,16 @@ import com.busy.engine.entity.Blog;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("user_service");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("user_service");
+            }
+            return count;
         }
         
         
@@ -296,7 +520,13 @@ import com.busy.engine.entity.Blog;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getUserServiceId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -316,6 +546,12 @@ import com.busy.engine.entity.Blog;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -336,6 +572,12 @@ import com.busy.engine.entity.Blog;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -356,7 +598,44 @@ import com.busy.engine.entity.Blog;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        UserService i = (UserService) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getUserServiceId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

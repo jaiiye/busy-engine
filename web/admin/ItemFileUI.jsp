@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<ItemFile> item_fileList = new ArrayList<ItemFile>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    item_fileList = ItemFile.getAllItemFileByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    item_fileList = new ItemFileDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    item_fileList = ItemFile.getAllItemFile();
+    item_fileList = new ItemFileDaoImpl().findAll(null, null);
 }
 request.setAttribute("item_fileList", item_fileList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -138,10 +198,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="ItemFileId" ${param.column == 'ItemFileId' ? "selected" : "" } >ItemFileId</option>                                                            
+                                                           <option value="FileName" ${param.column == 'FileName' ? "selected" : "" } >FileName</option>                                                            
+                                                           <option value="Description" ${param.column == 'Description' ? "selected" : "" } >Description</option>                                                            
+                                                           <option value="Label" ${param.column == 'Label' ? "selected" : "" } >Label</option>                                                            
+                                                           <option value="Hidden" ${param.column == 'Hidden' ? "selected" : "" } >Hidden</option>                                                            
                                                            <option value="ItemId" ${param.column == 'ItemId' ? "selected" : "" } >ItemId</option>                                                            
-                                                           <option value="ItemFileName" ${param.column == 'ItemFileName' ? "selected" : "" } >ItemFileName</option>                                                            
-                                                           <option value="ItemFileDescription" ${param.column == 'ItemFileDescription' ? "selected" : "" } >ItemFileDescription</option>                                                            
-                                                           <option value="ItemFileLabel" ${param.column == 'ItemFileLabel' ? "selected" : "" } >ItemFileLabel</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -197,37 +258,51 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=item_file&action=2" method="post">
 
-                                                <input type="hidden" name="itemFileId" value="${item_file.itemFileId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemId">ItemId:</label>
+                                                    <label class="col-md-2 control-label" for="itemFileId">ItemFile:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="itemFileId" class="form-control" value="${item_file.itemFileId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="fileName">FileName:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="fileName" class="form-control maxlength-handler" maxlength="255" value="${item_file.fileName}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="description">Description:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="description" class="form-control maxlength-handler" maxlength="255" value="${item_file.description}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="label">Label:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="label" class="form-control maxlength-handler" maxlength="255" value="${item_file.label}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="hidden">Hidden:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="hidden" class="form-control" value="${item_file.hidden}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemId">Item:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="itemId" class="form-control" value="${item_file.itemId}" />
                                                         <select name="itemId" class="form-control">
                                                             <%ItemFile x = (ItemFile) pageContext.getAttribute("item_file"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Item", x.getitemId().toString(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item", x.getItemId().toString(), 2)%>
                                                         </select>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemFileName">ItemFileName:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="itemFileName" class="form-control maxlength-handler" maxlength="255" value="${item_file.itemFileName}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemFileDescription">ItemFileDescription:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="itemFileDescription" class="form-control maxlength-handler" maxlength="255" value="${item_file.itemFileDescription}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemFileLabel">ItemFileLabel:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="itemFileLabel" class="form-control maxlength-handler" maxlength="255" value="${item_file.itemFileLabel}" />
                                                     </div>
                                                 </div>
                                                 
@@ -271,12 +346,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemId</label>
+                                                        <label class="col-md-2 control-label">ItemFileId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="itemId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Item", "", 2)%>
+                                                                <select name="itemFileId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_file", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -285,11 +360,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemFileName</label>
+                                                        <label class="col-md-2 control-label">FileName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="itemFileName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="fileName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -297,11 +372,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemFileDescription</label>
+                                                        <label class="col-md-2 control-label">Description</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="itemFileDescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -309,11 +384,37 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemFileLabel</label>
+                                                        <label class="col-md-2 control-label">Label</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="itemFileLabel" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="label" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Hidden</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="hidden" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ItemId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="itemId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -354,12 +455,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">ItemId</label> 
-                                                    <label><input type="checkbox" checked data-column="2">Name</label> 
-                                                    <label><input type="checkbox" checked data-column="3">Description</label> 
-                                                    <label><input type="checkbox" checked data-column="4">Label</label> 
+                                                    <label><input type="checkbox" checked data-column="1">FileName</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Description</label> 
+                                                    <label><input type="checkbox" checked data-column="3">Label</label> 
+                                                    <label><input type="checkbox" checked data-column="4">Hidden</label> 
+                                                    <label><input type="checkbox" checked data-column="5">ItemId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="5">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="6">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -372,10 +474,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>ItemId</th> 
-                                                    <th>Name</th> 
+                                                    <th>FileName</th> 
                                                     <th>Description</th> 
                                                     <th>Label</th> 
+                                                    <th>Hidden</th> 
+                                                    <th>ItemId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -384,10 +487,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="item_file" items="${item_fileList}" >
                                                 <tr>                                                    
                                                     <td>${item_file.itemFileId}</td> 
+                                                    <td>${item_file.fileName}</td> 
+                                                    <td>${item_file.description}</td> 
+                                                    <td>${item_file.label}</td> 
+                                                    <td>${item_file.hidden}</td> 
                                                     <td>${item_file.itemId}</td> 
-                                                    <td>${item_file.itemFileName}</td> 
-                                                    <td>${item_file.itemFileDescription}</td> 
-                                                    <td>${item_file.itemFileLabel}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${item_file.itemFileId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -474,8 +578,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -515,10 +620,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         itemFileId:    { required: true, number: true }, 
-                        itemId:    { required: true, number: true }, 
-                        itemFileName:    { required: true, minlength: 1, maxlength: 255}, 
-                        itemFileDescription:    { required: true, minlength: 1, maxlength: 255}, 
-                        itemFileLabel:    { required: true, minlength: 1, maxlength: 255} 
+                        fileName:    { required: true, minlength: 1, maxlength: 255}, 
+                        description:    { required: true, minlength: 1, maxlength: 255}, 
+                        label:    { required: true, minlength: 1, maxlength: 255}, 
+                        hidden:    { required: true, number: true }, 
+                        itemId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

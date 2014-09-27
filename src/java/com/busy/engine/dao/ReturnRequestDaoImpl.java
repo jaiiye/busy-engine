@@ -36,36 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.OrderItem;
-import com.busy.engine.entity.ReturnRequest;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class ReturnRequestDaoImpl extends BasicConnection implements Serializable, ReturnRequestDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public ReturnRequest find(Integer id)
+        public ReturnRequestDaoImpl()
         {
-            return findByColumn("ReturnRequestId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<ReturnRequest> findAll(Integer limit, Integer offset)
+
+        public ReturnRequestDaoImpl(boolean enableCache)
         {
-            ArrayList<ReturnRequest> return_request = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class ReturnRequestCache
+        {
+            public static final ConcurrentLruCache<Integer, ReturnRequest> returnRequestCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (ReturnRequest i : findAll())
+                {
+                    getCache().put(i.getReturnRequestId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, ReturnRequest> getCache()
+        {
+            return ReturnRequestCache.returnRequestCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, ReturnRequest> buildCache(ArrayList<ReturnRequest> returnRequestList)
+        {        
+            ConcurrentLruCache<Integer, ReturnRequest> cache = new ConcurrentLruCache<Integer, ReturnRequest>(returnRequestList.size() + 1000);
+            for (ReturnRequest i : returnRequestList)
+            {
+                cache.put(i.getReturnRequestId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<ReturnRequest> findAll()
+        {
+            ArrayList<ReturnRequest> returnRequest = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("return_request");
-                while(rs.next())
+                getAllRecordsByTableName("returnRequest");
+                while (rs.next())
                 {
-                    return_request.add(ReturnRequest.process(rs));
+                    returnRequest.add(ReturnRequest.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -76,72 +137,205 @@ import com.busy.engine.entity.ReturnRequest;
             {
                 closeConnection();
             }
-            return return_request;
+            return returnRequest;
+        }
+        
+        @Override
+        public ReturnRequest find(Integer id)
+        {
+            return findByColumn("ReturnRequestId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<ReturnRequest> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<ReturnRequest> returnRequestList = new ArrayList<ReturnRequest>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for ReturnRequest, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    returnRequestList = new ArrayList<ReturnRequest>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("return_request", limit, offset);
+                    while (rs.next())
+                    {
+                        returnRequestList.add(ReturnRequest.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ReturnRequest object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return returnRequestList;
          
         }
         
         @Override
         public ArrayList<ReturnRequest> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<ReturnRequest> return_requestList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("return_request", limit, offset);
-                while (rs.next())
+            ArrayList<ReturnRequest> returnRequestList = new ArrayList<ReturnRequest>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for ReturnRequest, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    return_requestList.add(ReturnRequest.process(rs));
+                    returnRequestList = new ArrayList<ReturnRequest>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(ReturnRequest return_request : return_requestList)
+                    try
                     {
-                        
-                            getRecordById("OrderItem", return_request.getOrderItemId().toString());
-                            return_request.setOrderItem(OrderItem.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            ReturnRequest returnRequest = (ReturnRequest) e.getValue();
+
+                            
+                                getRecordById("OrderItem", returnRequest.getOrderItemId().toString());
+                                returnRequest.setOrderItem(OrderItem.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object ReturnRequest method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object ReturnRequest method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                returnRequestList = new ArrayList<ReturnRequest>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("return_request", limit, offset);
+                    while (rs.next())
+                    {
+                        returnRequestList.add(ReturnRequest.process(rs));
+                    }
+
+                    
+                    
+                        for (ReturnRequest returnRequest : returnRequestList)
+                        {                        
+                            
+                                getRecordById("OrderItem", returnRequest.getOrderItemId().toString());
+                                returnRequest.setOrderItem(OrderItem.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object ReturnRequest method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return return_requestList;
+            return returnRequestList;            
         }
         
         @Override
         public ArrayList<ReturnRequest> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<ReturnRequest> return_request = new ArrayList<>();
-            try
+            ArrayList<ReturnRequest> returnRequestList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("return_request", ReturnRequest.checkColumnName(columnName), columnValue, ReturnRequest.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   return_request.add(ReturnRequest.process(rs));
+
+                    System.out.println("Find by column for ReturnRequest(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            ReturnRequest i = (ReturnRequest) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                returnRequestList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            returnRequestList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("ReturnRequest's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("return_request", ReturnRequest.checkColumnName(columnName), columnValue, ReturnRequest.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        returnRequestList.add(ReturnRequest.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ReturnRequest's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return return_request;
+            return returnRequestList;
         } 
     
         @Override
         public int add(ReturnRequest obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 
                 
@@ -150,9 +344,11 @@ import com.busy.engine.entity.ReturnRequest;
                 ReturnRequest.checkColumnSize(obj.getNotes(), 65535);
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO return_request(Quantity,RequestDate,ReturnReason,RequestedAction,Notes,RequestStatus,OrderItemId) VALUES (?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO return_request(ReturnRequestId,Quantity,RequestDate,ReturnReason,RequestedAction,Notes,RequestStatus,OrderItemId,) VALUES (?,?,?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getReturnRequestId());
                 preparedStatement.setInt(1, obj.getQuantity());
                 preparedStatement.setDate(2, new java.sql.Date(obj.getRequestDate().getTime()));
                 preparedStatement.setString(3, obj.getReturnReason());
@@ -161,13 +357,15 @@ import com.busy.engine.entity.ReturnRequest;
                 preparedStatement.setInt(6, obj.getRequestStatus());
                 preparedStatement.setInt(7, obj.getOrderItemId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from return_request;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -177,6 +375,13 @@ import com.busy.engine.entity.ReturnRequest;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setReturnRequestId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -195,7 +400,8 @@ import com.busy.engine.entity.ReturnRequest;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE return_request SET Quantity=?,RequestDate=?,ReturnReason=?,RequestedAction=?,Notes=?,RequestStatus=?,OrderItemId=? WHERE ReturnRequestId=?;");                    
+                prepareStatement("UPDATE return_request SET com.busy.util.DatabaseColumn@759194e9=?,com.busy.util.DatabaseColumn@42775951=?,com.busy.util.DatabaseColumn@664f7755=?,com.busy.util.DatabaseColumn@6ce25d77=?,com.busy.util.DatabaseColumn@152daade=?,com.busy.util.DatabaseColumn@6d68c4fb=?,com.busy.util.DatabaseColumn@7000f3dc=? WHERE ReturnRequestId=?;");                    
+                preparedStatement.setInt(0, obj.getReturnRequestId());
                 preparedStatement.setInt(1, obj.getQuantity());
                 preparedStatement.setDate(2, new java.sql.Date(obj.getRequestDate().getTime()));
                 preparedStatement.setString(3, obj.getReturnReason());
@@ -205,6 +411,11 @@ import com.busy.engine.entity.ReturnRequest;
                 preparedStatement.setInt(7, obj.getOrderItemId());
                 preparedStatement.setInt(8, obj.getReturnRequestId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getReturnRequestId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -220,7 +431,16 @@ import com.busy.engine.entity.ReturnRequest;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("return_request");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("return_request");
+            }
+            return count;
         }
         
         
@@ -269,7 +489,13 @@ import com.busy.engine.entity.ReturnRequest;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getReturnRequestId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -289,6 +515,12 @@ import com.busy.engine.entity.ReturnRequest;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -309,6 +541,12 @@ import com.busy.engine.entity.ReturnRequest;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -329,7 +567,44 @@ import com.busy.engine.entity.ReturnRequest;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        ReturnRequest i = (ReturnRequest) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getReturnRequestId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
         

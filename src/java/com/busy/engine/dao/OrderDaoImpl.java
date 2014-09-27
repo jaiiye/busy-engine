@@ -36,35 +36,95 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.Affiliate;
-import com.busy.engine.entity.Order;
-import com.busy.engine.entity.Shipping;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class OrderDaoImpl extends BasicConnection implements Serializable, OrderDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public Order find(Integer id)
+        public OrderDaoImpl()
         {
-            return findByColumn("OrderId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<Order> findAll(Integer limit, Integer offset)
+
+        public OrderDaoImpl(boolean enableCache)
+        {
+            cachingEnabled = enableCache;
+        }
+
+        private static class OrderCache
+        {
+            public static final ConcurrentLruCache<Integer, Order> orderCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (Order i : findAll())
+                {
+                    getCache().put(i.getOrderId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, Order> getCache()
+        {
+            return OrderCache.orderCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, Order> buildCache(ArrayList<Order> orderList)
+        {        
+            ConcurrentLruCache<Integer, Order> cache = new ConcurrentLruCache<Integer, Order>(orderList.size() + 1000);
+            for (Order i : orderList)
+            {
+                cache.put(i.getOrderId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<Order> findAll()
         {
             ArrayList<Order> order = new ArrayList<>();
             try
             {
                 getAllRecordsByTableName("order");
-                while(rs.next())
+                while (rs.next())
                 {
                     order.add(Order.process(rs));
                 }
@@ -78,74 +138,210 @@ import com.busy.engine.entity.Shipping;
                 closeConnection();
             }
             return order;
+        }
+        
+        @Override
+        public Order find(Integer id)
+        {
+            return findByColumn("OrderId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<Order> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<Order> orderList = new ArrayList<Order>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for Order, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    orderList = new ArrayList<Order>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("order", limit, offset);
+                    while (rs.next())
+                    {
+                        orderList.add(Order.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Order object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return orderList;
          
         }
         
         @Override
         public ArrayList<Order> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<Order> orderList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("order", limit, offset);
-                while (rs.next())
+            ArrayList<Order> orderList = new ArrayList<Order>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for Order, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    orderList.add(Order.process(rs));
+                    orderList = new ArrayList<Order>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(Order order : orderList)
+                    try
                     {
-                        
-                            getRecordById("Shipping", order.getShippingId().toString());
-                            order.setShipping(Shipping.process(rs));               
-                        
-                            getRecordById("Affiliate", order.getAffiliateId().toString());
-                            order.setAffiliate(Affiliate.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            Order order = (Order) e.getValue();
+
+                            
+                                getRecordById("Shipping", order.getShippingId().toString());
+                                order.setShipping(Shipping.process(rs));               
+                            
+                                getRecordById("Affiliate", order.getAffiliateId().toString());
+                                order.setAffiliate(Affiliate.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object Order method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object Order method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                orderList = new ArrayList<Order>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("order", limit, offset);
+                    while (rs.next())
+                    {
+                        orderList.add(Order.process(rs));
+                    }
+
+                    
+                    
+                        for (Order order : orderList)
+                        {                        
+                            
+                                getRecordById("Shipping", order.getShippingId().toString());
+                                order.setShipping(Shipping.process(rs));               
+                            
+                                getRecordById("Affiliate", order.getAffiliateId().toString());
+                                order.setAffiliate(Affiliate.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object Order method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return orderList;
+            return orderList;            
         }
         
         @Override
         public ArrayList<Order> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<Order> order = new ArrayList<>();
-            try
+            ArrayList<Order> orderList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("order", Order.checkColumnName(columnName), columnValue, Order.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   order.add(Order.process(rs));
+
+                    System.out.println("Find by column for Order(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            Order i = (Order) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                orderList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            orderList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Order's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("order", Order.checkColumnName(columnName), columnValue, Order.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        orderList.add(Order.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Order's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return order;
+            return orderList;
         } 
     
         @Override
         public int add(Order obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 
                 
@@ -169,9 +365,11 @@ import com.busy.engine.entity.Shipping;
                 
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO order(OrderDate,ShipDate,PaymentMethod,PurchaseOrder,TransactionId,AmountBilled,PaymentStatus,PendingReason,PaymentType,TransactionFee,CurrencyCode,PayerId,SubtotalAmount,DiscountAmount,TaxAmount,ShippingAmount,TotalAmount,RefundAmount,Notes,OrderStatus,ShippingId,AffiliateId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO order(OrderId,OrderDate,ShipDate,PaymentMethod,PurchaseOrder,TransactionId,AmountBilled,PaymentStatus,PendingReason,PaymentType,TransactionFee,CurrencyCode,PayerId,SubtotalAmount,DiscountAmount,TaxAmount,ShippingAmount,TotalAmount,RefundAmount,Notes,OrderStatus,ShippingId,AffiliateId,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getOrderId());
                 preparedStatement.setDate(1, new java.sql.Date(obj.getOrderDate().getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(obj.getShipDate().getTime()));
                 preparedStatement.setString(3, obj.getPaymentMethod());
@@ -195,13 +393,15 @@ import com.busy.engine.entity.Shipping;
                 preparedStatement.setInt(21, obj.getShippingId());
                 preparedStatement.setInt(22, obj.getAffiliateId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from order;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -211,6 +411,13 @@ import com.busy.engine.entity.Shipping;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setOrderId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -244,7 +451,8 @@ import com.busy.engine.entity.Shipping;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE order SET OrderDate=?,ShipDate=?,PaymentMethod=?,PurchaseOrder=?,TransactionId=?,AmountBilled=?,PaymentStatus=?,PendingReason=?,PaymentType=?,TransactionFee=?,CurrencyCode=?,PayerId=?,SubtotalAmount=?,DiscountAmount=?,TaxAmount=?,ShippingAmount=?,TotalAmount=?,RefundAmount=?,Notes=?,OrderStatus=?,ShippingId=?,AffiliateId=? WHERE OrderId=?;");                    
+                prepareStatement("UPDATE order SET com.busy.util.DatabaseColumn@60d023c7=?,com.busy.util.DatabaseColumn@4c99af8c=?,com.busy.util.DatabaseColumn@471cd10=?,com.busy.util.DatabaseColumn@5b556bb4=?,com.busy.util.DatabaseColumn@3afab502=?,com.busy.util.DatabaseColumn@3b1e981e=?,com.busy.util.DatabaseColumn@310dcb20=?,com.busy.util.DatabaseColumn@41f50e7e=?,com.busy.util.DatabaseColumn@2e48e1e7=?,com.busy.util.DatabaseColumn@61595258=?,com.busy.util.DatabaseColumn@3e52d198=?,com.busy.util.DatabaseColumn@57bdbed2=?,com.busy.util.DatabaseColumn@3e933a1b=?,com.busy.util.DatabaseColumn@15737403=?,com.busy.util.DatabaseColumn@3d85a924=?,com.busy.util.DatabaseColumn@7f4db68=?,com.busy.util.DatabaseColumn@20906a6f=?,com.busy.util.DatabaseColumn@2e4dc112=?,com.busy.util.DatabaseColumn@3e119176=?,com.busy.util.DatabaseColumn@1f1f2247=?,com.busy.util.DatabaseColumn@3cfff0d9=?,com.busy.util.DatabaseColumn@7c7ae305=? WHERE OrderId=?;");                    
+                preparedStatement.setInt(0, obj.getOrderId());
                 preparedStatement.setDate(1, new java.sql.Date(obj.getOrderDate().getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(obj.getShipDate().getTime()));
                 preparedStatement.setString(3, obj.getPaymentMethod());
@@ -269,6 +477,11 @@ import com.busy.engine.entity.Shipping;
                 preparedStatement.setInt(22, obj.getAffiliateId());
                 preparedStatement.setInt(23, obj.getOrderId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getOrderId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -284,7 +497,16 @@ import com.busy.engine.entity.Shipping;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("order");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("order");
+            }
+            return count;
         }
         
         
@@ -339,7 +561,13 @@ order.setShipmentList(new ShipmentDaoImpl().findByColumn("OrderId", order.getOrd
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getOrderId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -359,6 +587,12 @@ order.setShipmentList(new ShipmentDaoImpl().findByColumn("OrderId", order.getOrd
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -379,6 +613,12 @@ order.setShipmentList(new ShipmentDaoImpl().findByColumn("OrderId", order.getOrd
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -399,7 +639,44 @@ order.setShipmentList(new ShipmentDaoImpl().findByColumn("OrderId", order.getOrd
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        Order i = (Order) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getOrderId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

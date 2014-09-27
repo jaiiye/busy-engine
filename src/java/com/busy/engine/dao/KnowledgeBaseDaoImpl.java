@@ -36,35 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.KnowledgeBase;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class KnowledgeBaseDaoImpl extends BasicConnection implements Serializable, KnowledgeBaseDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public KnowledgeBase find(Integer id)
+        public KnowledgeBaseDaoImpl()
         {
-            return findByColumn("KnowledgeBaseId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<KnowledgeBase> findAll(Integer limit, Integer offset)
+
+        public KnowledgeBaseDaoImpl(boolean enableCache)
         {
-            ArrayList<KnowledgeBase> knowledge_base = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class KnowledgeBaseCache
+        {
+            public static final ConcurrentLruCache<Integer, KnowledgeBase> knowledgeBaseCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (KnowledgeBase i : findAll())
+                {
+                    getCache().put(i.getKnowledgeBaseId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, KnowledgeBase> getCache()
+        {
+            return KnowledgeBaseCache.knowledgeBaseCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, KnowledgeBase> buildCache(ArrayList<KnowledgeBase> knowledgeBaseList)
+        {        
+            ConcurrentLruCache<Integer, KnowledgeBase> cache = new ConcurrentLruCache<Integer, KnowledgeBase>(knowledgeBaseList.size() + 1000);
+            for (KnowledgeBase i : knowledgeBaseList)
+            {
+                cache.put(i.getKnowledgeBaseId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<KnowledgeBase> findAll()
+        {
+            ArrayList<KnowledgeBase> knowledgeBase = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("knowledge_base");
-                while(rs.next())
+                getAllRecordsByTableName("knowledgeBase");
+                while (rs.next())
                 {
-                    knowledge_base.add(KnowledgeBase.process(rs));
+                    knowledgeBase.add(KnowledgeBase.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -75,64 +137,175 @@ import com.busy.engine.entity.KnowledgeBase;
             {
                 closeConnection();
             }
-            return knowledge_base;
+            return knowledgeBase;
+        }
+        
+        @Override
+        public KnowledgeBase find(Integer id)
+        {
+            return findByColumn("KnowledgeBaseId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<KnowledgeBase> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<KnowledgeBase> knowledgeBaseList = new ArrayList<KnowledgeBase>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for KnowledgeBase, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    knowledgeBaseList = new ArrayList<KnowledgeBase>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("knowledge_base", limit, offset);
+                    while (rs.next())
+                    {
+                        knowledgeBaseList.add(KnowledgeBase.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("KnowledgeBase object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return knowledgeBaseList;
          
         }
         
         @Override
         public ArrayList<KnowledgeBase> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<KnowledgeBase> knowledge_baseList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("knowledge_base", limit, offset);
-                while (rs.next())
+            ArrayList<KnowledgeBase> knowledgeBaseList = new ArrayList<KnowledgeBase>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for KnowledgeBase, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    knowledge_baseList.add(KnowledgeBase.process(rs));
+                    knowledgeBaseList = new ArrayList<KnowledgeBase>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object KnowledgeBase method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                knowledgeBaseList = new ArrayList<KnowledgeBase>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("knowledge_base", limit, offset);
+                    while (rs.next())
+                    {
+                        knowledgeBaseList.add(KnowledgeBase.process(rs));
+                    }
+
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object KnowledgeBase method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return knowledge_baseList;
+            return knowledgeBaseList;            
         }
         
         @Override
         public ArrayList<KnowledgeBase> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<KnowledgeBase> knowledge_base = new ArrayList<>();
-            try
+            ArrayList<KnowledgeBase> knowledgeBaseList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("knowledge_base", KnowledgeBase.checkColumnName(columnName), columnValue, KnowledgeBase.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   knowledge_base.add(KnowledgeBase.process(rs));
+
+                    System.out.println("Find by column for KnowledgeBase(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            KnowledgeBase i = (KnowledgeBase) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                knowledgeBaseList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            knowledgeBaseList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("KnowledgeBase's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("knowledge_base", KnowledgeBase.checkColumnName(columnName), columnValue, KnowledgeBase.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        knowledgeBaseList.add(KnowledgeBase.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("KnowledgeBase's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return knowledge_base;
+            return knowledgeBaseList;
         } 
     
         @Override
         public int add(KnowledgeBase obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 KnowledgeBase.checkColumnSize(obj.getKnowledgeBaseName(), 200);
                 KnowledgeBase.checkColumnSize(obj.getDescription(), 65535);
@@ -140,9 +313,11 @@ import com.busy.engine.entity.KnowledgeBase;
                 
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO knowledge_base(KnowledgeBaseName,Description,Rank,LastModified,LatestTopic,LatestPost) VALUES (?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO knowledge_base(KnowledgeBaseId,KnowledgeBaseName,Description,Rank,LastModified,LatestTopic,LatestPost,) VALUES (?,?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getKnowledgeBaseId());
                 preparedStatement.setString(1, obj.getKnowledgeBaseName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getRank());
@@ -150,13 +325,15 @@ import com.busy.engine.entity.KnowledgeBase;
                 preparedStatement.setInt(5, obj.getLatestTopic());
                 preparedStatement.setInt(6, obj.getLatestPost());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from knowledge_base;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -166,6 +343,13 @@ import com.busy.engine.entity.KnowledgeBase;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setKnowledgeBaseId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -183,7 +367,8 @@ import com.busy.engine.entity.KnowledgeBase;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE knowledge_base SET KnowledgeBaseName=?,Description=?,Rank=?,LastModified=?,LatestTopic=?,LatestPost=? WHERE KnowledgeBaseId=?;");                    
+                prepareStatement("UPDATE knowledge_base SET com.busy.util.DatabaseColumn@2185c29e=?,com.busy.util.DatabaseColumn@3324a06d=?,com.busy.util.DatabaseColumn@1b8268d0=?,com.busy.util.DatabaseColumn@78dcce3f=?,com.busy.util.DatabaseColumn@77c27288=?,com.busy.util.DatabaseColumn@617393d5=? WHERE KnowledgeBaseId=?;");                    
+                preparedStatement.setInt(0, obj.getKnowledgeBaseId());
                 preparedStatement.setString(1, obj.getKnowledgeBaseName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getRank());
@@ -192,6 +377,11 @@ import com.busy.engine.entity.KnowledgeBase;
                 preparedStatement.setInt(6, obj.getLatestPost());
                 preparedStatement.setInt(7, obj.getKnowledgeBaseId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getKnowledgeBaseId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -207,7 +397,16 @@ import com.busy.engine.entity.KnowledgeBase;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("knowledge_base");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("knowledge_base");
+            }
+            return count;
         }
         
         
@@ -241,7 +440,13 @@ import com.busy.engine.entity.KnowledgeBase;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getKnowledgeBaseId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -261,6 +466,12 @@ import com.busy.engine.entity.KnowledgeBase;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -281,6 +492,12 @@ import com.busy.engine.entity.KnowledgeBase;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -301,7 +518,44 @@ import com.busy.engine.entity.KnowledgeBase;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        KnowledgeBase i = (KnowledgeBase) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getKnowledgeBaseId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

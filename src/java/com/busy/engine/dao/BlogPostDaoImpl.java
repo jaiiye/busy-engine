@@ -36,38 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.MetaTag;
-import com.busy.engine.entity.User;
-import com.busy.engine.entity.BlogPost;
-import com.busy.engine.entity.Blog;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class BlogPostDaoImpl extends BasicConnection implements Serializable, BlogPostDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public BlogPost find(Integer id)
+        public BlogPostDaoImpl()
         {
-            return findByColumn("BlogPostId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<BlogPost> findAll(Integer limit, Integer offset)
+
+        public BlogPostDaoImpl(boolean enableCache)
         {
-            ArrayList<BlogPost> blog_post = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class BlogPostCache
+        {
+            public static final ConcurrentLruCache<Integer, BlogPost> blogPostCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (BlogPost i : findAll())
+                {
+                    getCache().put(i.getBlogPostId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, BlogPost> getCache()
+        {
+            return BlogPostCache.blogPostCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, BlogPost> buildCache(ArrayList<BlogPost> blogPostList)
+        {        
+            ConcurrentLruCache<Integer, BlogPost> cache = new ConcurrentLruCache<Integer, BlogPost>(blogPostList.size() + 1000);
+            for (BlogPost i : blogPostList)
+            {
+                cache.put(i.getBlogPostId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<BlogPost> findAll()
+        {
+            ArrayList<BlogPost> blogPost = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("blog_post");
-                while(rs.next())
+                getAllRecordsByTableName("blogPost");
+                while (rs.next())
                 {
-                    blog_post.add(BlogPost.process(rs));
+                    blogPost.add(BlogPost.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -78,78 +137,217 @@ import com.busy.engine.entity.Blog;
             {
                 closeConnection();
             }
-            return blog_post;
+            return blogPost;
+        }
+        
+        @Override
+        public BlogPost find(Integer id)
+        {
+            return findByColumn("BlogPostId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<BlogPost> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<BlogPost> blogPostList = new ArrayList<BlogPost>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for BlogPost, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    blogPostList = new ArrayList<BlogPost>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("blog_post", limit, offset);
+                    while (rs.next())
+                    {
+                        blogPostList.add(BlogPost.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("BlogPost object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return blogPostList;
          
         }
         
         @Override
         public ArrayList<BlogPost> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<BlogPost> blog_postList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("blog_post", limit, offset);
-                while (rs.next())
+            ArrayList<BlogPost> blogPostList = new ArrayList<BlogPost>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for BlogPost, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    blog_postList.add(BlogPost.process(rs));
+                    blogPostList = new ArrayList<BlogPost>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(BlogPost blog_post : blog_postList)
+                    try
                     {
-                        
-                            getRecordById("User", blog_post.getUserId().toString());
-                            blog_post.setUser(User.process(rs));               
-                        
-                            getRecordById("Blog", blog_post.getBlogId().toString());
-                            blog_post.setBlog(Blog.process(rs));               
-                        
-                            getRecordById("MetaTag", blog_post.getMetaTagId().toString());
-                            blog_post.setMetaTag(MetaTag.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            BlogPost blogPost = (BlogPost) e.getValue();
+
+                            
+                                getRecordById("User", blogPost.getUserId().toString());
+                                blogPost.setUser(User.process(rs));               
+                            
+                                getRecordById("Blog", blogPost.getBlogId().toString());
+                                blogPost.setBlog(Blog.process(rs));               
+                            
+                                getRecordById("MetaTag", blogPost.getMetaTagId().toString());
+                                blogPost.setMetaTag(MetaTag.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object BlogPost method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object BlogPost method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                blogPostList = new ArrayList<BlogPost>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("blog_post", limit, offset);
+                    while (rs.next())
+                    {
+                        blogPostList.add(BlogPost.process(rs));
+                    }
+
+                    
+                    
+                        for (BlogPost blogPost : blogPostList)
+                        {                        
+                            
+                                getRecordById("User", blogPost.getUserId().toString());
+                                blogPost.setUser(User.process(rs));               
+                            
+                                getRecordById("Blog", blogPost.getBlogId().toString());
+                                blogPost.setBlog(Blog.process(rs));               
+                            
+                                getRecordById("MetaTag", blogPost.getMetaTagId().toString());
+                                blogPost.setMetaTag(MetaTag.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object BlogPost method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return blog_postList;
+            return blogPostList;            
         }
         
         @Override
         public ArrayList<BlogPost> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<BlogPost> blog_post = new ArrayList<>();
-            try
+            ArrayList<BlogPost> blogPostList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("blog_post", BlogPost.checkColumnName(columnName), columnValue, BlogPost.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   blog_post.add(BlogPost.process(rs));
+
+                    System.out.println("Find by column for BlogPost(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            BlogPost i = (BlogPost) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                blogPostList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            blogPostList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("BlogPost's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("blog_post", BlogPost.checkColumnName(columnName), columnValue, BlogPost.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        blogPostList.add(BlogPost.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("BlogPost's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return blog_post;
+            return blogPostList;
         } 
     
         @Override
         public int add(BlogPost obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 BlogPost.checkColumnSize(obj.getTitle(), 255);
                 BlogPost.checkColumnSize(obj.getContent(), 65535);
@@ -166,9 +364,11 @@ import com.busy.engine.entity.Blog;
                 
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO blog_post(Title,Content,ImageURL,Tags,Featured,RatingSum,VoteCount,CommentCount,PostStatus,Excerpt,LastModified,Locale,UserId,BlogId,MetaTagId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO blog_post(BlogPostId,Title,Content,ImageURL,Tags,Featured,RatingSum,VoteCount,CommentCount,PostStatus,Excerpt,LastModified,Locale,UserId,BlogId,MetaTagId,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getBlogPostId());
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getContent());
                 preparedStatement.setString(3, obj.getImageURL());
@@ -185,13 +385,15 @@ import com.busy.engine.entity.Blog;
                 preparedStatement.setInt(14, obj.getBlogId());
                 preparedStatement.setInt(15, obj.getMetaTagId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from blog_post;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -201,6 +403,13 @@ import com.busy.engine.entity.Blog;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setBlogPostId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -227,7 +436,8 @@ import com.busy.engine.entity.Blog;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE blog_post SET Title=?,Content=?,ImageURL=?,Tags=?,Featured=?,RatingSum=?,VoteCount=?,CommentCount=?,PostStatus=?,Excerpt=?,LastModified=?,Locale=?,UserId=?,BlogId=?,MetaTagId=? WHERE BlogPostId=?;");                    
+                prepareStatement("UPDATE blog_post SET com.busy.util.DatabaseColumn@1a5ad3af=?,com.busy.util.DatabaseColumn@6e4770f6=?,com.busy.util.DatabaseColumn@8d54d1f=?,com.busy.util.DatabaseColumn@84f15ce=?,com.busy.util.DatabaseColumn@44c468c3=?,com.busy.util.DatabaseColumn@11d1706d=?,com.busy.util.DatabaseColumn@334e7afd=?,com.busy.util.DatabaseColumn@435ff83f=?,com.busy.util.DatabaseColumn@243a12e7=?,com.busy.util.DatabaseColumn@3ef25c15=?,com.busy.util.DatabaseColumn@7e2b40a4=?,com.busy.util.DatabaseColumn@4289c15e=?,com.busy.util.DatabaseColumn@36d05ec2=?,com.busy.util.DatabaseColumn@1aeebef9=?,com.busy.util.DatabaseColumn@3e64f360=? WHERE BlogPostId=?;");                    
+                preparedStatement.setInt(0, obj.getBlogPostId());
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getContent());
                 preparedStatement.setString(3, obj.getImageURL());
@@ -245,6 +455,11 @@ import com.busy.engine.entity.Blog;
                 preparedStatement.setInt(15, obj.getMetaTagId());
                 preparedStatement.setInt(16, obj.getBlogPostId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getBlogPostId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -260,7 +475,16 @@ import com.busy.engine.entity.Blog;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("blog_post");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("blog_post");
+            }
+            return count;
         }
         
         
@@ -317,7 +541,13 @@ blog_post.setCommentList(new CommentDaoImpl().findByColumn("BlogPostId", blog_po
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getBlogPostId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -337,6 +567,12 @@ blog_post.setCommentList(new CommentDaoImpl().findByColumn("BlogPostId", blog_po
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -357,6 +593,12 @@ blog_post.setCommentList(new CommentDaoImpl().findByColumn("BlogPostId", blog_po
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -377,7 +619,44 @@ blog_post.setCommentList(new CommentDaoImpl().findByColumn("BlogPostId", blog_po
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        BlogPost i = (BlogPost) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getBlogPostId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

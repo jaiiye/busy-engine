@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Comment> commentList = new ArrayList<Comment>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    commentList = Comment.getAllCommentByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    commentList = new CommentDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    commentList = Comment.getAllComment();
+    commentList = new CommentDaoImpl().findAll(null, null);
 }
 request.setAttribute("commentList", commentList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "content"); %>
-        <% request.setAttribute("subCategory", "blogs"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
+        <% request.setAttribute("subCategory", "Comment"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -89,11 +149,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Content </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">Comments</a>
+                                        <a href="#">Comment</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -138,11 +198,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="CommentId" ${param.column == 'CommentId' ? "selected" : "" } >CommentId</option>                                                            
-                                                           <option value="PostId" ${param.column == 'PostId' ? "selected" : "" } >PostId</option>                                                            
-                                                           <option value="CommentTitle" ${param.column == 'CommentTitle' ? "selected" : "" } >CommentTitle</option>                                                            
-                                                           <option value="CommentBody" ${param.column == 'CommentBody' ? "selected" : "" } >CommentBody</option>                                                            
-                                                           <option value="CommentDate" ${param.column == 'CommentDate' ? "selected" : "" } >CommentDate</option>                                                            
+                                                           <option value="Title" ${param.column == 'Title' ? "selected" : "" } >Title</option>                                                            
+                                                           <option value="Content" ${param.column == 'Content' ? "selected" : "" } >Content</option>                                                            
+                                                           <option value="Date" ${param.column == 'Date' ? "selected" : "" } >Date</option>                                                            
+                                                           <option value="CommentStatus" ${param.column == 'CommentStatus' ? "selected" : "" } >CommentStatus</option>                                                            
                                                            <option value="UserId" ${param.column == 'UserId' ? "selected" : "" } >UserId</option>                                                            
+                                                           <option value="BlogPostId" ${param.column == 'BlogPostId' ? "selected" : "" } >BlogPostId</option>                                                            
+                                                           <option value="ItemReviewId" ${param.column == 'ItemReviewId' ? "selected" : "" } >ItemReviewId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -198,55 +260,76 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=comment&action=2" method="post">
 
-                                                <input type="hidden" name="commentId" value="${comment.commentId}" />
-     
+                                                
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="commentTitle">Title:</label>
+                                                    <label class="col-md-2 control-label" for="commentId">Comment:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="commentTitle" class="form-control maxlength-handler" maxlength="45" value="${comment.commentTitle}" />
+                                                        <input type="text" name="commentId" class="form-control" value="${comment.commentId}" />
+
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="commentBody">Body:</label>
+                                                    <label class="col-md-2 control-label" for="title">Title:</label>
                                                     <div  class="col-md-10">
-                                                        <textarea name="commentBody" class="ckeditor form-control" rows="4">${comment.commentBody}</textarea>
+                                                        <input type="text" name="title" class="form-control maxlength-handler" maxlength="45" value="${comment.title}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="commentDate">Date:</label>
+                                                    <label class="col-md-2 control-label" for="content">Content:</label>
                                                     <div  class="col-md-10">
-                                                        <div class="input-group date form_datetime" data-date="2012-12-21T15:25:00Z">        
-                                                            <input type="text" name="commentDate" value="${comment.commentDate}" class="form-control">        
-                                                            <span class="input-group-btn">                
-                                                                <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>        
-                                                            </span>        
-                                                            <span class="input-group-btn">                
-                                                                <button class="btn default date-set" type="button"><i class="fa fa-calendar"></i></button>        
-                                                            </span>
-                                                        </div>
+                                                        <textarea name="content" class="ckeditor form-control" rows="4">${comment.content}</textarea>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="postId">Post:</label>
+                                                    <label class="col-md-2 control-label" for="date">Date:</label>
                                                     <div  class="col-md-10">
-                                                        <select name="postId" class="form-control">
-                                                            <% Comment c = (Comment) pageContext.getAttribute("comment"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("blog_post", c.getPostId().toString(), 2)%>
-                                                        </select>
+                                                        <div class="input-group date form_datetime" data-date="2012-12-21T15:25:00Z">        <input type="text" name="date" value="${comment.date}" class="form-control">        <span class="input-group-btn">                <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>        </span>        <span class="input-group-btn">                <button class="btn default date-set" type="button"><i class="fa fa-calendar"></i></button>        </span></div>
                                                     </div>
                                                 </div>
-                                                        
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="commentStatus">CommentStatus:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="commentStatus" class="form-control" value="${comment.commentStatus}" />
+                                                    </div>
+                                                </div>
+                                                
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="userId">User:</label>
                                                     <div  class="col-md-10">
+                                                        <input type="text" name="userId" class="form-control" value="${comment.userId}" />
                                                         <select name="userId" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("user", c.getUserId().toString(), 4)%>
+                                                            <%Comment x = (Comment) pageContext.getAttribute("comment"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("user", x.getUserId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="blogPostId">BlogPost:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="blogPostId" class="form-control" value="${comment.blogPostId}" />
+                                                        <select name="blogPostId" class="form-control">
+                                                            <%Comment x = (Comment) pageContext.getAttribute("comment"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("blog_post", x.getBlogPostId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemReviewId">ItemReview:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="itemReviewId" class="form-control" value="${comment.itemReviewId}" />
+                                                        <select name="itemReviewId" class="form-control">
+                                                            <%Comment x = (Comment) pageContext.getAttribute("comment"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item_review", x.getItemReviewId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
 
                                                 <div class="form-actions right">
                                                     <input type="submit" value="Save Changes" class="btn green" />
@@ -283,14 +366,17 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <button class="close" data-close="alert"></button>
                                                     Your form validation is successful!
                                                 </div>
+
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Title</label>
+                                                        <label class="col-md-2 control-label">CommentId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="commentTitle" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <select name="commentId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("comment", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -298,11 +384,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Body</label>
+                                                        <label class="col-md-2 control-label">Title</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <textarea name="commentBody" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                                <input type="text" name="title" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Content</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <textarea name="content" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -314,7 +412,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="commentDate" class="form-control" id="mask_date2" />                                                            
+                                                                <input type="text" name="date" class="form-control" id="mask_date2" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -322,26 +420,52 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Post</label>
+                                                        <label class="col-md-2 control-label">CommentStatus</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="postId" class="form-control">
+                                                                <input type="text" name="commentStatus" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">UserId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="userId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">BlogPostId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="blogPostId" class="form-control">
                                                                     <%= Database.generateSelectOptionsFromTableAndColumn("blog_post", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                               
+                                                
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">User</label>
+                                                        <label class="col-md-2 control-label">ItemReviewId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="userId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user", "", 4)%>
+                                                                <select name="itemReviewId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_review", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -384,9 +508,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
                                                     <label><input type="checkbox" checked data-column="1">Title</label> 
-                                                    <label><input type="checkbox" checked data-column="2">Body</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Content</label> 
                                                     <label><input type="checkbox" checked data-column="3">Date</label> 
-                                                    <label><input type="checkbox" checked data-column="4">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="4">Status</label> 
+                                                    <label><input type="checkbox" checked data-column="5">UserId</label> 
+                                                    <label><input type="checkbox" checked data-column="6">BlogPostId</label> 
+                                                    <label><input type="checkbox" checked data-column="7">ItemReviewId</label> 
+                                                    
+                                                    <label><input type="checkbox" checked data-column="8">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -400,8 +529,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>
                                                     <th>Id</th> 
                                                     <th>Title</th> 
-                                                    <th>Body</th> 
-                                                    <th>Date</th>                                       
+                                                    <th>Content</th> 
+                                                    <th>Date</th> 
+                                                    <th>Status</th> 
+                                                    <th>UserId</th> 
+                                                    <th>BlogPostId</th> 
+                                                    <th>ItemReviewId</th> 
+                                                                                                        
                                                     <th>Actions</th> 
                                                 </tr>                                
                                             </thead>
@@ -409,9 +543,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="comment" items="${commentList}" >
                                                 <tr>                                                    
                                                     <td>${comment.commentId}</td> 
-                                                    <td>${comment.commentTitle}</td> 
-                                                    <td>${comment.commentBody}</td> 
-                                                    <td>${comment.commentDate}</td>
+                                                    <td>${comment.title}</td> 
+                                                    <td>${comment.content}</td> 
+                                                    <td>${comment.date}</td> 
+                                                    <td>${comment.commentStatus}</td> 
+                                                    <td>${comment.userId}</td> 
+                                                    <td>${comment.blogPostId}</td> 
+                                                    <td>${comment.itemReviewId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${comment.commentId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -498,8 +636,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>d
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -539,11 +678,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         commentId:    { required: true, number: true }, 
-                        postId:    { required: true, number: true }, 
-                        commentTitle:    { required: true, minlength: 1, maxlength: 45}, 
-                        commentBody:    { required: true, minlength: 1, maxlength: 65535}, 
-                        commentDate:    { required: true }, 
-                        userId:    { required: true, number: true } 
+                        title:    { required: true, minlength: 1, maxlength: 45}, 
+                        content:    { required: true, minlength: 1, maxlength: 65535}, 
+                        date:    { required: true }, 
+                        commentStatus:    { required: true, number: true }, 
+                        userId:    { required: true, number: true }, 
+                        blogPostId:    { required: true, number: true }, 
+                        itemReviewId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

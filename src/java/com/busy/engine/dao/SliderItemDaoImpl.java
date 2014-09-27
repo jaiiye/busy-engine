@@ -36,36 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.SliderItem;
-import com.busy.engine.entity.Slider;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class SliderItemDaoImpl extends BasicConnection implements Serializable, SliderItemDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public SliderItem find(Integer id)
+        public SliderItemDaoImpl()
         {
-            return findByColumn("SliderItemId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<SliderItem> findAll(Integer limit, Integer offset)
+
+        public SliderItemDaoImpl(boolean enableCache)
         {
-            ArrayList<SliderItem> slider_item = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class SliderItemCache
+        {
+            public static final ConcurrentLruCache<Integer, SliderItem> sliderItemCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (SliderItem i : findAll())
+                {
+                    getCache().put(i.getSliderItemId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, SliderItem> getCache()
+        {
+            return SliderItemCache.sliderItemCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, SliderItem> buildCache(ArrayList<SliderItem> sliderItemList)
+        {        
+            ConcurrentLruCache<Integer, SliderItem> cache = new ConcurrentLruCache<Integer, SliderItem>(sliderItemList.size() + 1000);
+            for (SliderItem i : sliderItemList)
+            {
+                cache.put(i.getSliderItemId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<SliderItem> findAll()
+        {
+            ArrayList<SliderItem> sliderItem = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("slider_item");
-                while(rs.next())
+                getAllRecordsByTableName("sliderItem");
+                while (rs.next())
                 {
-                    slider_item.add(SliderItem.process(rs));
+                    sliderItem.add(SliderItem.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -76,72 +137,205 @@ import com.busy.engine.entity.Slider;
             {
                 closeConnection();
             }
-            return slider_item;
+            return sliderItem;
+        }
+        
+        @Override
+        public SliderItem find(Integer id)
+        {
+            return findByColumn("SliderItemId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<SliderItem> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<SliderItem> sliderItemList = new ArrayList<SliderItem>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for SliderItem, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    sliderItemList = new ArrayList<SliderItem>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("slider_item", limit, offset);
+                    while (rs.next())
+                    {
+                        sliderItemList.add(SliderItem.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("SliderItem object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return sliderItemList;
          
         }
         
         @Override
         public ArrayList<SliderItem> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<SliderItem> slider_itemList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("slider_item", limit, offset);
-                while (rs.next())
+            ArrayList<SliderItem> sliderItemList = new ArrayList<SliderItem>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for SliderItem, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    slider_itemList.add(SliderItem.process(rs));
+                    sliderItemList = new ArrayList<SliderItem>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(SliderItem slider_item : slider_itemList)
+                    try
                     {
-                        
-                            getRecordById("Slider", slider_item.getSliderId().toString());
-                            slider_item.setSlider(Slider.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            SliderItem sliderItem = (SliderItem) e.getValue();
+
+                            
+                                getRecordById("Slider", sliderItem.getSliderId().toString());
+                                sliderItem.setSlider(Slider.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object SliderItem method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object SliderItem method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                sliderItemList = new ArrayList<SliderItem>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("slider_item", limit, offset);
+                    while (rs.next())
+                    {
+                        sliderItemList.add(SliderItem.process(rs));
+                    }
+
+                    
+                    
+                        for (SliderItem sliderItem : sliderItemList)
+                        {                        
+                            
+                                getRecordById("Slider", sliderItem.getSliderId().toString());
+                                sliderItem.setSlider(Slider.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object SliderItem method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return slider_itemList;
+            return sliderItemList;            
         }
         
         @Override
         public ArrayList<SliderItem> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<SliderItem> slider_item = new ArrayList<>();
-            try
+            ArrayList<SliderItem> sliderItemList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("slider_item", SliderItem.checkColumnName(columnName), columnValue, SliderItem.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   slider_item.add(SliderItem.process(rs));
+
+                    System.out.println("Find by column for SliderItem(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            SliderItem i = (SliderItem) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                sliderItemList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            sliderItemList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("SliderItem's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("slider_item", SliderItem.checkColumnName(columnName), columnValue, SliderItem.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        sliderItemList.add(SliderItem.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("SliderItem's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return slider_item;
+            return sliderItemList;
         } 
     
         @Override
         public int add(SliderItem obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 SliderItem.checkColumnSize(obj.getTitle(), 255);
                 SliderItem.checkColumnSize(obj.getDescription(), 255);
@@ -150,9 +344,11 @@ import com.busy.engine.entity.Slider;
                 SliderItem.checkColumnSize(obj.getAlternateText(), 255);
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO slider_item(Title,Description,Url,ImageName,AlternateText,Rank,SliderId) VALUES (?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO slider_item(SliderItemId,Title,Description,Url,ImageName,AlternateText,Rank,SliderId,) VALUES (?,?,?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getSliderItemId());
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getUrl());
@@ -161,13 +357,15 @@ import com.busy.engine.entity.Slider;
                 preparedStatement.setInt(6, obj.getRank());
                 preparedStatement.setInt(7, obj.getSliderId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from slider_item;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -177,6 +375,13 @@ import com.busy.engine.entity.Slider;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setSliderItemId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -195,7 +400,8 @@ import com.busy.engine.entity.Slider;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE slider_item SET Title=?,Description=?,Url=?,ImageName=?,AlternateText=?,Rank=?,SliderId=? WHERE SliderItemId=?;");                    
+                prepareStatement("UPDATE slider_item SET com.busy.util.DatabaseColumn@43045a2e=?,com.busy.util.DatabaseColumn@5803c06d=?,com.busy.util.DatabaseColumn@388f3ec3=?,com.busy.util.DatabaseColumn@7e18ca4=?,com.busy.util.DatabaseColumn@66d5635c=?,com.busy.util.DatabaseColumn@2093c743=?,com.busy.util.DatabaseColumn@61ab9cb4=? WHERE SliderItemId=?;");                    
+                preparedStatement.setInt(0, obj.getSliderItemId());
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getUrl());
@@ -205,6 +411,11 @@ import com.busy.engine.entity.Slider;
                 preparedStatement.setInt(7, obj.getSliderId());
                 preparedStatement.setInt(8, obj.getSliderItemId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getSliderItemId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -220,7 +431,16 @@ import com.busy.engine.entity.Slider;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("slider_item");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("slider_item");
+            }
+            return count;
         }
         
         
@@ -269,7 +489,13 @@ import com.busy.engine.entity.Slider;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getSliderItemId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -289,6 +515,12 @@ import com.busy.engine.entity.Slider;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -309,6 +541,12 @@ import com.busy.engine.entity.Slider;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -329,7 +567,44 @@ import com.busy.engine.entity.Slider;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        SliderItem i = (SliderItem) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getSliderItemId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
         

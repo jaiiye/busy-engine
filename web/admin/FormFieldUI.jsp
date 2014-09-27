@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<FormField> form_fieldList = new ArrayList<FormField>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    form_fieldList = FormField.getAllFormFieldByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    form_fieldList = new FormFieldDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    form_fieldList = FormField.getAllFormField();
+    form_fieldList = new FormFieldDaoImpl().findAll(null, null);
 }
 request.setAttribute("form_fieldList", form_fieldList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "content"); %>
-        <% request.setAttribute("subCategory", "forms"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
+        <% request.setAttribute("subCategory", "FormField"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -82,18 +142,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- BEGIN PAGE TITLE & BREADCRUMB-->
-                                <h3 class="page-title"> Form Fields </h3>
+                                <h3 class="page-title"> FormField </h3>
                                 <ul class="page-breadcrumb breadcrumb">                                
                                     <li>
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Content </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">Form Fields</a>
+                                        <a href="#">FormField</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -138,17 +198,17 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="FormFieldId" ${param.column == 'FormFieldId' ? "selected" : "" } >FormFieldId</option>                                                            
-                                                           <option value="FormId" ${param.column == 'FormId' ? "selected" : "" } >FormId</option>                                                            
                                                            <option value="FieldName" ${param.column == 'FieldName' ? "selected" : "" } >FieldName</option>                                                            
-                                                           <option value="FieldDataType" ${param.column == 'FieldDataType' ? "selected" : "" } >FieldDataType</option>                                                            
-                                                           <option value="FieldLabel" ${param.column == 'FieldLabel' ? "selected" : "" } >FieldLabel</option>                                                            
-                                                           <option value="FieldErrorText" ${param.column == 'FieldErrorText' ? "selected" : "" } >FieldErrorText</option>                                                            
-                                                           <option value="FieldValidationRegex" ${param.column == 'FieldValidationRegex' ? "selected" : "" } >FieldValidationRegex</option>                                                            
-                                                           <option value="FieldRank" ${param.column == 'FieldRank' ? "selected" : "" } >FieldRank</option>                                                            
-                                                           <option value="FieldDefaultValue" ${param.column == 'FieldDefaultValue' ? "selected" : "" } >FieldDefaultValue</option>                                                            
-                                                           <option value="FieldOptions" ${param.column == 'FieldOptions' ? "selected" : "" } >FieldOptions</option>                                                            
-                                                           <option value="FieldGroupName" ${param.column == 'FieldGroupName' ? "selected" : "" } >FieldGroupName</option>                                                            
-                                                           <option value="FieldOptional" ${param.column == 'FieldOptional' ? "selected" : "" } >FieldOptional</option>                                                            
+                                                           <option value="Label" ${param.column == 'Label' ? "selected" : "" } >Label</option>                                                            
+                                                           <option value="ErrorText" ${param.column == 'ErrorText' ? "selected" : "" } >ErrorText</option>                                                            
+                                                           <option value="ValidationRegex" ${param.column == 'ValidationRegex' ? "selected" : "" } >ValidationRegex</option>                                                            
+                                                           <option value="Rank" ${param.column == 'Rank' ? "selected" : "" } >Rank</option>                                                            
+                                                           <option value="DefaultValue" ${param.column == 'DefaultValue' ? "selected" : "" } >DefaultValue</option>                                                            
+                                                           <option value="Options" ${param.column == 'Options' ? "selected" : "" } >Options</option>                                                            
+                                                           <option value="GroupName" ${param.column == 'GroupName' ? "selected" : "" } >GroupName</option>                                                            
+                                                           <option value="Optional" ${param.column == 'Optional' ? "selected" : "" } >Optional</option>                                                            
+                                                           <option value="FormFieldTypeId" ${param.column == 'FormFieldTypeId' ? "selected" : "" } >FormFieldTypeId</option>                                                            
+                                                           <option value="FormId" ${param.column == 'FormId' ? "selected" : "" } >FormId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -204,87 +264,97 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=form_field&action=2" method="post">
 
-                                                <input type="hidden" name="formFieldId" value="${form_field.formFieldId}" />
-                                               
+                                                
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="formId">Form:</label>
+                                                    <label class="col-md-2 control-label" for="formFieldId">FormField:</label>
                                                     <div  class="col-md-10">
-                                                        <select name="formId" class="form-control">
-                                                            <%FormField x = (FormField) pageContext.getAttribute("form_field"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("form", x.getFormId().toString(), 2)%>
-                                                        </select>
+                                                        <input type="text" name="formFieldId" class="form-control" value="${form_field.formFieldId}" />
+
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldName">Name:</label>
+                                                    <label class="col-md-2 control-label" for="fieldName">FieldName:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="fieldName" class="form-control maxlength-handler" maxlength="255" value="${form_field.fieldName}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldDataType">Data Type:</label>
+                                                    <label class="col-md-2 control-label" for="label">Label:</label>
                                                     <div  class="col-md-10">
-                                                        <select name="fieldDataType" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("form_field_type", x.getFieldDataType().toString(), 2)%>
-                                                        </select> 
+                                                        <input type="text" name="label" class="form-control maxlength-handler" maxlength="255" value="${form_field.label}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldLabel">Label:</label>
+                                                    <label class="col-md-2 control-label" for="errorText">ErrorText:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fieldLabel" class="form-control maxlength-handler" maxlength="255" value="${form_field.fieldLabel}" />
+                                                        <input type="text" name="errorText" class="form-control maxlength-handler" maxlength="255" value="${form_field.errorText}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldErrorText">Error Text:</label>
+                                                    <label class="col-md-2 control-label" for="validationRegex">ValidationRegex:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fieldErrorText" class="form-control maxlength-handler" maxlength="255" value="${form_field.fieldErrorText}" />
+                                                        <input type="text" name="validationRegex" class="form-control maxlength-handler" maxlength="255" value="${form_field.validationRegex}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldValidationRegex">Validation Regex:</label>
+                                                    <label class="col-md-2 control-label" for="rank">Rank:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fieldValidationRegex" class="form-control maxlength-handler" maxlength="255" value="${form_field.fieldValidationRegex}" />
+                                                        <input type="text" name="rank" class="form-control" value="${form_field.rank}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldRank">Rank:</label>
+                                                    <label class="col-md-2 control-label" for="defaultValue">DefaultValue:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fieldRank" class="form-control" value="${form_field.fieldRank}" />
+                                                        <input type="text" name="defaultValue" class="form-control maxlength-handler" maxlength="255" value="${form_field.defaultValue}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldDefaultValue">Default Value:</label>
+                                                    <label class="col-md-2 control-label" for="options">Options:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fieldDefaultValue" class="form-control maxlength-handler" maxlength="255" value="${form_field.fieldDefaultValue}" />
+                                                        <textarea name="options" class="ckeditor form-control" rows="4">${form_field.options}</textarea>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldOptions">Options (CSV format):</label>
+                                                    <label class="col-md-2 control-label" for="groupName">GroupName:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fieldOptions" class="form-control" value="${form_field.fieldOptions}">
+                                                        <input type="text" name="groupName" class="form-control maxlength-handler" maxlength="255" value="${form_field.groupName}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldGroupName">Group Name:</label>
+                                                    <label class="col-md-2 control-label" for="optional">Optional:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fieldGroupName" class="form-control maxlength-handler" maxlength="255" value="${form_field.fieldGroupName}" />
+                                                        <input type="text" name="optional" class="form-control" value="${form_field.optional}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="fieldOptional">Optional:</label>
+                                                    <label class="col-md-2 control-label" for="formFieldTypeId">FormFieldType:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="fieldOptional" class="form-control" value="${form_field.fieldOptional}" />
+                                                        <input type="text" name="formFieldTypeId" class="form-control" value="${form_field.formFieldTypeId}" />
+                                                        <select name="formFieldTypeId" class="form-control">
+                                                            <%FormField x = (FormField) pageContext.getAttribute("form_field"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("form_field_type", x.getFormFieldTypeId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="formId">Form:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="formId" class="form-control" value="${form_field.formId}" />
+                                                        <select name="formId" class="form-control">
+                                                            <%FormField x = (FormField) pageContext.getAttribute("form_field"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("form", x.getFormId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
@@ -328,12 +398,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Form</label>
+                                                        <label class="col-md-2 control-label">FormFieldId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="formId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("form", "", 2)%>
+                                                                <select name="formFieldId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("form_field", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -342,7 +412,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Name</label>
+                                                        <label class="col-md-2 control-label">FieldName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
@@ -354,25 +424,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Data Type</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="fieldDataType" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("form_field_type", "", 2)%>
-                                                                </select> 
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
                                                         <label class="col-md-2 control-label">Label</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fieldLabel" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="label" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -380,11 +436,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Error Text</label>
+                                                        <label class="col-md-2 control-label">ErrorText</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fieldErrorText" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="errorText" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -392,11 +448,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Validation Regex</label>
+                                                        <label class="col-md-2 control-label">ValidationRegex</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fieldValidationRegex" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="validationRegex" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -408,7 +464,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fieldRank" class="form-control" placeholder="Enter Integer" />                                                            
+                                                                <input type="text" name="rank" class="form-control" placeholder="Enter Integer" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -416,11 +472,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Default Value</label>
+                                                        <label class="col-md-2 control-label">DefaultValue</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fieldDefaultValue" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="defaultValue" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -428,11 +484,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">FieldOptions</label>
+                                                        <label class="col-md-2 control-label">Options</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <textarea name="fieldOptions" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                                <textarea name="options" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -440,11 +496,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Group Name</label>
+                                                        <label class="col-md-2 control-label">GroupName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fieldGroupName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="groupName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -456,7 +512,35 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fieldOptional" class="form-control" placeholder="Enter Integer" />                                                            
+                                                                <input type="text" name="optional" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">FormFieldTypeId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="formFieldTypeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("form_field_type", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">FormId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="formId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("form", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -485,7 +569,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                  <div class="portlet box red-flamingo">
                                     <div class="portlet-title">
                                         <div class="caption">
-                                            <i class="fa fa-list-alt"></i>Form Field Listing
+                                            <i class="fa fa-list-alt"></i>FormField Listing
                                         </div>
                                         <div class="actions">
                                             <div class="btn-group">                                
@@ -497,13 +581,19 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">Form Id</label> 
-                                                    <label><input type="checkbox" checked data-column="2">Name</label> 
-                                                    <label><input type="checkbox" checked data-column="3">Data Type</label> 
-                                                    <label><input type="checkbox" checked data-column="4">Label</label> 
+                                                    <label><input type="checkbox" checked data-column="1">FieldName</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Label</label> 
+                                                    <label><input type="checkbox" checked data-column="3">ErrorText</label> 
+                                                    <label><input type="checkbox" checked data-column="4">ValidationRegex</label> 
                                                     <label><input type="checkbox" checked data-column="5">Rank</label> 
-                                                    <label><input type="checkbox" checked data-column="6">Default Value</label>
-                                                    <label><input type="checkbox" checked data-column="7">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="6">DefaultValue</label> 
+                                                    <label><input type="checkbox" checked data-column="7">Options</label> 
+                                                    <label><input type="checkbox" checked data-column="8">GroupName</label> 
+                                                    <label><input type="checkbox" checked data-column="9">Optional</label> 
+                                                    <label><input type="checkbox" checked data-column="10">TypeId</label> 
+                                                    <label><input type="checkbox" checked data-column="11">FormId</label> 
+                                                    
+                                                    <label><input type="checkbox" checked data-column="12">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -516,12 +606,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>Form Id</th> 
-                                                    <th>Name</th> 
-                                                    <th>Data Type</th> 
+                                                    <th>FieldName</th> 
                                                     <th>Label</th> 
+                                                    <th>ErrorText</th> 
+                                                    <th>ValidationRegex</th> 
                                                     <th>Rank</th> 
-                                                    <th>Default Value</th> 
+                                                    <th>DefaultValue</th> 
+                                                    <th>Options</th> 
+                                                    <th>GroupName</th> 
+                                                    <th>Optional</th> 
+                                                    <th>TypeId</th> 
+                                                    <th>FormId</th> 
+                                                                                                        
                                                     <th>Actions</th> 
                                                 </tr>                                
                                             </thead>
@@ -529,12 +625,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="form_field" items="${form_fieldList}" >
                                                 <tr>                                                    
                                                     <td>${form_field.formFieldId}</td> 
-                                                    <td>${form_field.formId}</td> 
                                                     <td>${form_field.fieldName}</td> 
-                                                    <td>${form_field.fieldDataType}</td> 
-                                                    <td>${form_field.fieldLabel}</td> 
-                                                    <td>${form_field.fieldRank}</td> 
-                                                    <td>${form_field.fieldDefaultValue}</td> 
+                                                    <td>${form_field.label}</td> 
+                                                    <td>${form_field.errorText}</td> 
+                                                    <td>${form_field.validationRegex}</td> 
+                                                    <td>${form_field.rank}</td> 
+                                                    <td>${form_field.defaultValue}</td> 
+                                                    <td>${form_field.options}</td> 
+                                                    <td>${form_field.groupName}</td> 
+                                                    <td>${form_field.optional}</td> 
+                                                    <td>${form_field.formFieldTypeId}</td> 
+                                                    <td>${form_field.formId}</td> 
+                                                    
                                                     <td>
                                                         <button id="edit-item${form_field.formFieldId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
                                                         <button id="delete-item${form_field.formFieldId}" class="btn btn-sm red filter-cancel"><span class="glyphicon glyphicon-trash"></span></button> 
@@ -620,8 +722,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -661,17 +764,17 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         formFieldId:    { required: true, number: true }, 
-                        formId:    { required: true, number: true }, 
                         fieldName:    { required: true, minlength: 1, maxlength: 255}, 
-                        fieldDataType:    { required: true, minlength: 1, maxlength: 45}, 
-                        fieldLabel:    { required: true, minlength: 1, maxlength: 255}, 
-                        fieldErrorText:    { required: true, minlength: 1, maxlength: 255}, 
-                        fieldValidationRegex:    { required: true, minlength: 1, maxlength: 255}, 
-                        fieldRank:    { required: true, number: true }, 
-                        fieldDefaultValue:    { required: true, minlength: 1, maxlength: 255}, 
-                        fieldOptions:    { required: true, minlength: 1, maxlength: 65535}, 
-                        fieldGroupName:    { required: true, minlength: 1, maxlength: 255}, 
-                        fieldOptional:    { required: true, number: true } 
+                        label:    { required: true, minlength: 1, maxlength: 255}, 
+                        errorText:    { required: true, minlength: 1, maxlength: 255}, 
+                        validationRegex:    { required: true, minlength: 1, maxlength: 255}, 
+                        rank:    { required: true, number: true }, 
+                        defaultValue:    { required: true, minlength: 1, maxlength: 255}, 
+                        options:    { required: true, minlength: 1, maxlength: 65535}, 
+                        groupName:    { required: true, minlength: 1, maxlength: 255}, 
+                        optional:    { required: true, number: true }, 
+                        formFieldTypeId:    { required: true, number: true }, 
+                        formId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

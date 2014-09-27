@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<ItemReview> item_reviewList = new ArrayList<ItemReview>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    item_reviewList = ItemReview.getAllItemReviewByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    item_reviewList = new ItemReviewDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    item_reviewList = ItemReview.getAllItemReview();
+    item_reviewList = new ItemReviewDaoImpl().findAll(null, null);
 }
 request.setAttribute("item_reviewList", item_reviewList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -139,8 +199,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <select name="column" class="form-control">
                                                             <option value="ItemReviewId" ${param.column == 'ItemReviewId' ? "selected" : "" } >ItemReviewId</option>                                                            
                                                            <option value="ItemId" ${param.column == 'ItemId' ? "selected" : "" } >ItemId</option>                                                            
-                                                           <option value="CommentId" ${param.column == 'CommentId' ? "selected" : "" } >CommentId</option>                                                            
                                                            <option value="Rating" ${param.column == 'Rating' ? "selected" : "" } >Rating</option>                                                            
+                                                           <option value="HelpfulYes" ${param.column == 'HelpfulYes' ? "selected" : "" } >HelpfulYes</option>                                                            
+                                                           <option value="HelpfulNo" ${param.column == 'HelpfulNo' ? "selected" : "" } >HelpfulNo</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -196,7 +257,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=item_review&action=2" method="post">
 
-                                                <input type="hidden" name="itemReviewId" value="${item_review.itemReviewId}" />
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemReviewId">ItemReview:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="itemReviewId" class="form-control" value="${item_review.itemReviewId}" />
+
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="itemId">Item:</label>
@@ -210,19 +278,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="commentId">Comment:</label>
+                                                    <label class="col-md-2 control-label" for="rating">Rating:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="commentId" class="form-control" value="${item_review.commentId}" />
-                                                        <select name="commentId" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("comment", x.getCommentId().toString(), 2)%>
-                                                        </select>
+                                                        <input type="text" name="rating" class="form-control" value="${item_review.rating}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="rating">Rating:</label>
+                                                    <label class="col-md-2 control-label" for="helpfulYes">HelpfulYes:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="rating" class="form-control" value="${item_review.rating}" />
+                                                        <input type="text" name="helpfulYes" class="form-control" value="${item_review.helpfulYes}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="helpfulNo">HelpfulNo:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="helpfulNo" class="form-control" value="${item_review.helpfulNo}" />
                                                     </div>
                                                 </div>
                                                 
@@ -266,12 +338,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemId</label>
+                                                        <label class="col-md-2 control-label">ItemReviewId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="itemId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Item", "", 2)%>
+                                                                <select name="itemReviewId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_review", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -280,12 +352,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">CommentId</label>
+                                                        <label class="col-md-2 control-label">ItemId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="commentId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Comment", "", 2)%>
+                                                                <select name="itemId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -299,6 +371,30 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <input type="text" name="rating" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">HelpfulYes</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="helpfulYes" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">HelpfulNo</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="helpfulNo" class="form-control" placeholder="Enter Integer" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -340,10 +436,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
                                                     <label><input type="checkbox" checked data-column="1">ItemId</label> 
-                                                    <label><input type="checkbox" checked data-column="2">CommentId</label> 
-                                                    <label><input type="checkbox" checked data-column="3">Rating</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Rating</label> 
+                                                    <label><input type="checkbox" checked data-column="3">HelpfulYes</label> 
+                                                    <label><input type="checkbox" checked data-column="4">HelpfulNo</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="4">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="5">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -357,8 +454,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>
                                                     <th>Id</th> 
                                                     <th>ItemId</th> 
-                                                    <th>CommentId</th> 
                                                     <th>Rating</th> 
+                                                    <th>HelpfulYes</th> 
+                                                    <th>HelpfulNo</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -368,8 +466,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>                                                    
                                                     <td>${item_review.itemReviewId}</td> 
                                                     <td>${item_review.itemId}</td> 
-                                                    <td>${item_review.commentId}</td> 
                                                     <td>${item_review.rating}</td> 
+                                                    <td>${item_review.helpfulYes}</td> 
+                                                    <td>${item_review.helpfulNo}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${item_review.itemReviewId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -456,8 +555,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -498,8 +598,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     rules: {                                
                         itemReviewId:    { required: true, number: true }, 
                         itemId:    { required: true, number: true }, 
-                        commentId:    { required: true, number: true }, 
-                        rating:    { required: true, number: true } 
+                        rating:    { required: true, number: true }, 
+                        helpfulYes:    { required: true, number: true }, 
+                        helpfulNo:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

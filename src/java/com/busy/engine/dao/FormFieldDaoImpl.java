@@ -36,37 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.FormFieldType;
-import com.busy.engine.entity.FormField;
-import com.busy.engine.entity.Form;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class FormFieldDaoImpl extends BasicConnection implements Serializable, FormFieldDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public FormField find(Integer id)
+        public FormFieldDaoImpl()
         {
-            return findByColumn("FormFieldId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<FormField> findAll(Integer limit, Integer offset)
+
+        public FormFieldDaoImpl(boolean enableCache)
         {
-            ArrayList<FormField> form_field = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class FormFieldCache
+        {
+            public static final ConcurrentLruCache<Integer, FormField> formFieldCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (FormField i : findAll())
+                {
+                    getCache().put(i.getFormFieldId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, FormField> getCache()
+        {
+            return FormFieldCache.formFieldCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, FormField> buildCache(ArrayList<FormField> formFieldList)
+        {        
+            ConcurrentLruCache<Integer, FormField> cache = new ConcurrentLruCache<Integer, FormField>(formFieldList.size() + 1000);
+            for (FormField i : formFieldList)
+            {
+                cache.put(i.getFormFieldId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<FormField> findAll()
+        {
+            ArrayList<FormField> formField = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("form_field");
-                while(rs.next())
+                getAllRecordsByTableName("formField");
+                while (rs.next())
                 {
-                    form_field.add(FormField.process(rs));
+                    formField.add(FormField.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -77,75 +137,211 @@ import com.busy.engine.entity.Form;
             {
                 closeConnection();
             }
-            return form_field;
+            return formField;
+        }
+        
+        @Override
+        public FormField find(Integer id)
+        {
+            return findByColumn("FormFieldId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<FormField> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<FormField> formFieldList = new ArrayList<FormField>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for FormField, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    formFieldList = new ArrayList<FormField>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("form_field", limit, offset);
+                    while (rs.next())
+                    {
+                        formFieldList.add(FormField.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("FormField object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return formFieldList;
          
         }
         
         @Override
         public ArrayList<FormField> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<FormField> form_fieldList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("form_field", limit, offset);
-                while (rs.next())
+            ArrayList<FormField> formFieldList = new ArrayList<FormField>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for FormField, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    form_fieldList.add(FormField.process(rs));
+                    formFieldList = new ArrayList<FormField>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(FormField form_field : form_fieldList)
+                    try
                     {
-                        
-                            getRecordById("FormFieldType", form_field.getFormFieldTypeId().toString());
-                            form_field.setFormFieldType(FormFieldType.process(rs));               
-                        
-                            getRecordById("Form", form_field.getFormId().toString());
-                            form_field.setForm(Form.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            FormField formField = (FormField) e.getValue();
+
+                            
+                                getRecordById("FormFieldType", formField.getFormFieldTypeId().toString());
+                                formField.setFormFieldType(FormFieldType.process(rs));               
+                            
+                                getRecordById("Form", formField.getFormId().toString());
+                                formField.setForm(Form.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object FormField method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object FormField method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                formFieldList = new ArrayList<FormField>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("form_field", limit, offset);
+                    while (rs.next())
+                    {
+                        formFieldList.add(FormField.process(rs));
+                    }
+
+                    
+                    
+                        for (FormField formField : formFieldList)
+                        {                        
+                            
+                                getRecordById("FormFieldType", formField.getFormFieldTypeId().toString());
+                                formField.setFormFieldType(FormFieldType.process(rs));               
+                            
+                                getRecordById("Form", formField.getFormId().toString());
+                                formField.setForm(Form.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object FormField method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return form_fieldList;
+            return formFieldList;            
         }
         
         @Override
         public ArrayList<FormField> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<FormField> form_field = new ArrayList<>();
-            try
+            ArrayList<FormField> formFieldList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("form_field", FormField.checkColumnName(columnName), columnValue, FormField.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   form_field.add(FormField.process(rs));
+
+                    System.out.println("Find by column for FormField(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            FormField i = (FormField) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                formFieldList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            formFieldList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("FormField's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("form_field", FormField.checkColumnName(columnName), columnValue, FormField.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        formFieldList.add(FormField.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("FormField's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return form_field;
+            return formFieldList;
         } 
     
         @Override
         public int add(FormField obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 FormField.checkColumnSize(obj.getFieldName(), 255);
                 FormField.checkColumnSize(obj.getLabel(), 255);
@@ -158,9 +354,11 @@ import com.busy.engine.entity.Form;
                 
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO form_field(FieldName,Label,ErrorText,ValidationRegex,Rank,DefaultValue,Options,GroupName,Optional,FormFieldTypeId,FormId) VALUES (?,?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO form_field(FormFieldId,FieldName,Label,ErrorText,ValidationRegex,Rank,DefaultValue,Options,GroupName,Optional,FormFieldTypeId,FormId,) VALUES (?,?,?,?,?,?,?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getFormFieldId());
                 preparedStatement.setString(1, obj.getFieldName());
                 preparedStatement.setString(2, obj.getLabel());
                 preparedStatement.setString(3, obj.getErrorText());
@@ -173,13 +371,15 @@ import com.busy.engine.entity.Form;
                 preparedStatement.setInt(10, obj.getFormFieldTypeId());
                 preparedStatement.setInt(11, obj.getFormId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from form_field;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -189,6 +389,13 @@ import com.busy.engine.entity.Form;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setFormFieldId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -211,7 +418,8 @@ import com.busy.engine.entity.Form;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE form_field SET FieldName=?,Label=?,ErrorText=?,ValidationRegex=?,Rank=?,DefaultValue=?,Options=?,GroupName=?,Optional=?,FormFieldTypeId=?,FormId=? WHERE FormFieldId=?;");                    
+                prepareStatement("UPDATE form_field SET com.busy.util.DatabaseColumn@6a4aed2a=?,com.busy.util.DatabaseColumn@41451242=?,com.busy.util.DatabaseColumn@63c819dc=?,com.busy.util.DatabaseColumn@210e6ae4=?,com.busy.util.DatabaseColumn@1c90e052=?,com.busy.util.DatabaseColumn@75ae3680=?,com.busy.util.DatabaseColumn@568bd710=?,com.busy.util.DatabaseColumn@400de6f=?,com.busy.util.DatabaseColumn@1f093ccd=?,com.busy.util.DatabaseColumn@1b97039a=?,com.busy.util.DatabaseColumn@132c64af=? WHERE FormFieldId=?;");                    
+                preparedStatement.setInt(0, obj.getFormFieldId());
                 preparedStatement.setString(1, obj.getFieldName());
                 preparedStatement.setString(2, obj.getLabel());
                 preparedStatement.setString(3, obj.getErrorText());
@@ -225,6 +433,11 @@ import com.busy.engine.entity.Form;
                 preparedStatement.setInt(11, obj.getFormId());
                 preparedStatement.setInt(12, obj.getFormFieldId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getFormFieldId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -240,7 +453,16 @@ import com.busy.engine.entity.Form;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("form_field");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("form_field");
+            }
+            return count;
         }
         
         
@@ -292,7 +514,13 @@ import com.busy.engine.entity.Form;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getFormFieldId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -312,6 +540,12 @@ import com.busy.engine.entity.Form;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -332,6 +566,12 @@ import com.busy.engine.entity.Form;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -352,7 +592,44 @@ import com.busy.engine.entity.Form;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        FormField i = (FormField) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getFormFieldId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
         

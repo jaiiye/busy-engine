@@ -36,35 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.PostCategory;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class PostCategoryDaoImpl extends BasicConnection implements Serializable, PostCategoryDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public PostCategory find(Integer id)
+        public PostCategoryDaoImpl()
         {
-            return findByColumn("PostCategoryId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<PostCategory> findAll(Integer limit, Integer offset)
+
+        public PostCategoryDaoImpl(boolean enableCache)
         {
-            ArrayList<PostCategory> post_category = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class PostCategoryCache
+        {
+            public static final ConcurrentLruCache<Integer, PostCategory> postCategoryCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (PostCategory i : findAll())
+                {
+                    getCache().put(i.getPostCategoryId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, PostCategory> getCache()
+        {
+            return PostCategoryCache.postCategoryCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, PostCategory> buildCache(ArrayList<PostCategory> postCategoryList)
+        {        
+            ConcurrentLruCache<Integer, PostCategory> cache = new ConcurrentLruCache<Integer, PostCategory>(postCategoryList.size() + 1000);
+            for (PostCategory i : postCategoryList)
+            {
+                cache.put(i.getPostCategoryId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<PostCategory> findAll()
+        {
+            ArrayList<PostCategory> postCategory = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("post_category");
-                while(rs.next())
+                getAllRecordsByTableName("postCategory");
+                while (rs.next())
                 {
-                    post_category.add(PostCategory.process(rs));
+                    postCategory.add(PostCategory.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -75,78 +137,193 @@ import com.busy.engine.entity.PostCategory;
             {
                 closeConnection();
             }
-            return post_category;
+            return postCategory;
+        }
+        
+        @Override
+        public PostCategory find(Integer id)
+        {
+            return findByColumn("PostCategoryId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<PostCategory> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<PostCategory> postCategoryList = new ArrayList<PostCategory>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for PostCategory, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    postCategoryList = new ArrayList<PostCategory>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("post_category", limit, offset);
+                    while (rs.next())
+                    {
+                        postCategoryList.add(PostCategory.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("PostCategory object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return postCategoryList;
          
         }
         
         @Override
         public ArrayList<PostCategory> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<PostCategory> post_categoryList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("post_category", limit, offset);
-                while (rs.next())
+            ArrayList<PostCategory> postCategoryList = new ArrayList<PostCategory>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for PostCategory, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    post_categoryList.add(PostCategory.process(rs));
+                    postCategoryList = new ArrayList<PostCategory>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object PostCategory method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                postCategoryList = new ArrayList<PostCategory>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("post_category", limit, offset);
+                    while (rs.next())
+                    {
+                        postCategoryList.add(PostCategory.process(rs));
+                    }
+
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object PostCategory method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return post_categoryList;
+            return postCategoryList;            
         }
         
         @Override
         public ArrayList<PostCategory> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<PostCategory> post_category = new ArrayList<>();
-            try
+            ArrayList<PostCategory> postCategoryList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("post_category", PostCategory.checkColumnName(columnName), columnValue, PostCategory.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   post_category.add(PostCategory.process(rs));
+
+                    System.out.println("Find by column for PostCategory(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            PostCategory i = (PostCategory) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                postCategoryList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            postCategoryList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("PostCategory's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("post_category", PostCategory.checkColumnName(columnName), columnValue, PostCategory.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        postCategoryList.add(PostCategory.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("PostCategory's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return post_category;
+            return postCategoryList;
         } 
     
         @Override
         public int add(PostCategory obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 PostCategory.checkColumnSize(obj.getCategoryName(), 100);
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO post_category(CategoryName) VALUES (?);");                    
+                prepareStatement("INSERT INTO post_category(PostCategoryId,CategoryName,) VALUES (?);");                    
+                preparedStatement.setInt(0, obj.getPostCategoryId());
                 preparedStatement.setString(1, obj.getCategoryName());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from post_category;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -156,6 +333,13 @@ import com.busy.engine.entity.PostCategory;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setPostCategoryId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -168,10 +352,16 @@ import com.busy.engine.entity.PostCategory;
                 PostCategory.checkColumnSize(obj.getCategoryName(), 100);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE post_category SET CategoryName=? WHERE PostCategoryId=?;");                    
+                prepareStatement("UPDATE post_category SET com.busy.util.DatabaseColumn@3cb6fe03=? WHERE PostCategoryId=?;");                    
+                preparedStatement.setInt(0, obj.getPostCategoryId());
                 preparedStatement.setString(1, obj.getCategoryName());
                 preparedStatement.setInt(2, obj.getPostCategoryId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getPostCategoryId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -187,7 +377,16 @@ import com.busy.engine.entity.PostCategory;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("post_category");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("post_category");
+            }
+            return count;
         }
         
         
@@ -221,7 +420,13 @@ import com.busy.engine.entity.PostCategory;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getPostCategoryId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -241,6 +446,12 @@ import com.busy.engine.entity.PostCategory;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -261,6 +472,12 @@ import com.busy.engine.entity.PostCategory;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -281,7 +498,44 @@ import com.busy.engine.entity.PostCategory;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        PostCategory i = (PostCategory) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getPostCategoryId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

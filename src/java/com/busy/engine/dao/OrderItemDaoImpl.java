@@ -36,37 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.CustomerOrder;
-import com.busy.engine.entity.OrderItem;
-import com.busy.engine.entity.Item;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class OrderItemDaoImpl extends BasicConnection implements Serializable, OrderItemDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public OrderItem find(Integer id)
+        public OrderItemDaoImpl()
         {
-            return findByColumn("OrderItemId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<OrderItem> findAll(Integer limit, Integer offset)
+
+        public OrderItemDaoImpl(boolean enableCache)
         {
-            ArrayList<OrderItem> order_item = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class OrderItemCache
+        {
+            public static final ConcurrentLruCache<Integer, OrderItem> orderItemCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (OrderItem i : findAll())
+                {
+                    getCache().put(i.getOrderItemId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, OrderItem> getCache()
+        {
+            return OrderItemCache.orderItemCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, OrderItem> buildCache(ArrayList<OrderItem> orderItemList)
+        {        
+            ConcurrentLruCache<Integer, OrderItem> cache = new ConcurrentLruCache<Integer, OrderItem>(orderItemList.size() + 1000);
+            for (OrderItem i : orderItemList)
+            {
+                cache.put(i.getOrderItemId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<OrderItem> findAll()
+        {
+            ArrayList<OrderItem> orderItem = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("order_item");
-                while(rs.next())
+                getAllRecordsByTableName("orderItem");
+                while (rs.next())
                 {
-                    order_item.add(OrderItem.process(rs));
+                    orderItem.add(OrderItem.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -77,97 +137,237 @@ import com.busy.engine.entity.Item;
             {
                 closeConnection();
             }
-            return order_item;
+            return orderItem;
+        }
+        
+        @Override
+        public OrderItem find(Integer id)
+        {
+            return findByColumn("OrderItemId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<OrderItem> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<OrderItem> orderItemList = new ArrayList<OrderItem>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for OrderItem, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    orderItemList = new ArrayList<OrderItem>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("order_item", limit, offset);
+                    while (rs.next())
+                    {
+                        orderItemList.add(OrderItem.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("OrderItem object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return orderItemList;
          
         }
         
         @Override
         public ArrayList<OrderItem> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<OrderItem> order_itemList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("order_item", limit, offset);
-                while (rs.next())
+            ArrayList<OrderItem> orderItemList = new ArrayList<OrderItem>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for OrderItem, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    order_itemList.add(OrderItem.process(rs));
+                    orderItemList = new ArrayList<OrderItem>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(OrderItem order_item : order_itemList)
+                    try
                     {
-                        
-                            getRecordById("CustomerOrder", order_item.getCustomerOrderId().toString());
-                            order_item.setCustomerOrder(CustomerOrder.process(rs));               
-                        
-                            getRecordById("Item", order_item.getItemId().toString());
-                            order_item.setItem(Item.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            OrderItem orderItem = (OrderItem) e.getValue();
+
+                            
+                                getRecordById("CustomerOrder", orderItem.getCustomerOrderId().toString());
+                                orderItem.setCustomerOrder(CustomerOrder.process(rs));               
+                            
+                                getRecordById("Item", orderItem.getItemId().toString());
+                                orderItem.setItem(Item.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object OrderItem method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object OrderItem method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                orderItemList = new ArrayList<OrderItem>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("order_item", limit, offset);
+                    while (rs.next())
+                    {
+                        orderItemList.add(OrderItem.process(rs));
+                    }
+
+                    
+                    
+                        for (OrderItem orderItem : orderItemList)
+                        {                        
+                            
+                                getRecordById("CustomerOrder", orderItem.getCustomerOrderId().toString());
+                                orderItem.setCustomerOrder(CustomerOrder.process(rs));               
+                            
+                                getRecordById("Item", orderItem.getItemId().toString());
+                                orderItem.setItem(Item.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object OrderItem method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return order_itemList;
+            return orderItemList;            
         }
         
         @Override
         public ArrayList<OrderItem> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<OrderItem> order_item = new ArrayList<>();
-            try
+            ArrayList<OrderItem> orderItemList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("order_item", OrderItem.checkColumnName(columnName), columnValue, OrderItem.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   order_item.add(OrderItem.process(rs));
+
+                    System.out.println("Find by column for OrderItem(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            OrderItem i = (OrderItem) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                orderItemList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            orderItemList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("OrderItem's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("order_item", OrderItem.checkColumnName(columnName), columnValue, OrderItem.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        orderItemList.add(OrderItem.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("OrderItem's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return order_item;
+            return orderItemList;
         } 
     
         @Override
         public int add(OrderItem obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 
                 
                 
                 OrderItem.checkColumnSize(obj.getOptionName(), 100);
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO order_item(CustomerOrderId,ItemId,Quantity,OptionName,UnitPrice) VALUES (?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO order_item(OrderItemId,CustomerOrderId,ItemId,Quantity,OptionName,UnitPrice,) VALUES (?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getOrderItemId());
                 preparedStatement.setInt(1, obj.getCustomerOrderId());
                 preparedStatement.setInt(2, obj.getItemId());
                 preparedStatement.setInt(3, obj.getQuantity());
                 preparedStatement.setString(4, obj.getOptionName());
                 preparedStatement.setDouble(5, obj.getUnitPrice());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from order_item;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -177,6 +377,13 @@ import com.busy.engine.entity.Item;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setOrderItemId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -193,7 +400,8 @@ import com.busy.engine.entity.Item;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE order_item SET CustomerOrderId=?,ItemId=?,Quantity=?,OptionName=?,UnitPrice=? WHERE OrderItemId=?;");                    
+                prepareStatement("UPDATE order_item SET com.busy.util.DatabaseColumn@25e9fb42=?,com.busy.util.DatabaseColumn@454e68f2=?,com.busy.util.DatabaseColumn@54979d14=?,com.busy.util.DatabaseColumn@4c4b8e1d=?,com.busy.util.DatabaseColumn@26924f3d=? WHERE OrderItemId=?;");                    
+                preparedStatement.setInt(0, obj.getOrderItemId());
                 preparedStatement.setInt(1, obj.getCustomerOrderId());
                 preparedStatement.setInt(2, obj.getItemId());
                 preparedStatement.setInt(3, obj.getQuantity());
@@ -201,6 +409,11 @@ import com.busy.engine.entity.Item;
                 preparedStatement.setDouble(5, obj.getUnitPrice());
                 preparedStatement.setInt(6, obj.getOrderItemId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getOrderItemId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -216,7 +429,16 @@ import com.busy.engine.entity.Item;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("order_item");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("order_item");
+            }
+            return count;
         }
         
         
@@ -269,7 +491,13 @@ import com.busy.engine.entity.Item;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getOrderItemId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -289,6 +517,12 @@ import com.busy.engine.entity.Item;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -309,6 +543,12 @@ import com.busy.engine.entity.Item;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -329,7 +569,44 @@ import com.busy.engine.entity.Item;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        OrderItem i = (OrderItem) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getOrderItemId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

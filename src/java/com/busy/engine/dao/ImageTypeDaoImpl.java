@@ -36,35 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.ImageType;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class ImageTypeDaoImpl extends BasicConnection implements Serializable, ImageTypeDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public ImageType find(Integer id)
+        public ImageTypeDaoImpl()
         {
-            return findByColumn("ImageTypeId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<ImageType> findAll(Integer limit, Integer offset)
+
+        public ImageTypeDaoImpl(boolean enableCache)
         {
-            ArrayList<ImageType> image_type = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class ImageTypeCache
+        {
+            public static final ConcurrentLruCache<Integer, ImageType> imageTypeCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (ImageType i : findAll())
+                {
+                    getCache().put(i.getImageTypeId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, ImageType> getCache()
+        {
+            return ImageTypeCache.imageTypeCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, ImageType> buildCache(ArrayList<ImageType> imageTypeList)
+        {        
+            ConcurrentLruCache<Integer, ImageType> cache = new ConcurrentLruCache<Integer, ImageType>(imageTypeList.size() + 1000);
+            for (ImageType i : imageTypeList)
+            {
+                cache.put(i.getImageTypeId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<ImageType> findAll()
+        {
+            ArrayList<ImageType> imageType = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("image_type");
-                while(rs.next())
+                getAllRecordsByTableName("imageType");
+                while (rs.next())
                 {
-                    image_type.add(ImageType.process(rs));
+                    imageType.add(ImageType.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -75,80 +137,195 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
-            return image_type;
+            return imageType;
+        }
+        
+        @Override
+        public ImageType find(Integer id)
+        {
+            return findByColumn("ImageTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<ImageType> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<ImageType> imageTypeList = new ArrayList<ImageType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for ImageType, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    imageTypeList = new ArrayList<ImageType>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("image_type", limit, offset);
+                    while (rs.next())
+                    {
+                        imageTypeList.add(ImageType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ImageType object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return imageTypeList;
          
         }
         
         @Override
         public ArrayList<ImageType> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<ImageType> image_typeList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("image_type", limit, offset);
-                while (rs.next())
+            ArrayList<ImageType> imageTypeList = new ArrayList<ImageType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for ImageType, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    image_typeList.add(ImageType.process(rs));
+                    imageTypeList = new ArrayList<ImageType>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object ImageType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                imageTypeList = new ArrayList<ImageType>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("image_type", limit, offset);
+                    while (rs.next())
+                    {
+                        imageTypeList.add(ImageType.process(rs));
+                    }
+
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object ImageType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return image_typeList;
+            return imageTypeList;            
         }
         
         @Override
         public ArrayList<ImageType> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<ImageType> image_type = new ArrayList<>();
-            try
+            ArrayList<ImageType> imageTypeList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("image_type", ImageType.checkColumnName(columnName), columnValue, ImageType.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   image_type.add(ImageType.process(rs));
+
+                    System.out.println("Find by column for ImageType(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            ImageType i = (ImageType) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                imageTypeList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            imageTypeList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("ImageType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("image_type", ImageType.checkColumnName(columnName), columnValue, ImageType.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        imageTypeList.add(ImageType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ImageType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return image_type;
+            return imageTypeList;
         } 
     
         @Override
         public int add(ImageType obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 ImageType.checkColumnSize(obj.getTypeName(), 45);
                 ImageType.checkColumnSize(obj.getDescription(), 255);
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO image_type(TypeName,Description) VALUES (?,?);");                    
+                prepareStatement("INSERT INTO image_type(ImageTypeId,TypeName,Description,) VALUES (?,?);");                    
+                preparedStatement.setInt(0, obj.getImageTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDescription());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from image_type;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -158,6 +335,13 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setImageTypeId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -171,11 +355,17 @@ import com.busy.engine.entity.ImageType;
                 ImageType.checkColumnSize(obj.getDescription(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE image_type SET TypeName=?,Description=? WHERE ImageTypeId=?;");                    
+                prepareStatement("UPDATE image_type SET com.busy.util.DatabaseColumn@1fb101f6=?,com.busy.util.DatabaseColumn@66c51d43=? WHERE ImageTypeId=?;");                    
+                preparedStatement.setInt(0, obj.getImageTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getImageTypeId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getImageTypeId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -191,7 +381,16 @@ import com.busy.engine.entity.ImageType;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("image_type");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("image_type");
+            }
+            return count;
         }
         
         
@@ -225,7 +424,13 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getImageTypeId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -245,6 +450,12 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -265,6 +476,12 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -285,7 +502,44 @@ import com.busy.engine.entity.ImageType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        ImageType i = (ImageType) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getImageTypeId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

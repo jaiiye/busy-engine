@@ -5,6 +5,7 @@ import static com.busy.engine.data.BasicConnection.connection;
 import static com.busy.engine.data.BasicConnection.rs;
 import static com.busy.engine.data.BasicConnection.statement;
 import com.busy.engine.entity.*;
+import com.busy.engine.dao.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -455,10 +456,11 @@ public class Database extends BasicConnection
     
     public static void RecordUserObjectCreationAction(String userId, String userName, String currentTime, String objectName, int id) 
     {
-        String query = "INSERT INTO user_action(UserId, ActionDate, ActionTypeId, ActionDetail) VALUES ( " + userId 
-                + ", '" + currentTime + "'" 
+        String query = "INSERT INTO user_action(Date, Detail, UserActionTypeId, UserId) VALUES ( " 
+                + "'" + currentTime + "'" 
+                + ", '" + userName + " created: " + objectName + " with id of "+ id  + "' "                
                 + ", 5" 
-                + ", '" + userName + " created: " + objectName + " with id of "+ id  + "' );";
+                + ", " + userId + ");";
         try
         {
             openConnection();
@@ -479,10 +481,12 @@ public class Database extends BasicConnection
        
     public static void RecordUserObjectUpdateAction(String userId, String userName, String currentTime, String objectName, int id) 
     {
-        String query = "INSERT INTO user_action(UserId, ActionDate, ActionTypeId, ActionDetail) VALUES ( " + userId 
-                + ", '" + currentTime + "'" 
-                + ", 6" 
-                + ", '" + userName + " updated: " + objectName + " with id of "+ id  + "' );";
+        String query = "INSERT INTO user_action(Date, Detail, UserActionTypeId, UserId) VALUES ( " 
+                    + "'" + currentTime + "'" 
+                    + ", '" + userName + " updated: " + objectName + " with id of "+ id  + "' "                
+                    + ", 6" 
+                    + ", " + userId + ");";
+       
         try
         {
             openConnection();
@@ -503,10 +507,11 @@ public class Database extends BasicConnection
        
     public static void RecordUserObjectDeletionAction(String userId, String userName, String currentTime, String objectName, String id) 
     {
-        String query = "INSERT INTO user_action(UserId, ActionDate, ActionTypeId, ActionDetail) VALUES ( " + userId 
-                + ", '" + currentTime + "'" 
-                + ", 7" 
-                + ", '" + userName + " deleted: " + objectName + " with id of "+ id  + "' );";
+        String query = "INSERT INTO user_action(Date, Detail, UserActionTypeId, UserId) VALUES ( " 
+                    + "'" + currentTime + "'" 
+                    + ", '" + userName + " deleted: " + objectName + " with id of "+ id  + "' "                
+                    + ", 7" 
+                    + ", " + userId + ");";
         try
         {
             openConnection();
@@ -527,10 +532,12 @@ public class Database extends BasicConnection
       
     public static void RecordUserObjectClearAction(String userId, String userName, String currentTime, String objectName) 
     {
-        String query = "INSERT INTO user_action(UserId, ActionDate, ActionTypeId, ActionDetail) VALUES ( " + userId 
-                + ", '" + currentTime + "'" 
+        String query = "INSERT INTO user_action(Date, Detail, UserActionTypeId, UserId) VALUES ( " 
+                + "'" + currentTime + "'" 
+                + ", '" + userName + " cleared all " + objectName + " records' "                
                 + ", 8" 
-                + ", '" + userName + " cleared all " + objectName + " records' );";
+                + ", " + userId + ");";
+        
         try
         {
             openConnection();
@@ -550,10 +557,11 @@ public class Database extends BasicConnection
     
     public static void RecordUserLoginAction(String userId, String userName, String currentTime, String area) 
     {
-        String query = "INSERT INTO user_action(UserId, ActionDate, ActionTypeId, ActionDetail) VALUES ( " + userId 
-                + ", '" + currentTime + "'" 
-                + ", 1" 
-                + ", '" + userName + " logged-in to " + area + "' );";
+        String query = "INSERT INTO user_action(Date, Detail, UserActionTypeId, UserId) VALUES ( " 
+                        + "'" + currentTime + "'" 
+                        + ", '" + userName + " logged-in to " + area + "' "                
+                        + ", 1" 
+                        + ", " + userId + ");";
         try
         {
             openConnection();
@@ -574,10 +582,11 @@ public class Database extends BasicConnection
         
     public static void RecordUserLogoutAction(String userId, String userName, String currentTime, String area) 
     {
-        String query = "INSERT INTO user_action(UserId, ActionDate, ActionTypeId, ActionDetail) VALUES ( " + userId 
-                + ", '" + currentTime + "'" 
+        String query = "INSERT INTO user_action(Date, Detail, UserActionTypeId, UserId) VALUES ( " 
+                + "'" + currentTime + "'" 
+                + ", '" + userName + " logged-out to " + area + "' "                
                 + ", 2" 
-                + ", '" + userName + " logged-out from " + area + "' );";
+                + ", " + userId + ");";
         try
         {
             openConnection();
@@ -615,10 +624,12 @@ public class Database extends BasicConnection
     
     public static void RecordUserDownloadAction(String userId, String userName, String fileId, String fileName, String folderId, String folderName, String currentTime) 
     {
-        String query = "INSERT INTO user_action(UserId, ActionDate, ActionTypeId, ActionDetail) VALUES ( " + userId 
-                + ", '" + currentTime + "'" 
+        String query = "INSERT INTO user_action(Date, Detail, UserActionTypeId, UserId) VALUES ( " 
+                + "'" + currentTime + "'" 
+                + " downloaded: " + folderName + '/' + fileName  + "' "                
                 + ", 3" 
-                + ", '" + userName + " downloaded: " + folderName + '/' + fileName  + "' );";
+                + ", " + userId + ");";
+                
         try
         {
             openConnection();
@@ -846,6 +857,56 @@ public class Database extends BasicConnection
             closeConnection();
         }
     }
+    
+    public static String getLoginHeaderImage()
+    {
+        //ArrayList<Image> images = getImagesByTypeId(6);        
+        //return images.get(0).getImageFileName();
+        return "logo.jpg";
+    }
+    
+    public static String getMainSiteURL()
+    {
+        int mode = 0;
+        String url = "";
+
+        try
+        {
+            runQuery("SELECT * FROM site WHERE SiteId=1;");
+            while(rs.next())
+            {
+                mode = rs.getInt(4);
+                
+                if(mode == 1)
+                {
+                   url =  rs.getString(3); //SiteURL
+                }
+                else if(mode == 2)
+                {
+                   url =  rs.getString(5); //TestURL
+                }
+                else
+                {
+                    url = "ERROR";
+                }                
+            }
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Site URL retreival error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+        return url;
+    }
+    
+    public static User getUser(String userName)
+    {
+        return new UserDaoImpl().findByColumn(User.PROP_USERNAME, userName, null, null).get(0);        
+    }
+    
     
     /*
     public static ArrayList<SiteFile> getSiteFiles(String folderId)
@@ -2807,45 +2868,6 @@ public class Database extends BasicConnection
         return values;
     }
         
-    
-    public static String getSiteURL()
-    {
-        int mode = 0;
-        String url = "";
-
-        try
-        {
-            runQuery("SELECT * FROM site_info;");
-            while(rs.next())
-            {
-                mode = rs.getInt(7);
-                
-                if(mode == 1)
-                {
-                   url =  rs.getString(5); //SiteURL
-                }
-                else if(mode == 2)
-                {
-                   url =  rs.getString(6); //TestURL
-                }
-                else
-                {
-                    url = "ERROR";
-                }                
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Sute URL retreival error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-        return url;
-    }
-        
-
 //    public static User getUser(String userName, String Password)
 //    {
 //        User u = new User();
@@ -2902,36 +2924,7 @@ public class Database extends BasicConnection
     
     
     
-    public static User getUser(String userName)
-    {
-        User c = new User();
-        ResultSet rs7;
-
-        try
-        {
-            openConnection();
-            String query = "SELECT * FROM user u where UserName = '" + userName + "';";
-            System.out.println(query);
-            rs7 = statement.executeQuery(query);
-
-            while(rs7.next())
-            {
-                c.setUserId(Integer.valueOf(rs7.getString(1)));
-                c.setUsername(rs7.getString(4));
-                c.setImageURL(rs7.getString(8));
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Get User error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-
-        return c;
-    }
+    
        
     public static User getUserByEmail(String userEmail)
     {

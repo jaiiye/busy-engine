@@ -1,20 +1,80 @@
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<ServiceCharge> service_chargeList = new ArrayList<ServiceCharge>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    service_chargeList = ServiceCharge.getAllServiceChargeByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    service_chargeList = new ServiceChargeDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    service_chargeList = ServiceCharge.getAllServiceCharge();
+    service_chargeList = new ServiceChargeDaoImpl().findAll(null, null);
 }
 request.setAttribute("service_chargeList", service_chargeList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -32,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -70,7 +128,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "E-Commerce"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
         <% request.setAttribute("subCategory", "ServiceCharge"); %>
         <%@include file="index_sidebar.jsp"%>
 
@@ -140,12 +198,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="ServiceChargeId" ${param.column == 'ServiceChargeId' ? "selected" : "" } >ServiceChargeId</option>                                                            
-                                                           <option value="ServiceChargeName" ${param.column == 'ServiceChargeName' ? "selected" : "" } >ServiceChargeName</option>                                                            
-                                                           <option value="ServiceChargeDescription" ${param.column == 'ServiceChargeDescription' ? "selected" : "" } >ServiceChargeDescription</option>                                                            
-                                                           <option value="ServiceChargeRate" ${param.column == 'ServiceChargeRate' ? "selected" : "" } >ServiceChargeRate</option>                                                            
-                                                           <option value="ServiceChargeUnits" ${param.column == 'ServiceChargeUnits' ? "selected" : "" } >ServiceChargeUnits</option>                                                            
+                                                           <option value="ChargeName" ${param.column == 'ChargeName' ? "selected" : "" } >ChargeName</option>                                                            
+                                                           <option value="Description" ${param.column == 'Description' ? "selected" : "" } >Description</option>                                                            
+                                                           <option value="Rate" ${param.column == 'Rate' ? "selected" : "" } >Rate</option>                                                            
+                                                           <option value="Units" ${param.column == 'Units' ? "selected" : "" } >Units</option>                                                            
+                                                           <option value="Date" ${param.column == 'Date' ? "selected" : "" } >Date</option>                                                            
                                                            <option value="UserServiceId" ${param.column == 'UserServiceId' ? "selected" : "" } >UserServiceId</option>                                                            
-                                                           <option value="ServiceChargeDate" ${param.column == 'ServiceChargeDate' ? "selected" : "" } >ServiceChargeDate</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -200,51 +258,59 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                     <div class="portlet-body">	
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=service_charge&action=2" method="post">
-                                                <input type="hidden" name="serviceChargeId"  value="${service_charge.serviceChargeId}" />
+
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="serviceChargeName">ServiceChargeName:</label>
+                                                    <label class="col-md-2 control-label" for="serviceChargeId">ServiceCharge:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="serviceChargeName" class="form-control maxlength-handler" maxlength="100" value="${service_charge.serviceChargeName}" />
+                                                        <input type="text" name="serviceChargeId" class="form-control" value="${service_charge.serviceChargeId}" />
+
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="serviceChargeDescription">ServiceChargeDescription:</label>
+                                                    <label class="col-md-2 control-label" for="chargeName">ChargeName:</label>
                                                     <div  class="col-md-10">
-                                                        <textarea name="serviceChargeDescription" class="ckeditor form-control" rows="4">${service_charge.serviceChargeDescription}</textarea>
+                                                        <input type="text" name="chargeName" class="form-control maxlength-handler" maxlength="100" value="${service_charge.chargeName}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="serviceChargeRate">ServiceChargeRate:</label>
+                                                    <label class="col-md-2 control-label" for="description">Description:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="serviceChargeRate" class="form-control maxlength-handler" maxlength="12" value="${service_charge.serviceChargeRate}" />
+                                                        <textarea name="description" class="ckeditor form-control" rows="4">${service_charge.description}</textarea>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="serviceChargeUnits">ServiceChargeUnits:</label>
+                                                    <label class="col-md-2 control-label" for="rate">Rate:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="serviceChargeUnits" class="form-control maxlength-handler" maxlength="12" value="${service_charge.serviceChargeUnits}" />
+                                                        <input type="text" name="rate" class="form-control maxlength-handler" maxlength="12" value="${service_charge.rate}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userServiceId">UserServiceId:</label>
+                                                    <label class="col-md-2 control-label" for="units">Units:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="units" class="form-control maxlength-handler" maxlength="12" value="${service_charge.units}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="date">Date:</label>
+                                                    <div  class="col-md-10">
+                                                        <div class="input-group date form_datetime" data-date="2012-12-21T15:25:00Z">        <input type="text" name="date" value="${service_charge.date}" class="form-control">        <span class="input-group-btn">                <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>        </span>        <span class="input-group-btn">                <button class="btn default date-set" type="button"><i class="fa fa-calendar"></i></button>        </span></div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="userServiceId">UserService:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="userServiceId" class="form-control" value="${service_charge.userServiceId}" />
                                                         <select name="userServiceId" class="form-control">
                                                             <%ServiceCharge x = (ServiceCharge) pageContext.getAttribute("service_charge"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("user_service", x.getUserServiceId().toString(), 2)%>
                                                         </select>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="serviceChargeDate">ServiceChargeDate:</label>
-                                                    <div  class="col-md-10">
-                                                        <div class="input-group date form_datetime" data-date="2012-12-21T15:25:00Z">        <input type="text" name="serviceChargeDate" value="${service_charge.serviceChargeDate}" class="form-control">        <span class="input-group-btn">                <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>        </span>        <span class="input-group-btn">                <button class="btn default date-set" type="button"><i class="fa fa-calendar"></i></button>        </span></div>
                                                     </div>
                                                 </div>
                                                 
@@ -288,11 +354,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ServiceChargeName</label>
+                                                        <label class="col-md-2 control-label">ServiceChargeId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="serviceChargeName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                                <select name="serviceChargeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("service_charge", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -300,11 +368,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ServiceChargeDescription</label>
+                                                        <label class="col-md-2 control-label">ChargeName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <textarea name="serviceChargeDescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                                <input type="text" name="chargeName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -312,11 +380,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ServiceChargeRate</label>
+                                                        <label class="col-md-2 control-label">Description</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="serviceChargeRate" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="12" />                                                            
+                                                                <textarea name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -324,11 +392,35 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ServiceChargeUnits</label>
+                                                        <label class="col-md-2 control-label">Rate</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="serviceChargeUnits" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="12" />                                                            
+                                                                <input type="text" name="rate" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="12" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Units</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="units" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="12" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Date</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="date" class="form-control" id="mask_date2" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -341,20 +433,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <select name="userServiceId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:UserService", "", 2)%>
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user_service", "", 2)%>
                                                                </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ServiceChargeDate</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="serviceChargeDate" class="form-control" id="mask_date2" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -395,12 +475,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">Name</label> 
+                                                    <label><input type="checkbox" checked data-column="1">ChargeName</label> 
                                                     <label><input type="checkbox" checked data-column="2">Description</label> 
                                                     <label><input type="checkbox" checked data-column="3">Rate</label> 
                                                     <label><input type="checkbox" checked data-column="4">Units</label> 
-                                                    <label><input type="checkbox" checked data-column="5">UserServiceId</label> 
-                                                    <label><input type="checkbox" checked data-column="6">Date</label> 
+                                                    <label><input type="checkbox" checked data-column="5">Date</label> 
+                                                    <label><input type="checkbox" checked data-column="6">UserServiceId</label> 
                                                     
                                                     <label><input type="checkbox" checked data-column="7">Actions</label>
                                                 </div>
@@ -415,12 +495,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>Name</th> 
+                                                    <th>ChargeName</th> 
                                                     <th>Description</th> 
                                                     <th>Rate</th> 
                                                     <th>Units</th> 
-                                                    <th>UserServiceId</th> 
                                                     <th>Date</th> 
+                                                    <th>UserServiceId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -429,12 +509,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="service_charge" items="${service_chargeList}" >
                                                 <tr>                                                    
                                                     <td>${service_charge.serviceChargeId}</td> 
-                                                    <td>${service_charge.serviceChargeName}</td> 
-                                                    <td>${service_charge.serviceChargeDescription}</td> 
-                                                    <td>${service_charge.serviceChargeRate}</td> 
-                                                    <td>${service_charge.serviceChargeUnits}</td> 
+                                                    <td>${service_charge.chargeName}</td> 
+                                                    <td>${service_charge.description}</td> 
+                                                    <td>${service_charge.rate}</td> 
+                                                    <td>${service_charge.units}</td> 
+                                                    <td>${service_charge.date}</td> 
                                                     <td>${service_charge.userServiceId}</td> 
-                                                    <td>${service_charge.serviceChargeDate}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${service_charge.serviceChargeId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -521,8 +601,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -562,12 +643,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         serviceChargeId:    { required: true, number: true }, 
-                        serviceChargeName:    { required: true, minlength: 1, maxlength: 100}, 
-                        serviceChargeDescription:    { required: true, minlength: 1, maxlength: 65535}, 
-                        serviceChargeRate:    { required: true, minlength: 1, maxlength: 12}, 
-                        serviceChargeUnits:    { required: true, minlength: 1, maxlength: 12}, 
-                        userServiceId:    { required: true, number: true }, 
-                        serviceChargeDate:    { required: true } 
+                        chargeName:    { required: true, minlength: 1, maxlength: 100}, 
+                        description:    { required: true, minlength: 1, maxlength: 65535}, 
+                        rate:    { required: true, minlength: 1, maxlength: 12}, 
+                        units:    { required: true, minlength: 1, maxlength: 12}, 
+                        date:    { required: true }, 
+                        userServiceId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

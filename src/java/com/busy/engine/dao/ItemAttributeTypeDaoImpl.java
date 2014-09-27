@@ -36,35 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.ItemAttributeType;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class ItemAttributeTypeDaoImpl extends BasicConnection implements Serializable, ItemAttributeTypeDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public ItemAttributeType find(Integer id)
+        public ItemAttributeTypeDaoImpl()
         {
-            return findByColumn("ItemAttributeTypeId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<ItemAttributeType> findAll(Integer limit, Integer offset)
+
+        public ItemAttributeTypeDaoImpl(boolean enableCache)
         {
-            ArrayList<ItemAttributeType> item_attribute_type = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class ItemAttributeTypeCache
+        {
+            public static final ConcurrentLruCache<Integer, ItemAttributeType> itemAttributeTypeCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (ItemAttributeType i : findAll())
+                {
+                    getCache().put(i.getItemAttributeTypeId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, ItemAttributeType> getCache()
+        {
+            return ItemAttributeTypeCache.itemAttributeTypeCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, ItemAttributeType> buildCache(ArrayList<ItemAttributeType> itemAttributeTypeList)
+        {        
+            ConcurrentLruCache<Integer, ItemAttributeType> cache = new ConcurrentLruCache<Integer, ItemAttributeType>(itemAttributeTypeList.size() + 1000);
+            for (ItemAttributeType i : itemAttributeTypeList)
+            {
+                cache.put(i.getItemAttributeTypeId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<ItemAttributeType> findAll()
+        {
+            ArrayList<ItemAttributeType> itemAttributeType = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("item_attribute_type");
-                while(rs.next())
+                getAllRecordsByTableName("itemAttributeType");
+                while (rs.next())
                 {
-                    item_attribute_type.add(ItemAttributeType.process(rs));
+                    itemAttributeType.add(ItemAttributeType.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -75,80 +137,195 @@ import com.busy.engine.entity.ItemAttributeType;
             {
                 closeConnection();
             }
-            return item_attribute_type;
+            return itemAttributeType;
+        }
+        
+        @Override
+        public ItemAttributeType find(Integer id)
+        {
+            return findByColumn("ItemAttributeTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<ItemAttributeType> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<ItemAttributeType> itemAttributeTypeList = new ArrayList<ItemAttributeType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for ItemAttributeType, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    itemAttributeTypeList = new ArrayList<ItemAttributeType>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("item_attribute_type", limit, offset);
+                    while (rs.next())
+                    {
+                        itemAttributeTypeList.add(ItemAttributeType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ItemAttributeType object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return itemAttributeTypeList;
          
         }
         
         @Override
         public ArrayList<ItemAttributeType> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<ItemAttributeType> item_attribute_typeList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("item_attribute_type", limit, offset);
-                while (rs.next())
+            ArrayList<ItemAttributeType> itemAttributeTypeList = new ArrayList<ItemAttributeType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for ItemAttributeType, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    item_attribute_typeList.add(ItemAttributeType.process(rs));
+                    itemAttributeTypeList = new ArrayList<ItemAttributeType>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object ItemAttributeType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                itemAttributeTypeList = new ArrayList<ItemAttributeType>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("item_attribute_type", limit, offset);
+                    while (rs.next())
+                    {
+                        itemAttributeTypeList.add(ItemAttributeType.process(rs));
+                    }
+
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object ItemAttributeType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return item_attribute_typeList;
+            return itemAttributeTypeList;            
         }
         
         @Override
         public ArrayList<ItemAttributeType> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<ItemAttributeType> item_attribute_type = new ArrayList<>();
-            try
+            ArrayList<ItemAttributeType> itemAttributeTypeList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("item_attribute_type", ItemAttributeType.checkColumnName(columnName), columnValue, ItemAttributeType.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   item_attribute_type.add(ItemAttributeType.process(rs));
+
+                    System.out.println("Find by column for ItemAttributeType(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            ItemAttributeType i = (ItemAttributeType) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                itemAttributeTypeList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            itemAttributeTypeList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("ItemAttributeType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("item_attribute_type", ItemAttributeType.checkColumnName(columnName), columnValue, ItemAttributeType.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        itemAttributeTypeList.add(ItemAttributeType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ItemAttributeType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return item_attribute_type;
+            return itemAttributeTypeList;
         } 
     
         @Override
         public int add(ItemAttributeType obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 ItemAttributeType.checkColumnSize(obj.getAttributeName(), 45);
                 ItemAttributeType.checkColumnSize(obj.getDescription(), 255);
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO item_attribute_type(AttributeName,Description) VALUES (?,?);");                    
+                prepareStatement("INSERT INTO item_attribute_type(ItemAttributeTypeId,AttributeName,Description,) VALUES (?,?);");                    
+                preparedStatement.setInt(0, obj.getItemAttributeTypeId());
                 preparedStatement.setString(1, obj.getAttributeName());
                 preparedStatement.setString(2, obj.getDescription());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from item_attribute_type;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -158,6 +335,13 @@ import com.busy.engine.entity.ItemAttributeType;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setItemAttributeTypeId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -171,11 +355,17 @@ import com.busy.engine.entity.ItemAttributeType;
                 ItemAttributeType.checkColumnSize(obj.getDescription(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_attribute_type SET AttributeName=?,Description=? WHERE ItemAttributeTypeId=?;");                    
+                prepareStatement("UPDATE item_attribute_type SET com.busy.util.DatabaseColumn@723b34b1=?,com.busy.util.DatabaseColumn@6497ce7f=? WHERE ItemAttributeTypeId=?;");                    
+                preparedStatement.setInt(0, obj.getItemAttributeTypeId());
                 preparedStatement.setString(1, obj.getAttributeName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getItemAttributeTypeId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getItemAttributeTypeId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -191,7 +381,16 @@ import com.busy.engine.entity.ItemAttributeType;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("item_attribute_type");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("item_attribute_type");
+            }
+            return count;
         }
         
         
@@ -225,7 +424,13 @@ import com.busy.engine.entity.ItemAttributeType;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getItemAttributeTypeId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -245,6 +450,12 @@ import com.busy.engine.entity.ItemAttributeType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -265,6 +476,12 @@ import com.busy.engine.entity.ItemAttributeType;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -285,7 +502,44 @@ import com.busy.engine.entity.ItemAttributeType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        ItemAttributeType i = (ItemAttributeType) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getItemAttributeTypeId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<User> userList = new ArrayList<User>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    userList = User.getAllUserByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    userList = new UserDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    userList = User.getAllUser();
+    userList = new UserDaoImpl().findAll(null, null);
 }
 request.setAttribute("userList", userList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "users"); %>
-        <% request.setAttribute("subCategory", "users"); %>
+        <% request.setAttribute("category", "Users"); %>
+        <% request.setAttribute("subCategory", "User"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -82,18 +142,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- BEGIN PAGE TITLE & BREADCRUMB-->
-                                <h3 class="page-title">User Manager</h3>
+                                <h3 class="page-title"> User </h3>
                                 <ul class="page-breadcrumb breadcrumb">                                
                                     <li>
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Users </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">User Manager</a>
+                                        <a href="#">User</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -138,18 +198,21 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="UserId" ${param.column == 'UserId' ? "selected" : "" } >UserId</option>                                                            
-                                                           <option value="BrandId" ${param.column == 'BrandId' ? "selected" : "" } >BrandId</option>                                                            
-                                                           <option value="TypeId" ${param.column == 'TypeId' ? "selected" : "" } >TypeId</option>                                                            
-                                                           <option value="UserName" ${param.column == 'UserName' ? "selected" : "" } >UserName</option>                                                            
-                                                           <option value="UserPassword" ${param.column == 'UserPassword' ? "selected" : "" } >UserPassword</option>                                                            
-                                                           <option value="UserSecurityQuestion" ${param.column == 'UserSecurityQuestion' ? "selected" : "" } >UserSecurityQuestion</option>                                                            
-                                                           <option value="UserSecurityAnswer" ${param.column == 'UserSecurityAnswer' ? "selected" : "" } >UserSecurityAnswer</option>                                                            
-                                                           <option value="UserImgURL" ${param.column == 'UserImgURL' ? "selected" : "" } >UserImgURL</option>                                                            
-                                                           <option value="UserEmail" ${param.column == 'UserEmail' ? "selected" : "" } >UserEmail</option>                                                            
-                                                           <option value="UserEmailConfirmed" ${param.column == 'UserEmailConfirmed' ? "selected" : "" } >UserEmailConfirmed</option>                                                            
-                                                           <option value="UserWebUrl" ${param.column == 'UserWebUrl' ? "selected" : "" } >UserWebUrl</option>                                                            
-                                                           <option value="ContactId" ${param.column == 'ContactId' ? "selected" : "" } >ContactId</option>                                                            
+                                                           <option value="Username" ${param.column == 'Username' ? "selected" : "" } >Username</option>                                                            
+                                                           <option value="Password" ${param.column == 'Password' ? "selected" : "" } >Password</option>                                                            
+                                                           <option value="Email" ${param.column == 'Email' ? "selected" : "" } >Email</option>                                                            
+                                                           <option value="SecurityQuestion" ${param.column == 'SecurityQuestion' ? "selected" : "" } >SecurityQuestion</option>                                                            
+                                                           <option value="SecurityAnswer" ${param.column == 'SecurityAnswer' ? "selected" : "" } >SecurityAnswer</option>                                                            
+                                                           <option value="RegisterDate" ${param.column == 'RegisterDate' ? "selected" : "" } >RegisterDate</option>                                                            
+                                                           <option value="ImageUrl" ${param.column == 'ImageUrl' ? "selected" : "" } >ImageUrl</option>                                                            
+                                                           <option value="UserStatus" ${param.column == 'UserStatus' ? "selected" : "" } >UserStatus</option>                                                            
+                                                           <option value="Rank" ${param.column == 'Rank' ? "selected" : "" } >Rank</option>                                                            
+                                                           <option value="WebUrl" ${param.column == 'WebUrl' ? "selected" : "" } >WebUrl</option>                                                            
+                                                           <option value="ItemBrandId" ${param.column == 'ItemBrandId' ? "selected" : "" } >ItemBrandId</option>                                                            
+                                                           <option value="UserTypeId" ${param.column == 'UserTypeId' ? "selected" : "" } >UserTypeId</option>                                                            
                                                            <option value="AddressId" ${param.column == 'AddressId' ? "selected" : "" } >AddressId</option>                                                            
+                                                           <option value="ContactId" ${param.column == 'ContactId' ? "selected" : "" } >ContactId</option>                                                            
+                                                           <option value="UserGroupId" ${param.column == 'UserGroupId' ? "selected" : "" } >UserGroupId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -205,85 +268,141 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=user&action=2" method="post">
 
-                                                <input type="hidden" name="userId" value="${user.userId}" />
-                                                <input type="hidden" name="contactId" value="${user.contactId}" />
-                                                <input type="hidden" name="addressId" value="${user.addressId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="brandId">Brand:</label>
+                                                    <label class="col-md-2 control-label" for="userId">User:</label>
                                                     <div  class="col-md-10">
-                                                        <select name="brandId" class="form-control">
+                                                        <input type="text" name="userId" class="form-control" value="${user.userId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="username">Username:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="username" class="form-control maxlength-handler" maxlength="30" value="${user.username}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="password">Password:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="password" class="form-control maxlength-handler" maxlength="15" value="${user.password}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="email">Email:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="email" class="form-control maxlength-handler" maxlength="255" value="${user.email}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="securityQuestion">SecurityQuestion:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="securityQuestion" class="form-control maxlength-handler" maxlength="100" value="${user.securityQuestion}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="securityAnswer">SecurityAnswer:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="securityAnswer" class="form-control maxlength-handler" maxlength="30" value="${user.securityAnswer}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="registerDate">RegisterDate:</label>
+                                                    <div  class="col-md-10">
+                                                        <div class="input-group date form_datetime" data-date="2012-12-21T15:25:00Z">        <input type="text" name="registerDate" value="${user.registerDate}" class="form-control">        <span class="input-group-btn">                <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>        </span>        <span class="input-group-btn">                <button class="btn default date-set" type="button"><i class="fa fa-calendar"></i></button>        </span></div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="imageUrl">ImageUrl:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="imageUrl" class="form-control maxlength-handler" maxlength="255" value="${user.imageUrl}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="userStatus">UserStatus:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="userStatus" class="form-control" value="${user.userStatus}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="rank">Rank:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="rank" class="form-control" value="${user.rank}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="webUrl">WebUrl:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="webUrl" class="form-control maxlength-handler" maxlength="255" value="${user.webUrl}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemBrandId">ItemBrand:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="itemBrandId" class="form-control" value="${user.itemBrandId}" />
+                                                        <select name="itemBrandId" class="form-control">
                                                             <%User x = (User) pageContext.getAttribute("user"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", x.getBrandId().toString(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", x.getItemBrandId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="typeId">Type:</label>
+                                                    <label class="col-md-2 control-label" for="userTypeId">UserType:</label>
                                                     <div  class="col-md-10">
-                                                        <select name="typeId" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("type", x.getTypeId().toString(), 2)%>
+                                                        <input type="text" name="userTypeId" class="form-control" value="${user.userTypeId}" />
+                                                        <select name="userTypeId" class="form-control">
+                                                            <%User x = (User) pageContext.getAttribute("user"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("user_type", x.getUserTypeId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userName">User Name:</label>
+                                                    <label class="col-md-2 control-label" for="addressId">Address:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="userName" class="form-control maxlength-handler" maxlength="30" value="${user.userName}" />
+                                                        <input type="text" name="addressId" class="form-control" value="${user.addressId}" />
+                                                        <select name="addressId" class="form-control">
+                                                            <%User x = (User) pageContext.getAttribute("user"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("address", x.getAddressId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userPassword">Password:</label>
+                                                    <label class="col-md-2 control-label" for="contactId">Contact:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="password" name="userPassword" class="form-control maxlength-handler" maxlength="15" value="${user.userPassword}" />
+                                                        <input type="text" name="contactId" class="form-control" value="${user.contactId}" />
+                                                        <select name="contactId" class="form-control">
+                                                            <%User x = (User) pageContext.getAttribute("user"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("contact", x.getContactId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userSecurityQuestion">Security Question:</label>
+                                                    <label class="col-md-2 control-label" for="userGroupId">UserGroup:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="userSecurityQuestion" class="form-control maxlength-handler" maxlength="100" value="${user.userSecurityQuestion}" />
+                                                        <input type="text" name="userGroupId" class="form-control" value="${user.userGroupId}" />
+                                                        <select name="userGroupId" class="form-control">
+                                                            <%User x = (User) pageContext.getAttribute("user"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("user_group", x.getUserGroupId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userSecurityAnswer">Security Answer:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="userSecurityAnswer" class="form-control maxlength-handler" maxlength="30" value="${user.userSecurityAnswer}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userImgURL">Image URL:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="userImgURL" class="form-control maxlength-handler" maxlength="255" value="${user.userImgURL}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userEmail">User Email:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="userEmail" class="form-control maxlength-handler" maxlength="255" value="${user.userEmail}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userEmailConfirmed">Email Confirmed:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="userEmailConfirmed" class="form-control" value="${user.userEmailConfirmed}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userWebUrl">Web Url:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="userWebUrl" class="form-control maxlength-handler" maxlength="255" value="${user.userWebUrl}" />
-                                                    </div>
-                                                </div>
-                                                
+
                                                 <div class="form-actions right">
                                                     <input type="submit" value="Save Changes" class="btn green" />
                                                 </div>
@@ -323,12 +442,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Brand</label>
+                                                        <label class="col-md-2 control-label">UserId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="brandId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", "", 2)%>
+                                                                <select name="userId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -337,25 +456,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Type</label>
+                                                        <label class="col-md-2 control-label">Username</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="typeId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("type", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">UserName</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="userName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="30" />                                                            
+                                                                <input type="text" name="username" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="30" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -367,7 +472,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="password" name="userPassword" class="form-control maxlength-handler" maxlength="15" />                                                            
+                                                                <input type="text" name="password" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="15" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -375,24 +480,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Security Question</label>
+                                                        <label class="col-md-2 control-label">Email</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="userSecurityQuestion" class="form-control">
-                                                                    <option value=""></option>
-                                                                    <option value="What was your childhood nickname?">What was your childhood nickname?</option>
-                                                                    <option value="What is the name of your favorite childhood friend?">What's the name of your favorite childhood friend?</option>
-                                                                    <option value="What street did you live on in third grade?">What street did you live on in third grade?</option>
-                                                                    <option value="In what city did you meet your spouse?">In what city did you meet your spouse?</option>
-                                                                    <option value="What school did you attend for 6th grade?">What school did you attend for 6th grade?</option>
-                                                                    <option value="What was the name of your first stuffed animal?">What was the name of your first stuffed animal?</option>
-                                                                    <option value="In what city or town did your parents meet?">In what city or town did your parents meet?</option>
-                                                                    <option value="Where were you when you had your first kiss?">Where were you when you had your first kiss?</option>
-                                                                    <option value="What was the last name of your 3rd grade teacher?">What was the last name of your 3rd grade teacher?</option>
-                                                                    <option value="In what city was your first job?">In what city was your first job?</option>
-                                                                    <option value="What is the name of the place your wedding was held?">What is the name of the place your wedding was held?</option>
-                                                                </select>                                                            
+                                                                <input type="text" name="email" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -400,11 +492,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Security Answer</label>
+                                                        <label class="col-md-2 control-label">SecurityQuestion</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="userSecurityAnswer" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="30" />                                                            
+                                                                <input type="text" name="securityQuestion" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -412,11 +504,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">UserImgURL</label>
+                                                        <label class="col-md-2 control-label">SecurityAnswer</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="userImgURL" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="securityAnswer" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="30" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -424,11 +516,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">UserEmail</label>
+                                                        <label class="col-md-2 control-label">RegisterDate</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="userEmail" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="registerDate" class="form-control" id="mask_date2" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -436,11 +528,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">UserEmailConfirmed</label>
+                                                        <label class="col-md-2 control-label">ImageUrl</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="userEmailConfirmed" class="form-control" placeholder="Enter Integer" />                                                            
+                                                                <input type="text" name="imageUrl" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -448,15 +540,111 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">UserWebUrl</label>
+                                                        <label class="col-md-2 control-label">UserStatus</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="userWebUrl" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="userStatus" class="form-control" placeholder="Enter Integer" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Rank</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="rank" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">WebUrl</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="webUrl" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ItemBrandId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="itemBrandId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">UserTypeId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="userTypeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user_type", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">AddressId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="addressId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("address", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ContactId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="contactId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("contact", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">UserGroupId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="userGroupId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user_group", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+
                                             </div>
 
                                             <div class="form-actions right">
@@ -491,11 +679,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">Name</label> 
-                                                    <label><input type="checkbox" checked data-column="2">ImgURL</label> 
+                                                    <label><input type="checkbox" checked data-column="1">name</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Password</label> 
                                                     <label><input type="checkbox" checked data-column="3">Email</label> 
-                                                    <label><input type="checkbox" checked data-column="4">WebUrl</label> 
-                                                    <label><input type="checkbox" checked data-column="5">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="4">SecurityQuestion</label> 
+                                                    <label><input type="checkbox" checked data-column="5">SecurityAnswer</label> 
+                                                    <label><input type="checkbox" checked data-column="6">RegisterDate</label> 
+                                                    <label><input type="checkbox" checked data-column="7">ImageUrl</label> 
+                                                    <label><input type="checkbox" checked data-column="8">Status</label> 
+                                                    <label><input type="checkbox" checked data-column="9">Rank</label> 
+                                                    <label><input type="checkbox" checked data-column="10">WebUrl</label> 
+                                                    <label><input type="checkbox" checked data-column="11">ItemBrandId</label> 
+                                                    <label><input type="checkbox" checked data-column="12">TypeId</label> 
+                                                    <label><input type="checkbox" checked data-column="13">AddressId</label> 
+                                                    <label><input type="checkbox" checked data-column="14">ContactId</label> 
+                                                    <label><input type="checkbox" checked data-column="15">GroupId</label> 
+                                                    
+                                                    <label><input type="checkbox" checked data-column="16">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -507,11 +707,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                     	<table class="table table-striped table-bordered table-hover table-full-width" id="sample_2">
                                             <thead>							
                                                 <tr>
-                                                    <th>Id</th>  
-                                                    <th>Name</th> 
-                                                    <th>ImgURL</th> 
+                                                    <th>Id</th> 
+                                                    <th>name</th> 
+                                                    <th>Password</th> 
                                                     <th>Email</th> 
-                                                    <th>WebUrl</th>                                     
+                                                    <th>SecurityQuestion</th> 
+                                                    <th>SecurityAnswer</th> 
+                                                    <th>RegisterDate</th> 
+                                                    <th>ImageUrl</th> 
+                                                    <th>Status</th> 
+                                                    <th>Rank</th> 
+                                                    <th>WebUrl</th> 
+                                                    <th>ItemBrandId</th> 
+                                                    <th>TypeId</th> 
+                                                    <th>AddressId</th> 
+                                                    <th>ContactId</th> 
+                                                    <th>GroupId</th> 
+                                                                                                        
                                                     <th>Actions</th> 
                                                 </tr>                                
                                             </thead>
@@ -519,16 +731,24 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="user" items="${userList}" >
                                                 <tr>                                                    
                                                     <td>${user.userId}</td> 
-                                                    <td>${user.userName}</td> 
-                                                    <td>${user.userImgURL}</td> 
-                                                    <td>${user.userEmail}</td> 
-                                                    <td>${user.userWebUrl}</td> 
+                                                    <td>${user.username}</td> 
+                                                    <td>${user.password}</td> 
+                                                    <td>${user.email}</td> 
+                                                    <td>${user.securityQuestion}</td> 
+                                                    <td>${user.securityAnswer}</td> 
+                                                    <td>${user.registerDate}</td> 
+                                                    <td>${user.imageUrl}</td> 
+                                                    <td>${user.userStatus}</td> 
+                                                    <td>${user.rank}</td> 
+                                                    <td>${user.webUrl}</td> 
+                                                    <td>${user.itemBrandId}</td> 
+                                                    <td>${user.userTypeId}</td> 
+                                                    <td>${user.addressId}</td> 
+                                                    <td>${user.contactId}</td> 
+                                                    <td>${user.userGroupId}</td> 
+                                                    
                                                     <td>
                                                         <button id="edit-item${user.userId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
-                                                        <button id="view-address${user.userId}" class="btn btn-sm grey filter-cancel"><i class="fa fa-eye"></i> Address</button>&nbsp;   
-                                                        <button id="view-contact${user.userId}" class="btn btn-sm grey filter-cancel"><i class="fa fa-eye"></i> Contact</button>&nbsp;   
-                                                        <button id="view-roles${user.userId}" class="btn btn-sm grey filter-cancel"><i class="fa fa-eye"></i> Roles</button>&nbsp;  
-                                                        <button id="view-actions${user.userId}" class="btn btn-sm grey filter-cancel"><i class="fa fa-location-arrow"></i> Actions</button>&nbsp;
                                                         <button id="delete-item${user.userId}" class="btn btn-sm red filter-cancel"><span class="glyphicon glyphicon-trash"></span></button> 
                                                     </td>
                                                 </tr>  
@@ -537,18 +757,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         toggleVisibility('itemBox${user.userId}');                                                        
                                                         document.getElementById('itemBox${user.userId}').scrollIntoView();
                                                         window.scrollBy(0,-80);
-                                                    });
-                                                    $("#view-address${user.userId}").button().click(function() {
-                                                        window.location = 'AddressUI.jsp?column=AddressId&columnValue=${user.addressId}';
-                                                    });
-                                                    $("#view-contact${user.userId}").button().click(function() {
-                                                        window.location = 'ContactUI.jsp?column=ContactId&columnValue=${user.contactId}';
-                                                    });
-                                                    $("#view-roles${user.userId}").button().click(function() {
-                                                        window.location = 'UserRoleUI.jsp?column=UserName&columnValue=${user.userName}';
-                                                    });
-                                                    $("#view-actions${user.userId}").button().click(function() {
-                                                        window.location = 'UserActionUI.jsp?column=UserId&columnValue=${user.userId}';
                                                     });
                                                     $("#delete-item${user.userId}").button().click(function() {
                                                         window.location = '../Operations?form=user&action=3&id=${user.userId}';
@@ -624,8 +832,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -665,16 +874,21 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         userId:    { required: true, number: true }, 
-                        brandId:    { required: true, number: true }, 
-                        typeId:    { required: true, number: true }, 
-                        userName:    { required: true, minlength: 1, maxlength: 30}, 
-                        userPassword:    { required: true, minlength: 1, maxlength: 15}, 
-                        userSecurityQuestion:    { required: true, minlength: 1, maxlength: 100}, 
-                        userSecurityAnswer:    { required: true, minlength: 1, maxlength: 30}, 
-                        userImgURL:    { required: true, minlength: 1, maxlength: 255}, 
-                        userEmail:    { required: true, minlength: 1, maxlength: 255}, 
-                        userEmailConfirmed:    { required: true, number: true }, 
-                        userWebUrl:    { required: true, minlength: 1, maxlength: 255}
+                        username:    { required: true, minlength: 1, maxlength: 30}, 
+                        password:    { required: true, minlength: 1, maxlength: 15}, 
+                        email:    { required: true, minlength: 1, maxlength: 255}, 
+                        securityQuestion:    { required: true, minlength: 1, maxlength: 100}, 
+                        securityAnswer:    { required: true, minlength: 1, maxlength: 30}, 
+                        registerDate:    { required: true }, 
+                        imageUrl:    { required: true, minlength: 1, maxlength: 255}, 
+                        userStatus:    { required: true, number: true }, 
+                        rank:    { required: true, number: true }, 
+                        webUrl:    { required: true, minlength: 1, maxlength: 255}, 
+                        itemBrandId:    { required: true, number: true }, 
+                        userTypeId:    { required: true, number: true }, 
+                        addressId:    { required: true, number: true }, 
+                        contactId:    { required: true, number: true }, 
+                        userGroupId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

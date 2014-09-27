@@ -1,40 +1,36 @@
-
 <%@page import="java.util.*" %>
-<%@page import="com.transitionsoft.*" %>
+<%@page import="com.busy.engine.entity.*" %>
+<%@page import="com.busy.engine.data.*" %>
+<%@page import="static com.busy.engine.web.SecurityHelper.getSessionUser" %>
+<%@page import="static com.busy.engine.web.SecurityHelper.setSessionUser" %>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page contentType="text/html; charset=utf-8" language="java" %>
 
 <%
     String userName = request.getUserPrincipal().getName();
-    com.transitionsoft.dao.User u = null;	
-    String siteUrl =  Database.getSiteURL();
+    com.busy.engine.entity.User u = getSessionUser(request);	
+    String siteUrl =  Database.getMainSiteURL();
 
-    if(userName == null)
-    {
-        //user is not logged in
-    }
-    else
-    {
-        //see if the user is already logged in before
-        String name = (String)session.getAttribute("userName");
-        
-        if(name == null)
+    if(u == null)
+    {   
+        if(userName == null)
         {
-            //a new user is being logged-in
-            session.setAttribute("userName", userName);
+            //user is not logged in
+            System.out.println("User is not logged in");
+            response.sendRedirect("../login.jsp");            
+        }
         
-            //find out who the logged-on user is
-            u = Database.getUser(request.getUserPrincipal().getName()); 
+        //find out who the logged-on user is
+        u = Database.getUser(userName); 
+        
+        //user info is not saved in session
+        setSessionUser(request, u);
+        
+        //record the login date and time
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String loginTime = sdf.format(new java.util.Date(session.getCreationTime()));
 
-            //record the login date and time
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String loginTime = sdf.format(new java.util.Date(session.getCreationTime()));
-
-            Database.RecordUserLoginAction(u.getUserId().toString(), u.getUserName(), loginTime, "Site Administration");
-        }
-        else{
-            u = Database.getUser(name); 
-        }
+        Database.RecordUserLoginAction(u.getUserId().toString(), u.getUsername(), loginTime, "Site Administration");
     }
 %>
 
@@ -62,8 +58,8 @@
                 <!-- BEGIN USER LOGIN DROPDOWN -->
                 <li class="dropdown dropdown-user">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                        <img alt="" src="../images/<%= u.getUserImgUrl() %>" width="32px" height="32px"/>
-                        <span class="username"><%= u.getUserName() %></span>
+                        <img alt="" src="../images/<%= u.getImageUrl() %>" width="32px" height="32px"/>
+                        <span class="username"><%= u.getUsername() %></span>
                         <i class="fa fa-angle-down"></i>
                     </a>
                     <ul class="dropdown-menu">
@@ -74,7 +70,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="<%= u.getUserWebUrl() %>" target="_blank">
+                            <a href="<%= u.getWebUrl() %>" target="_blank">
                                 <i class="fa fa-link"></i> Web Link
                                 
                             </a>
@@ -92,7 +88,7 @@
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="../LogOut?userId=<%= u.getUserId()%>&userName=<%= u.getUserName()%>&area=Site%20Administration">
+                            <a href="../LogOut?userId=<%= u.getUserId()%>&userName=<%= u.getUsername()%>&area=Site%20Administration">
                                 <i class="fa fa-sign-out"></i> Log Out
                             </a>
                         </li>

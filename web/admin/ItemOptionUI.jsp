@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<ItemOption> item_optionList = new ArrayList<ItemOption>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    item_optionList = ItemOption.getAllItemOptionByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    item_optionList = new ItemOptionDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    item_optionList = ItemOption.getAllItemOption();
+    item_optionList = new ItemOptionDaoImpl().findAll(null, null);
 }
 request.setAttribute("item_optionList", item_optionList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,16 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
+
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -137,8 +198,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="ItemOptionId" ${param.column == 'ItemOptionId' ? "selected" : "" } >ItemOptionId</option>                                                            
-                                                           <option value="ItemOptionType" ${param.column == 'ItemOptionType' ? "selected" : "" } >ItemOptionType</option>                                                            
-                                                           <option value="ItemOptionDescription" ${param.column == 'ItemOptionDescription' ? "selected" : "" } >ItemOptionDescription</option>                                                            
+                                                           <option value="OptionName" ${param.column == 'OptionName' ? "selected" : "" } >OptionName</option>                                                            
+                                                           <option value="Description" ${param.column == 'Description' ? "selected" : "" } >Description</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -194,19 +255,26 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=item_option&action=2" method="post">
 
-                                                <input type="hidden" name="itemOptionId" value="${item_option.itemOptionId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemOptionType">ItemOptionType:</label>
+                                                    <label class="col-md-2 control-label" for="itemOptionId">ItemOption:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="itemOptionType" class="form-control maxlength-handler" maxlength="45" value="${item_option.itemOptionType}" />
+                                                        <input type="text" name="itemOptionId" class="form-control" value="${item_option.itemOptionId}" />
+
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemOptionDescription">ItemOptionDescription:</label>
+                                                    <label class="col-md-2 control-label" for="optionName">OptionName:</label>
                                                     <div  class="col-md-10">
-                                                        <textarea name="itemOptionDescription" class="ckeditor form-control" rows="4">${item_option.itemOptionDescription}</textarea>
+                                                        <input type="text" name="optionName" class="form-control maxlength-handler" maxlength="100" value="${item_option.optionName}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="description">Description:</label>
+                                                    <div  class="col-md-10">
+                                                        <textarea name="description" class="ckeditor form-control" rows="4">${item_option.description}</textarea>
                                                     </div>
                                                 </div>
                                                 
@@ -250,11 +318,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemOptionType</label>
+                                                        <label class="col-md-2 control-label">ItemOptionId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="itemOptionType" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <select name="itemOptionId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_option", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -262,11 +332,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemOptionDescription</label>
+                                                        <label class="col-md-2 control-label">OptionName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <textarea name="itemOptionDescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                                <input type="text" name="optionName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Description</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <textarea name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -307,7 +389,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">Type</label> 
+                                                    <label><input type="checkbox" checked data-column="1">OptionName</label> 
                                                     <label><input type="checkbox" checked data-column="2">Description</label> 
                                                     
                                                     <label><input type="checkbox" checked data-column="3">Actions</label>
@@ -323,7 +405,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>Type</th> 
+                                                    <th>OptionName</th> 
                                                     <th>Description</th> 
                                                                                                         
                                                     <th>Actions</th> 
@@ -333,8 +415,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="item_option" items="${item_optionList}" >
                                                 <tr>                                                    
                                                     <td>${item_option.itemOptionId}</td> 
-                                                    <td>${item_option.itemOptionType}</td> 
-                                                    <td>${item_option.itemOptionDescription}</td> 
+                                                    <td>${item_option.optionName}</td> 
+                                                    <td>${item_option.description}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${item_option.itemOptionId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -421,8 +503,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -462,8 +545,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         itemOptionId:    { required: true, number: true }, 
-                        itemOptionType:    { required: true, minlength: 1, maxlength: 45}, 
-                        itemOptionDescription:    { required: true, minlength: 1, maxlength: 65535} 
+                        optionName:    { required: true, minlength: 1, maxlength: 100}, 
+                        description:    { required: true, minlength: 1, maxlength: 65535} 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

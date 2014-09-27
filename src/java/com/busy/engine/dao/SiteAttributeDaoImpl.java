@@ -36,36 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.Site;
-import com.busy.engine.entity.SiteAttribute;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class SiteAttributeDaoImpl extends BasicConnection implements Serializable, SiteAttributeDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public SiteAttribute find(Integer id)
+        public SiteAttributeDaoImpl()
         {
-            return findByColumn("SiteAttributeId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<SiteAttribute> findAll(Integer limit, Integer offset)
+
+        public SiteAttributeDaoImpl(boolean enableCache)
         {
-            ArrayList<SiteAttribute> site_attribute = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class SiteAttributeCache
+        {
+            public static final ConcurrentLruCache<Integer, SiteAttribute> siteAttributeCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (SiteAttribute i : findAll())
+                {
+                    getCache().put(i.getSiteAttributeId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, SiteAttribute> getCache()
+        {
+            return SiteAttributeCache.siteAttributeCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, SiteAttribute> buildCache(ArrayList<SiteAttribute> siteAttributeList)
+        {        
+            ConcurrentLruCache<Integer, SiteAttribute> cache = new ConcurrentLruCache<Integer, SiteAttribute>(siteAttributeList.size() + 1000);
+            for (SiteAttribute i : siteAttributeList)
+            {
+                cache.put(i.getSiteAttributeId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<SiteAttribute> findAll()
+        {
+            ArrayList<SiteAttribute> siteAttribute = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("site_attribute");
-                while(rs.next())
+                getAllRecordsByTableName("siteAttribute");
+                while (rs.next())
                 {
-                    site_attribute.add(SiteAttribute.process(rs));
+                    siteAttribute.add(SiteAttribute.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -76,92 +137,229 @@ import com.busy.engine.entity.SiteAttribute;
             {
                 closeConnection();
             }
-            return site_attribute;
+            return siteAttribute;
+        }
+        
+        @Override
+        public SiteAttribute find(Integer id)
+        {
+            return findByColumn("SiteAttributeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<SiteAttribute> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<SiteAttribute> siteAttributeList = new ArrayList<SiteAttribute>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for SiteAttribute, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    siteAttributeList = new ArrayList<SiteAttribute>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("site_attribute", limit, offset);
+                    while (rs.next())
+                    {
+                        siteAttributeList.add(SiteAttribute.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("SiteAttribute object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return siteAttributeList;
          
         }
         
         @Override
         public ArrayList<SiteAttribute> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<SiteAttribute> site_attributeList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("site_attribute", limit, offset);
-                while (rs.next())
+            ArrayList<SiteAttribute> siteAttributeList = new ArrayList<SiteAttribute>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for SiteAttribute, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    site_attributeList.add(SiteAttribute.process(rs));
+                    siteAttributeList = new ArrayList<SiteAttribute>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(SiteAttribute site_attribute : site_attributeList)
+                    try
                     {
-                        
-                            getRecordById("Site", site_attribute.getSiteId().toString());
-                            site_attribute.setSite(Site.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            SiteAttribute siteAttribute = (SiteAttribute) e.getValue();
+
+                            
+                                getRecordById("Site", siteAttribute.getSiteId().toString());
+                                siteAttribute.setSite(Site.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object SiteAttribute method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object SiteAttribute method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                siteAttributeList = new ArrayList<SiteAttribute>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("site_attribute", limit, offset);
+                    while (rs.next())
+                    {
+                        siteAttributeList.add(SiteAttribute.process(rs));
+                    }
+
+                    
+                    
+                        for (SiteAttribute siteAttribute : siteAttributeList)
+                        {                        
+                            
+                                getRecordById("Site", siteAttribute.getSiteId().toString());
+                                siteAttribute.setSite(Site.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object SiteAttribute method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return site_attributeList;
+            return siteAttributeList;            
         }
         
         @Override
         public ArrayList<SiteAttribute> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<SiteAttribute> site_attribute = new ArrayList<>();
-            try
+            ArrayList<SiteAttribute> siteAttributeList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("site_attribute", SiteAttribute.checkColumnName(columnName), columnValue, SiteAttribute.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   site_attribute.add(SiteAttribute.process(rs));
+
+                    System.out.println("Find by column for SiteAttribute(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            SiteAttribute i = (SiteAttribute) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                siteAttributeList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            siteAttributeList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("SiteAttribute's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("site_attribute", SiteAttribute.checkColumnName(columnName), columnValue, SiteAttribute.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        siteAttributeList.add(SiteAttribute.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("SiteAttribute's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return site_attribute;
+            return siteAttributeList;
         } 
     
         @Override
         public int add(SiteAttribute obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 SiteAttribute.checkColumnSize(obj.getAttributeKey(), 100);
                 SiteAttribute.checkColumnSize(obj.getAttributeValue(), 255);
                 SiteAttribute.checkColumnSize(obj.getAttributeType(), 45);
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO site_attribute(AttributeKey,AttributeValue,AttributeType,SiteId) VALUES (?,?,?,?);");                    
+                prepareStatement("INSERT INTO site_attribute(SiteAttributeId,AttributeKey,AttributeValue,AttributeType,SiteId,) VALUES (?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getSiteAttributeId());
                 preparedStatement.setString(1, obj.getAttributeKey());
                 preparedStatement.setString(2, obj.getAttributeValue());
                 preparedStatement.setString(3, obj.getAttributeType());
                 preparedStatement.setInt(4, obj.getSiteId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from site_attribute;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -171,6 +369,13 @@ import com.busy.engine.entity.SiteAttribute;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setSiteAttributeId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -186,13 +391,19 @@ import com.busy.engine.entity.SiteAttribute;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_attribute SET AttributeKey=?,AttributeValue=?,AttributeType=?,SiteId=? WHERE SiteAttributeId=?;");                    
+                prepareStatement("UPDATE site_attribute SET com.busy.util.DatabaseColumn@7f0feb14=?,com.busy.util.DatabaseColumn@b2d45ac=?,com.busy.util.DatabaseColumn@5212899d=?,com.busy.util.DatabaseColumn@4e00524d=? WHERE SiteAttributeId=?;");                    
+                preparedStatement.setInt(0, obj.getSiteAttributeId());
                 preparedStatement.setString(1, obj.getAttributeKey());
                 preparedStatement.setString(2, obj.getAttributeValue());
                 preparedStatement.setString(3, obj.getAttributeType());
                 preparedStatement.setInt(4, obj.getSiteId());
                 preparedStatement.setInt(5, obj.getSiteAttributeId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getSiteAttributeId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -208,7 +419,16 @@ import com.busy.engine.entity.SiteAttribute;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("site_attribute");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("site_attribute");
+            }
+            return count;
         }
         
         
@@ -257,7 +477,13 @@ import com.busy.engine.entity.SiteAttribute;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getSiteAttributeId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -277,6 +503,12 @@ import com.busy.engine.entity.SiteAttribute;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -297,6 +529,12 @@ import com.busy.engine.entity.SiteAttribute;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -317,7 +555,44 @@ import com.busy.engine.entity.SiteAttribute;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        SiteAttribute i = (SiteAttribute) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getSiteAttributeId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
         

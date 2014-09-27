@@ -36,35 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.ResourceType;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class ResourceTypeDaoImpl extends BasicConnection implements Serializable, ResourceTypeDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public ResourceType find(Integer id)
+        public ResourceTypeDaoImpl()
         {
-            return findByColumn("ResourceTypeId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<ResourceType> findAll(Integer limit, Integer offset)
+
+        public ResourceTypeDaoImpl(boolean enableCache)
         {
-            ArrayList<ResourceType> resource_type = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class ResourceTypeCache
+        {
+            public static final ConcurrentLruCache<Integer, ResourceType> resourceTypeCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (ResourceType i : findAll())
+                {
+                    getCache().put(i.getResourceTypeId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, ResourceType> getCache()
+        {
+            return ResourceTypeCache.resourceTypeCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, ResourceType> buildCache(ArrayList<ResourceType> resourceTypeList)
+        {        
+            ConcurrentLruCache<Integer, ResourceType> cache = new ConcurrentLruCache<Integer, ResourceType>(resourceTypeList.size() + 1000);
+            for (ResourceType i : resourceTypeList)
+            {
+                cache.put(i.getResourceTypeId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<ResourceType> findAll()
+        {
+            ArrayList<ResourceType> resourceType = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("resource_type");
-                while(rs.next())
+                getAllRecordsByTableName("resourceType");
+                while (rs.next())
                 {
-                    resource_type.add(ResourceType.process(rs));
+                    resourceType.add(ResourceType.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -75,80 +137,195 @@ import com.busy.engine.entity.ResourceType;
             {
                 closeConnection();
             }
-            return resource_type;
+            return resourceType;
+        }
+        
+        @Override
+        public ResourceType find(Integer id)
+        {
+            return findByColumn("ResourceTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<ResourceType> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<ResourceType> resourceTypeList = new ArrayList<ResourceType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for ResourceType, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    resourceTypeList = new ArrayList<ResourceType>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("resource_type", limit, offset);
+                    while (rs.next())
+                    {
+                        resourceTypeList.add(ResourceType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ResourceType object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return resourceTypeList;
          
         }
         
         @Override
         public ArrayList<ResourceType> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<ResourceType> resource_typeList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("resource_type", limit, offset);
-                while (rs.next())
+            ArrayList<ResourceType> resourceTypeList = new ArrayList<ResourceType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for ResourceType, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    resource_typeList.add(ResourceType.process(rs));
+                    resourceTypeList = new ArrayList<ResourceType>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object ResourceType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                resourceTypeList = new ArrayList<ResourceType>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("resource_type", limit, offset);
+                    while (rs.next())
+                    {
+                        resourceTypeList.add(ResourceType.process(rs));
+                    }
+
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object ResourceType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return resource_typeList;
+            return resourceTypeList;            
         }
         
         @Override
         public ArrayList<ResourceType> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<ResourceType> resource_type = new ArrayList<>();
-            try
+            ArrayList<ResourceType> resourceTypeList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("resource_type", ResourceType.checkColumnName(columnName), columnValue, ResourceType.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   resource_type.add(ResourceType.process(rs));
+
+                    System.out.println("Find by column for ResourceType(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            ResourceType i = (ResourceType) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                resourceTypeList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            resourceTypeList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("ResourceType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("resource_type", ResourceType.checkColumnName(columnName), columnValue, ResourceType.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        resourceTypeList.add(ResourceType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("ResourceType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return resource_type;
+            return resourceTypeList;
         } 
     
         @Override
         public int add(ResourceType obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 ResourceType.checkColumnSize(obj.getTypeName(), 45);
                 ResourceType.checkColumnSize(obj.getTypeValue(), 150);
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO resource_type(TypeName,TypeValue) VALUES (?,?);");                    
+                prepareStatement("INSERT INTO resource_type(ResourceTypeId,TypeName,TypeValue,) VALUES (?,?);");                    
+                preparedStatement.setInt(0, obj.getResourceTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getTypeValue());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from resource_type;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -158,6 +335,13 @@ import com.busy.engine.entity.ResourceType;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setResourceTypeId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -171,11 +355,17 @@ import com.busy.engine.entity.ResourceType;
                 ResourceType.checkColumnSize(obj.getTypeValue(), 150);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE resource_type SET TypeName=?,TypeValue=? WHERE ResourceTypeId=?;");                    
+                prepareStatement("UPDATE resource_type SET com.busy.util.DatabaseColumn@2302eed8=?,com.busy.util.DatabaseColumn@704d7804=? WHERE ResourceTypeId=?;");                    
+                preparedStatement.setInt(0, obj.getResourceTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getTypeValue());
                 preparedStatement.setInt(3, obj.getResourceTypeId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getResourceTypeId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -191,7 +381,16 @@ import com.busy.engine.entity.ResourceType;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("resource_type");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("resource_type");
+            }
+            return count;
         }
         
         
@@ -225,7 +424,13 @@ import com.busy.engine.entity.ResourceType;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getResourceTypeId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -245,6 +450,12 @@ import com.busy.engine.entity.ResourceType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -265,6 +476,12 @@ import com.busy.engine.entity.ResourceType;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -285,7 +502,44 @@ import com.busy.engine.entity.ResourceType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        ResourceType i = (ResourceType) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getResourceTypeId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

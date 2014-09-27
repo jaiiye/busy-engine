@@ -24,7 +24,7 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
     @Override
     public String getId()
     {
-        return userName + roleName;
+        return userName + "-" +  roleName;
     }
 
     @Override

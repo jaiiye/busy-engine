@@ -5,6 +5,7 @@ import com.busy.engine.entity.*;
 import static com.busy.engine.web.SecurityHelper.setSessionUser;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +15,8 @@ public class Operations extends HttpServlet
 {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        String userName = request.getUserPrincipal().getName();
+        //String userName = request.getUserPrincipal().getName();
+        String userName = (request.getUserPrincipal() == null || request.getUserPrincipal().getName() == null) ? "admin" : request.getUserPrincipal().getName();
         User user = null;
         
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -22,7 +24,7 @@ public class Operations extends HttpServlet
         
         SimpleDateFormat operatingDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        if (!userName.equals("Guest"))            
+        if (!userName.equals("admin"))            
         {
             UserDao userDao = (UserDao) this.getServletContext().getAttribute("userDao");
 
@@ -1021,6 +1023,11 @@ public class Operations extends HttpServlet
                         itemDao.removeAll();                        
                         Database.RecordUserObjectClearAction(user.getUserId().toString(), user.getUsername(), currentTime, "Item");
                         response.sendRedirect("admin/ItemUI.jsp?SuccessMsg=Removed All Records Successfully!");
+                        break;
+                    case 5:  //testing the Dao                        
+                        ArrayList<Item> items = itemDao.findAll(null, null);
+                        itemDao.find(2);
+                        itemDao.findByColumn(Item.PROP_ITEM_NAME,"Sand", null, null);
                         break;
                     default:
                         response.sendRedirect("admin/ItemUI.jsp?ErrorMsg=Error editing Item, Invalid Action."); break;

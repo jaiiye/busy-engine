@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<BlogType> blog_typeList = new ArrayList<BlogType>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    blog_typeList = BlogType.getAllBlogTypeByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    blog_typeList = new BlogTypeDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    blog_typeList = BlogType.getAllBlogType();
+    blog_typeList = new BlogTypeDaoImpl().findAll(null, null);
 }
 request.setAttribute("blog_typeList", blog_typeList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,7 +128,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "E-Commerce"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
         <% request.setAttribute("subCategory", "BlogType"); %>
         <%@include file="index_sidebar.jsp"%>
 
@@ -138,7 +198,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="BlogTypeId" ${param.column == 'BlogTypeId' ? "selected" : "" } >BlogTypeId</option>                                                            
-                                                           <option value="BlogTypeName" ${param.column == 'BlogTypeName' ? "selected" : "" } >BlogTypeName</option>                                                            
+                                                           <option value="TypeName" ${param.column == 'TypeName' ? "selected" : "" } >TypeName</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -194,12 +254,19 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=blog_type&action=2" method="post">
 
-                                                <input type="hidden" name="blogTypeId" value="${blog_type.blogTypeId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="blogTypeName">BlogTypeName:</label>
+                                                    <label class="col-md-2 control-label" for="blogTypeId">BlogType:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="blogTypeName" class="form-control maxlength-handler" maxlength="100" value="${blog_type.blogTypeName}" />
+                                                        <input type="text" name="blogTypeId" class="form-control" value="${blog_type.blogTypeId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="typeName">TypeName:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="typeName" class="form-control maxlength-handler" maxlength="100" value="${blog_type.typeName}" />
                                                     </div>
                                                 </div>
                                                 
@@ -243,11 +310,25 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">BlogTypeName</label>
+                                                        <label class="col-md-2 control-label">BlogTypeId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="blogTypeName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                                <select name="blogTypeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("blog_type", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">TypeName</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="typeName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -288,7 +369,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">Name</label> 
+                                                    <label><input type="checkbox" checked data-column="1">TypeName</label> 
                                                     
                                                     <label><input type="checkbox" checked data-column="2">Actions</label>
                                                 </div>
@@ -303,7 +384,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>Name</th> 
+                                                    <th>TypeName</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -312,7 +393,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="blog_type" items="${blog_typeList}" >
                                                 <tr>                                                    
                                                     <td>${blog_type.blogTypeId}</td> 
-                                                    <td>${blog_type.blogTypeName}</td> 
+                                                    <td>${blog_type.typeName}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${blog_type.blogTypeId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -399,8 +480,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -440,7 +522,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         blogTypeId:    { required: true, number: true }, 
-                        blogTypeName:    { required: true, minlength: 1, maxlength: 100} 
+                        typeName:    { required: true, minlength: 1, maxlength: 100} 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

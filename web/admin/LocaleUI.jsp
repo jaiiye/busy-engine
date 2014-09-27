@@ -1,17 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="java.util.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
-ArrayList<com.busy.dao.Locale> localeList = new ArrayList<com.busy.dao.Locale>();
+ArrayList<Locale> localeList = new ArrayList<Locale>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    localeList = com.busy.dao.Locale.getAllLocaleByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    localeList = new LocaleDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    localeList = com.busy.dao.Locale.getAllLocale();
+    localeList = new LocaleDaoImpl().findAll(null, null);
 }
 request.setAttribute("localeList", localeList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -29,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -67,7 +128,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "E-Commerce"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
         <% request.setAttribute("subCategory", "Locale"); %>
         <%@include file="index_sidebar.jsp"%>
 
@@ -194,7 +255,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=locale&action=2" method="post">
 
-                                                <input type="hidden" name="localeId" value="${locale.localeId}" />
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="localeId">Locale:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="localeId" class="form-control" value="${locale.localeId}" />
+
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="localeString">LocaleString:</label>
@@ -247,6 +315,20 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     Your form validation is successful!
                                                 </div>
 
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">LocaleId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="localeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("locale", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
@@ -421,8 +503,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({

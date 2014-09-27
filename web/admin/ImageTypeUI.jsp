@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<ImageType> image_typeList = new ArrayList<ImageType>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    image_typeList = ImageType.getAllImageTypeByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    image_typeList = new ImageTypeDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    image_typeList = ImageType.getAllImageType();
+    image_typeList = new ImageTypeDaoImpl().findAll(null, null);
 }
 request.setAttribute("image_typeList", image_typeList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,7 +128,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "E-Commerce"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
         <% request.setAttribute("subCategory", "ImageType"); %>
         <%@include file="index_sidebar.jsp"%>
 
@@ -139,7 +199,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <select name="column" class="form-control">
                                                             <option value="ImageTypeId" ${param.column == 'ImageTypeId' ? "selected" : "" } >ImageTypeId</option>                                                            
                                                            <option value="TypeName" ${param.column == 'TypeName' ? "selected" : "" } >TypeName</option>                                                            
-                                                           <option value="TypeDescription" ${param.column == 'TypeDescription' ? "selected" : "" } >TypeDescription</option>                                                            
+                                                           <option value="Description" ${param.column == 'Description' ? "selected" : "" } >Description</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -195,7 +255,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=image_type&action=2" method="post">
 
-                                                <input type="hidden" name="imageTypeId" value="${image_type.imageTypeId}" />
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="imageTypeId">ImageType:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="imageTypeId" class="form-control" value="${image_type.imageTypeId}" />
+
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="typeName">TypeName:</label>
@@ -205,9 +272,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="typeDescription">TypeDescription:</label>
+                                                    <label class="col-md-2 control-label" for="description">Description:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="typeDescription" class="form-control maxlength-handler" maxlength="255" value="${image_type.typeDescription}" />
+                                                        <input type="text" name="description" class="form-control maxlength-handler" maxlength="255" value="${image_type.description}" />
                                                     </div>
                                                 </div>
                                                 
@@ -251,6 +318,20 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
+                                                        <label class="col-md-2 control-label">ImageTypeId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="imageTypeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("image_type", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
                                                         <label class="col-md-2 control-label">TypeName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
@@ -263,11 +344,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">TypeDescription</label>
+                                                        <label class="col-md-2 control-label">Description</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="typeDescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -309,7 +390,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
                                                     <label><input type="checkbox" checked data-column="1">TypeName</label> 
-                                                    <label><input type="checkbox" checked data-column="2">TypeDescription</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Description</label> 
                                                     
                                                     <label><input type="checkbox" checked data-column="3">Actions</label>
                                                 </div>
@@ -325,7 +406,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>
                                                     <th>Id</th> 
                                                     <th>TypeName</th> 
-                                                    <th>TypeDescription</th> 
+                                                    <th>Description</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -335,7 +416,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>                                                    
                                                     <td>${image_type.imageTypeId}</td> 
                                                     <td>${image_type.typeName}</td> 
-                                                    <td>${image_type.typeDescription}</td> 
+                                                    <td>${image_type.description}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${image_type.imageTypeId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -422,8 +503,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -464,7 +546,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     rules: {                                
                         imageTypeId:    { required: true, number: true }, 
                         typeName:    { required: true, minlength: 1, maxlength: 45}, 
-                        typeDescription:    { required: true, minlength: 1, maxlength: 255} 
+                        description:    { required: true, minlength: 1, maxlength: 255} 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

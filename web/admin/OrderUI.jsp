@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.Database"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
-ArrayList<com.busy.dao.Order> orderList = new ArrayList<com.busy.dao.Order>();
+ArrayList<Order> orderList = new ArrayList<Order>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    orderList = com.busy.dao.Order.getAllOrderByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    orderList = new OrderDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    orderList = com.busy.dao.Order.getAllOrder();
+    orderList = new OrderDaoImpl().findAll(null, null);
 }
 request.setAttribute("orderList", orderList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -34,12 +96,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
         <%@include file="index_global_styles.jsp"%>
 
+
         <!-- BEGIN PAGE LEVEL STYLES -->
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>            
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -48,10 +109,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
             <link rel="stylesheet" type="text/css" href="../assets/admin/layout/css/layout.css" />
             <link rel="stylesheet" type="text/css" href="../assets/admin/layout/css/themes/light.css" id="style_color"/>
             <link rel="stylesheet" type="text/css" href="../assets/admin/layout/css/custom.css"/>
-	<!-- END THEME STYLES -->
+		<!-- END THEME STYLES -->
 
         <%@include file="index_global_scripts.jsp"%>
+
+        
 	<script type="text/javascript" src="../uploadify/jquery.uploadify3.2.min.js"></script> 
+
         <link rel="shortcut icon" href="favicon.ico"/>
     </head>
 
@@ -65,7 +129,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <div class="page-container">
 
         <% request.setAttribute("category", "E-Commerce"); %>
-        <% request.setAttribute("subCategory", "orders"); %>
+        <% request.setAttribute("subCategory", "Order"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -134,20 +198,28 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="OrderId" ${param.column == 'OrderId' ? "selected" : "" } >OrderId</option>                                                            
-                                                           <option value="ShippingId" ${param.column == 'ShippingId' ? "selected" : "" } >ShippingId</option>                                                            
-                                                           <option value="OrderStatus" ${param.column == 'OrderStatus' ? "selected" : "" } >OrderStatus</option>                                                            
                                                            <option value="OrderDate" ${param.column == 'OrderDate' ? "selected" : "" } >OrderDate</option>                                                            
-                                                           <option value="PayPalTransactionId" ${param.column == 'PayPalTransactionId' ? "selected" : "" } >PayPalTransactionId</option>                                                            
-                                                           <option value="PayPalAmountBilled" ${param.column == 'PayPalAmountBilled' ? "selected" : "" } >PayPalAmountBilled</option>                                                            
-                                                           <option value="PayPalPaymentStatus" ${param.column == 'PayPalPaymentStatus' ? "selected" : "" } >PayPalPaymentStatus</option>                                                            
-                                                           <option value="PayPalPendingReason" ${param.column == 'PayPalPendingReason' ? "selected" : "" } >PayPalPendingReason</option>                                                            
-                                                           <option value="PayPalPaymentType" ${param.column == 'PayPalPaymentType' ? "selected" : "" } >PayPalPaymentType</option>                                                            
-                                                           <option value="PayPalFeeCharged" ${param.column == 'PayPalFeeCharged' ? "selected" : "" } >PayPalFeeCharged</option>                                                            
-                                                           <option value="PayPalCurrencyCode" ${param.column == 'PayPalCurrencyCode' ? "selected" : "" } >PayPalCurrencyCode</option>                                                            
-                                                           <option value="PayPalPayerId" ${param.column == 'PayPalPayerId' ? "selected" : "" } >PayPalPayerId</option>                                                            
-                                                           <option value="OrderTaxAmount" ${param.column == 'OrderTaxAmount' ? "selected" : "" } >OrderTaxAmount</option>                                                            
-                                                           <option value="OrderShippingAmount" ${param.column == 'OrderShippingAmount' ? "selected" : "" } >OrderShippingAmount</option>                                                            
-                                                           <option value="OrderAdditionalData" ${param.column == 'OrderAdditionalData' ? "selected" : "" } >OrderAdditionalData</option>                                                            
+                                                           <option value="ShipDate" ${param.column == 'ShipDate' ? "selected" : "" } >ShipDate</option>                                                            
+                                                           <option value="PaymentMethod" ${param.column == 'PaymentMethod' ? "selected" : "" } >PaymentMethod</option>                                                            
+                                                           <option value="PurchaseOrder" ${param.column == 'PurchaseOrder' ? "selected" : "" } >PurchaseOrder</option>                                                            
+                                                           <option value="TransactionId" ${param.column == 'TransactionId' ? "selected" : "" } >TransactionId</option>                                                            
+                                                           <option value="AmountBilled" ${param.column == 'AmountBilled' ? "selected" : "" } >AmountBilled</option>                                                            
+                                                           <option value="PaymentStatus" ${param.column == 'PaymentStatus' ? "selected" : "" } >PaymentStatus</option>                                                            
+                                                           <option value="PendingReason" ${param.column == 'PendingReason' ? "selected" : "" } >PendingReason</option>                                                            
+                                                           <option value="PaymentType" ${param.column == 'PaymentType' ? "selected" : "" } >PaymentType</option>                                                            
+                                                           <option value="TransactionFee" ${param.column == 'TransactionFee' ? "selected" : "" } >TransactionFee</option>                                                            
+                                                           <option value="CurrencyCode" ${param.column == 'CurrencyCode' ? "selected" : "" } >CurrencyCode</option>                                                            
+                                                           <option value="PayerId" ${param.column == 'PayerId' ? "selected" : "" } >PayerId</option>                                                            
+                                                           <option value="SubtotalAmount" ${param.column == 'SubtotalAmount' ? "selected" : "" } >SubtotalAmount</option>                                                            
+                                                           <option value="DiscountAmount" ${param.column == 'DiscountAmount' ? "selected" : "" } >DiscountAmount</option>                                                            
+                                                           <option value="TaxAmount" ${param.column == 'TaxAmount' ? "selected" : "" } >TaxAmount</option>                                                            
+                                                           <option value="ShippingAmount" ${param.column == 'ShippingAmount' ? "selected" : "" } >ShippingAmount</option>                                                            
+                                                           <option value="TotalAmount" ${param.column == 'TotalAmount' ? "selected" : "" } >TotalAmount</option>                                                            
+                                                           <option value="RefundAmount" ${param.column == 'RefundAmount' ? "selected" : "" } >RefundAmount</option>                                                            
+                                                           <option value="Notes" ${param.column == 'Notes' ? "selected" : "" } >Notes</option>                                                            
+                                                           <option value="OrderStatus" ${param.column == 'OrderStatus' ? "selected" : "" } >OrderStatus</option>                                                            
+                                                           <option value="ShippingId" ${param.column == 'ShippingId' ? "selected" : "" } >ShippingId</option>                                                            
+                                                           <option value="AffiliateId" ${param.column == 'AffiliateId' ? "selected" : "" } >AffiliateId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -203,22 +275,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=order&action=2" method="post">
 
-                                                <input type="hidden" name="orderId" value="${order.orderId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="shippingId">ShippingId:</label>
+                                                    <label class="col-md-2 control-label" for="orderId">Order:</label>
                                                     <div  class="col-md-10">
-                                                        <select name="shippingId" class="form-control">
-                                                            <%com.busy.dao.Order x = (com.busy.dao.Order) pageContext.getAttribute("order"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("shipping", x.getShippingId().toString(), 2)%>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="orderStatus">OrderStatus:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="orderStatus" class="form-control maxlength-handler" maxlength="45" value="${order.orderStatus}" />
+                                                        <input type="text" name="orderId" class="form-control" value="${order.orderId}" />
+
                                                     </div>
                                                 </div>
                                                 
@@ -230,79 +292,157 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="payPalTransactionId">PayPalTransactionId:</label>
+                                                    <label class="col-md-2 control-label" for="shipDate">ShipDate:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="payPalTransactionId" class="form-control maxlength-handler" maxlength="45" value="${order.payPalTransactionId}" />
+                                                        <div class="input-group date form_datetime" data-date="2012-12-21T15:25:00Z">        <input type="text" name="shipDate" value="${order.shipDate}" class="form-control">        <span class="input-group-btn">                <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>        </span>        <span class="input-group-btn">                <button class="btn default date-set" type="button"><i class="fa fa-calendar"></i></button>        </span></div>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="payPalAmountBilled">PayPalAmountBilled:</label>
+                                                    <label class="col-md-2 control-label" for="paymentMethod">PaymentMethod:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="payPalAmountBilled" class="form-control" value="${order.payPalAmountBilled}" />
+                                                        <input type="text" name="paymentMethod" class="form-control maxlength-handler" maxlength="100" value="${order.paymentMethod}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="payPalPaymentStatus">PayPalPaymentStatus:</label>
+                                                    <label class="col-md-2 control-label" for="purchaseOrder">PurchaseOrder:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="payPalPaymentStatus" class="form-control maxlength-handler" maxlength="45" value="${order.payPalPaymentStatus}" />
+                                                        <input type="text" name="purchaseOrder" class="form-control maxlength-handler" maxlength="100" value="${order.purchaseOrder}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="payPalPendingReason">PayPalPendingReason:</label>
+                                                    <label class="col-md-2 control-label" for="transactionId">Transaction:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="payPalPendingReason" class="form-control maxlength-handler" maxlength="45" value="${order.payPalPendingReason}" />
+                                                        <input type="text" name="transactionId" class="form-control maxlength-handler" maxlength="45" value="${order.transactionId}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="payPalPaymentType">PayPalPaymentType:</label>
+                                                    <label class="col-md-2 control-label" for="amountBilled">AmountBilled:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="payPalPaymentType" class="form-control maxlength-handler" maxlength="15" value="${order.payPalPaymentType}" />
+                                                        <input type="text" name="amountBilled" class="form-control" value="${order.amountBilled}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="payPalFeeCharged">PayPalFeeCharged:</label>
+                                                    <label class="col-md-2 control-label" for="paymentStatus">PaymentStatus:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="payPalFeeCharged" class="form-control" value="${order.payPalFeeCharged}" />
+                                                        <input type="text" name="paymentStatus" class="form-control maxlength-handler" maxlength="45" value="${order.paymentStatus}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="payPalCurrencyCode">PayPalCurrencyCode:</label>
+                                                    <label class="col-md-2 control-label" for="pendingReason">PendingReason:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="payPalCurrencyCode" class="form-control maxlength-handler" maxlength="45" value="${order.payPalCurrencyCode}" />
+                                                        <input type="text" name="pendingReason" class="form-control maxlength-handler" maxlength="45" value="${order.pendingReason}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="payPalPayerId">PayPalPayerId:</label>
+                                                    <label class="col-md-2 control-label" for="paymentType">PaymentType:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="payPalPayerId" class="form-control maxlength-handler" maxlength="45" value="${order.payPalPayerId}" />
+                                                        <input type="text" name="paymentType" class="form-control maxlength-handler" maxlength="15" value="${order.paymentType}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="orderTaxAmount">OrderTaxAmount:</label>
+                                                    <label class="col-md-2 control-label" for="transactionFee">TransactionFee:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="orderTaxAmount" class="form-control" value="${order.orderTaxAmount}" />
+                                                        <input type="text" name="transactionFee" class="form-control" value="${order.transactionFee}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="orderShippingAmount">OrderShippingAmount:</label>
+                                                    <label class="col-md-2 control-label" for="currencyCode">CurrencyCode:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="orderShippingAmount" class="form-control" value="${order.orderShippingAmount}" />
+                                                        <input type="text" name="currencyCode" class="form-control maxlength-handler" maxlength="45" value="${order.currencyCode}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="orderAdditionalData">OrderAdditionalData:</label>
+                                                    <label class="col-md-2 control-label" for="payerId">Payer:</label>
                                                     <div  class="col-md-10">
-                                                        <textarea name="orderAdditionalData" class="ckeditor form-control" rows="4">${order.orderAdditionalData}</textarea>
+                                                        <input type="text" name="payerId" class="form-control maxlength-handler" maxlength="45" value="${order.payerId}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="subtotalAmount">SubtotalAmount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="subtotalAmount" class="form-control" value="${order.subtotalAmount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="discountAmount">DiscountAmount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="discountAmount" class="form-control" value="${order.discountAmount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="taxAmount">TaxAmount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="taxAmount" class="form-control" value="${order.taxAmount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="shippingAmount">ShippingAmount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="shippingAmount" class="form-control" value="${order.shippingAmount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="totalAmount">TotalAmount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="totalAmount" class="form-control" value="${order.totalAmount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="refundAmount">RefundAmount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="refundAmount" class="form-control" value="${order.refundAmount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="notes">Notes:</label>
+                                                    <div  class="col-md-10">
+                                                        <textarea name="notes" class="ckeditor form-control" rows="4">${order.notes}</textarea>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="orderStatus">OrderStatus:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="orderStatus" class="form-control" value="${order.orderStatus}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="shippingId">Shipping:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="shippingId" class="form-control" value="${order.shippingId}" />
+                                                        <select name="shippingId" class="form-control">
+                                                            <%Order x = (Order) pageContext.getAttribute("order"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("shipping", x.getShippingId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="affiliateId">Affiliate:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="affiliateId" class="form-control" value="${order.affiliateId}" />
+                                                        <select name="affiliateId" class="form-control">
+                                                            <%Order x = (Order) pageContext.getAttribute("order"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("affiliate", x.getAffiliateId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
@@ -346,25 +486,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ShippingId</label>
+                                                        <label class="col-md-2 control-label">OrderId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="shippingId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("shipping", "", 2)%>
+                                                                <select name="orderId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("order", "", 2)%>
                                                                </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">OrderStatus</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="orderStatus" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -384,11 +512,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">PayPalTransactionId</label>
+                                                        <label class="col-md-2 control-label">ShipDate</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="payPalTransactionId" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <input type="text" name="shipDate" class="form-control" id="mask_date2" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -396,11 +524,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">PayPalAmountBilled</label>
+                                                        <label class="col-md-2 control-label">PaymentMethod</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="payPalAmountBilled" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                                <input type="text" name="paymentMethod" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -408,11 +536,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">PayPalPaymentStatus</label>
+                                                        <label class="col-md-2 control-label">PurchaseOrder</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="payPalPaymentStatus" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <input type="text" name="purchaseOrder" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -420,11 +548,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">PayPalPendingReason</label>
+                                                        <label class="col-md-2 control-label">TransactionId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="payPalPendingReason" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <input type="text" name="transactionId" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -432,11 +560,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">PayPalPaymentType</label>
+                                                        <label class="col-md-2 control-label">AmountBilled</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="payPalPaymentType" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="15" />                                                            
+                                                                <input type="text" name="amountBilled" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -444,11 +572,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">PayPalFeeCharged</label>
+                                                        <label class="col-md-2 control-label">PaymentStatus</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="payPalFeeCharged" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                                <input type="text" name="paymentStatus" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -456,11 +584,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">PayPalCurrencyCode</label>
+                                                        <label class="col-md-2 control-label">PendingReason</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="payPalCurrencyCode" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <input type="text" name="pendingReason" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -468,11 +596,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">PayPalPayerId</label>
+                                                        <label class="col-md-2 control-label">PaymentType</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="payPalPayerId" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <input type="text" name="paymentType" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="15" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -480,11 +608,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">OrderTaxAmount</label>
+                                                        <label class="col-md-2 control-label">TransactionFee</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="orderTaxAmount" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                                <input type="text" name="transactionFee" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -492,11 +620,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">OrderShippingAmount</label>
+                                                        <label class="col-md-2 control-label">CurrencyCode</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="orderShippingAmount" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                                <input type="text" name="currencyCode" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -504,11 +632,135 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">OrderAdditionalData</label>
+                                                        <label class="col-md-2 control-label">PayerId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <textarea name="orderAdditionalData" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                                <input type="text" name="payerId" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">SubtotalAmount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="subtotalAmount" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">DiscountAmount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="discountAmount" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">TaxAmount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="taxAmount" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ShippingAmount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="shippingAmount" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">TotalAmount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="totalAmount" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">RefundAmount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="refundAmount" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Notes</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <textarea name="notes" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">OrderStatus</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="orderStatus" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ShippingId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="shippingId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("shipping", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">AffiliateId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="affiliateId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("affiliate", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -549,13 +801,30 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">ShippingId</label> 
-                                                    <label><input type="checkbox" checked data-column="2">Status</label> 
-                                                    <label><input type="checkbox" checked data-column="3">Date</label>  
-                                                    <label><input type="checkbox" checked data-column="4">TaxAmount</label> 
-                                                    <label><input type="checkbox" checked data-column="5">ShippingAmount</label> 
-                                                    <label><input type="checkbox" checked data-column="6">AdditionalData</label> 
-                                                    <label><input type="checkbox" checked data-column="7">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="1">Date</label> 
+                                                    <label><input type="checkbox" checked data-column="2">ShipDate</label> 
+                                                    <label><input type="checkbox" checked data-column="3">PaymentMethod</label> 
+                                                    <label><input type="checkbox" checked data-column="4">Purchase</label> 
+                                                    <label><input type="checkbox" checked data-column="5">TransactionId</label> 
+                                                    <label><input type="checkbox" checked data-column="6">AmountBilled</label> 
+                                                    <label><input type="checkbox" checked data-column="7">PaymentStatus</label> 
+                                                    <label><input type="checkbox" checked data-column="8">PendingReason</label> 
+                                                    <label><input type="checkbox" checked data-column="9">PaymentType</label> 
+                                                    <label><input type="checkbox" checked data-column="10">TransactionFee</label> 
+                                                    <label><input type="checkbox" checked data-column="11">CurrencyCode</label> 
+                                                    <label><input type="checkbox" checked data-column="12">PayerId</label> 
+                                                    <label><input type="checkbox" checked data-column="13">SubtotalAmount</label> 
+                                                    <label><input type="checkbox" checked data-column="14">DiscountAmount</label> 
+                                                    <label><input type="checkbox" checked data-column="15">TaxAmount</label> 
+                                                    <label><input type="checkbox" checked data-column="16">ShippingAmount</label> 
+                                                    <label><input type="checkbox" checked data-column="17">TotalAmount</label> 
+                                                    <label><input type="checkbox" checked data-column="18">RefundAmount</label> 
+                                                    <label><input type="checkbox" checked data-column="19">Notes</label> 
+                                                    <label><input type="checkbox" checked data-column="20">Status</label> 
+                                                    <label><input type="checkbox" checked data-column="21">ShippingId</label> 
+                                                    <label><input type="checkbox" checked data-column="22">AffiliateId</label> 
+                                                    
+                                                    <label><input type="checkbox" checked data-column="23">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -568,12 +837,28 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>Shipping Id</th> 
+                                                    <th>Date</th> 
+                                                    <th>ShipDate</th> 
+                                                    <th>PaymentMethod</th> 
+                                                    <th>Purchase</th> 
+                                                    <th>TransactionId</th> 
+                                                    <th>AmountBilled</th> 
+                                                    <th>PaymentStatus</th> 
+                                                    <th>PendingReason</th> 
+                                                    <th>PaymentType</th> 
+                                                    <th>TransactionFee</th> 
+                                                    <th>CurrencyCode</th> 
+                                                    <th>PayerId</th> 
+                                                    <th>SubtotalAmount</th> 
+                                                    <th>DiscountAmount</th> 
+                                                    <th>TaxAmount</th> 
+                                                    <th>ShippingAmount</th> 
+                                                    <th>TotalAmount</th> 
+                                                    <th>RefundAmount</th> 
+                                                    <th>Notes</th> 
                                                     <th>Status</th> 
-                                                    <th>Date</th>  
-                                                    <th>Tax Amount</th> 
-                                                    <th>Shipping Amount</th> 
-                                                    <th>Additional Data</th> 
+                                                    <th>ShippingId</th> 
+                                                    <th>AffiliateId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -582,12 +867,28 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="order" items="${orderList}" >
                                                 <tr>                                                    
                                                     <td>${order.orderId}</td> 
-                                                    <td>${order.shippingId}</td> 
-                                                    <td>${order.orderStatus}</td> 
                                                     <td>${order.orderDate}</td> 
-                                                    <td>${order.orderTaxAmount}</td> 
-                                                    <td>${order.orderShippingAmount}</td> 
-                                                    <td>${order.orderAdditionalData}</td> 
+                                                    <td>${order.shipDate}</td> 
+                                                    <td>${order.paymentMethod}</td> 
+                                                    <td>${order.purchaseOrder}</td> 
+                                                    <td>${order.transactionId}</td> 
+                                                    <td>${order.amountBilled}</td> 
+                                                    <td>${order.paymentStatus}</td> 
+                                                    <td>${order.pendingReason}</td> 
+                                                    <td>${order.paymentType}</td> 
+                                                    <td>${order.transactionFee}</td> 
+                                                    <td>${order.currencyCode}</td> 
+                                                    <td>${order.payerId}</td> 
+                                                    <td>${order.subtotalAmount}</td> 
+                                                    <td>${order.discountAmount}</td> 
+                                                    <td>${order.taxAmount}</td> 
+                                                    <td>${order.shippingAmount}</td> 
+                                                    <td>${order.totalAmount}</td> 
+                                                    <td>${order.refundAmount}</td> 
+                                                    <td>${order.notes}</td> 
+                                                    <td>${order.orderStatus}</td> 
+                                                    <td>${order.shippingId}</td> 
+                                                    <td>${order.affiliateId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${order.orderId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -652,13 +953,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <script type="text/javascript" src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/select2/select2.min.js"></script>
-        
         <script type="text/javascript" src="../assets/global/plugins/datatables/media/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/datatables/extensions/Scroller/js/dataTables.scroller.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js"></script>
-        
         <script type="text/javascript" src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
@@ -668,7 +967,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN PAGE LEVEL SCRIPTS -->
         <script type="text/javascript" src="../assets/global/scripts/metronic.js"></script>
         <script type="text/javascript" src="../assets/admin/layout/scripts/layout.js"></script>
-        <script type="text/javascript" src="../assets/global/scripts/datatable.js"></script>
+        <script src="../assets/global/scripts/datatable.js"></script>
         <!-- END PAGE LEVEL SCRIPTS -->
         
         <script>
@@ -676,8 +975,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -717,20 +1017,28 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         orderId:    { required: true, number: true }, 
-                        shippingId:    { required: true, number: true }, 
-                        orderStatus:    { required: true, minlength: 1, maxlength: 45}, 
                         orderDate:    { required: true }, 
-                        payPalTransactionId:    { required: true, minlength: 1, maxlength: 45}, 
-                        payPalAmountBilled:    { required: true, digits: true }, 
-                        payPalPaymentStatus:    { required: true, minlength: 1, maxlength: 45}, 
-                        payPalPendingReason:    { required: true, minlength: 1, maxlength: 45}, 
-                        payPalPaymentType:    { required: true, minlength: 1, maxlength: 15}, 
-                        payPalFeeCharged:    { required: true, digits: true }, 
-                        payPalCurrencyCode:    { required: true, minlength: 1, maxlength: 45}, 
-                        payPalPayerId:    { required: true, minlength: 1, maxlength: 45}, 
-                        orderTaxAmount:    { required: true, digits: true }, 
-                        orderShippingAmount:    { required: true, digits: true }, 
-                        orderAdditionalData:    { required: true, minlength: 1, maxlength: 65535} 
+                        shipDate:    { required: true }, 
+                        paymentMethod:    { required: true, minlength: 1, maxlength: 100}, 
+                        purchaseOrder:    { required: true, minlength: 1, maxlength: 100}, 
+                        transactionId:    { required: true, minlength: 1, maxlength: 45}, 
+                        amountBilled:    { required: true, digits: true }, 
+                        paymentStatus:    { required: true, minlength: 1, maxlength: 45}, 
+                        pendingReason:    { required: true, minlength: 1, maxlength: 45}, 
+                        paymentType:    { required: true, minlength: 1, maxlength: 15}, 
+                        transactionFee:    { required: true, digits: true }, 
+                        currencyCode:    { required: true, minlength: 1, maxlength: 45}, 
+                        payerId:    { required: true, minlength: 1, maxlength: 45}, 
+                        subtotalAmount:    { required: true, digits: true }, 
+                        discountAmount:    { required: true, digits: true }, 
+                        taxAmount:    { required: true, digits: true }, 
+                        shippingAmount:    { required: true, digits: true }, 
+                        totalAmount:    { required: true, digits: true }, 
+                        refundAmount:    { required: true, digits: true }, 
+                        notes:    { required: true, minlength: 1, maxlength: 65535}, 
+                        orderStatus:    { required: true, number: true }, 
+                        shippingId:    { required: true, number: true }, 
+                        affiliateId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

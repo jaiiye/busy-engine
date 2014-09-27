@@ -36,35 +36,95 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.StateProvince;
-import com.busy.engine.entity.Country;
-import com.busy.engine.entity.Shipping;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class ShippingDaoImpl extends BasicConnection implements Serializable, ShippingDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public Shipping find(Integer id)
+        public ShippingDaoImpl()
         {
-            return findByColumn("ShippingId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<Shipping> findAll(Integer limit, Integer offset)
+
+        public ShippingDaoImpl(boolean enableCache)
+        {
+            cachingEnabled = enableCache;
+        }
+
+        private static class ShippingCache
+        {
+            public static final ConcurrentLruCache<Integer, Shipping> shippingCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (Shipping i : findAll())
+                {
+                    getCache().put(i.getShippingId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, Shipping> getCache()
+        {
+            return ShippingCache.shippingCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, Shipping> buildCache(ArrayList<Shipping> shippingList)
+        {        
+            ConcurrentLruCache<Integer, Shipping> cache = new ConcurrentLruCache<Integer, Shipping>(shippingList.size() + 1000);
+            for (Shipping i : shippingList)
+            {
+                cache.put(i.getShippingId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<Shipping> findAll()
         {
             ArrayList<Shipping> shipping = new ArrayList<>();
             try
             {
                 getAllRecordsByTableName("shipping");
-                while(rs.next())
+                while (rs.next())
                 {
                     shipping.add(Shipping.process(rs));
                 }
@@ -78,74 +138,210 @@ import com.busy.engine.entity.Shipping;
                 closeConnection();
             }
             return shipping;
+        }
+        
+        @Override
+        public Shipping find(Integer id)
+        {
+            return findByColumn("ShippingId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<Shipping> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<Shipping> shippingList = new ArrayList<Shipping>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for Shipping, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    shippingList = new ArrayList<Shipping>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("shipping", limit, offset);
+                    while (rs.next())
+                    {
+                        shippingList.add(Shipping.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Shipping object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return shippingList;
          
         }
         
         @Override
         public ArrayList<Shipping> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<Shipping> shippingList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("shipping", limit, offset);
-                while (rs.next())
+            ArrayList<Shipping> shippingList = new ArrayList<Shipping>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for Shipping, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    shippingList.add(Shipping.process(rs));
+                    shippingList = new ArrayList<Shipping>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(Shipping shipping : shippingList)
+                    try
                     {
-                        
-                            getRecordById("StateProvince", shipping.getStateProvinceId().toString());
-                            shipping.setStateProvince(StateProvince.process(rs));               
-                        
-                            getRecordById("Country", shipping.getCountryId().toString());
-                            shipping.setCountry(Country.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            Shipping shipping = (Shipping) e.getValue();
+
+                            
+                                getRecordById("StateProvince", shipping.getStateProvinceId().toString());
+                                shipping.setStateProvince(StateProvince.process(rs));               
+                            
+                                getRecordById("Country", shipping.getCountryId().toString());
+                                shipping.setCountry(Country.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object Shipping method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object Shipping method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                shippingList = new ArrayList<Shipping>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("shipping", limit, offset);
+                    while (rs.next())
+                    {
+                        shippingList.add(Shipping.process(rs));
+                    }
+
+                    
+                    
+                        for (Shipping shipping : shippingList)
+                        {                        
+                            
+                                getRecordById("StateProvince", shipping.getStateProvinceId().toString());
+                                shipping.setStateProvince(StateProvince.process(rs));               
+                            
+                                getRecordById("Country", shipping.getCountryId().toString());
+                                shipping.setCountry(Country.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object Shipping method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return shippingList;
+            return shippingList;            
         }
         
         @Override
         public ArrayList<Shipping> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<Shipping> shipping = new ArrayList<>();
-            try
+            ArrayList<Shipping> shippingList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("shipping", Shipping.checkColumnName(columnName), columnValue, Shipping.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   shipping.add(Shipping.process(rs));
+
+                    System.out.println("Find by column for Shipping(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            Shipping i = (Shipping) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                shippingList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            shippingList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Shipping's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("shipping", Shipping.checkColumnName(columnName), columnValue, Shipping.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        shippingList.add(Shipping.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Shipping's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return shipping;
+            return shippingList;
         } 
     
         @Override
         public int add(Shipping obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 Shipping.checkColumnSize(obj.getMethodName(), 100);
                 
@@ -154,9 +350,11 @@ import com.busy.engine.entity.Shipping;
                 
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO shipping(MethodName,Quantity,UnitOfMeasure,RatePerUnitCost,AdditionalCost,StateProvinceId,CountryId) VALUES (?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO shipping(ShippingId,MethodName,Quantity,UnitOfMeasure,RatePerUnitCost,AdditionalCost,StateProvinceId,CountryId,) VALUES (?,?,?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getShippingId());
                 preparedStatement.setString(1, obj.getMethodName());
                 preparedStatement.setDouble(2, obj.getQuantity());
                 preparedStatement.setString(3, obj.getUnitOfMeasure());
@@ -165,13 +363,15 @@ import com.busy.engine.entity.Shipping;
                 preparedStatement.setInt(6, obj.getStateProvinceId());
                 preparedStatement.setInt(7, obj.getCountryId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from shipping;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -181,6 +381,13 @@ import com.busy.engine.entity.Shipping;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setShippingId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -199,7 +406,8 @@ import com.busy.engine.entity.Shipping;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE shipping SET MethodName=?,Quantity=?,UnitOfMeasure=?,RatePerUnitCost=?,AdditionalCost=?,StateProvinceId=?,CountryId=? WHERE ShippingId=?;");                    
+                prepareStatement("UPDATE shipping SET com.busy.util.DatabaseColumn@3387c983=?,com.busy.util.DatabaseColumn@7804a4c8=?,com.busy.util.DatabaseColumn@43d3bc59=?,com.busy.util.DatabaseColumn@43afd1e4=?,com.busy.util.DatabaseColumn@4ee9c3c3=?,com.busy.util.DatabaseColumn@13961c32=?,com.busy.util.DatabaseColumn@4df94b6d=? WHERE ShippingId=?;");                    
+                preparedStatement.setInt(0, obj.getShippingId());
                 preparedStatement.setString(1, obj.getMethodName());
                 preparedStatement.setDouble(2, obj.getQuantity());
                 preparedStatement.setString(3, obj.getUnitOfMeasure());
@@ -209,6 +417,11 @@ import com.busy.engine.entity.Shipping;
                 preparedStatement.setInt(7, obj.getCountryId());
                 preparedStatement.setInt(8, obj.getShippingId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getShippingId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -224,7 +437,16 @@ import com.busy.engine.entity.Shipping;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("shipping");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("shipping");
+            }
+            return count;
         }
         
         
@@ -277,7 +499,13 @@ import com.busy.engine.entity.Shipping;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getShippingId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -297,6 +525,12 @@ import com.busy.engine.entity.Shipping;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -317,6 +551,12 @@ import com.busy.engine.entity.Shipping;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -337,7 +577,44 @@ import com.busy.engine.entity.Shipping;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        Shipping i = (Shipping) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getShippingId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

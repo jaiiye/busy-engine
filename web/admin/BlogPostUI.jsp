@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<BlogPost> blog_postList = new ArrayList<BlogPost>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    blog_postList = BlogPost.getAllBlogPostByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    blog_postList = new BlogPostDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    blog_postList = BlogPost.getAllBlogPost();
+    blog_postList = new BlogPostDaoImpl().findAll(null, null);
 }
 request.setAttribute("blog_postList", blog_postList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,16 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
+
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -67,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "content"); %>
-        <% request.setAttribute("subCategory", "blogs"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
+        <% request.setAttribute("subCategory", "BlogPost"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -81,18 +142,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- BEGIN PAGE TITLE & BREADCRUMB-->
-                                <h3 class="page-title"> Blog Post </h3>
+                                <h3 class="page-title"> BlogPost </h3>
                                 <ul class="page-breadcrumb breadcrumb">                                
                                     <li>
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Content </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">Blog Posts</a>
+                                        <a href="#">BlogPost</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -137,15 +198,21 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="BlogPostId" ${param.column == 'BlogPostId' ? "selected" : "" } >BlogPostId</option>                                                            
-                                                           <option value="PostTitle" ${param.column == 'PostTitle' ? "selected" : "" } >PostTitle</option>                                                            
-                                                           <option value="PostBody" ${param.column == 'PostBody' ? "selected" : "" } >PostBody</option>                                                            
-                                                           <option value="PostPicURL" ${param.column == 'PostPicURL' ? "selected" : "" } >PostPicURL</option>                                                            
-                                                           <option value="PostDate" ${param.column == 'PostDate' ? "selected" : "" } >PostDate</option>                                                            
-                                                           <option value="PostTags" ${param.column == 'PostTags' ? "selected" : "" } >PostTags</option>                                                            
-                                                           <option value="PostFeatured" ${param.column == 'PostFeatured' ? "selected" : "" } >PostFeatured</option>                                                            
+                                                           <option value="Title" ${param.column == 'Title' ? "selected" : "" } >Title</option>                                                            
+                                                           <option value="Content" ${param.column == 'Content' ? "selected" : "" } >Content</option>                                                            
+                                                           <option value="ImageURL" ${param.column == 'ImageURL' ? "selected" : "" } >ImageURL</option>                                                            
+                                                           <option value="Tags" ${param.column == 'Tags' ? "selected" : "" } >Tags</option>                                                            
+                                                           <option value="Featured" ${param.column == 'Featured' ? "selected" : "" } >Featured</option>                                                            
+                                                           <option value="RatingSum" ${param.column == 'RatingSum' ? "selected" : "" } >RatingSum</option>                                                            
+                                                           <option value="VoteCount" ${param.column == 'VoteCount' ? "selected" : "" } >VoteCount</option>                                                            
+                                                           <option value="CommentCount" ${param.column == 'CommentCount' ? "selected" : "" } >CommentCount</option>                                                            
+                                                           <option value="PostStatus" ${param.column == 'PostStatus' ? "selected" : "" } >PostStatus</option>                                                            
+                                                           <option value="Excerpt" ${param.column == 'Excerpt' ? "selected" : "" } >Excerpt</option>                                                            
+                                                           <option value="LastModified" ${param.column == 'LastModified' ? "selected" : "" } >LastModified</option>                                                            
+                                                           <option value="Locale" ${param.column == 'Locale' ? "selected" : "" } >Locale</option>                                                            
                                                            <option value="UserId" ${param.column == 'UserId' ? "selected" : "" } >UserId</option>                                                            
-                                                           <option value="PostRating" ${param.column == 'PostRating' ? "selected" : "" } >PostRating</option>                                                            
                                                            <option value="BlogId" ${param.column == 'BlogId' ? "selected" : "" } >BlogId</option>                                                            
+                                                           <option value="MetaTagId" ${param.column == 'MetaTagId' ? "selected" : "" } >MetaTagId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -201,72 +268,128 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=blog_post&action=2" method="post">
 
-                                                <input type="hidden" name="blogPostId" value="${blog_post.blogPostId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="postTitle">PostTitle:</label>
+                                                    <label class="col-md-2 control-label" for="blogPostId">BlogPost:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="postTitle" class="form-control maxlength-handler" maxlength="255" value="${blog_post.postTitle}" />
+                                                        <input type="text" name="blogPostId" class="form-control" value="${blog_post.blogPostId}" />
+
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="postBody">PostBody:</label>
+                                                    <label class="col-md-2 control-label" for="title">Title:</label>
                                                     <div  class="col-md-10">
-                                                        <textarea name="postBody" class="ckeditor form-control" rows="4">${blog_post.postBody}</textarea>
+                                                        <input type="text" name="title" class="form-control maxlength-handler" maxlength="255" value="${blog_post.title}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="postPicURL">PostPicURL:</label>
+                                                    <label class="col-md-2 control-label" for="content">Content:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="postPicURL" class="form-control maxlength-handler" maxlength="255" value="${blog_post.postPicURL}" />
+                                                        <textarea name="content" class="ckeditor form-control" rows="4">${blog_post.content}</textarea>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="postDate">PostDate:</label>
+                                                    <label class="col-md-2 control-label" for="imageURL">ImageURL:</label>
                                                     <div  class="col-md-10">
-                                                        <div class="input-group date form_datetime" data-date="2012-12-21T15:25:00Z">        <input type="text" name="postDate" value="${blog_post.postDate}" class="form-control">        <span class="input-group-btn">                <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>        </span>        <span class="input-group-btn">                <button class="btn default date-set" type="button"><i class="fa fa-calendar"></i></button>        </span></div>
+                                                        <input type="text" name="imageURL" class="form-control maxlength-handler" maxlength="255" value="${blog_post.imageURL}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="postTags">PostTags:</label>
+                                                    <label class="col-md-2 control-label" for="tags">Tags:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="postTags" class="form-control maxlength-handler" maxlength="255" value="${blog_post.postTags}" />
+                                                        <input type="text" name="tags" class="form-control maxlength-handler" maxlength="255" value="${blog_post.tags}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="postFeatured">PostFeatured:</label>
+                                                    <label class="col-md-2 control-label" for="featured">Featured:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="postFeatured" class="form-control" value="${blog_post.postFeatured}" />
+                                                        <input type="text" name="featured" class="form-control" value="${blog_post.featured}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="postRating">PostRating:</label>
+                                                    <label class="col-md-2 control-label" for="ratingSum">RatingSum:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="postRating" class="form-control" value="${blog_post.postRating}" />
+                                                        <input type="text" name="ratingSum" class="form-control" value="${blog_post.ratingSum}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userId">UserId:</label>
+                                                    <label class="col-md-2 control-label" for="voteCount">VoteCount:</label>
                                                     <div  class="col-md-10">
+                                                        <input type="text" name="voteCount" class="form-control" value="${blog_post.voteCount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="commentCount">CommentCount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="commentCount" class="form-control" value="${blog_post.commentCount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="postStatus">PostStatus:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="postStatus" class="form-control" value="${blog_post.postStatus}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="excerpt">Excerpt:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="excerpt" class="form-control maxlength-handler" maxlength="255" value="${blog_post.excerpt}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="lastModified">LastModified:</label>
+                                                    <div  class="col-md-10">
+                                                        <div class="input-group date form_datetime" data-date="2012-12-21T15:25:00Z">        <input type="text" name="lastModified" value="${blog_post.lastModified}" class="form-control">        <span class="input-group-btn">                <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>        </span>        <span class="input-group-btn">                <button class="btn default date-set" type="button"><i class="fa fa-calendar"></i></button>        </span></div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="locale">Locale:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="locale" class="form-control maxlength-handler" maxlength="10" value="${blog_post.locale}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="userId">User:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="userId" class="form-control" value="${blog_post.userId}" />
                                                         <select name="userId" class="form-control">
-                                                            <% BlogPost blogPost = (BlogPost) pageContext.getAttribute("blog_post"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("user", blogPost.getUserId().toString(), 4)%>
+                                                            <%BlogPost x = (BlogPost) pageContext.getAttribute("blog_post"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("user", x.getUserId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="blogId">BlogId:</label>
+                                                    <label class="col-md-2 control-label" for="blogId">Blog:</label>
                                                     <div  class="col-md-10">
-                                                        <select name="blogId" class="form-control" >
-                                                           <%= Database.generateSelectOptionsFromTableAndColumn("blog", blogPost.getBlogId().toString(), 2)%>
+                                                        <input type="text" name="blogId" class="form-control" value="${blog_post.blogId}" />
+                                                        <select name="blogId" class="form-control">
+                                                            <%BlogPost x = (BlogPost) pageContext.getAttribute("blog_post"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("blog", x.getBlogId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="metaTagId">MetaTag:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="metaTagId" class="form-control" value="${blog_post.metaTagId}" />
+                                                        <select name="metaTagId" class="form-control">
+                                                            <%BlogPost x = (BlogPost) pageContext.getAttribute("blog_post"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("meta_tag", x.getMetaTagId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -311,96 +434,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">PostTitle</label>
+                                                        <label class="col-md-2 control-label">BlogPostId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="postTitle" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">PostBody</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <textarea name="postBody" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">PostPicURL</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="postPicURL" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">PostDate</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="postDate" class="form-control" id="mask_date2" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">PostTags</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="postTags" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">PostFeatured</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="postFeatured" class="form-control" placeholder="Enter Integer" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">PostRating</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="postRating" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">User</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="userId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user", "", 4)%>
+                                                                <select name="blogPostId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("blog_post", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -409,12 +448,184 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Blog</label>
+                                                        <label class="col-md-2 control-label">Title</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="title" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Content</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <textarea name="content" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ImageURL</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="imageURL" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Tags</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="tags" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Featured</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="featured" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">RatingSum</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="ratingSum" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">VoteCount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="voteCount" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">CommentCount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="commentCount" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">PostStatus</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="postStatus" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Excerpt</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="excerpt" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">LastModified</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="lastModified" class="form-control" id="mask_date2" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Locale</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="locale" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="10" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">UserId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="userId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">BlogId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <select name="blogId" class="form-control">
-                                                                   <%= Database.generateSelectOptionsFromTableAndColumn("blog", "", 2)%>
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("blog", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">MetaTagId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="metaTagId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("meta_tag", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -456,12 +667,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">Post Title</label> 
-                                                    <label><input type="checkbox" checked data-column="2">Post Pic Url</label> 
-                                                    <label><input type="checkbox" checked data-column="3">Post Date</label> 
-                                                    <label><input type="checkbox" checked data-column="4">Post Featured</label>  
-                                                    <label><input type="checkbox" checked data-column="5">Post Rating</label>                                                     
-                                                    <label><input type="checkbox" checked data-column="6">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="1">Title</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Content</label> 
+                                                    <label><input type="checkbox" checked data-column="3">ImageURL</label> 
+                                                    <label><input type="checkbox" checked data-column="4">Tags</label> 
+                                                    <label><input type="checkbox" checked data-column="5">Featured</label> 
+                                                    <label><input type="checkbox" checked data-column="6">RatingSum</label> 
+                                                    <label><input type="checkbox" checked data-column="7">VoteCount</label> 
+                                                    <label><input type="checkbox" checked data-column="8">CommentCount</label> 
+                                                    <label><input type="checkbox" checked data-column="9">PostStatus</label> 
+                                                    <label><input type="checkbox" checked data-column="10">Excerpt</label> 
+                                                    <label><input type="checkbox" checked data-column="11">LastModified</label> 
+                                                    <label><input type="checkbox" checked data-column="12">Locale</label> 
+                                                    <label><input type="checkbox" checked data-column="13">UserId</label> 
+                                                    <label><input type="checkbox" checked data-column="14">BlogId</label> 
+                                                    <label><input type="checkbox" checked data-column="15">MetaTagId</label> 
+                                                    
+                                                    <label><input type="checkbox" checked data-column="16">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -475,10 +697,20 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>
                                                     <th>Id</th> 
                                                     <th>Title</th> 
-                                                    <th>Pic Url</th> 
-                                                    <th>Post Date</th>  
-                                                    <th>Post Featured</th> 
-                                                    <th>Post Rating</th> 
+                                                    <th>Content</th> 
+                                                    <th>ImageURL</th> 
+                                                    <th>Tags</th> 
+                                                    <th>Featured</th> 
+                                                    <th>RatingSum</th> 
+                                                    <th>VoteCount</th> 
+                                                    <th>CommentCount</th> 
+                                                    <th>PostStatus</th> 
+                                                    <th>Excerpt</th> 
+                                                    <th>LastModified</th> 
+                                                    <th>Locale</th> 
+                                                    <th>UserId</th> 
+                                                    <th>BlogId</th> 
+                                                    <th>MetaTagId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -487,15 +719,24 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="blog_post" items="${blog_postList}" >
                                                 <tr>                                                    
                                                     <td>${blog_post.blogPostId}</td> 
-                                                    <td>${blog_post.postTitle}</td> 
-                                                    <td>${blog_post.postPicURL}</td> 
-                                                    <td>${blog_post.postDate}</td>  
-                                                    <td>${blog_post.postFeatured}</td>
-                                                    <td>${blog_post.postRating}</td> 
+                                                    <td>${blog_post.title}</td> 
+                                                    <td>${blog_post.content}</td> 
+                                                    <td>${blog_post.imageURL}</td> 
+                                                    <td>${blog_post.tags}</td> 
+                                                    <td>${blog_post.featured}</td> 
+                                                    <td>${blog_post.ratingSum}</td> 
+                                                    <td>${blog_post.voteCount}</td> 
+                                                    <td>${blog_post.commentCount}</td> 
+                                                    <td>${blog_post.postStatus}</td> 
+                                                    <td>${blog_post.excerpt}</td> 
+                                                    <td>${blog_post.lastModified}</td> 
+                                                    <td>${blog_post.locale}</td> 
+                                                    <td>${blog_post.userId}</td> 
+                                                    <td>${blog_post.blogId}</td> 
+                                                    <td>${blog_post.metaTagId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${blog_post.blogPostId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
-                                                        <button id="view-comments${blog_post.blogPostId}" class="btn btn-sm grey filter-cancel"><i class="fa fa-eye"></i> View Comments</button>   
                                                         <button id="delete-item${blog_post.blogPostId}" class="btn btn-sm red filter-cancel"><span class="glyphicon glyphicon-trash"></span></button> 
                                                     </td>
                                                 </tr>  
@@ -504,9 +745,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         toggleVisibility('itemBox${blog_post.blogPostId}');                                                        
                                                         document.getElementById('itemBox${blog_post.blogPostId}').scrollIntoView();
                                                         window.scrollBy(0,-80);
-                                                    });
-                                                    $("#view-comments${blog_post.blogPostId}").button().click(function() {
-                                                        window.location = 'CommentUI.jsp?column=PostId&columnValue=${blog_post.blogPostId}';
                                                     });
                                                     $("#delete-item${blog_post.blogPostId}").button().click(function() {
                                                         window.location = '../Operations?form=blog_post&action=3&id=${blog_post.blogPostId}';
@@ -582,8 +820,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -623,15 +862,21 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         blogPostId:    { required: true, number: true }, 
-                        postTitle:    { required: true, minlength: 1, maxlength: 255}, 
-                        postBody:    { required: true, minlength: 1, maxlength: 65535}, 
-                        postPicURL:    { required: true, minlength: 1, maxlength: 255}, 
-                        postDate:    { required: true }, 
-                        postTags:    { required: true, minlength: 1, maxlength: 255}, 
-                        postFeatured:    { required: true, number: true }, 
+                        title:    { required: true, minlength: 1, maxlength: 255}, 
+                        content:    { required: true, minlength: 1, maxlength: 65535}, 
+                        imageURL:    { required: true, minlength: 1, maxlength: 255}, 
+                        tags:    { required: true, minlength: 1, maxlength: 255}, 
+                        featured:    { required: true, number: true }, 
+                        ratingSum:    { required: true, number: true }, 
+                        voteCount:    { required: true, number: true }, 
+                        commentCount:    { required: true, number: true }, 
+                        postStatus:    { required: true, number: true }, 
+                        excerpt:    { required: true, minlength: 1, maxlength: 255}, 
+                        lastModified:    { required: true }, 
+                        locale:    { required: true, minlength: 1, maxlength: 10}, 
                         userId:    { required: true, number: true }, 
-                        postRating:    { required: true, digits: true }, 
-                        blogId:    { required: true, number: true } 
+                        blogId:    { required: true, number: true }, 
+                        metaTagId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

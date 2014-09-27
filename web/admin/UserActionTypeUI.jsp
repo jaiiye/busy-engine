@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<UserActionType> user_action_typeList = new ArrayList<UserActionType>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    user_action_typeList = UserActionType.getAllUserActionTypeByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    user_action_typeList = new UserActionTypeDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    user_action_typeList = UserActionType.getAllUserActionType();
+    user_action_typeList = new UserActionTypeDaoImpl().findAll(null, null);
 }
 request.setAttribute("user_action_typeList", user_action_typeList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,7 +128,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "E-Commerce"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
         <% request.setAttribute("subCategory", "UserActionType"); %>
         <%@include file="index_sidebar.jsp"%>
 
@@ -138,7 +198,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="UserActionTypeId" ${param.column == 'UserActionTypeId' ? "selected" : "" } >UserActionTypeId</option>                                                            
-                                                           <option value="ActionTypeName" ${param.column == 'ActionTypeName' ? "selected" : "" } >ActionTypeName</option>                                                            
+                                                           <option value="TypeName" ${param.column == 'TypeName' ? "selected" : "" } >TypeName</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -194,12 +254,19 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=user_action_type&action=2" method="post">
 
-                                                <input type="text" name="userActionTypeId" value="${user_action_type.userActionTypeId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="actionTypeName">ActionTypeName:</label>
+                                                    <label class="col-md-2 control-label" for="userActionTypeId">UserActionType:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="actionTypeName" class="form-control maxlength-handler" maxlength="255" value="${user_action_type.actionTypeName}" />
+                                                        <input type="text" name="userActionTypeId" class="form-control" value="${user_action_type.userActionTypeId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="typeName">TypeName:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="typeName" class="form-control maxlength-handler" maxlength="255" value="${user_action_type.typeName}" />
                                                     </div>
                                                 </div>
                                                 
@@ -243,11 +310,25 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ActionTypeName</label>
+                                                        <label class="col-md-2 control-label">UserActionTypeId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="actionTypeName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <select name="userActionTypeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user_action_type", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">TypeName</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="typeName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -288,7 +369,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">ActionTypeName</label> 
+                                                    <label><input type="checkbox" checked data-column="1">TypeName</label> 
                                                     
                                                     <label><input type="checkbox" checked data-column="2">Actions</label>
                                                 </div>
@@ -303,7 +384,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>ActionTypeName</th> 
+                                                    <th>TypeName</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -312,7 +393,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="user_action_type" items="${user_action_typeList}" >
                                                 <tr>                                                    
                                                     <td>${user_action_type.userActionTypeId}</td> 
-                                                    <td>${user_action_type.actionTypeName}</td> 
+                                                    <td>${user_action_type.typeName}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${user_action_type.userActionTypeId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -399,8 +480,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -440,7 +522,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         userActionTypeId:    { required: true, number: true }, 
-                        actionTypeName:    { required: true, minlength: 1, maxlength: 255} 
+                        typeName:    { required: true, minlength: 1, maxlength: 255} 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

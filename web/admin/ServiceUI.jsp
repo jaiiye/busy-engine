@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Service> serviceList = new ArrayList<Service>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    serviceList = Service.getAllServiceByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    serviceList = new ServiceDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    serviceList = Service.getAllService();
+    serviceList = new ServiceDaoImpl().findAll(null, null);
 }
 request.setAttribute("serviceList", serviceList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,7 +128,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "E-Commerce"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
         <% request.setAttribute("subCategory", "Service"); %>
         <%@include file="index_sidebar.jsp"%>
 
@@ -138,10 +198,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="ServiceId" ${param.column == 'ServiceId' ? "selected" : "" } >ServiceId</option>                                                            
-                                                           <option value="ServiceTypeId" ${param.column == 'ServiceTypeId' ? "selected" : "" } >ServiceTypeId</option>                                                            
-                                                           <option value="ServiceChargeId" ${param.column == 'ServiceChargeId' ? "selected" : "" } >ServiceChargeId</option>                                                            
                                                            <option value="ServiceName" ${param.column == 'ServiceName' ? "selected" : "" } >ServiceName</option>                                                            
-                                                           <option value="ServiceDescription" ${param.column == 'ServiceDescription' ? "selected" : "" } >ServiceDescription</option>                                                            
+                                                           <option value="Description" ${param.column == 'Description' ? "selected" : "" } >Description</option>                                                            
+                                                           <option value="ServiceStatus" ${param.column == 'ServiceStatus' ? "selected" : "" } >ServiceStatus</option>                                                            
+                                                           <option value="ServiceChargeId" ${param.column == 'ServiceChargeId' ? "selected" : "" } >ServiceChargeId</option>                                                            
+                                                           <option value="ServiceTypeId" ${param.column == 'ServiceTypeId' ? "selected" : "" } >ServiceTypeId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -197,24 +258,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=service&action=2" method="post">
 
-                                                <input type="hidden" name="serviceId" value="${service.serviceId}" />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="serviceTypeId">ServiceType:</label>
+                                                    <label class="col-md-2 control-label" for="serviceId">Service:</label>
                                                     <div  class="col-md-10">
-                                                        <select name="serviceTypeId" class="form-control">
-                                                            <%Service x = (Service) pageContext.getAttribute("service"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("service_type", x.getServiceTypeId().toString(), 2)%>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="serviceChargeId">ServiceCharge:</label>
-                                                    <div  class="col-md-10">
-                                                        <select name="serviceChargeId" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("table_name:ServiceCharge", x.getServiceChargeId().toString(), 2)%>
-                                                        </select>
+                                                        <input type="text" name="serviceId" class="form-control" value="${service.serviceId}" />
+
                                                     </div>
                                                 </div>
                                                 
@@ -226,9 +275,38 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="serviceDescription">ServiceDescription:</label>
+                                                    <label class="col-md-2 control-label" for="description">Description:</label>
                                                     <div  class="col-md-10">
-                                                        <textarea name="serviceDescription" class="ckeditor form-control" rows="4">${service.serviceDescription}</textarea>
+                                                        <textarea name="description" class="ckeditor form-control" rows="4">${service.description}</textarea>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="serviceStatus">ServiceStatus:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="serviceStatus" class="form-control" value="${service.serviceStatus}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="serviceChargeId">ServiceCharge:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="serviceChargeId" class="form-control" value="${service.serviceChargeId}" />
+                                                        <select name="serviceChargeId" class="form-control">
+                                                            <%Service x = (Service) pageContext.getAttribute("service"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("service_charge", x.getServiceChargeId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="serviceTypeId">ServiceType:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="serviceTypeId" class="form-control" value="${service.serviceTypeId}" />
+                                                        <select name="serviceTypeId" class="form-control">
+                                                            <%Service x = (Service) pageContext.getAttribute("service"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("service_type", x.getServiceTypeId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
@@ -272,26 +350,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ServiceTypeId</label>
+                                                        <label class="col-md-2 control-label">ServiceId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="serviceTypeId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:ServiceType", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ServiceChargeId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="serviceChargeId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:ServiceCharge", "", 2)%>
+                                                                <select name="serviceId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("service", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -312,11 +376,51 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ServiceDescription</label>
+                                                        <label class="col-md-2 control-label">Description</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <textarea name="serviceDescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                                <textarea name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ServiceStatus</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="serviceStatus" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ServiceChargeId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="serviceChargeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("service_charge", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ServiceTypeId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="serviceTypeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("service_type", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -357,12 +461,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">TypeId</label> 
-                                                    <label><input type="checkbox" checked data-column="2">ChargeId</label> 
-                                                    <label><input type="checkbox" checked data-column="3">Name</label> 
-                                                    <label><input type="checkbox" checked data-column="4">Description</label> 
+                                                    <label><input type="checkbox" checked data-column="1">Name</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Description</label> 
+                                                    <label><input type="checkbox" checked data-column="3">Status</label> 
+                                                    <label><input type="checkbox" checked data-column="4">ChargeId</label> 
+                                                    <label><input type="checkbox" checked data-column="5">TypeId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="5">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="6">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -375,10 +480,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>TypeId</th> 
-                                                    <th>ChargeId</th> 
                                                     <th>Name</th> 
                                                     <th>Description</th> 
+                                                    <th>Status</th> 
+                                                    <th>ChargeId</th> 
+                                                    <th>TypeId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -387,10 +493,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="service" items="${serviceList}" >
                                                 <tr>                                                    
                                                     <td>${service.serviceId}</td> 
-                                                    <td>${service.serviceTypeId}</td> 
-                                                    <td>${service.serviceChargeId}</td> 
                                                     <td>${service.serviceName}</td> 
-                                                    <td>${service.serviceDescription}</td> 
+                                                    <td>${service.description}</td> 
+                                                    <td>${service.serviceStatus}</td> 
+                                                    <td>${service.serviceChargeId}</td> 
+                                                    <td>${service.serviceTypeId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${service.serviceId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -477,8 +584,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -518,10 +626,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         serviceId:    { required: true, number: true }, 
-                        serviceTypeId:    { required: true, number: true }, 
-                        serviceChargeId:    { required: true, number: true }, 
                         serviceName:    { required: true, minlength: 1, maxlength: 100}, 
-                        serviceDescription:    { required: true, minlength: 1, maxlength: 65535} 
+                        description:    { required: true, minlength: 1, maxlength: 65535}, 
+                        serviceStatus:    { required: true, number: true }, 
+                        serviceChargeId:    { required: true, number: true }, 
+                        serviceTypeId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

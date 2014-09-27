@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Affiliate> affiliateList = new ArrayList<Affiliate>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    affiliateList = Affiliate.getAllAffiliateByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    affiliateList = new AffiliateDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    affiliateList = Affiliate.getAllAffiliate();
+    affiliateList = new AffiliateDaoImpl().findAll(null, null);
 }
 request.setAttribute("affiliateList", affiliateList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,7 +128,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "E-Commerce"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
         <% request.setAttribute("subCategory", "Affiliate"); %>
         <%@include file="index_sidebar.jsp"%>
 
@@ -138,13 +198,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="AffiliateId" ${param.column == 'AffiliateId' ? "selected" : "" } >AffiliateId</option>                                                            
-                                                           <option value="Name" ${param.column == 'Name' ? "selected" : "" } >Name</option>                                                            
-                                                           <option value="InternetURL" ${param.column == 'InternetURL' ? "selected" : "" } >InternetURL</option>                                                            
-                                                           <option value="EMail" ${param.column == 'EMail' ? "selected" : "" } >EMail</option>                                                            
+                                                           <option value="CompanyName" ${param.column == 'CompanyName' ? "selected" : "" } >CompanyName</option>                                                            
+                                                           <option value="Email" ${param.column == 'Email' ? "selected" : "" } >Email</option>                                                            
                                                            <option value="Phone" ${param.column == 'Phone' ? "selected" : "" } >Phone</option>                                                            
                                                            <option value="Fax" ${param.column == 'Fax' ? "selected" : "" } >Fax</option>                                                            
+                                                           <option value="WebUrl" ${param.column == 'WebUrl' ? "selected" : "" } >WebUrl</option>                                                            
                                                            <option value="Details" ${param.column == 'Details' ? "selected" : "" } >Details</option>                                                            
                                                            <option value="ServiceHours" ${param.column == 'ServiceHours' ? "selected" : "" } >ServiceHours</option>                                                            
+                                                           <option value="AffiliateStatus" ${param.column == 'AffiliateStatus' ? "selected" : "" } >AffiliateStatus</option>                                                            
                                                            <option value="UserId" ${param.column == 'UserId' ? "selected" : "" } >UserId</option>                                                            
                                                            <option value="ContactId" ${param.column == 'ContactId' ? "selected" : "" } >ContactId</option>                                                            
                                                            <option value="AddressId" ${param.column == 'AddressId' ? "selected" : "" } >AddressId</option>                                                            
@@ -203,26 +264,26 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=affiliate&action=2" method="post">
 
-                                                <input type="hidden" name="affiliateId" value="${affiliate.affiliateId}" />
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="affiliateId">Affiliate:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="affiliateId" class="form-control" value="${affiliate.affiliateId}" />
 
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="name">Name:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="name" class="form-control maxlength-handler" maxlength="30" value="${affiliate.name}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="internetURL">InternetURL:</label>
+                                                    <label class="col-md-2 control-label" for="companyName">CompanyName:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="internetURL" class="form-control maxlength-handler" maxlength="255" value="${affiliate.internetURL}" />
+                                                        <input type="text" name="companyName" class="form-control maxlength-handler" maxlength="100" value="${affiliate.companyName}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="eMail">EMail:</label>
+                                                    <label class="col-md-2 control-label" for="email">Email:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="eMail" class="form-control maxlength-handler" maxlength="50" value="${affiliate.eMail}" />
+                                                        <input type="text" name="email" class="form-control maxlength-handler" maxlength="50" value="${affiliate.email}" />
                                                     </div>
                                                 </div>
                                                 
@@ -241,9 +302,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="webUrl">WebUrl:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="webUrl" class="form-control maxlength-handler" maxlength="255" value="${affiliate.webUrl}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
                                                     <label class="col-md-2 control-label" for="details">Details:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="details" class="form-control maxlength-handler" maxlength="24" value="${affiliate.details}" />
+                                                        <textarea name="details" class="ckeditor form-control" rows="4">${affiliate.details}</textarea>
                                                     </div>
                                                 </div>
                                                 
@@ -255,34 +323,41 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userId">UserId:</label>
+                                                    <label class="col-md-2 control-label" for="affiliateStatus">AffiliateStatus:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="affiliateStatus" class="form-control" value="${affiliate.affiliateStatus}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="userId">User:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="userId" class="form-control" value="${affiliate.userId}" />
                                                         <select name="userId" class="form-control">
                                                             <%Affiliate x = (Affiliate) pageContext.getAttribute("affiliate"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("table_name:User", x.getuserId().toString(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("user", x.getUserId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="contactId">ContactId:</label>
+                                                    <label class="col-md-2 control-label" for="contactId">Contact:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="contactId" class="form-control" value="${affiliate.contactId}" />
                                                         <select name="contactId" class="form-control">
                                                             <%Affiliate x = (Affiliate) pageContext.getAttribute("affiliate"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Contact", x.getcontactId().toString(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("contact", x.getContactId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="addressId">AddressId:</label>
+                                                    <label class="col-md-2 control-label" for="addressId">Address:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="addressId" class="form-control" value="${affiliate.addressId}" />
                                                         <select name="addressId" class="form-control">
                                                             <%Affiliate x = (Affiliate) pageContext.getAttribute("affiliate"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Address", x.getaddressId().toString(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("address", x.getAddressId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -327,11 +402,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Name</label>
+                                                        <label class="col-md-2 control-label">AffiliateId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="name" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="30" />                                                            
+                                                                <select name="affiliateId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("affiliate", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -339,11 +416,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">InternetURL</label>
+                                                        <label class="col-md-2 control-label">CompanyName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="internetURL" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="companyName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -351,11 +428,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">EMail</label>
+                                                        <label class="col-md-2 control-label">Email</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="eMail" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="50" />                                                            
+                                                                <input type="text" name="email" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="50" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -387,11 +464,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
+                                                        <label class="col-md-2 control-label">WebUrl</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="webUrl" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
                                                         <label class="col-md-2 control-label">Details</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="details" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="24" />                                                            
+                                                                <textarea name="details" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -411,12 +500,24 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
+                                                        <label class="col-md-2 control-label">AffiliateStatus</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="affiliateStatus" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
                                                         <label class="col-md-2 control-label">UserId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <select name="userId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:User", "", 2)%>
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("user", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -430,7 +531,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <select name="contactId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Contact", "", 2)%>
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("contact", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -444,7 +545,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <select name="addressId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:Address", "", 2)%>
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("address", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -486,18 +587,19 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">Name</label> 
-                                                    <label><input type="checkbox" checked data-column="2">InternetURL</label> 
-                                                    <label><input type="checkbox" checked data-column="3">EMail</label> 
-                                                    <label><input type="checkbox" checked data-column="4">Phone</label> 
-                                                    <label><input type="checkbox" checked data-column="5">Fax</label> 
+                                                    <label><input type="checkbox" checked data-column="1">CompanyName</label> 
+                                                    <label><input type="checkbox" checked data-column="2">Email</label> 
+                                                    <label><input type="checkbox" checked data-column="3">Phone</label> 
+                                                    <label><input type="checkbox" checked data-column="4">Fax</label> 
+                                                    <label><input type="checkbox" checked data-column="5">WebUrl</label> 
                                                     <label><input type="checkbox" checked data-column="6">Details</label> 
                                                     <label><input type="checkbox" checked data-column="7">ServiceHours</label> 
-                                                    <label><input type="checkbox" checked data-column="8">UserId</label> 
-                                                    <label><input type="checkbox" checked data-column="9">ContactId</label> 
-                                                    <label><input type="checkbox" checked data-column="10">AddressId</label> 
+                                                    <label><input type="checkbox" checked data-column="8">Status</label> 
+                                                    <label><input type="checkbox" checked data-column="9">UserId</label> 
+                                                    <label><input type="checkbox" checked data-column="10">ContactId</label> 
+                                                    <label><input type="checkbox" checked data-column="11">AddressId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="11">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="12">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -510,13 +612,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
-                                                    <th>Name</th> 
-                                                    <th>InternetURL</th> 
-                                                    <th>EMail</th> 
+                                                    <th>CompanyName</th> 
+                                                    <th>Email</th> 
                                                     <th>Phone</th> 
                                                     <th>Fax</th> 
+                                                    <th>WebUrl</th> 
                                                     <th>Details</th> 
                                                     <th>ServiceHours</th> 
+                                                    <th>Status</th> 
                                                     <th>UserId</th> 
                                                     <th>ContactId</th> 
                                                     <th>AddressId</th> 
@@ -528,13 +631,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="affiliate" items="${affiliateList}" >
                                                 <tr>                                                    
                                                     <td>${affiliate.affiliateId}</td> 
-                                                    <td>${affiliate.name}</td> 
-                                                    <td>${affiliate.internetURL}</td> 
-                                                    <td>${affiliate.eMail}</td> 
+                                                    <td>${affiliate.companyName}</td> 
+                                                    <td>${affiliate.email}</td> 
                                                     <td>${affiliate.phone}</td> 
                                                     <td>${affiliate.fax}</td> 
+                                                    <td>${affiliate.webUrl}</td> 
                                                     <td>${affiliate.details}</td> 
                                                     <td>${affiliate.serviceHours}</td> 
+                                                    <td>${affiliate.affiliateStatus}</td> 
                                                     <td>${affiliate.userId}</td> 
                                                     <td>${affiliate.contactId}</td> 
                                                     <td>${affiliate.addressId}</td> 
@@ -624,8 +728,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -665,13 +770,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         affiliateId:    { required: true, number: true }, 
-                        name:    { required: true, minlength: 1, maxlength: 30}, 
-                        internetURL:    { required: true, minlength: 1, maxlength: 255}, 
-                        eMail:    { required: true, minlength: 1, maxlength: 50}, 
+                        companyName:    { required: true, minlength: 1, maxlength: 100}, 
+                        email:    { required: true, minlength: 1, maxlength: 50}, 
                         phone:    { required: true, minlength: 1, maxlength: 15}, 
                         fax:    { required: true, minlength: 1, maxlength: 15}, 
-                        details:    { required: true, minlength: 1, maxlength: 24}, 
+                        webUrl:    { required: true, minlength: 1, maxlength: 255}, 
+                        details:    { required: true, minlength: 1, maxlength: 65535}, 
                         serviceHours:    { required: true, number: true }, 
+                        affiliateStatus:    { required: true, number: true }, 
                         userId:    { required: true, number: true }, 
                         contactId:    { required: true, number: true }, 
                         addressId:    { required: true, number: true } 

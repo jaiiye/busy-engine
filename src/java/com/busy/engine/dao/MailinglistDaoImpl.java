@@ -36,34 +36,95 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.Mailinglist;
-import com.busy.engine.entity.User;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class MailinglistDaoImpl extends BasicConnection implements Serializable, MailinglistDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public Mailinglist find(Integer id)
+        public MailinglistDaoImpl()
         {
-            return findByColumn("MailinglistId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<Mailinglist> findAll(Integer limit, Integer offset)
+
+        public MailinglistDaoImpl(boolean enableCache)
+        {
+            cachingEnabled = enableCache;
+        }
+
+        private static class MailinglistCache
+        {
+            public static final ConcurrentLruCache<Integer, Mailinglist> mailinglistCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (Mailinglist i : findAll())
+                {
+                    getCache().put(i.getMailinglistId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, Mailinglist> getCache()
+        {
+            return MailinglistCache.mailinglistCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, Mailinglist> buildCache(ArrayList<Mailinglist> mailinglistList)
+        {        
+            ConcurrentLruCache<Integer, Mailinglist> cache = new ConcurrentLruCache<Integer, Mailinglist>(mailinglistList.size() + 1000);
+            for (Mailinglist i : mailinglistList)
+            {
+                cache.put(i.getMailinglistId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<Mailinglist> findAll()
         {
             ArrayList<Mailinglist> mailinglist = new ArrayList<>();
             try
             {
                 getAllRecordsByTableName("mailinglist");
-                while(rs.next())
+                while (rs.next())
                 {
                     mailinglist.add(Mailinglist.process(rs));
                 }
@@ -77,91 +138,228 @@ import com.busy.engine.entity.User;
                 closeConnection();
             }
             return mailinglist;
+        }
+        
+        @Override
+        public Mailinglist find(Integer id)
+        {
+            return findByColumn("MailinglistId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<Mailinglist> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<Mailinglist> mailinglistList = new ArrayList<Mailinglist>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for Mailinglist, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    mailinglistList = new ArrayList<Mailinglist>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("mailinglist", limit, offset);
+                    while (rs.next())
+                    {
+                        mailinglistList.add(Mailinglist.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Mailinglist object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return mailinglistList;
          
         }
         
         @Override
         public ArrayList<Mailinglist> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<Mailinglist> mailinglistList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("mailinglist", limit, offset);
-                while (rs.next())
+            ArrayList<Mailinglist> mailinglistList = new ArrayList<Mailinglist>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for Mailinglist, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    mailinglistList.add(Mailinglist.process(rs));
+                    mailinglistList = new ArrayList<Mailinglist>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(Mailinglist mailinglist : mailinglistList)
+                    try
                     {
-                        
-                            getRecordById("User", mailinglist.getUserId().toString());
-                            mailinglist.setUser(User.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            Mailinglist mailinglist = (Mailinglist) e.getValue();
+
+                            
+                                getRecordById("User", mailinglist.getUserId().toString());
+                                mailinglist.setUser(User.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object Mailinglist method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object Mailinglist method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                mailinglistList = new ArrayList<Mailinglist>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("mailinglist", limit, offset);
+                    while (rs.next())
+                    {
+                        mailinglistList.add(Mailinglist.process(rs));
+                    }
+
+                    
+                    
+                        for (Mailinglist mailinglist : mailinglistList)
+                        {                        
+                            
+                                getRecordById("User", mailinglist.getUserId().toString());
+                                mailinglist.setUser(User.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object Mailinglist method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return mailinglistList;
+            return mailinglistList;            
         }
         
         @Override
         public ArrayList<Mailinglist> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<Mailinglist> mailinglist = new ArrayList<>();
-            try
+            ArrayList<Mailinglist> mailinglistList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("mailinglist", Mailinglist.checkColumnName(columnName), columnValue, Mailinglist.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   mailinglist.add(Mailinglist.process(rs));
+
+                    System.out.println("Find by column for Mailinglist(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            Mailinglist i = (Mailinglist) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                mailinglistList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            mailinglistList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Mailinglist's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("mailinglist", Mailinglist.checkColumnName(columnName), columnValue, Mailinglist.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        mailinglistList.add(Mailinglist.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Mailinglist's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return mailinglist;
+            return mailinglistList;
         } 
     
         @Override
         public int add(Mailinglist obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 Mailinglist.checkColumnSize(obj.getFullName(), 45);
                 Mailinglist.checkColumnSize(obj.getEmail(), 245);
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO mailinglist(FullName,Email,ListStatus,UserId) VALUES (?,?,?,?);");                    
+                prepareStatement("INSERT INTO mailinglist(MailinglistId,FullName,Email,ListStatus,UserId,) VALUES (?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getMailinglistId());
                 preparedStatement.setString(1, obj.getFullName());
                 preparedStatement.setString(2, obj.getEmail());
                 preparedStatement.setInt(3, obj.getListStatus());
                 preparedStatement.setInt(4, obj.getUserId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from mailinglist;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -171,6 +369,13 @@ import com.busy.engine.entity.User;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setMailinglistId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -186,13 +391,19 @@ import com.busy.engine.entity.User;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE mailinglist SET FullName=?,Email=?,ListStatus=?,UserId=? WHERE MailinglistId=?;");                    
+                prepareStatement("UPDATE mailinglist SET com.busy.util.DatabaseColumn@3601348f=?,com.busy.util.DatabaseColumn@65a5747d=?,com.busy.util.DatabaseColumn@57599fe7=?,com.busy.util.DatabaseColumn@6e306457=? WHERE MailinglistId=?;");                    
+                preparedStatement.setInt(0, obj.getMailinglistId());
                 preparedStatement.setString(1, obj.getFullName());
                 preparedStatement.setString(2, obj.getEmail());
                 preparedStatement.setInt(3, obj.getListStatus());
                 preparedStatement.setInt(4, obj.getUserId());
                 preparedStatement.setInt(5, obj.getMailinglistId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getMailinglistId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -208,7 +419,16 @@ import com.busy.engine.entity.User;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("mailinglist");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("mailinglist");
+            }
+            return count;
         }
         
         
@@ -257,7 +477,13 @@ import com.busy.engine.entity.User;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getMailinglistId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -277,6 +503,12 @@ import com.busy.engine.entity.User;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -297,6 +529,12 @@ import com.busy.engine.entity.User;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -317,7 +555,44 @@ import com.busy.engine.entity.User;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        Mailinglist i = (Mailinglist) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getMailinglistId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
         

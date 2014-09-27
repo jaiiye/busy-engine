@@ -1,18 +1,15 @@
 package com.busy.engine.dao;
 
 import com.busy.engine.data.BasicConnection;
-import com.busy.engine.entity.Item;
-import com.busy.engine.entity.ItemBrand;
-import com.busy.engine.entity.ItemType;
-import com.busy.engine.entity.MetaTag;
-import com.busy.engine.entity.Template;
-import com.busy.engine.entity.Vendor;
-import com.busy.engine.util.ConcurrentLruCache;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
+import com.busy.engine.entity.*;
+import com.busy.engine.dao.*;
+import com.busy.engine.util.*;
 import java.util.ArrayList;
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.Map.Entry;
+import java.lang.reflect.InvocationTargetException;
 
 public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDao
 {
@@ -24,29 +21,30 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
     {
         cachingEnabled = false;
     }
-    
+
     public ItemDaoImpl(boolean enableCache)
     {
         cachingEnabled = enableCache;
     }
-    
+
     private static class ItemCache
     {
+
         public static final ConcurrentLruCache<Integer, Item> itemCache = buildCache(findAll());
     }
 
     private void checkCacheState()
     {
-        if(getCache().size() == 0)
+        if (getCache().size() == 0)
         {
             System.out.println("Found the cache empty, rebuilding...");
             for (Item i : findAll())
             {
                 getCache().put(i.getItemId(), i);
-            } 
+            }
         }
     }
-    
+
     public static ConcurrentLruCache<Integer, Item> getCache()
     {
         return ItemCache.itemCache;
@@ -57,10 +55,10 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
         return getCache();
     }
 
-    public static ConcurrentLruCache<Integer, Item> buildCache(ArrayList<Item> items)
+    public static ConcurrentLruCache<Integer, Item> buildCache(ArrayList<Item> itemList)
     {
-        ConcurrentLruCache<Integer, Item> cache = new ConcurrentLruCache<Integer, Item>(1000);
-        for (Item i : items)
+        ConcurrentLruCache<Integer, Item> cache = new ConcurrentLruCache<Integer, Item>(itemList.size() + 1000);
+        for (Item i : itemList)
         {
             cache.put(i.getItemId(), i);
         }
@@ -87,26 +85,12 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
             closeConnection();
         }
         return item;
-
     }
 
     @Override
     public Item find(Integer id)
     {
-        Item result = null;
-        //check cache first
-        if (cachingEnabled)
-        {
-            checkCacheState();
-            result = getCache().get(id);
-        }
-
-        if (result == null)
-        {
-            result = findByColumn("ItemId", id.toString(), null, null).get(0);
-            getCache().put(id, result);
-        }
-        return result;
+        return findByColumn("ItemId", id.toString(), null, null).get(0);
     }
 
     @Override
@@ -114,13 +98,14 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
     {
         ArrayList<Item> itemList = new ArrayList<Item>();
         boolean cacheNotUsed = false;
-        
+
         //check cache first
         if (cachingEnabled)
         {
+            System.out.println("Find all operation for Item, getting objects from cache...");
             checkCacheState();
-            
-            if(limit == null && offset == null)
+
+            if (limit == null && offset == null)
             {
                 itemList = new ArrayList<Item>(getCache().getValues());
             }
@@ -129,8 +114,8 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
                 cacheNotUsed = true;
             }
         }
-        
-        if( !cachingEnabled || cacheNotUsed)
+
+        if (!cachingEnabled || cacheNotUsed)
         {
             try
             {
@@ -158,18 +143,20 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
     {
         ArrayList<Item> itemList = new ArrayList<Item>();
         boolean cacheNotUsed = false;
-        
+
         //check cache first
         if (cachingEnabled)
-        {            
+        {
             checkCacheState();
-            
+
+            System.out.println("Find all with info operation for Item, getting objects from cache...");
+
             if (limit == null && offset == null)
             {
                 itemList = new ArrayList<Item>(getCache().getValues());
             }
             else
-            {                
+            {
                 cacheNotUsed = true;
             }
 
@@ -193,6 +180,7 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
 
                     getRecordById("Vendor", item.getVendorId().toString());
                     item.setVendor(Vendor.process(rs));
+
                 }
             }
             catch (SQLException ex)
@@ -203,9 +191,10 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
             {
                 closeConnection();
             }
+
         }
-        
-        if( !cachingEnabled || cacheNotUsed)
+
+        if (!cachingEnabled || cacheNotUsed)
         {
             itemList = new ArrayList<Item>();
             try
@@ -218,6 +207,7 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
 
                 for (Item item : itemList)
                 {
+
                     getRecordById("ItemType", item.getItemTypeId().toString());
                     item.setItemType(ItemType.process(rs));
 
@@ -232,7 +222,9 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
 
                     getRecordById("Vendor", item.getVendorId().toString());
                     item.setVendor(Vendor.process(rs));
+
                 }
+
             }
             catch (SQLException ex)
             {
@@ -245,7 +237,7 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
         }
         return itemList;
     }
-    
+
     @Override
     public ArrayList<Item> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
     {
@@ -256,6 +248,8 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
         {
             if (limit == null && offset == null)
             {
+
+                System.out.println("Find by column for Item(" + columnName + "=" + columnValue + "), getting objects from cache...");
                 for (Entry e : getCache().getEntries())
                 {
                     try
@@ -278,8 +272,8 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
                 cacheNotUsed = true;
             }
         }
-        
-        if( !cachingEnabled || cacheNotUsed)
+
+        if (!cachingEnabled || cacheNotUsed)
         {
             try
             {
@@ -304,17 +298,23 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
     @Override
     public int add(Item obj)
     {
+        boolean success = false;
         int id = 0;
         try
         {
+
             Item.checkColumnSize(obj.getItemName(), 255);
             Item.checkColumnSize(obj.getDescription(), 65535);
+
             Item.checkColumnSize(obj.getShortDescription(), 255);
+
             Item.checkColumnSize(obj.getSku(), 30);
+
             Item.checkColumnSize(obj.getLocale(), 10);
 
             openConnection();
-            prepareStatement("INSERT INTO item(ItemName,Description,ListPrice,Price,ShortDescription,Adjustment,Sku,RatingSum,VoteCount,Rank,ItemStatus,Locale,ItemTypeId,ItemBrandId,MetaTagId,TemplateId,VendorId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+            prepareStatement("INSERT INTO item(ItemId,ItemName,Description,ListPrice,Price,ShortDescription,Adjustment,Sku,RatingSum,VoteCount,Rank,ItemStatus,Locale,ItemTypeId,ItemBrandId,MetaTagId,TemplateId,VendorId,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+            preparedStatement.setInt(0, obj.getItemId());
             preparedStatement.setString(1, obj.getItemName());
             preparedStatement.setString(2, obj.getDescription());
             preparedStatement.setDouble(3, obj.getListPrice());
@@ -332,6 +332,7 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
             preparedStatement.setInt(15, obj.getMetaTagId());
             preparedStatement.setInt(16, obj.getTemplateId());
             preparedStatement.setInt(17, obj.getVendorId());
+
             preparedStatement.executeUpdate();
 
             rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from item;");
@@ -340,11 +341,7 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
                 id = rs.getInt(1);
             }
 
-            if (cachingEnabled)
-            {
-                obj.setItemId(id);
-                getCache().put(id, obj); //synchronizing between local cache and database
-            }
+            success = true;
         }
         catch (Exception ex)
         {
@@ -354,6 +351,13 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
         {
             closeConnection();
         }
+
+        if (cachingEnabled && success)
+        {
+            obj.setItemId(id);
+            getCache().put(id, obj); //synchronizing between local cache and database
+        }
+
         return id;
     }
 
@@ -362,14 +366,19 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
     {
         try
         {
+
             Item.checkColumnSize(obj.getItemName(), 255);
             Item.checkColumnSize(obj.getDescription(), 65535);
+
             Item.checkColumnSize(obj.getShortDescription(), 255);
+
             Item.checkColumnSize(obj.getSku(), 30);
+
             Item.checkColumnSize(obj.getLocale(), 10);
 
             openConnection();
-            prepareStatement("UPDATE item SET ItemName=?,Description=?,ListPrice=?,Price=?,ShortDescription=?,Adjustment=?,Sku=?,RatingSum=?,VoteCount=?,Rank=?,ItemStatus=?,Locale=?,ItemTypeId=?,ItemBrandId=?,MetaTagId=?,TemplateId=?,VendorId=? WHERE ItemId=?;");
+            prepareStatement("UPDATE item SET com.busy.util.DatabaseColumn@753f8648=?,com.busy.util.DatabaseColumn@18bb82cd=?,com.busy.util.DatabaseColumn@6d6d1087=?,com.busy.util.DatabaseColumn@3b062f0=?,com.busy.util.DatabaseColumn@ab4b908=?,com.busy.util.DatabaseColumn@4e5def79=?,com.busy.util.DatabaseColumn@4bb1371d=?,com.busy.util.DatabaseColumn@4b166b79=?,com.busy.util.DatabaseColumn@6445f7ea=?,com.busy.util.DatabaseColumn@4542ea3c=?,com.busy.util.DatabaseColumn@7092456=?,com.busy.util.DatabaseColumn@7f3cda6d=?,com.busy.util.DatabaseColumn@340d98c7=?,com.busy.util.DatabaseColumn@66cc8770=?,com.busy.util.DatabaseColumn@2829246b=?,com.busy.util.DatabaseColumn@31df7cb1=?,com.busy.util.DatabaseColumn@694c11ed=? WHERE ItemId=?;");
+            preparedStatement.setInt(0, obj.getItemId());
             preparedStatement.setString(1, obj.getItemName());
             preparedStatement.setString(2, obj.getDescription());
             preparedStatement.setDouble(3, obj.getListPrice());
@@ -424,8 +433,10 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
     @Override
     public void getRelatedInfo(Item item)
     {
+
         try
         {
+
             getRecordById("ItemType", item.getItemTypeId().toString());
             item.setItemType(ItemType.process(rs));
 
@@ -472,7 +483,6 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
     public boolean remove(Item obj)
     {
         boolean success = false;
-
         try
         {
             updateQuery("DELETE FROM item WHERE ItemId=" + obj.getItemId() + ";");
@@ -487,11 +497,11 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
             closeConnection();
         }
 
-        if(cachingEnabled && success)
+        if (cachingEnabled && success)
         {
             getCache().remove(obj.getItemId());
         }
-        
+
         return success;
     }
 
@@ -512,12 +522,12 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
         {
             closeConnection();
         }
-        
-        if(cachingEnabled && success)
+
+        if (cachingEnabled && success)
         {
             getCache().remove(id);
         }
-        
+
         return success;
     }
 
@@ -538,12 +548,12 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
         {
             closeConnection();
         }
-        
-        if(cachingEnabled && success)
+
+        if (cachingEnabled && success)
         {
             getCache().clear();
         }
-        
+
         return success;
     }
 
@@ -564,11 +574,11 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
         {
             closeConnection();
         }
-        
-        if(cachingEnabled && success)
+
+        if (cachingEnabled && success)
         {
             ArrayList<Integer> keys = new ArrayList<Integer>();
-            
+
             for (Entry e : getCache().getEntries())
             {
                 try
@@ -584,13 +594,13 @@ public class ItemDaoImpl extends BasicConnection implements Serializable, ItemDa
                     ex.printStackTrace();
                 }
             }
-            
-            for(int id : keys)
+
+            for (int id : keys)
             {
                 getCache().remove(id);
             }
         }
-        
+
         return success;
     }
 

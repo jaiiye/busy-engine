@@ -7,11 +7,10 @@
             <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/web/ServiceHandler.java</file>
             <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/data/BasicConnection.java</file>
             <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/data/Database.java</file>
-            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/service/ItemService.java</file>
-            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/service/SiteServiceImpl.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/web/admin/index_common_scripts.jsp</file>
             <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/data/Operations.java</file>
+            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/web/admin/ItemUI.jsp</file>
             <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/listener/ContextListener.java</file>
-            <file>file:/E:/Companies/BusyTechnologies/repo/busy-engine/src/java/com/busy/engine/service/ItemServiceImpl.java</file>
         </group>
     </open-files>
 </project-private>

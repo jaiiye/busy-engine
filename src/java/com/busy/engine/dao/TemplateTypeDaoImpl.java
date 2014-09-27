@@ -36,35 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.TemplateType;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class TemplateTypeDaoImpl extends BasicConnection implements Serializable, TemplateTypeDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public TemplateType find(Integer id)
+        public TemplateTypeDaoImpl()
         {
-            return findByColumn("TemplateTypeId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<TemplateType> findAll(Integer limit, Integer offset)
+
+        public TemplateTypeDaoImpl(boolean enableCache)
         {
-            ArrayList<TemplateType> template_type = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class TemplateTypeCache
+        {
+            public static final ConcurrentLruCache<Integer, TemplateType> templateTypeCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (TemplateType i : findAll())
+                {
+                    getCache().put(i.getTemplateTypeId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, TemplateType> getCache()
+        {
+            return TemplateTypeCache.templateTypeCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, TemplateType> buildCache(ArrayList<TemplateType> templateTypeList)
+        {        
+            ConcurrentLruCache<Integer, TemplateType> cache = new ConcurrentLruCache<Integer, TemplateType>(templateTypeList.size() + 1000);
+            for (TemplateType i : templateTypeList)
+            {
+                cache.put(i.getTemplateTypeId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<TemplateType> findAll()
+        {
+            ArrayList<TemplateType> templateType = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("template_type");
-                while(rs.next())
+                getAllRecordsByTableName("templateType");
+                while (rs.next())
                 {
-                    template_type.add(TemplateType.process(rs));
+                    templateType.add(TemplateType.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -75,80 +137,195 @@ import com.busy.engine.entity.TemplateType;
             {
                 closeConnection();
             }
-            return template_type;
+            return templateType;
+        }
+        
+        @Override
+        public TemplateType find(Integer id)
+        {
+            return findByColumn("TemplateTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<TemplateType> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<TemplateType> templateTypeList = new ArrayList<TemplateType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for TemplateType, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    templateTypeList = new ArrayList<TemplateType>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("template_type", limit, offset);
+                    while (rs.next())
+                    {
+                        templateTypeList.add(TemplateType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("TemplateType object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return templateTypeList;
          
         }
         
         @Override
         public ArrayList<TemplateType> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<TemplateType> template_typeList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("template_type", limit, offset);
-                while (rs.next())
+            ArrayList<TemplateType> templateTypeList = new ArrayList<TemplateType>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for TemplateType, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    template_typeList.add(TemplateType.process(rs));
+                    templateTypeList = new ArrayList<TemplateType>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object TemplateType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                templateTypeList = new ArrayList<TemplateType>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("template_type", limit, offset);
+                    while (rs.next())
+                    {
+                        templateTypeList.add(TemplateType.process(rs));
+                    }
+
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object TemplateType method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return template_typeList;
+            return templateTypeList;            
         }
         
         @Override
         public ArrayList<TemplateType> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<TemplateType> template_type = new ArrayList<>();
-            try
+            ArrayList<TemplateType> templateTypeList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("template_type", TemplateType.checkColumnName(columnName), columnValue, TemplateType.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   template_type.add(TemplateType.process(rs));
+
+                    System.out.println("Find by column for TemplateType(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            TemplateType i = (TemplateType) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                templateTypeList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            templateTypeList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("TemplateType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("template_type", TemplateType.checkColumnName(columnName), columnValue, TemplateType.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        templateTypeList.add(TemplateType.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("TemplateType's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return template_type;
+            return templateTypeList;
         } 
     
         @Override
         public int add(TemplateType obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 TemplateType.checkColumnSize(obj.getTypeName(), 45);
                 TemplateType.checkColumnSize(obj.getTypeValue(), 45);
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO template_type(TypeName,TypeValue) VALUES (?,?);");                    
+                prepareStatement("INSERT INTO template_type(TemplateTypeId,TypeName,TypeValue,) VALUES (?,?);");                    
+                preparedStatement.setInt(0, obj.getTemplateTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getTypeValue());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from template_type;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -158,6 +335,13 @@ import com.busy.engine.entity.TemplateType;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setTemplateTypeId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -171,11 +355,17 @@ import com.busy.engine.entity.TemplateType;
                 TemplateType.checkColumnSize(obj.getTypeValue(), 45);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE template_type SET TypeName=?,TypeValue=? WHERE TemplateTypeId=?;");                    
+                prepareStatement("UPDATE template_type SET com.busy.util.DatabaseColumn@3429c259=?,com.busy.util.DatabaseColumn@3a2292e1=? WHERE TemplateTypeId=?;");                    
+                preparedStatement.setInt(0, obj.getTemplateTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getTypeValue());
                 preparedStatement.setInt(3, obj.getTemplateTypeId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getTemplateTypeId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -191,7 +381,16 @@ import com.busy.engine.entity.TemplateType;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("template_type");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("template_type");
+            }
+            return count;
         }
         
         
@@ -225,7 +424,13 @@ import com.busy.engine.entity.TemplateType;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getTemplateTypeId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -245,6 +450,12 @@ import com.busy.engine.entity.TemplateType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -265,6 +476,12 @@ import com.busy.engine.entity.TemplateType;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -285,7 +502,44 @@ import com.busy.engine.entity.TemplateType;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        TemplateType i = (TemplateType) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getTemplateTypeId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

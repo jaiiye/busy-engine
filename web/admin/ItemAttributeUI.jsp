@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<ItemAttribute> item_attributeList = new ArrayList<ItemAttribute>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    item_attributeList = ItemAttribute.getAllItemAttributeByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    item_attributeList = new ItemAttributeDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    item_attributeList = ItemAttribute.getAllItemAttribute();
+    item_attributeList = new ItemAttributeDaoImpl().findAll(null, null);
 }
 request.setAttribute("item_attributeList", item_attributeList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -140,7 +200,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <option value="ItemAttributeId" ${param.column == 'ItemAttributeId' ? "selected" : "" } >ItemAttributeId</option>                                                            
                                                            <option value="Key" ${param.column == 'Key' ? "selected" : "" } >Key</option>                                                            
                                                            <option value="Value" ${param.column == 'Value' ? "selected" : "" } >Value</option>                                                            
-                                                           <option value="Type" ${param.column == 'Type' ? "selected" : "" } >Type</option>                                                            
+                                                           <option value="Locale" ${param.column == 'Locale' ? "selected" : "" } >Locale</option>                                                            
+                                                           <option value="ItemAttributeTypeId" ${param.column == 'ItemAttributeTypeId' ? "selected" : "" } >ItemAttributeTypeId</option>                                                            
+                                                           <option value="ItemId" ${param.column == 'ItemId' ? "selected" : "" } >ItemId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -195,7 +257,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                     <div class="portlet-body">	
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=item_attribute&action=2" method="post">
-                                                <input type="hidden" name="itemAttributeId" value="${item_attribute.itemAttributeId}" />
+
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemAttributeId">ItemAttribute:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="itemAttributeId" class="form-control" value="${item_attribute.itemAttributeId}" />
+
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="key">Key:</label>
@@ -212,9 +282,31 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="type">Type:</label>
+                                                    <label class="col-md-2 control-label" for="locale">Locale:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="type" class="form-control maxlength-handler" maxlength="45" value="${item_attribute.type}" />
+                                                        <input type="text" name="locale" class="form-control maxlength-handler" maxlength="10" value="${item_attribute.locale}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemAttributeTypeId">ItemAttributeType:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="itemAttributeTypeId" class="form-control" value="${item_attribute.itemAttributeTypeId}" />
+                                                        <select name="itemAttributeTypeId" class="form-control">
+                                                            <%ItemAttribute x = (ItemAttribute) pageContext.getAttribute("item_attribute"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item_attribute_type", x.getItemAttributeTypeId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemId">Item:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="itemId" class="form-control" value="${item_attribute.itemId}" />
+                                                        <select name="itemId" class="form-control">
+                                                            <%ItemAttribute x = (ItemAttribute) pageContext.getAttribute("item_attribute"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item", x.getItemId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
@@ -258,6 +350,20 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
+                                                        <label class="col-md-2 control-label">ItemAttributeId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="itemAttributeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_attribute", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
                                                         <label class="col-md-2 control-label">Key</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
@@ -282,11 +388,39 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Type</label>
+                                                        <label class="col-md-2 control-label">Locale</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="type" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <input type="text" name="locale" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="10" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ItemAttributeTypeId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="itemAttributeTypeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_attribute_type", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ItemId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="itemId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -329,9 +463,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
                                                     <label><input type="checkbox" checked data-column="1">Key</label> 
                                                     <label><input type="checkbox" checked data-column="2">Value</label> 
-                                                    <label><input type="checkbox" checked data-column="3">Type</label> 
+                                                    <label><input type="checkbox" checked data-column="3">Locale</label> 
+                                                    <label><input type="checkbox" checked data-column="4">TypeId</label> 
+                                                    <label><input type="checkbox" checked data-column="5">ItemId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="4">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="6">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -346,7 +482,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <th>Id</th> 
                                                     <th>Key</th> 
                                                     <th>Value</th> 
-                                                    <th>Type</th> 
+                                                    <th>Locale</th> 
+                                                    <th>TypeId</th> 
+                                                    <th>ItemId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -357,7 +495,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <td>${item_attribute.itemAttributeId}</td> 
                                                     <td>${item_attribute.key}</td> 
                                                     <td>${item_attribute.value}</td> 
-                                                    <td>${item_attribute.type}</td> 
+                                                    <td>${item_attribute.locale}</td> 
+                                                    <td>${item_attribute.itemAttributeTypeId}</td> 
+                                                    <td>${item_attribute.itemId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${item_attribute.itemAttributeId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -444,8 +584,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -487,7 +628,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         itemAttributeId:    { required: true, number: true }, 
                         key:    { required: true, minlength: 1, maxlength: 100}, 
                         value:    { required: true, minlength: 1, maxlength: 255}, 
-                        type:    { required: true, minlength: 1, maxlength: 45} 
+                        locale:    { required: true, minlength: 1, maxlength: 10}, 
+                        itemAttributeTypeId:    { required: true, number: true }, 
+                        itemId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

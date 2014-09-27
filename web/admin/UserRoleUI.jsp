@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<UserRole> user_roleList = new ArrayList<UserRole>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    user_roleList = UserRole.getAllUserRoleByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    user_roleList = new UserRoleDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    user_roleList = UserRole.getAllUserRole();
+    user_roleList = new UserRoleDaoImpl().findAll(null, null);
 }
 request.setAttribute("user_roleList", user_roleList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "users"); %>
-        <% request.setAttribute("subCategory", "users"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
+        <% request.setAttribute("subCategory", "UserRole"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -82,18 +142,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- BEGIN PAGE TITLE & BREADCRUMB-->
-                                <h3 class="page-title"> UserRoles </h3>
+                                <h3 class="page-title"> UserRole </h3>
                                 <ul class="page-breadcrumb breadcrumb">                                
                                     <li>
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Users </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">User Roles</a>
+                                        <a href="#">UserRole</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -179,14 +239,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         <!-- START RECORD DETAILS -->
                                   
                         <c:forEach var="user_role" items="${user_roleList}" >
-                        <div class="row" id="itemBox${user_role.userName}${user_role.roleName}" style="display:none;">                      
+                        <div class="row" id="itemBox${user_role.userRoleId}" style="display:${param.id == null ? "none" : user_role.userRoleId==param.id ? "block" : "none"}">                      
                             <div class="col-md-12">
                                 <div class="portlet box green-seagreen">
                                     <div class="portlet-title">
                                         <div class="caption">Record Details</div>
                                         <div class="actions">                                                 
                                             <div class="btn-group">                                
-                                                <a href="javascript:toggleVisibility('itemBox${user_role.userName}${user_role.roleName}');" class="btn btn-default"><i class="fa fa-times"></i>&nbsp;Close</a> 
+                                                <a href="javascript:toggleVisibility('itemBox${user_role.userRoleId}');" class="btn btn-default"><i class="fa fa-times"></i>&nbsp;Close</a> 
                                             </div>
                                         </div>
                                     </div>
@@ -196,14 +256,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="userName">User Name:</label>
+                                                    <label class="col-md-2 control-label" for="userName">UserName:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="userName" class="form-control maxlength-handler" maxlength="30" value="${user_role.userName}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="roleName">Role Name:</label>
+                                                    <label class="col-md-2 control-label" for="roleName">RoleName:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="roleName" class="form-control maxlength-handler" maxlength="20" value="${user_role.roleName}" />
                                                     </div>
@@ -231,7 +291,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                        <h4 class="modal-title">Add a new User Role</h4>
+                                        <h4 class="modal-title">Add a new UserRole</h4>
                                     </div>
                                     <div class="modal-body form">
                                         <!-- BEGIN FORM-->
@@ -246,9 +306,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     Your form validation is successful!
                                                 </div>
 
+                                                
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">User Name</label>
+                                                        <label class="col-md-2 control-label">UserName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
@@ -260,20 +321,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Role Name</label>
+                                                        <label class="col-md-2 control-label">RoleName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="roleName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="20" /> 
-                                                                <select name="roleName">                             
-                                                                    <option value="admin" selected="">Administrator</option>                             
-                                                                    <option value="member">Member</option>                             
-                                                                    <option value="manager">Manager</option> 
-                                                                    <option value="manager-gui">GUI Manager</option> 
-                                                                    <option value="manager-script">Script Manager</option> 
-                                                                    <option value="affiliate">Affiliate</option> 
-                                                                    <option value="private">Private</option>                                                                     
-                                                                </select>
+                                                                <input type="text" name="roleName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="20" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -302,7 +354,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                  <div class="portlet box red-flamingo">
                                     <div class="portlet-title">
                                         <div class="caption">
-                                            <i class="fa fa-list-alt"></i>User Role Listing
+                                            <i class="fa fa-list-alt"></i>UserRole Listing
                                         </div>
                                         <div class="actions">
                                             <div class="btn-group">                                
@@ -313,8 +365,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <i class="fa fa-columns"></i> Columns <i class="fa fa-angle-down"></i>
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
-                                                    <label><input type="checkbox" checked data-column="0">User Name</label> 
-                                                    <label><input type="checkbox" checked data-column="1">Role Name</label> 
+                                                    <label><input type="checkbox" checked data-column="0">UserName</label> 
+                                                    <label><input type="checkbox" checked data-column="1">RoleName</label> 
+                                                    
                                                     <label><input type="checkbox" checked data-column="2">Actions</label>
                                                 </div>
                                             </div>                                                 
@@ -327,8 +380,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                     	<table class="table table-striped table-bordered table-hover table-full-width" id="sample_2">
                                             <thead>							
                                                 <tr>
-                                                    <th>User Name</th> 
-                                                    <th>Role Name</th>                                     
+                                                    <th>UserName</th> 
+                                                    <th>RoleName</th> 
+                                                                                                        
                                                     <th>Actions</th> 
                                                 </tr>                                
                                             </thead>
@@ -336,20 +390,21 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="user_role" items="${user_roleList}" >
                                                 <tr>                                                    
                                                     <td>${user_role.userName}</td> 
-                                                    <td>${user_role.roleName}</td>                                                     
+                                                    <td>${user_role.roleName}</td> 
+                                                    
                                                     <td>
-                                                        <button id="edit-item${user_role.userName}${user_role.roleName}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
-                                                        <button id="delete-item${user_role.userName}${user_role.roleName}" class="btn btn-sm red filter-cancel"><span class="glyphicon glyphicon-trash"></span></button> 
+                                                        <button id="edit-item${user_role.userRoleId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
+                                                        <button id="delete-item${user_role.userRoleId}" class="btn btn-sm red filter-cancel"><span class="glyphicon glyphicon-trash"></span></button> 
                                                     </td>
                                                 </tr>  
                                                 <script type="text/javascript">
-                                                    $("#edit-item${user_role.userName}${user_role.roleName}").button().click(function() {
-                                                        toggleVisibility('itemBox${user_role.userName}${user_role.roleName}');                                                        
-                                                        document.getElementById('itemBox${user_role.userName}${user_role.roleName}').scrollIntoView();
+                                                    $("#edit-item${user_role.userRoleId}").button().click(function() {
+                                                        toggleVisibility('itemBox${user_role.userRoleId}');                                                        
+                                                        document.getElementById('itemBox${user_role.userRoleId}').scrollIntoView();
                                                         window.scrollBy(0,-80);
                                                     });
-                                                    $("#delete-item${user_role.userName}${user_role.roleName}").button().click(function() {
-                                                        window.location = '../Operations?form=user_role&action=3&id=${user_role.userName}${user_role.roleName}';
+                                                    $("#delete-item${user_role.userRoleId}").button().click(function() {
+                                                        window.location = '../Operations?form=user_role&action=3&id=${user_role.userRoleId}';
                                                     });
                                                 </script>
                                                 </c:forEach>
@@ -422,8 +477,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({

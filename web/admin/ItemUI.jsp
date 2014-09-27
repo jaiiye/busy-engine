@@ -1,18 +1,19 @@
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Item> itemList = new ArrayList<Item>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    itemList = Item.getAllItemByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    itemList = new ItemDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    itemList = Item.getAllItem();
+    itemList = new ItemDaoImpl().findAll(null, null);
 }
 request.setAttribute("itemList", itemList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +31,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -139,19 +138,22 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <select name="column" class="form-control">
                                                             <option value="ItemId" ${param.column == 'ItemId' ? "selected" : "" } >ItemId</option>                                                            
                                                            <option value="ItemName" ${param.column == 'ItemName' ? "selected" : "" } >ItemName</option>                                                            
-                                                           <option value="ItemDescription" ${param.column == 'ItemDescription' ? "selected" : "" } >ItemDescription</option>                                                            
+                                                           <option value="Description" ${param.column == 'Description' ? "selected" : "" } >Description</option>                                                            
+                                                           <option value="ListPrice" ${param.column == 'ListPrice' ? "selected" : "" } >ListPrice</option>                                                            
+                                                           <option value="Price" ${param.column == 'Price' ? "selected" : "" } >Price</option>                                                            
+                                                           <option value="ShortDescription" ${param.column == 'ShortDescription' ? "selected" : "" } >ShortDescription</option>                                                            
+                                                           <option value="Adjustment" ${param.column == 'Adjustment' ? "selected" : "" } >Adjustment</option>                                                            
+                                                           <option value="Sku" ${param.column == 'Sku' ? "selected" : "" } >Sku</option>                                                            
+                                                           <option value="RatingSum" ${param.column == 'RatingSum' ? "selected" : "" } >RatingSum</option>                                                            
+                                                           <option value="VoteCount" ${param.column == 'VoteCount' ? "selected" : "" } >VoteCount</option>                                                            
+                                                           <option value="Rank" ${param.column == 'Rank' ? "selected" : "" } >Rank</option>                                                            
+                                                           <option value="ItemStatus" ${param.column == 'ItemStatus' ? "selected" : "" } >ItemStatus</option>                                                            
+                                                           <option value="Locale" ${param.column == 'Locale' ? "selected" : "" } >Locale</option>                                                            
+                                                           <option value="ItemTypeId" ${param.column == 'ItemTypeId' ? "selected" : "" } >ItemTypeId</option>                                                            
                                                            <option value="ItemBrandId" ${param.column == 'ItemBrandId' ? "selected" : "" } >ItemBrandId</option>                                                            
-                                                           <option value="ItemListPrice" ${param.column == 'ItemListPrice' ? "selected" : "" } >ItemListPrice</option>                                                            
-                                                           <option value="ItemPrice" ${param.column == 'ItemPrice' ? "selected" : "" } >ItemPrice</option>                                                            
-                                                           <option value="ItemPriceAdjustment" ${param.column == 'ItemPriceAdjustment' ? "selected" : "" } >ItemPriceAdjustment</option>                                                            
-                                                           <option value="ItemSEOTitle" ${param.column == 'ItemSEOTitle' ? "selected" : "" } >ItemSEOTitle</option>                                                            
-                                                           <option value="ItemSEODescription" ${param.column == 'ItemSEODescription' ? "selected" : "" } >ItemSEODescription</option>                                                            
-                                                           <option value="ItemSEOKeywords" ${param.column == 'ItemSEOKeywords' ? "selected" : "" } >ItemSEOKeywords</option>                                                            
-                                                           <option value="ItemType" ${param.column == 'ItemType' ? "selected" : "" } >ItemType</option>                                                            
-                                                           <option value="ItemUPC" ${param.column == 'ItemUPC' ? "selected" : "" } >ItemUPC</option>                                                            
-                                                           <option value="ItemRating" ${param.column == 'ItemRating' ? "selected" : "" } >ItemRating</option>                                                            
-                                                           <option value="ItemVoteCount" ${param.column == 'ItemVoteCount' ? "selected" : "" } >ItemVoteCount</option>                                                            
-                                                           <option value="ItemShortDescription" ${param.column == 'ItemShortDescription' ? "selected" : "" } >ItemShortDescription</option>                                                            
+                                                           <option value="MetaTagId" ${param.column == 'MetaTagId' ? "selected" : "" } >MetaTagId</option>                                                            
+                                                           <option value="TemplateId" ${param.column == 'TemplateId' ? "selected" : "" } >TemplateId</option>                                                            
+                                                           <option value="VendorId" ${param.column == 'VendorId' ? "selected" : "" } >VendorId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -207,7 +209,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=item&action=2" method="post">
 
-                                                <input type="hidden" name="itemId" value="${item.itemId}" />
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemId">Item:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="itemId" class="form-control" value="${item.itemId}" />
+
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="itemName">ItemName:</label>
@@ -217,97 +226,130 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemDescription">Item Description:</label>
+                                                    <label class="col-md-2 control-label" for="description">Description:</label>
                                                     <div  class="col-md-10">
-                                                        <textarea name="itemDescription" class="ckeditor form-control" rows="4">${item.itemDescription}</textarea>
+                                                        <textarea name="description" class="ckeditor form-control" rows="4">${item.description}</textarea>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemBrandId">Item Brand:</label>
+                                                    <label class="col-md-2 control-label" for="listPrice">ListPrice:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="listPrice" class="form-control" value="${item.listPrice}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="price">Price:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="price" class="form-control" value="${item.price}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="shortDescription">ShortDescription:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="shortDescription" class="form-control maxlength-handler" maxlength="255" value="${item.shortDescription}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="adjustment">Adjustment:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="adjustment" class="form-control" value="${item.adjustment}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="sku">Sku:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="sku" class="form-control maxlength-handler" maxlength="30" value="${item.sku}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="ratingSum">RatingSum:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="ratingSum" class="form-control" value="${item.ratingSum}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="voteCount">VoteCount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="voteCount" class="form-control" value="${item.voteCount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="rank">Rank:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="rank" class="form-control" value="${item.rank}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemStatus">ItemStatus:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="itemStatus" class="form-control" value="${item.itemStatus}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="locale">Locale:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="locale" class="form-control maxlength-handler" maxlength="10" value="${item.locale}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemTypeId">ItemType:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="itemTypeId" class="form-control" value="${item.itemTypeId}" />
+                                                        <select name="itemTypeId" class="form-control">
+                                                            <%Item x = (Item) pageContext.getAttribute("item"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item_type", x.getItemTypeId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="itemBrandId">ItemBrand:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="itemBrandId" class="form-control" value="${item.itemBrandId}" />
                                                         <select name="itemBrandId" class="form-control">
-                                                            <%Item x = (Item) pageContext.getAttribute("item"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", x.getItemBrandId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemListPrice">ItemListPrice:</label>
+                                                    <label class="col-md-2 control-label" for="metaTagId">MetaTag:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="itemListPrice" class="form-control" value="${item.itemListPrice}" />
+                                                        <input type="text" name="metaTagId" class="form-control" value="${item.metaTagId}" />
+                                                        <select name="metaTagId" class="form-control">
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("meta_tag", x.getMetaTagId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemPrice">ItemPrice:</label>
+                                                    <label class="col-md-2 control-label" for="templateId">Template:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="itemPrice" class="form-control" value="${item.itemPrice}" />
+                                                        <input type="text" name="templateId" class="form-control" value="${item.templateId}" />
+                                                        <select name="templateId" class="form-control">
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("template", x.getTemplateId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemPriceAdjustment">ItemPriceAdjustment:</label>
+                                                    <label class="col-md-2 control-label" for="vendorId">Vendor:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="itemPriceAdjustment" class="form-control" value="${item.itemPriceAdjustment}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemSEOTitle">ItemSEOTitle:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="itemSEOTitle" class="form-control maxlength-handler" maxlength="245" value="${item.itemSEOTitle}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemSEODescription">ItemSEODescription:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="itemSEODescription" class="form-control maxlength-handler" maxlength="245" value="${item.itemSEODescription}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemSEOKeywords">ItemSEOKeywords:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="itemSEOKeywords" class="form-control maxlength-handler" maxlength="245" value="${item.itemSEOKeywords}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemType">ItemType:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="itemType" class="form-control" value="${item.itemType}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemUPC">ItemUPC:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="itemUPC" class="form-control maxlength-handler" maxlength="45" value="${item.itemUPC}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemRating">ItemRating:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="itemRating" class="form-control" value="${item.itemRating}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemVoteCount">ItemVoteCount:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="itemVoteCount" class="form-control" value="${item.itemVoteCount}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="itemShortDescription">ItemShortDescription:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="itemShortDescription" class="form-control maxlength-handler" maxlength="255" value="${item.itemShortDescription}" />
+                                                        <input type="text" name="vendorId" class="form-control" value="${item.vendorId}" />
+                                                        <select name="vendorId" class="form-control">
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("vendor", x.getVendorId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
@@ -351,6 +393,20 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
+                                                        <label class="col-md-2 control-label">ItemId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="itemId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
                                                         <label class="col-md-2 control-label">ItemName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
@@ -363,11 +419,145 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemDescription</label>
+                                                        <label class="col-md-2 control-label">Description</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <textarea name="itemDescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                                <textarea name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ListPrice</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="listPrice" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Price</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="price" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ShortDescription</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="shortDescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Adjustment</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="adjustment" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Sku</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="sku" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="30" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">RatingSum</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="ratingSum" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">VoteCount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="voteCount" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Rank</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="rank" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ItemStatus</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="itemStatus" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Locale</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="locale" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="10" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ItemTypeId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="itemTypeId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_type", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -380,7 +570,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <select name="itemBrandId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:ItemBrand", "", 2)%>
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -389,11 +579,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemListPrice</label>
+                                                        <label class="col-md-2 control-label">MetaTagId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="itemListPrice" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                                <select name="metaTagId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("meta_tag", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -401,11 +593,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemPrice</label>
+                                                        <label class="col-md-2 control-label">TemplateId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="itemPrice" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                                <select name="templateId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("template", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -413,107 +607,13 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemPriceAdjustment</label>
+                                                        <label class="col-md-2 control-label">VendorId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="itemPriceAdjustment" class="form-control" placeholder="Enter Integer" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemSEOTitle</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="itemSEOTitle" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="245" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemSEODescription</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="itemSEODescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="245" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemSEOKeywords</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="itemSEOKeywords" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="245" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemType</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="itemType" class="form-control" placeholder="Enter Integer" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemUPC</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="itemUPC" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemRating</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="itemRating" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemVoteCount</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="itemVoteCount" class="form-control" placeholder="Enter Integer" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemShortDescription</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="itemShortDescription" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <select name="vendorId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("vendor", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -556,20 +656,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
                                                     <label><input type="checkbox" checked data-column="1">Name</label> 
                                                     <label><input type="checkbox" checked data-column="2">Description</label> 
-                                                    <label><input type="checkbox" checked data-column="3">BrandId</label> 
-                                                    <label><input type="checkbox" checked data-column="4">ListPrice</label> 
-                                                    <label><input type="checkbox" checked data-column="5">Price</label> 
-                                                    <label><input type="checkbox" checked data-column="6">PriceAdjustment</label> 
-                                                    <label><input type="checkbox" checked data-column="7">SEOTitle</label> 
-                                                    <label><input type="checkbox" checked data-column="8">SEODescription</label> 
-                                                    <label><input type="checkbox" checked data-column="9">SEOKeywords</label> 
-                                                    <label><input type="checkbox" checked data-column="10">Type</label> 
-                                                    <label><input type="checkbox" checked data-column="11">UPC</label> 
-                                                    <label><input type="checkbox" checked data-column="12">Rating</label> 
-                                                    <label><input type="checkbox" checked data-column="13">VoteCount</label> 
-                                                    <label><input type="checkbox" checked data-column="14">ShortDescription</label> 
+                                                    <label><input type="checkbox" checked data-column="3">ListPrice</label> 
+                                                    <label><input type="checkbox" checked data-column="4">Price</label> 
+                                                    <label><input type="checkbox" checked data-column="5">ShortDescription</label> 
+                                                    <label><input type="checkbox" checked data-column="6">Adjustment</label> 
+                                                    <label><input type="checkbox" checked data-column="7">Sku</label> 
+                                                    <label><input type="checkbox" checked data-column="8">RatingSum</label> 
+                                                    <label><input type="checkbox" checked data-column="9">VoteCount</label> 
+                                                    <label><input type="checkbox" checked data-column="10">Rank</label> 
+                                                    <label><input type="checkbox" checked data-column="11">Status</label> 
+                                                    <label><input type="checkbox" checked data-column="12">Locale</label> 
+                                                    <label><input type="checkbox" checked data-column="13">TypeId</label> 
+                                                    <label><input type="checkbox" checked data-column="14">BrandId</label> 
+                                                    <label><input type="checkbox" checked data-column="15">MetaTagId</label> 
+                                                    <label><input type="checkbox" checked data-column="16">TemplateId</label> 
+                                                    <label><input type="checkbox" checked data-column="17">VendorId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="15">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="18">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -584,18 +687,21 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <th>Id</th> 
                                                     <th>Name</th> 
                                                     <th>Description</th> 
-                                                    <th>BrandId</th> 
                                                     <th>ListPrice</th> 
                                                     <th>Price</th> 
-                                                    <th>PriceAdjustment</th> 
-                                                    <th>SEOTitle</th> 
-                                                    <th>SEODescription</th> 
-                                                    <th>SEOKeywords</th> 
-                                                    <th>Type</th> 
-                                                    <th>UPC</th> 
-                                                    <th>Rating</th> 
-                                                    <th>VoteCount</th> 
                                                     <th>ShortDescription</th> 
+                                                    <th>Adjustment</th> 
+                                                    <th>Sku</th> 
+                                                    <th>RatingSum</th> 
+                                                    <th>VoteCount</th> 
+                                                    <th>Rank</th> 
+                                                    <th>Status</th> 
+                                                    <th>Locale</th> 
+                                                    <th>TypeId</th> 
+                                                    <th>BrandId</th> 
+                                                    <th>MetaTagId</th> 
+                                                    <th>TemplateId</th> 
+                                                    <th>VendorId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -605,19 +711,22 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>                                                    
                                                     <td>${item.itemId}</td> 
                                                     <td>${item.itemName}</td> 
-                                                    <td>${item.itemDescription}</td> 
+                                                    <td>${item.description}</td> 
+                                                    <td>${item.listPrice}</td> 
+                                                    <td>${item.price}</td> 
+                                                    <td>${item.shortDescription}</td> 
+                                                    <td>${item.adjustment}</td> 
+                                                    <td>${item.sku}</td> 
+                                                    <td>${item.ratingSum}</td> 
+                                                    <td>${item.voteCount}</td> 
+                                                    <td>${item.rank}</td> 
+                                                    <td>${item.itemStatus}</td> 
+                                                    <td>${item.locale}</td> 
+                                                    <td>${item.itemTypeId}</td> 
                                                     <td>${item.itemBrandId}</td> 
-                                                    <td>${item.itemListPrice}</td> 
-                                                    <td>${item.itemPrice}</td> 
-                                                    <td>${item.itemPriceAdjustment}</td> 
-                                                    <td>${item.itemSEOTitle}</td> 
-                                                    <td>${item.itemSEODescription}</td> 
-                                                    <td>${item.itemSEOKeywords}</td> 
-                                                    <td>${item.itemType}</td> 
-                                                    <td>${item.itemUPC}</td> 
-                                                    <td>${item.itemRating}</td> 
-                                                    <td>${item.itemVoteCount}</td> 
-                                                    <td>${item.itemShortDescription}</td> 
+                                                    <td>${item.metaTagId}</td> 
+                                                    <td>${item.templateId}</td> 
+                                                    <td>${item.vendorId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${item.itemId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -704,8 +813,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -746,19 +856,22 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     rules: {                                
                         itemId:    { required: true, number: true }, 
                         itemName:    { required: true, minlength: 1, maxlength: 255}, 
-                        itemDescription:    { required: true, minlength: 1, maxlength: 65535}, 
+                        description:    { required: true, minlength: 1, maxlength: 65535}, 
+                        listPrice:    { required: true, digits: true }, 
+                        price:    { required: true, digits: true }, 
+                        shortDescription:    { required: true, minlength: 1, maxlength: 255}, 
+                        adjustment:    { required: true, number: true }, 
+                        sku:    { required: true, minlength: 1, maxlength: 30}, 
+                        ratingSum:    { required: true, number: true }, 
+                        voteCount:    { required: true, number: true }, 
+                        rank:    { required: true, number: true }, 
+                        itemStatus:    { required: true, number: true }, 
+                        locale:    { required: true, minlength: 1, maxlength: 10}, 
+                        itemTypeId:    { required: true, number: true }, 
                         itemBrandId:    { required: true, number: true }, 
-                        itemListPrice:    { required: true, digits: true }, 
-                        itemPrice:    { required: true, digits: true }, 
-                        itemPriceAdjustment:    { required: true, number: true }, 
-                        itemSEOTitle:    { required: true, minlength: 1, maxlength: 245}, 
-                        itemSEODescription:    { required: true, minlength: 1, maxlength: 245}, 
-                        itemSEOKeywords:    { required: true, minlength: 1, maxlength: 245}, 
-                        itemType:    { required: true, number: true }, 
-                        itemUPC:    { required: true, minlength: 1, maxlength: 45}, 
-                        itemRating:    { required: true, digits: true }, 
-                        itemVoteCount:    { required: true, number: true }, 
-                        itemShortDescription:    { required: true, minlength: 1, maxlength: 255} 
+                        metaTagId:    { required: true, number: true }, 
+                        templateId:    { required: true, number: true }, 
+                        vendorId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

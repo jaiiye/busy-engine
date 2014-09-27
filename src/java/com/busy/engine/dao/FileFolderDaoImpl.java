@@ -36,37 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.SiteFolder;
-import com.busy.engine.entity.SiteFile;
-import com.busy.engine.entity.FileFolder;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class FileFolderDaoImpl extends BasicConnection implements Serializable, FileFolderDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public FileFolder find(Integer id)
+        public FileFolderDaoImpl()
         {
-            return findByColumn("FileFolderId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<FileFolder> findAll(Integer limit, Integer offset)
+
+        public FileFolderDaoImpl(boolean enableCache)
         {
-            ArrayList<FileFolder> file_folder = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class FileFolderCache
+        {
+            public static final ConcurrentLruCache<Integer, FileFolder> fileFolderCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (FileFolder i : findAll())
+                {
+                    getCache().put(i.getFileFolderId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, FileFolder> getCache()
+        {
+            return FileFolderCache.fileFolderCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, FileFolder> buildCache(ArrayList<FileFolder> fileFolderList)
+        {        
+            ConcurrentLruCache<Integer, FileFolder> cache = new ConcurrentLruCache<Integer, FileFolder>(fileFolderList.size() + 1000);
+            for (FileFolder i : fileFolderList)
+            {
+                cache.put(i.getFileFolderId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<FileFolder> findAll()
+        {
+            ArrayList<FileFolder> fileFolder = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("file_folder");
-                while(rs.next())
+                getAllRecordsByTableName("fileFolder");
+                while (rs.next())
                 {
-                    file_folder.add(FileFolder.process(rs));
+                    fileFolder.add(FileFolder.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -77,91 +137,231 @@ import com.busy.engine.entity.FileFolder;
             {
                 closeConnection();
             }
-            return file_folder;
+            return fileFolder;
+        }
+        
+        @Override
+        public FileFolder find(Integer id)
+        {
+            return findByColumn("FileFolderId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<FileFolder> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<FileFolder> fileFolderList = new ArrayList<FileFolder>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for FileFolder, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    fileFolderList = new ArrayList<FileFolder>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("file_folder", limit, offset);
+                    while (rs.next())
+                    {
+                        fileFolderList.add(FileFolder.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("FileFolder object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return fileFolderList;
          
         }
         
         @Override
         public ArrayList<FileFolder> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<FileFolder> file_folderList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("file_folder", limit, offset);
-                while (rs.next())
+            ArrayList<FileFolder> fileFolderList = new ArrayList<FileFolder>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for FileFolder, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    file_folderList.add(FileFolder.process(rs));
+                    fileFolderList = new ArrayList<FileFolder>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(FileFolder file_folder : file_folderList)
+                    try
                     {
-                        
-                            getRecordById("SiteFile", file_folder.getSiteFileId().toString());
-                            file_folder.setSiteFile(SiteFile.process(rs));               
-                        
-                            getRecordById("SiteFolder", file_folder.getSiteFolderId().toString());
-                            file_folder.setSiteFolder(SiteFolder.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            FileFolder fileFolder = (FileFolder) e.getValue();
+
+                            
+                                getRecordById("SiteFile", fileFolder.getSiteFileId().toString());
+                                fileFolder.setSiteFile(SiteFile.process(rs));               
+                            
+                                getRecordById("SiteFolder", fileFolder.getSiteFolderId().toString());
+                                fileFolder.setSiteFolder(SiteFolder.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object FileFolder method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object FileFolder method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                fileFolderList = new ArrayList<FileFolder>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("file_folder", limit, offset);
+                    while (rs.next())
+                    {
+                        fileFolderList.add(FileFolder.process(rs));
+                    }
+
+                    
+                    
+                        for (FileFolder fileFolder : fileFolderList)
+                        {                        
+                            
+                                getRecordById("SiteFile", fileFolder.getSiteFileId().toString());
+                                fileFolder.setSiteFile(SiteFile.process(rs));               
+                            
+                                getRecordById("SiteFolder", fileFolder.getSiteFolderId().toString());
+                                fileFolder.setSiteFolder(SiteFolder.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object FileFolder method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return file_folderList;
+            return fileFolderList;            
         }
         
         @Override
         public ArrayList<FileFolder> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<FileFolder> file_folder = new ArrayList<>();
-            try
+            ArrayList<FileFolder> fileFolderList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("file_folder", FileFolder.checkColumnName(columnName), columnValue, FileFolder.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   file_folder.add(FileFolder.process(rs));
+
+                    System.out.println("Find by column for FileFolder(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            FileFolder i = (FileFolder) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                fileFolderList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            fileFolderList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("FileFolder's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("file_folder", FileFolder.checkColumnName(columnName), columnValue, FileFolder.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        fileFolderList.add(FileFolder.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("FileFolder's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return file_folder;
+            return fileFolderList;
         } 
     
         @Override
         public int add(FileFolder obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO file_folder(SiteFileId,SiteFolderId) VALUES (?,?);");                    
+                prepareStatement("INSERT INTO file_folder(FileFolderId,SiteFileId,SiteFolderId,) VALUES (?,?);");                    
+                preparedStatement.setInt(0, obj.getFileFolderId());
                 preparedStatement.setInt(1, obj.getSiteFileId());
                 preparedStatement.setInt(2, obj.getSiteFolderId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from file_folder;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -171,6 +371,13 @@ import com.busy.engine.entity.FileFolder;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setFileFolderId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -184,11 +391,17 @@ import com.busy.engine.entity.FileFolder;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE file_folder SET SiteFileId=?,SiteFolderId=? WHERE FileFolderId=?;");                    
+                prepareStatement("UPDATE file_folder SET com.busy.util.DatabaseColumn@cc4c7=?,com.busy.util.DatabaseColumn@325cafa4=? WHERE FileFolderId=?;");                    
+                preparedStatement.setInt(0, obj.getFileFolderId());
                 preparedStatement.setInt(1, obj.getSiteFileId());
                 preparedStatement.setInt(2, obj.getSiteFolderId());
                 preparedStatement.setInt(3, obj.getFileFolderId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getFileFolderId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -204,7 +417,16 @@ import com.busy.engine.entity.FileFolder;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("file_folder");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("file_folder");
+            }
+            return count;
         }
         
         
@@ -256,7 +478,13 @@ import com.busy.engine.entity.FileFolder;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getFileFolderId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -276,6 +504,12 @@ import com.busy.engine.entity.FileFolder;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -296,6 +530,12 @@ import com.busy.engine.entity.FileFolder;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -316,7 +556,44 @@ import com.busy.engine.entity.FileFolder;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        FileFolder i = (FileFolder) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getFileFolderId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
         

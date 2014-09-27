@@ -36,35 +36,95 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.SliderType;
-import com.busy.engine.entity.Slider;
-import com.busy.engine.entity.Form;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class SliderDaoImpl extends BasicConnection implements Serializable, SliderDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public Slider find(Integer id)
+        public SliderDaoImpl()
         {
-            return findByColumn("SliderId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<Slider> findAll(Integer limit, Integer offset)
+
+        public SliderDaoImpl(boolean enableCache)
+        {
+            cachingEnabled = enableCache;
+        }
+
+        private static class SliderCache
+        {
+            public static final ConcurrentLruCache<Integer, Slider> sliderCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (Slider i : findAll())
+                {
+                    getCache().put(i.getSliderId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, Slider> getCache()
+        {
+            return SliderCache.sliderCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, Slider> buildCache(ArrayList<Slider> sliderList)
+        {        
+            ConcurrentLruCache<Integer, Slider> cache = new ConcurrentLruCache<Integer, Slider>(sliderList.size() + 1000);
+            for (Slider i : sliderList)
+            {
+                cache.put(i.getSliderId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<Slider> findAll()
         {
             ArrayList<Slider> slider = new ArrayList<>();
             try
             {
                 getAllRecordsByTableName("slider");
-                while(rs.next())
+                while (rs.next())
                 {
                     slider.add(Slider.process(rs));
                 }
@@ -78,92 +138,232 @@ import com.busy.engine.entity.Form;
                 closeConnection();
             }
             return slider;
+        }
+        
+        @Override
+        public Slider find(Integer id)
+        {
+            return findByColumn("SliderId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<Slider> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<Slider> sliderList = new ArrayList<Slider>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for Slider, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    sliderList = new ArrayList<Slider>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("slider", limit, offset);
+                    while (rs.next())
+                    {
+                        sliderList.add(Slider.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Slider object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return sliderList;
          
         }
         
         @Override
         public ArrayList<Slider> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<Slider> sliderList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("slider", limit, offset);
-                while (rs.next())
+            ArrayList<Slider> sliderList = new ArrayList<Slider>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for Slider, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    sliderList.add(Slider.process(rs));
+                    sliderList = new ArrayList<Slider>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(Slider slider : sliderList)
+                    try
                     {
-                        
-                            getRecordById("SliderType", slider.getSliderTypeId().toString());
-                            slider.setSliderType(SliderType.process(rs));               
-                        
-                            getRecordById("Form", slider.getFormId().toString());
-                            slider.setForm(Form.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            Slider slider = (Slider) e.getValue();
+
+                            
+                                getRecordById("SliderType", slider.getSliderTypeId().toString());
+                                slider.setSliderType(SliderType.process(rs));               
+                            
+                                getRecordById("Form", slider.getFormId().toString());
+                                slider.setForm(Form.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object Slider method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object Slider method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                sliderList = new ArrayList<Slider>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("slider", limit, offset);
+                    while (rs.next())
+                    {
+                        sliderList.add(Slider.process(rs));
+                    }
+
+                    
+                    
+                        for (Slider slider : sliderList)
+                        {                        
+                            
+                                getRecordById("SliderType", slider.getSliderTypeId().toString());
+                                slider.setSliderType(SliderType.process(rs));               
+                            
+                                getRecordById("Form", slider.getFormId().toString());
+                                slider.setForm(Form.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object Slider method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return sliderList;
+            return sliderList;            
         }
         
         @Override
         public ArrayList<Slider> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<Slider> slider = new ArrayList<>();
-            try
+            ArrayList<Slider> sliderList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("slider", Slider.checkColumnName(columnName), columnValue, Slider.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   slider.add(Slider.process(rs));
+
+                    System.out.println("Find by column for Slider(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            Slider i = (Slider) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                sliderList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            sliderList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Slider's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("slider", Slider.checkColumnName(columnName), columnValue, Slider.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        sliderList.add(Slider.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Slider's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return slider;
+            return sliderList;
         } 
     
         @Override
         public int add(Slider obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 Slider.checkColumnSize(obj.getSliderName(), 100);
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO slider(SliderName,SliderTypeId,FormId) VALUES (?,?,?);");                    
+                prepareStatement("INSERT INTO slider(SliderId,SliderName,SliderTypeId,FormId,) VALUES (?,?,?);");                    
+                preparedStatement.setInt(0, obj.getSliderId());
                 preparedStatement.setString(1, obj.getSliderName());
                 preparedStatement.setInt(2, obj.getSliderTypeId());
                 preparedStatement.setInt(3, obj.getFormId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from slider;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -173,6 +373,13 @@ import com.busy.engine.entity.Form;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setSliderId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -187,12 +394,18 @@ import com.busy.engine.entity.Form;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE slider SET SliderName=?,SliderTypeId=?,FormId=? WHERE SliderId=?;");                    
+                prepareStatement("UPDATE slider SET com.busy.util.DatabaseColumn@466beaf6=?,com.busy.util.DatabaseColumn@22e6475e=?,com.busy.util.DatabaseColumn@2ed099b8=? WHERE SliderId=?;");                    
+                preparedStatement.setInt(0, obj.getSliderId());
                 preparedStatement.setString(1, obj.getSliderName());
                 preparedStatement.setInt(2, obj.getSliderTypeId());
                 preparedStatement.setInt(3, obj.getFormId());
                 preparedStatement.setInt(4, obj.getSliderId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getSliderId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -208,7 +421,16 @@ import com.busy.engine.entity.Form;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("slider");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("slider");
+            }
+            return count;
         }
         
         
@@ -262,7 +484,13 @@ slider.setSliderItemList(new SliderItemDaoImpl().findByColumn("SliderId", slider
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getSliderId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -282,6 +510,12 @@ slider.setSliderItemList(new SliderItemDaoImpl().findByColumn("SliderId", slider
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -302,6 +536,12 @@ slider.setSliderItemList(new SliderItemDaoImpl().findByColumn("SliderId", slider
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -322,7 +562,44 @@ slider.setSliderItemList(new SliderItemDaoImpl().findByColumn("SliderId", slider
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        Slider i = (Slider) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getSliderId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
                     

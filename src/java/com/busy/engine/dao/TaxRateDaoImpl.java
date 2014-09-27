@@ -36,37 +36,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     package com.busy.engine.dao;
 
-import com.busy.engine.entity.StateProvince;
-import com.busy.engine.entity.Country;
-import com.busy.engine.entity.TaxRate;
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.entity.*;
+    import com.busy.engine.dao.*;
+    import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
     import java.sql.SQLException;
     import java.util.Date;
+    import java.util.Map.Entry;
+    import java.lang.reflect.InvocationTargetException;
     
     public class TaxRateDaoImpl extends BasicConnection implements Serializable, TaxRateDao
     {    
-        private static final long serialVersionUID = 1L;        
+        private static final long serialVersionUID = 1L;  
+        private boolean cachingEnabled;
         
-        @Override
-        public TaxRate find(Integer id)
+        public TaxRateDaoImpl()
         {
-            return findByColumn("TaxRateId", id.toString(), null, null).get(0);
+            cachingEnabled = false;
         }
-        
-        @Override
-        public ArrayList<TaxRate> findAll(Integer limit, Integer offset)
+
+        public TaxRateDaoImpl(boolean enableCache)
         {
-            ArrayList<TaxRate> tax_rate = new ArrayList<>();
+            cachingEnabled = enableCache;
+        }
+
+        private static class TaxRateCache
+        {
+            public static final ConcurrentLruCache<Integer, TaxRate> taxRateCache = buildCache(findAll());
+        }
+
+        private void checkCacheState()
+        {
+            if(getCache().size() == 0)
+            {
+                System.out.println("Found the cache empty, rebuilding...");
+                for (TaxRate i : findAll())
+                {
+                    getCache().put(i.getTaxRateId(), i);
+                } 
+            }
+        }
+
+        public static ConcurrentLruCache<Integer, TaxRate> getCache()
+        {
+            return TaxRateCache.taxRateCache;
+        }
+
+        protected Object readResolve()
+        {
+            return getCache();
+        }
+
+        public static ConcurrentLruCache<Integer, TaxRate> buildCache(ArrayList<TaxRate> taxRateList)
+        {        
+            ConcurrentLruCache<Integer, TaxRate> cache = new ConcurrentLruCache<Integer, TaxRate>(taxRateList.size() + 1000);
+            for (TaxRate i : taxRateList)
+            {
+                cache.put(i.getTaxRateId(), i);
+            }
+            return cache;
+        }
+
+        private static ArrayList<TaxRate> findAll()
+        {
+            ArrayList<TaxRate> taxRate = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("tax_rate");
-                while(rs.next())
+                getAllRecordsByTableName("taxRate");
+                while (rs.next())
                 {
-                    tax_rate.add(TaxRate.process(rs));
+                    taxRate.add(TaxRate.process(rs));
                 }
             }
             catch (SQLException ex)
@@ -77,97 +137,237 @@ import com.busy.engine.entity.TaxRate;
             {
                 closeConnection();
             }
-            return tax_rate;
+            return taxRate;
+        }
+        
+        @Override
+        public TaxRate find(Integer id)
+        {
+            return findByColumn("TaxRateId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ArrayList<TaxRate> findAll(Integer limit, Integer offset)
+        {
+            ArrayList<TaxRate> taxRateList = new ArrayList<TaxRate>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                System.out.println("Find all operation for TaxRate, getting objects from cache...");
+                checkCacheState();
+
+                if(limit == null && offset == null)
+                {
+                    taxRateList = new ArrayList<TaxRate>(getCache().getValues());
+                }
+                else
+                {
+                    cacheNotUsed = true;
+                }
+            }
+
+            if( !cachingEnabled || cacheNotUsed)
+            {
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("tax_rate", limit, offset);
+                    while (rs.next())
+                    {
+                        taxRateList.add(TaxRate.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("TaxRate object's findAll method error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            }
+            return taxRateList;
          
         }
         
         @Override
         public ArrayList<TaxRate> findAllWithInfo(Integer limit, Integer offset)
         {
-            ArrayList<TaxRate> tax_rateList = new ArrayList<>();
-            try
-            {
-                getRecordsByTableNameWithLimitOrOffset("tax_rate", limit, offset);
-                while (rs.next())
+            ArrayList<TaxRate> taxRateList = new ArrayList<TaxRate>();
+            boolean cacheNotUsed = false;
+
+            //check cache first
+            if (cachingEnabled)
+            {            
+                checkCacheState();
+
+                System.out.println("Find all with info operation for TaxRate, getting objects from cache...");
+
+                if (limit == null && offset == null)
                 {
-                    tax_rateList.add(TaxRate.process(rs));
+                    taxRateList = new ArrayList<TaxRate>(getCache().getValues());
+                }
+                else
+                {                
+                    cacheNotUsed = true;
                 }
 
                 
-                    for(TaxRate tax_rate : tax_rateList)
+                    try
                     {
-                        
-                            getRecordById("StateProvince", tax_rate.getStateProvinceId().toString());
-                            tax_rate.setStateProvince(StateProvince.process(rs));               
-                        
-                            getRecordById("Country", tax_rate.getCountryId().toString());
-                            tax_rate.setCountry(Country.process(rs));               
-                        
+                        for (Entry e : getCache().getEntries())
+                        {
+                            TaxRate taxRate = (TaxRate) e.getValue();
+
+                            
+                                getRecordById("StateProvince", taxRate.getStateProvinceId().toString());
+                                taxRate.setStateProvince(StateProvince.process(rs));               
+                            
+                                getRecordById("Country", taxRate.getCountryId().toString());
+                                taxRate.setCountry(Country.process(rs));               
+                                                    
+                        }
                     }
-             
+                    catch (SQLException ex)
+                    {
+                        System.out.println("Object TaxRate method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+                    }
+                    finally
+                    {
+                        closeConnection();
+                    }
+                
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("Object TaxRate method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                taxRateList = new ArrayList<TaxRate>();
+                try
+                {
+                    getRecordsByTableNameWithLimitOrOffset("tax_rate", limit, offset);
+                    while (rs.next())
+                    {
+                        taxRateList.add(TaxRate.process(rs));
+                    }
+
+                    
+                    
+                        for (TaxRate taxRate : taxRateList)
+                        {                        
+                            
+                                getRecordById("StateProvince", taxRate.getStateProvinceId().toString());
+                                taxRate.setStateProvince(StateProvince.process(rs));               
+                            
+                                getRecordById("Country", taxRate.getCountryId().toString());
+                                taxRate.setCountry(Country.process(rs));               
+                              
+                        }
+                    
+                    
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("Object TaxRate method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return tax_rateList;
+            return taxRateList;            
         }
         
         @Override
         public ArrayList<TaxRate> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
         {
-            ArrayList<TaxRate> tax_rate = new ArrayList<>();
-            try
+            ArrayList<TaxRate> taxRateList = new ArrayList<>();
+            boolean cacheNotUsed = false;
+
+            if (cachingEnabled)
             {
-                getRecordsByColumnWithLimitOrOffset("tax_rate", TaxRate.checkColumnName(columnName), columnValue, TaxRate.isColumnNumeric(columnName), limit, offset);
-                while(rs.next())
+                if (limit == null && offset == null)
                 {
-                   tax_rate.add(TaxRate.process(rs));
+
+                    System.out.println("Find by column for TaxRate(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                    for (Entry e : getCache().getEntries())
+                    {
+                        try
+                        {
+                            TaxRate i = (TaxRate) e.getValue();
+                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                            {
+                                taxRateList.add(i);
+                            }
+                        }
+                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            taxRateList = null;
+                        }
+                    }
+                }
+                else
+                {
+                    cacheNotUsed = true;
                 }
             }
-            catch (SQLException ex)
+
+            if( !cachingEnabled || cacheNotUsed)
             {
-                System.out.println("TaxRate's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                try
+                {
+                    getRecordsByColumnWithLimitOrOffset("tax_rate", TaxRate.checkColumnName(columnName), columnValue, TaxRate.isColumnNumeric(columnName), limit, offset);
+                    while (rs.next())
+                    {
+                        taxRateList.add(TaxRate.process(rs));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println("TaxRate's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
             }
-            finally
-            {
-                closeConnection();
-            }
-            return tax_rate;
+            return taxRateList;
         } 
     
         @Override
         public int add(TaxRate obj)
-        {
+        {        
+            boolean success = false;
             int id = 0;
             try
-            {
+            {                
                 
                 TaxRate.checkColumnSize(obj.getTaxCategory(), 100);
                 
                 TaxRate.checkColumnSize(obj.getZipPostalCode(), 15);
                 
                 
-                                            
+                  
+
                 openConnection();
-                prepareStatement("INSERT INTO tax_rate(TaxCategory,Percentage,ZipPostalCode,StateProvinceId,CountryId) VALUES (?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO tax_rate(TaxRateId,TaxCategory,Percentage,ZipPostalCode,StateProvinceId,CountryId,) VALUES (?,?,?,?,?);");                    
+                preparedStatement.setInt(0, obj.getTaxRateId());
                 preparedStatement.setString(1, obj.getTaxCategory());
                 preparedStatement.setDouble(2, obj.getPercentage());
                 preparedStatement.setString(3, obj.getZipPostalCode());
                 preparedStatement.setInt(4, obj.getStateProvinceId());
                 preparedStatement.setInt(5, obj.getCountryId());
                 
-                preparedStatement.executeUpdate(); 
-                
+                preparedStatement.executeUpdate();
+
                 rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from tax_rate;");
-                while(rs.next())
+                while (rs.next())
                 {
-                    id =  rs.getInt(1);
+                    id = rs.getInt(1);
                 }
+                
+                success = true;
             }
             catch (Exception ex)
             {
@@ -177,6 +377,13 @@ import com.busy.engine.entity.TaxRate;
             {
                 closeConnection();
             }
+            
+            if (cachingEnabled && success)
+            {
+                obj.setTaxRateId(id);
+                getCache().put(id, obj); //synchronizing between local cache and database
+            }
+                
             return id;
         }
         
@@ -193,7 +400,8 @@ import com.busy.engine.entity.TaxRate;
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE tax_rate SET TaxCategory=?,Percentage=?,ZipPostalCode=?,StateProvinceId=?,CountryId=? WHERE TaxRateId=?;");                    
+                prepareStatement("UPDATE tax_rate SET com.busy.util.DatabaseColumn@1fa4d86c=?,com.busy.util.DatabaseColumn@76c0f1e0=?,com.busy.util.DatabaseColumn@7d575e08=?,com.busy.util.DatabaseColumn@1fc7ba27=?,com.busy.util.DatabaseColumn@2699760b=? WHERE TaxRateId=?;");                    
+                preparedStatement.setInt(0, obj.getTaxRateId());
                 preparedStatement.setString(1, obj.getTaxCategory());
                 preparedStatement.setDouble(2, obj.getPercentage());
                 preparedStatement.setString(3, obj.getZipPostalCode());
@@ -201,6 +409,11 @@ import com.busy.engine.entity.TaxRate;
                 preparedStatement.setInt(5, obj.getCountryId());
                 preparedStatement.setInt(6, obj.getTaxRateId());
                 preparedStatement.executeUpdate();
+                
+                if (cachingEnabled)
+                {
+                    getCache().put(obj.getTaxRateId(), obj);
+                }            
             }
             catch (Exception ex)
             {
@@ -216,7 +429,16 @@ import com.busy.engine.entity.TaxRate;
         @Override
         public int getAllCount()
         {        
-            return getAllRecordsCountByTableName("tax_rate");
+            int count = 0;
+            if (cachingEnabled)
+            {
+                count = getCache().size();
+            }
+            else
+            {
+                count = getAllRecordsCountByTableName("tax_rate");
+            }
+            return count;
         }
         
         
@@ -268,7 +490,13 @@ import com.busy.engine.entity.TaxRate;
             {
                 closeConnection();
             }
-            return success;
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(obj.getTaxRateId());
+            }
+            
+            return success;            
         }
         
         @Override
@@ -288,6 +516,12 @@ import com.busy.engine.entity.TaxRate;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                getCache().remove(id);
+            }
+        
             return success;
         }
 
@@ -308,6 +542,12 @@ import com.busy.engine.entity.TaxRate;
             {
                 closeConnection();
             }
+        
+            if(cachingEnabled && success)
+            {
+                getCache().clear();
+            }
+        
             return success;
         }
 
@@ -328,7 +568,44 @@ import com.busy.engine.entity.TaxRate;
             {
                 closeConnection();
             }
+            
+            if(cachingEnabled && success)
+            {
+                ArrayList<Integer> keys = new ArrayList<Integer>();
+
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        TaxRate i = (TaxRate) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            keys.add(i.getTaxRateId());
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                for(int id : keys)
+                {
+                    getCache().remove(id);
+                }
+            }
+            
             return success;
+        }
+        
+        public boolean isCachingEnabled()
+        {
+            return cachingEnabled;
+        }
+        
+        public void setCachingEnabled(boolean cachingEnabled)
+        {
+            this.cachingEnabled = cachingEnabled;
         }
         
         

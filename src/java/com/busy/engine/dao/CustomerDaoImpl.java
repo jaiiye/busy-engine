@@ -1,27 +1,71 @@
 package com.busy.engine.dao;
 
-import com.busy.engine.entity.Customer;
-import com.busy.engine.entity.Contact;
-import com.busy.engine.entity.Address;
-import com.busy.engine.entity.User;
 import com.busy.engine.data.BasicConnection;
+import com.busy.engine.entity.*;
+import com.busy.engine.dao.*;
+import com.busy.engine.util.*;
 import java.util.ArrayList;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.Map.Entry;
+import java.lang.reflect.InvocationTargetException;
 
 public class CustomerDaoImpl extends BasicConnection implements Serializable, CustomerDao
 {
 
     private static final long serialVersionUID = 1L;
+    private boolean cachingEnabled;
 
-    @Override
-    public Customer find(Integer id)
+    public CustomerDaoImpl()
     {
-        return findByColumn("CustomerId", id.toString(), null, null).get(0);
+        cachingEnabled = false;
     }
 
-    @Override
-    public ArrayList<Customer> findAll(Integer limit, Integer offset)
+    public CustomerDaoImpl(boolean enableCache)
+    {
+        cachingEnabled = enableCache;
+    }
+
+    private static class CustomerCache
+    {
+
+        public static final ConcurrentLruCache<Integer, Customer> customerCache = buildCache(findAll());
+    }
+
+    private void checkCacheState()
+    {
+        if (getCache().size() == 0)
+        {
+            System.out.println("Found the cache empty, rebuilding...");
+            for (Customer i : findAll())
+            {
+                getCache().put(i.getCustomerId(), i);
+            }
+        }
+    }
+
+    public static ConcurrentLruCache<Integer, Customer> getCache()
+    {
+        return CustomerCache.customerCache;
+    }
+
+    protected Object readResolve()
+    {
+        return getCache();
+    }
+
+    public static ConcurrentLruCache<Integer, Customer> buildCache(ArrayList<Customer> customerList)
+    {
+        ConcurrentLruCache<Integer, Customer> cache = new ConcurrentLruCache<Integer, Customer>(customerList.size() + 1000);
+        for (Customer i : customerList)
+        {
+            cache.put(i.getCustomerId(), i);
+        }
+        return cache;
+    }
+
+    private static ArrayList<Customer> findAll()
     {
         ArrayList<Customer> customer = new ArrayList<>();
         try
@@ -41,46 +85,149 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
             closeConnection();
         }
         return customer;
+    }
+
+    @Override
+    public Customer find(Integer id)
+    {
+        return findByColumn("CustomerId", id.toString(), null, null).get(0);
+    }
+
+    @Override
+    public ArrayList<Customer> findAll(Integer limit, Integer offset)
+    {
+        ArrayList<Customer> customerList = new ArrayList<Customer>();
+        boolean cacheNotUsed = false;
+
+        //check cache first
+        if (cachingEnabled)
+        {
+            System.out.println("Find all operation for Customer, getting objects from cache...");
+            checkCacheState();
+
+            if (limit == null && offset == null)
+            {
+                customerList = new ArrayList<Customer>(getCache().getValues());
+            }
+            else
+            {
+                cacheNotUsed = true;
+            }
+        }
+
+        if (!cachingEnabled || cacheNotUsed)
+        {
+            try
+            {
+                getRecordsByTableNameWithLimitOrOffset("customer", limit, offset);
+                while (rs.next())
+                {
+                    customerList.add(Customer.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Customer object's findAll method error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+        }
+        return customerList;
 
     }
 
     @Override
     public ArrayList<Customer> findAllWithInfo(Integer limit, Integer offset)
     {
-        ArrayList<Customer> customerList = new ArrayList<>();
-        try
+        ArrayList<Customer> customerList = new ArrayList<Customer>();
+        boolean cacheNotUsed = false;
+
+        //check cache first
+        if (cachingEnabled)
         {
-            getRecordsByTableNameWithLimitOrOffset("customer", limit, offset);
-            while (rs.next())
+            checkCacheState();
+
+            System.out.println("Find all with info operation for Customer, getting objects from cache...");
+
+            if (limit == null && offset == null)
             {
-                customerList.add(Customer.process(rs));
+                customerList = new ArrayList<Customer>(getCache().getValues());
+            }
+            else
+            {
+                cacheNotUsed = true;
             }
 
-            for (Customer customer : customerList)
+            try
             {
+                for (Entry e : getCache().getEntries())
+                {
+                    Customer customer = (Customer) e.getValue();
 
-                getRecordById("Contact", customer.getContactId().toString());
-                customer.setContact(Contact.process(rs));
+                    getRecordById("Contact", customer.getContactId().toString());
+                    customer.setContact(Contact.process(rs));
 
-                getRecordById("User", customer.getUserId().toString());
-                customer.setUser(User.process(rs));
+                    getRecordById("User", customer.getUserId().toString());
+                    customer.setUser(User.process(rs));
 
-                getRecordById("Address", customer.getBillingAddressId().toString());
-                customer.setBillingAddress(Address.process(rs));
+                    getRecordById("BillingAddress", customer.getBillingAddressId().toString());
+                    customer.setBillingAddress(Address.process(rs));
 
-                getRecordById("Address", customer.getShippingAddressId().toString());
-                customer.setShippingAddress(Address.process(rs));
+                    getRecordById("ShippingAddress", customer.getShippingAddressId().toString());
+                    customer.setShippingAddress(Address.process(rs));
 
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Object Customer method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
             }
 
         }
-        catch (SQLException ex)
+
+        if (!cachingEnabled || cacheNotUsed)
         {
-            System.out.println("Object Customer method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
+            customerList = new ArrayList<Customer>();
+            try
+            {
+                getRecordsByTableNameWithLimitOrOffset("customer", limit, offset);
+                while (rs.next())
+                {
+                    customerList.add(Customer.process(rs));
+                }
+
+                for (Customer customer : customerList)
+                {
+
+                    getRecordById("Contact", customer.getContactId().toString());
+                    customer.setContact(Contact.process(rs));
+
+                    getRecordById("User", customer.getUserId().toString());
+                    customer.setUser(User.process(rs));
+
+                    getRecordById("BillingAddress", customer.getBillingAddressId().toString());
+                    customer.setBillingAddress(Address.process(rs));
+
+                    getRecordById("ShippingAddress", customer.getShippingAddressId().toString());
+                    customer.setShippingAddress(Address.process(rs));
+
+                }
+
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Object Customer method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
         }
         return customerList;
     }
@@ -88,35 +235,71 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
     @Override
     public ArrayList<Customer> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
     {
-        ArrayList<Customer> customer = new ArrayList<>();
-        try
+        ArrayList<Customer> customerList = new ArrayList<>();
+        boolean cacheNotUsed = false;
+
+        if (cachingEnabled)
         {
-            getRecordsByColumnWithLimitOrOffset("customer", Customer.checkColumnName(columnName), columnValue, Customer.isColumnNumeric(columnName), limit, offset);
-            while (rs.next())
+            if (limit == null && offset == null)
             {
-                customer.add(Customer.process(rs));
+
+                System.out.println("Find by column for Customer(" + columnName + "=" + columnValue + "), getting objects from cache...");
+                for (Entry e : getCache().getEntries())
+                {
+                    try
+                    {
+                        Customer i = (Customer) e.getValue();
+                        if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                        {
+                            customerList.add(i);
+                        }
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                    {
+                        ex.printStackTrace();
+                        customerList = null;
+                    }
+                }
+            }
+            else
+            {
+                cacheNotUsed = true;
             }
         }
-        catch (SQLException ex)
+
+        if (!cachingEnabled || cacheNotUsed)
         {
-            System.out.println("Customer's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+            try
+            {
+                getRecordsByColumnWithLimitOrOffset("customer", Customer.checkColumnName(columnName), columnValue, Customer.isColumnNumeric(columnName), limit, offset);
+                while (rs.next())
+                {
+                    customerList.add(Customer.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Customer's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
         }
-        finally
-        {
-            closeConnection();
-        }
-        return customer;
+        return customerList;
     }
 
     @Override
     public int add(Customer obj)
     {
+        boolean success = false;
         int id = 0;
         try
         {
 
             openConnection();
-            prepareStatement("INSERT INTO customer(ContactId,UserId,BillingAddressId,ShippingAddressId,CustomerStatus) VALUES (?,?,?,?,?);");
+            prepareStatement("INSERT INTO customer(CustomerId,ContactId,UserId,BillingAddressId,ShippingAddressId,CustomerStatus,) VALUES (?,?,?,?,?);");
+            preparedStatement.setInt(0, obj.getCustomerId());
             preparedStatement.setInt(1, obj.getContactId());
             preparedStatement.setInt(2, obj.getUserId());
             preparedStatement.setInt(3, obj.getBillingAddressId());
@@ -130,6 +313,8 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
             {
                 id = rs.getInt(1);
             }
+
+            success = true;
         }
         catch (Exception ex)
         {
@@ -139,6 +324,13 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
         {
             closeConnection();
         }
+
+        if (cachingEnabled && success)
+        {
+            obj.setCustomerId(id);
+            getCache().put(id, obj); //synchronizing between local cache and database
+        }
+
         return id;
     }
 
@@ -149,7 +341,8 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
         {
 
             openConnection();
-            prepareStatement("UPDATE customer SET ContactId=?,UserId=?,BillingAddressId=?,ShippingAddressId=?,CustomerStatus=? WHERE CustomerId=?;");
+            prepareStatement("UPDATE customer SET com.busy.util.DatabaseColumn@44e6bbe7=?,com.busy.util.DatabaseColumn@27143046=?,com.busy.util.DatabaseColumn@15ff3576=?,com.busy.util.DatabaseColumn@5f678acb=?,com.busy.util.DatabaseColumn@2eaf3b43=? WHERE CustomerId=?;");
+            preparedStatement.setInt(0, obj.getCustomerId());
             preparedStatement.setInt(1, obj.getContactId());
             preparedStatement.setInt(2, obj.getUserId());
             preparedStatement.setInt(3, obj.getBillingAddressId());
@@ -157,6 +350,11 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
             preparedStatement.setInt(5, obj.getCustomerStatus());
             preparedStatement.setInt(6, obj.getCustomerId());
             preparedStatement.executeUpdate();
+
+            if (cachingEnabled)
+            {
+                getCache().put(obj.getCustomerId(), obj);
+            }
         }
         catch (Exception ex)
         {
@@ -172,7 +370,16 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
     @Override
     public int getAllCount()
     {
-        return getAllRecordsCountByTableName("customer");
+        int count = 0;
+        if (cachingEnabled)
+        {
+            count = getCache().size();
+        }
+        else
+        {
+            count = getAllRecordsCountByTableName("customer");
+        }
+        return count;
     }
 
     @Override
@@ -188,10 +395,10 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
             getRecordById("User", customer.getUserId().toString());
             customer.setUser(User.process(rs));
 
-            getRecordById("Address", customer.getBillingAddressId().toString());
+            getRecordById("BillingAddress", customer.getBillingAddressId().toString());
             customer.setBillingAddress(Address.process(rs));
 
-            getRecordById("Address", customer.getShippingAddressId().toString());
+            getRecordById("ShippingAddress", customer.getShippingAddressId().toString());
             customer.setShippingAddress(Address.process(rs));
 
         }
@@ -210,6 +417,7 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
     public void getRelatedObjects(Customer customer)
     {
         customer.setCustomerOrderList(new CustomerOrderDaoImpl().findByColumn("CustomerId", customer.getCustomerId().toString(), null, null));
+
     }
 
     @Override
@@ -229,6 +437,12 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
         {
             closeConnection();
         }
+
+        if (cachingEnabled && success)
+        {
+            getCache().remove(obj.getCustomerId());
+        }
+
         return success;
     }
 
@@ -249,6 +463,12 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
         {
             closeConnection();
         }
+
+        if (cachingEnabled && success)
+        {
+            getCache().remove(id);
+        }
+
         return success;
     }
 
@@ -269,6 +489,12 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
         {
             closeConnection();
         }
+
+        if (cachingEnabled && success)
+        {
+            getCache().clear();
+        }
+
         return success;
     }
 
@@ -289,7 +515,44 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
         {
             closeConnection();
         }
+
+        if (cachingEnabled && success)
+        {
+            ArrayList<Integer> keys = new ArrayList<Integer>();
+
+            for (Entry e : getCache().getEntries())
+            {
+                try
+                {
+                    Customer i = (Customer) e.getValue();
+                    if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                    {
+                        keys.add(i.getCustomerId());
+                    }
+                }
+                catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+
+            for (int id : keys)
+            {
+                getCache().remove(id);
+            }
+        }
+
         return success;
+    }
+
+    public boolean isCachingEnabled()
+    {
+        return cachingEnabled;
+    }
+
+    public void setCachingEnabled(boolean cachingEnabled)
+    {
+        this.cachingEnabled = cachingEnabled;
     }
 
     public void getRelatedCustomerOrderList(Customer customer)

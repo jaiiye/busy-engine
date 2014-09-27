@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Address> addressList = new ArrayList<Address>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    addressList = Address.getAllAddressByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    addressList = new AddressDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    addressList = Address.getAllAddress();
+    addressList = new AddressDaoImpl().findAll(null, null);
 }
 request.setAttribute("addressList", addressList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
-        <!-- BEGIN PAGE LEVEL STYLES -->                             
+        <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "users"); %>
-        <% request.setAttribute("subCategory", "users"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
+        <% request.setAttribute("subCategory", "Address"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -89,7 +149,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> Users </a>
+                                        <a href="#"> E-Commerce </a>
                                         <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
@@ -138,14 +198,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="AddressId" ${param.column == 'AddressId' ? "selected" : "" } >AddressId</option>                                                            
+                                                           <option value="Recipient" ${param.column == 'Recipient' ? "selected" : "" } >Recipient</option>                                                            
                                                            <option value="Address1" ${param.column == 'Address1' ? "selected" : "" } >Address1</option>                                                            
                                                            <option value="Address2" ${param.column == 'Address2' ? "selected" : "" } >Address2</option>                                                            
                                                            <option value="City" ${param.column == 'City' ? "selected" : "" } >City</option>                                                            
-                                                           <option value="State" ${param.column == 'State' ? "selected" : "" } >State</option>                                                            
-                                                           <option value="Zipcode" ${param.column == 'Zipcode' ? "selected" : "" } >Zipcode</option>                                                            
+                                                           <option value="StateProvince" ${param.column == 'StateProvince' ? "selected" : "" } >StateProvince</option>                                                            
+                                                           <option value="ZipPostalCode" ${param.column == 'ZipPostalCode' ? "selected" : "" } >ZipPostalCode</option>                                                            
                                                            <option value="Country" ${param.column == 'Country' ? "selected" : "" } >Country</option>                                                            
                                                            <option value="Region" ${param.column == 'Region' ? "selected" : "" } >Region</option>                                                            
-                                                           <option value="UserId" ${param.column == 'UserId' ? "selected" : "" } >UserId</option>                                                            
+                                                           <option value="AddressStatus" ${param.column == 'AddressStatus' ? "selected" : "" } >AddressStatus</option>                                                            
+                                                           <option value="Locale" ${param.column == 'Locale' ? "selected" : "" } >Locale</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -201,8 +263,21 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=address&action=2" method="post">
 
-                                                <input type="hidden" name="addressId" value="${address.addressId}" />        
-                                                <input type="hidden" name="userId" value="${address.userId}" />
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="addressId">Address:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="addressId" class="form-control" value="${address.addressId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="recipient">Recipient:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="recipient" class="form-control maxlength-handler" maxlength="100" value="${address.recipient}" />
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="address1">Address1:</label>
@@ -226,23 +301,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="state">State:</label>
+                                                    <label class="col-md-2 control-label" for="stateProvince">StateProvince:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="state" class="form-control maxlength-handler" maxlength="100" value="${address.state}" />
+                                                        <input type="text" name="stateProvince" class="form-control maxlength-handler" maxlength="100" value="${address.stateProvince}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="zipcode">Zipcode:</label>
+                                                    <label class="col-md-2 control-label" for="zipPostalCode">ZipPostalCode:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="zipcode" class="form-control maxlength-handler" maxlength="10" value="${address.zipcode}" />
+                                                        <input type="text" name="zipPostalCode" class="form-control maxlength-handler" maxlength="10" value="${address.zipPostalCode}" />
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="country">Country:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="country" class="form-control maxlength-handler" maxlength="150" value="${address.country}" />
+                                                        <input type="text" name="country" class="form-control maxlength-handler" maxlength="100" value="${address.country}" />
                                                     </div>
                                                 </div>
                                                 
@@ -253,6 +328,21 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     </div>
                                                 </div>
                                                 
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="addressStatus">AddressStatus:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="addressStatus" class="form-control" value="${address.addressStatus}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="locale">Locale:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="locale" class="form-control maxlength-handler" maxlength="10" value="${address.locale}" />
+                                                    </div>
+                                                </div>
+                                                
+
                                                 <div class="form-actions right">
                                                     <input type="submit" value="Save Changes" class="btn green" />
                                                 </div>
@@ -292,6 +382,32 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
+                                                        <label class="col-md-2 control-label">AddressId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="addressId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("address", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Recipient</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="recipient" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
                                                         <label class="col-md-2 control-label">Address1</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
@@ -328,11 +444,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">State</label>
+                                                        <label class="col-md-2 control-label">StateProvince</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="state" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                                <input type="text" name="stateProvince" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -340,11 +456,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">Zipcode</label>
+                                                        <label class="col-md-2 control-label">ZipPostalCode</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="zipcode" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="10" />                                                            
+                                                                <input type="text" name="zipPostalCode" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="10" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -356,7 +472,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="country" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="150" />                                                            
+                                                                <input type="text" name="country" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -376,13 +492,23 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">UserId</label>
+                                                        <label class="col-md-2 control-label">AddressStatus</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <select name="userId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("table_name:User", "", 2)%>
-                                                               </select>                                                            
+                                                                <input type="text" name="addressStatus" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Locale</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="locale" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="10" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -423,16 +549,18 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </a>
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
-                                                    <label><input type="checkbox" checked data-column="1">1</label> 
-                                                    <label><input type="checkbox" checked data-column="2">2</label> 
-                                                    <label><input type="checkbox" checked data-column="3">City</label> 
-                                                    <label><input type="checkbox" checked data-column="4">State</label> 
-                                                    <label><input type="checkbox" checked data-column="5">Zipcode</label> 
-                                                    <label><input type="checkbox" checked data-column="6">Country</label> 
-                                                    <label><input type="checkbox" checked data-column="7">Region</label> 
-                                                    <label><input type="checkbox" checked data-column="8">UserId</label> 
+                                                    <label><input type="checkbox" checked data-column="1">Recipient</label> 
+                                                    <label><input type="checkbox" checked data-column="2">1</label> 
+                                                    <label><input type="checkbox" checked data-column="3">2</label> 
+                                                    <label><input type="checkbox" checked data-column="4">City</label> 
+                                                    <label><input type="checkbox" checked data-column="5">StateProvince</label> 
+                                                    <label><input type="checkbox" checked data-column="6">ZipPostalCode</label> 
+                                                    <label><input type="checkbox" checked data-column="7">Country</label> 
+                                                    <label><input type="checkbox" checked data-column="8">Region</label> 
+                                                    <label><input type="checkbox" checked data-column="9">Status</label> 
+                                                    <label><input type="checkbox" checked data-column="10">Locale</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="9">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="11">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -445,14 +573,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                             <thead>							
                                                 <tr>
                                                     <th>Id</th> 
+                                                    <th>Recipient</th> 
                                                     <th>1</th> 
                                                     <th>2</th> 
                                                     <th>City</th> 
-                                                    <th>State</th> 
-                                                    <th>Zipcode</th> 
+                                                    <th>StateProvince</th> 
+                                                    <th>ZipPostalCode</th> 
                                                     <th>Country</th> 
                                                     <th>Region</th> 
-                                                    <th>UserId</th> 
+                                                    <th>Status</th> 
+                                                    <th>Locale</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -461,14 +591,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="address" items="${addressList}" >
                                                 <tr>                                                    
                                                     <td>${address.addressId}</td> 
+                                                    <td>${address.recipient}</td> 
                                                     <td>${address.address1}</td> 
                                                     <td>${address.address2}</td> 
                                                     <td>${address.city}</td> 
-                                                    <td>${address.state}</td> 
-                                                    <td>${address.zipcode}</td> 
+                                                    <td>${address.stateProvince}</td> 
+                                                    <td>${address.zipPostalCode}</td> 
                                                     <td>${address.country}</td> 
                                                     <td>${address.region}</td> 
-                                                    <td>${address.userId}</td> 
+                                                    <td>${address.addressStatus}</td> 
+                                                    <td>${address.locale}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${address.addressId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -533,13 +665,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <script type="text/javascript" src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/select2/select2.min.js"></script>
-        
         <script type="text/javascript" src="../assets/global/plugins/datatables/media/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/datatables/extensions/Scroller/js/dataTables.scroller.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js"></script>
-        
         <script type="text/javascript" src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
         <script type="text/javascript" src="../assets/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
@@ -558,7 +688,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
 
-                <%@include file="index_common_scripts.jsp"%>
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -598,14 +729,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         addressId:    { required: true, number: true }, 
+                        recipient:    { required: true, minlength: 1, maxlength: 100}, 
                         address1:    { required: true, minlength: 1, maxlength: 255}, 
                         address2:    { required: true, minlength: 1, maxlength: 255}, 
                         city:    { required: true, minlength: 1, maxlength: 100}, 
-                        state:    { required: true, minlength: 1, maxlength: 100}, 
-                        zipcode:    { required: true, minlength: 1, maxlength: 10}, 
-                        country:    { required: true, minlength: 1, maxlength: 150}, 
+                        stateProvince:    { required: true, minlength: 1, maxlength: 100}, 
+                        zipPostalCode:    { required: true, minlength: 1, maxlength: 10}, 
+                        country:    { required: true, minlength: 1, maxlength: 100}, 
                         region:    { required: true, minlength: 1, maxlength: 100}, 
-                        userId:    { required: true, number: true } 
+                        addressStatus:    { required: true, number: true }, 
+                        locale:    { required: true, minlength: 1, maxlength: 10} 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

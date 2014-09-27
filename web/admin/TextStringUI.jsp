@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<TextString> text_stringList = new ArrayList<TextString>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    text_stringList = TextString.getAllTextStringByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    text_stringList = new TextStringDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    text_stringList = TextString.getAllTextString();
+    text_stringList = new TextStringDaoImpl().findAll(null, null);
 }
 request.setAttribute("text_stringList", text_stringList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -68,8 +128,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "configuration"); %>
-        <% request.setAttribute("subCategory", "languages"); %>
+        <% request.setAttribute("category", "Uncategorized"); %>
+        <% request.setAttribute("subCategory", "TextString"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -138,7 +198,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div class="col-md-4">
                                                         <select name="column" class="form-control">
                                                             <option value="TextStringId" ${param.column == 'TextStringId' ? "selected" : "" } >TextStringId</option>                                                            
-                                                           <option value="TextStringKey" ${param.column == 'TextStringKey' ? "selected" : "" } >TextStringKey</option>                                                            
+                                                           <option value="Key" ${param.column == 'Key' ? "selected" : "" } >Key</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -194,12 +254,19 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=text_string&action=2" method="post">
 
-                                                <input type="hidden" name="textStringId" value="${text_string.textStringId}"  />
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="textStringKey">TextStringKey:</label>
+                                                    <label class="col-md-2 control-label" for="textStringId">TextString:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="textStringKey" class="form-control maxlength-handler" maxlength="100" value="${text_string.textStringKey}" />
+                                                        <input type="text" name="textStringId" class="form-control" value="${text_string.textStringId}" />
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="key">Key:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="key" class="form-control maxlength-handler" maxlength="200" value="${text_string.key}" />
                                                     </div>
                                                 </div>
                                                 
@@ -243,11 +310,25 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">TextStringKey</label>
+                                                        <label class="col-md-2 control-label">TextStringId</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="textStringKey" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                                <select name="textStringId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("text_string", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">Key</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="key" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="200" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -312,11 +393,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <c:forEach var="text_string" items="${text_stringList}" >
                                                 <tr>                                                    
                                                     <td>${text_string.textStringId}</td> 
-                                                    <td>${text_string.textStringKey}</td> 
+                                                    <td>${text_string.key}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${text_string.textStringId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
-                                                        <button id="view-texts${text_string.textStringId}" class="btn btn-sm grey filter-cancel"><i class="fa fa-eye"></i> View Localized Text</button>    
                                                         <button id="delete-item${text_string.textStringId}" class="btn btn-sm red filter-cancel"><span class="glyphicon glyphicon-trash"></span></button> 
                                                     </td>
                                                 </tr>  
@@ -325,9 +405,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         toggleVisibility('itemBox${text_string.textStringId}');                                                        
                                                         document.getElementById('itemBox${text_string.textStringId}').scrollIntoView();
                                                         window.scrollBy(0,-80);
-                                                    });
-                                                    $("#view-texts${text_string.textStringId}").button().click(function() {
-                                                        window.location = 'TextStringLocalUI.jsp?column=TextStringId&columnValue=${text_string.textStringId}';
                                                     });
                                                     $("#delete-item${text_string.textStringId}").button().click(function() {
                                                         window.location = '../Operations?form=text_string&action=3&id=${text_string.textStringId}';
@@ -403,8 +480,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -444,7 +522,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         textStringId:    { required: true, number: true }, 
-                        textStringKey:    { required: true, minlength: 1, maxlength: 100} 
+                        key:    { required: true, minlength: 1, maxlength: 200} 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

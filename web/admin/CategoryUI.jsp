@@ -1,18 +1,80 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+                                           
+                                           
+                                           
+                                           
+  
+            
+  
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.*"%>
+<%@page import="com.busy.engine.data.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 ArrayList<Category> categoryList = new ArrayList<Category>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    categoryList = Category.getAllCategoryByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    categoryList = new CategoryDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null, null);
 }
 else
 {
-    categoryList = Category.getAllCategory();
+    categoryList = new CategoryDaoImpl().findAll(null, null);
 }
 request.setAttribute("categoryList", categoryList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -30,17 +92,15 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Busy Administrator: Business Website Administration Portal</title>
+        <title>Busy Administrator: Business Administration Portal</title>
 
         <%@include file="index_global_styles.jsp"%>
 
 
         <!-- BEGIN PAGE LEVEL STYLES -->
             <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>   
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+            <link rel="stylesheet" href="../assets/global/plugins/data-tables/DT_bootstrap.css"/>
+            <link rel="stylesheet" type="text/css" href="../assets/global/plugins/bootstrap-datepicker/css/datepicker.css"/>
         <!-- END PAGE LEVEL STYLES -->
         
         <!-- BEGIN THEME STYLES -->
@@ -139,6 +199,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <select name="column" class="form-control">
                                                             <option value="CategoryId" ${param.column == 'CategoryId' ? "selected" : "" } >CategoryId</option>                                                            
                                                            <option value="CategoryName" ${param.column == 'CategoryName' ? "selected" : "" } >CategoryName</option>                                                            
+                                                           <option value="DiscountId" ${param.column == 'DiscountId' ? "selected" : "" } >DiscountId</option>                                                            
+                                                           <option value="ParentCategoryId" ${param.column == 'ParentCategoryId' ? "selected" : "" } >ParentCategoryId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -194,12 +256,41 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <div class="portlet-body form">
                                             <form class="form-horizontal" name="edit" action="../Operations?form=category&action=2" method="post">
 
-                                                <input type="hidden" name="categoryId" value="${category.categoryId}" />
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="categoryId">Category:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="categoryId" class="form-control" value="${category.categoryId}" />
+
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="categoryName">CategoryName:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="categoryName" class="form-control maxlength-handler" maxlength="45" value="${category.categoryName}" />
+                                                        <input type="text" name="categoryName" class="form-control maxlength-handler" maxlength="100" value="${category.categoryName}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="discountId">Discount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="discountId" class="form-control" value="${category.discountId}" />
+                                                        <select name="discountId" class="form-control">
+                                                            <%Category x = (Category) pageContext.getAttribute("category"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("discount", x.getDiscountId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="parentCategoryId">ParentCategory:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="parentCategoryId" class="form-control" value="${category.parentCategoryId}" />
+                                                        <select name="parentCategoryId" class="form-control">
+                                                            <%Category x = (Category) pageContext.getAttribute("category"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("parent_category", x.getParentCategoryId().toString(), 2)%>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 
@@ -243,11 +334,53 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
+                                                        <label class="col-md-2 control-label">CategoryId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="categoryId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("category", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
                                                         <label class="col-md-2 control-label">CategoryName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="categoryName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
+                                                                <input type="text" name="categoryName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">DiscountId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="discountId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("discount", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">ParentCategoryId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="parentCategoryId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("parent_category", "", 2)%>
+                                                               </select>                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -289,8 +422,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div id="sample_2_column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">                                                    
                                                     <label><input type="checkbox" checked data-column="0">Id</label> 
                                                     <label><input type="checkbox" checked data-column="1">Name</label> 
+                                                    <label><input type="checkbox" checked data-column="2">DiscountId</label> 
+                                                    <label><input type="checkbox" checked data-column="3">ParentId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="2">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="4">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -304,6 +439,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>
                                                     <th>Id</th> 
                                                     <th>Name</th> 
+                                                    <th>DiscountId</th> 
+                                                    <th>ParentId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -313,6 +450,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <tr>                                                    
                                                     <td>${category.categoryId}</td> 
                                                     <td>${category.categoryName}</td> 
+                                                    <td>${category.discountId}</td> 
+                                                    <td>${category.parentCategoryId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${category.categoryId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -399,8 +538,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
                 Metronic.init(); // init metronic core components
                 Layout.init(); // init current layout
-                
-                <%@include file="index_common_scripts.jsp"%>
+
+                 <%@include file="index_common_scripts.jsp"%>
+
 
                 //init maxlength handler
                 $('.maxlength-handler').maxlength({
@@ -440,7 +580,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                     ignore: "",
                     rules: {                                
                         categoryId:    { required: true, number: true }, 
-                        categoryName:    { required: true, minlength: 1, maxlength: 45} 
+                        categoryName:    { required: true, minlength: 1, maxlength: 100}, 
+                        discountId:    { required: true, number: true }, 
+                        parentCategoryId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

@@ -25,7 +25,10 @@ public class ContextListener implements ServletContextListener
 
         System.out.println("Initializing Data Access Objects...");
         
-        context.setAttribute("itemDao", new ItemDaoImpl(true));
+        context.setAttribute("itemDao", new ItemDaoImpl(true));   
+        context.setAttribute("userDao", new UserDaoImpl(true));
+        context.setAttribute("userRoleDao", new UserRoleDaoImpl(true));
+        
 //        context.setAttribute("itemAttributeDao", new ItemAttributeDaoImpl());
 //        context.setAttribute("itemAttributeTypeDao", new ItemAttributeTypeDaoImpl());
 //        context.setAttribute("itemAvailabilityDao", new ItemAvailabilityDaoImpl());
@@ -38,9 +41,6 @@ public class ContextListener implements ServletContextListener
 //        context.setAttribute("itemOptionDao", new ItemOptionDaoImpl());
 //        context.setAttribute("itemReviewDao", new ItemReviewDaoImpl());
 //        context.setAttribute("itemTypeDao", new ItemTypeDaoImpl());
-    
-        context.setAttribute("userDao", new UserDaoImpl());
-        context.setAttribute("userRoleDao", new UserRoleDaoImpl());
         
 //        context.setAttribute("blogDao", new BlogDaoImpl());
 //        context.setAttribute("blogPostDao", new BlogPostDaoImpl());
