@@ -56,11 +56,9 @@ public class ImageTypeServiceImpl extends AbstractService implements ImageTypeSe
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ImageTypeServiceImpl() 
     {
-        super();
-        
+        super();        
         imageTypeDao = new ImageTypeDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ImageTypeServiceImpl extends AbstractService implements ImageTypeSe
     
     public ImageTypeServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         imageTypeDao = (ImageTypeDao) context.getAttribute("imageTypeDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

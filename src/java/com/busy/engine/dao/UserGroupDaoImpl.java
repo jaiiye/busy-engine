@@ -394,7 +394,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_group SET com.busy.util.DatabaseColumn@3738e36a=?,com.busy.util.DatabaseColumn@7e4375a8=?,com.busy.util.DatabaseColumn@315d84e6=? WHERE UserGroupId=?;");                    
+                prepareStatement("UPDATE user_group SET com.busy.util.DatabaseColumn@46e1eb0f=?,com.busy.util.DatabaseColumn@70b3b4fa=?,com.busy.util.DatabaseColumn@e64f96e=? WHERE UserGroupId=?;");                    
                 preparedStatement.setInt(0, obj.getUserGroupId());
                 preparedStatement.setString(1, obj.getGroupName());
                 preparedStatement.setInt(2, obj.getSiteId());

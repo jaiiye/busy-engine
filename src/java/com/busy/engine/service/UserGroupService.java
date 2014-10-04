@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.UserGroup;
@@ -27,10 +46,6 @@ public interface UserGroupService
       public Result<UserGroup> store(String userName, Integer userGroupId, String groupName, Integer siteId, Integer discountId);
       public Result<UserGroup> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

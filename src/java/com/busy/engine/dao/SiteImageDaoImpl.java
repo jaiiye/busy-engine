@@ -403,7 +403,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_image SET com.busy.util.DatabaseColumn@261ea7b1=?,com.busy.util.DatabaseColumn@71800f20=?,com.busy.util.DatabaseColumn@4f5c078f=?,com.busy.util.DatabaseColumn@4d92b2cb=?,com.busy.util.DatabaseColumn@1e62b7e7=?,com.busy.util.DatabaseColumn@6fea5204=? WHERE SiteImageId=?;");                    
+                prepareStatement("UPDATE site_image SET com.busy.util.DatabaseColumn@22a42cfe=?,com.busy.util.DatabaseColumn@4bfd2cb=?,com.busy.util.DatabaseColumn@2e4a0fd4=?,com.busy.util.DatabaseColumn@3c31fb87=?,com.busy.util.DatabaseColumn@3f71e323=?,com.busy.util.DatabaseColumn@45a2578c=? WHERE SiteImageId=?;");                    
                 preparedStatement.setInt(0, obj.getSiteImageId());
                 preparedStatement.setString(1, obj.getFileName());
                 preparedStatement.setString(2, obj.getDescription());

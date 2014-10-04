@@ -56,11 +56,9 @@ public class RecurringPaymentServiceImpl extends AbstractService implements Recu
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public RecurringPaymentServiceImpl() 
     {
-        super();
-        
+        super();        
         recurringPaymentDao = new RecurringPaymentDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class RecurringPaymentServiceImpl extends AbstractService implements Recu
     
     public RecurringPaymentServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         recurringPaymentDao = (RecurringPaymentDao) context.getAttribute("recurringPaymentDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -115,7 +118,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Locale.PROP_LOCALE_ID) )
+            if (column.equals(Locale.PROP_LOCALE_ID) || column.equals(Locale.PROP_LOCALE_STRING) || column.equals(Locale.PROP_LOCALE_CHARACTER_SET) )
             {
                 return true;
             }        

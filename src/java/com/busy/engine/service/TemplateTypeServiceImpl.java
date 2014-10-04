@@ -56,11 +56,9 @@ public class TemplateTypeServiceImpl extends AbstractService implements Template
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public TemplateTypeServiceImpl() 
     {
-        super();
-        
+        super();        
         templateTypeDao = new TemplateTypeDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class TemplateTypeServiceImpl extends AbstractService implements Template
     
     public TemplateTypeServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         templateTypeDao = (TemplateTypeDao) context.getAttribute("templateTypeDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

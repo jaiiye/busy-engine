@@ -1,8 +1,11 @@
 package com.busy.engine.entity;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.json.JsonObjectBuilder;
+import java.text.SimpleDateFormat;
 
 public class UserRole extends AbstractEntity implements EntityItem<String>
 {
@@ -12,6 +15,7 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
     public static final String PROP_ROLE_NAME = "RoleName";
 
     private String userName;
+
     private String roleName;
 
     public UserRole()
@@ -24,14 +28,18 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
     @Override
     public String getId()
     {
-        return userName + "-" +  roleName;
+
+        return userName + "-" + roleName;
     }
 
     @Override
     public void addJson(JsonObjectBuilder builder)
     {
+
         builder.add("userName", userName == null ? "" : userName);
+
         builder.add("roleName", roleName == null ? "" : roleName);
+
     }
 
     public static String checkColumnName(String column) throws SQLException
@@ -56,7 +64,14 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
 
     public static boolean isColumnNumeric(String column)
     {
-        return false;     
+        if (column.equals(UserRole.PROP_USER_NAME) || column.equals(UserRole.PROP_ROLE_NAME))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public static UserRole process(ResultSet rs) throws SQLException
@@ -68,6 +83,7 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
     {
         this.userName = UserName;
         this.roleName = RoleName;
+
     }
 
     public String getUserName()

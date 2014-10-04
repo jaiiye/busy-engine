@@ -56,11 +56,9 @@ public class CommentServiceImpl extends AbstractService implements CommentServic
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public CommentServiceImpl() 
     {
-        super();
-        
+        super();        
         commentDao = new CommentDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class CommentServiceImpl extends AbstractService implements CommentServic
     
     public CommentServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         commentDao = (CommentDao) context.getAttribute("commentDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

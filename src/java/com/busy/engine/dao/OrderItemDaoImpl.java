@@ -400,7 +400,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE order_item SET com.busy.util.DatabaseColumn@25e9fb42=?,com.busy.util.DatabaseColumn@454e68f2=?,com.busy.util.DatabaseColumn@54979d14=?,com.busy.util.DatabaseColumn@4c4b8e1d=?,com.busy.util.DatabaseColumn@26924f3d=? WHERE OrderItemId=?;");                    
+                prepareStatement("UPDATE order_item SET com.busy.util.DatabaseColumn@29c680f5=?,com.busy.util.DatabaseColumn@1cebb53d=?,com.busy.util.DatabaseColumn@1a2313a9=?,com.busy.util.DatabaseColumn@3ebf400c=?,com.busy.util.DatabaseColumn@23e3be06=? WHERE OrderItemId=?;");                    
                 preparedStatement.setInt(0, obj.getOrderItemId());
                 preparedStatement.setInt(1, obj.getCustomerOrderId());
                 preparedStatement.setInt(2, obj.getItemId());

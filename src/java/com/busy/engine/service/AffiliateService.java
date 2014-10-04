@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.Affiliate;
@@ -27,10 +46,6 @@ public interface AffiliateService
       public Result<Affiliate> store(String userName, Integer affiliateId, String companyName, String email, String phone, String fax, String webUrl, String details, Integer serviceHours, Integer affiliateStatus, Integer userId, Integer contactId, Integer addressId);
       public Result<Affiliate> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

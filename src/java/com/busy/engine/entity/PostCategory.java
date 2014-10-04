@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -110,7 +113,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(PostCategory.PROP_POST_CATEGORY_ID) )
+            if (column.equals(PostCategory.PROP_POST_CATEGORY_ID) || column.equals(PostCategory.PROP_CATEGORY_NAME) )
             {
                 return true;
             }        

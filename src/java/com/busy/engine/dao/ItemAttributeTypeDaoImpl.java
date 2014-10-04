@@ -355,7 +355,7 @@
                 ItemAttributeType.checkColumnSize(obj.getDescription(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_attribute_type SET com.busy.util.DatabaseColumn@723b34b1=?,com.busy.util.DatabaseColumn@6497ce7f=? WHERE ItemAttributeTypeId=?;");                    
+                prepareStatement("UPDATE item_attribute_type SET com.busy.util.DatabaseColumn@3eacdba3=?,com.busy.util.DatabaseColumn@5744bc8f=? WHERE ItemAttributeTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getItemAttributeTypeId());
                 preparedStatement.setString(1, obj.getAttributeName());
                 preparedStatement.setString(2, obj.getDescription());

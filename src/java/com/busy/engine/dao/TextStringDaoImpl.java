@@ -352,7 +352,7 @@
                 TextString.checkColumnSize(obj.getKey(), 200);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE text_string SET com.busy.util.DatabaseColumn@632a7fec=? WHERE TextStringId=?;");                    
+                prepareStatement("UPDATE text_string SET com.busy.util.DatabaseColumn@59d7eefb=? WHERE TextStringId=?;");                    
                 preparedStatement.setInt(0, obj.getTextStringId());
                 preparedStatement.setString(1, obj.getKey());
                 preparedStatement.setInt(2, obj.getTextStringId());

@@ -56,11 +56,9 @@ public class SiteFolderServiceImpl extends AbstractService implements SiteFolder
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public SiteFolderServiceImpl() 
     {
-        super();
-        
+        super();        
         siteFolderDao = new SiteFolderDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class SiteFolderServiceImpl extends AbstractService implements SiteFolder
     
     public SiteFolderServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         siteFolderDao = (SiteFolderDao) context.getAttribute("siteFolderDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

@@ -56,11 +56,9 @@ public class ServiceTypeServiceImpl extends AbstractService implements ServiceTy
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ServiceTypeServiceImpl() 
     {
-        super();
-        
+        super();        
         serviceTypeDao = new ServiceTypeDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ServiceTypeServiceImpl extends AbstractService implements ServiceTy
     
     public ServiceTypeServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         serviceTypeDao = (ServiceTypeDao) context.getAttribute("serviceTypeDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

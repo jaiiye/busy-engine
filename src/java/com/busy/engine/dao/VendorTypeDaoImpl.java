@@ -352,7 +352,7 @@
                 VendorType.checkColumnSize(obj.getTypeName(), 100);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE vendor_type SET com.busy.util.DatabaseColumn@3c3870be=? WHERE VendorTypeId=?;");                    
+                prepareStatement("UPDATE vendor_type SET com.busy.util.DatabaseColumn@3d84888c=? WHERE VendorTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getVendorTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setInt(2, obj.getVendorTypeId());

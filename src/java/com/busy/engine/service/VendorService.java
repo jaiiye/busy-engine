@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.Vendor;
@@ -27,10 +46,6 @@ public interface VendorService
       public Result<Vendor> store(String userName, Integer vendorId, String vendorName, String description, Integer rank, Integer vendorStatus, Integer metaTagId, Integer templateId, Integer vendorTypeId);
       public Result<Vendor> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

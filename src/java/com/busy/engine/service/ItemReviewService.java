@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ItemReview;
@@ -27,10 +46,6 @@ public interface ItemReviewService
       public Result<ItemReview> store(String userName, Integer itemReviewId, Integer itemId, Integer rating, Integer helpfulYes, Integer helpfulNo);
       public Result<ItemReview> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

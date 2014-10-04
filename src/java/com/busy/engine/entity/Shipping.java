@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -154,7 +157,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Shipping.PROP_SHIPPING_ID) || column.equals(Shipping.PROP_QUANTITY) || column.equals(Shipping.PROP_RATE_PER_UNIT_COST) || column.equals(Shipping.PROP_ADDITIONAL_COST) || column.equals(Shipping.PROP_STATE_PROVINCE_ID) || column.equals(Shipping.PROP_COUNTRY_ID) )
+            if (column.equals(Shipping.PROP_SHIPPING_ID) || column.equals(Shipping.PROP_METHOD_NAME) || column.equals(Shipping.PROP_QUANTITY) || column.equals(Shipping.PROP_UNIT_OF_MEASURE) || column.equals(Shipping.PROP_RATE_PER_UNIT_COST) || column.equals(Shipping.PROP_ADDITIONAL_COST) || column.equals(Shipping.PROP_STATE_PROVINCE_ID) || column.equals(Shipping.PROP_COUNTRY_ID) )
             {
                 return true;
             }        

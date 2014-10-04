@@ -355,7 +355,7 @@
                 SliderType.checkColumnSize(obj.getCode(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE slider_type SET com.busy.util.DatabaseColumn@74561fbd=?,com.busy.util.DatabaseColumn@4bf7511b=? WHERE SliderTypeId=?;");                    
+                prepareStatement("UPDATE slider_type SET com.busy.util.DatabaseColumn@44d82941=?,com.busy.util.DatabaseColumn@55394892=? WHERE SliderTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getSliderTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getCode());

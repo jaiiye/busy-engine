@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.TextString;
@@ -27,10 +46,6 @@ public interface TextStringService
       public Result<TextString> store(String userName, Integer textStringId, String key);
       public Result<TextString> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

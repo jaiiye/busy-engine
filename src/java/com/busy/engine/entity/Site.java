@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -51,15 +54,12 @@
         public static final String PROP_MODE = "Mode";
         public static final String PROP_URL = "Url";
         public static final String PROP_LOGO_TITLE = "LogoTitle";
-        public static final String PROP_LOGO_IMAGE = "LogoImage";
+        public static final String PROP_LOGO_IMAGE_URL = "LogoImageUrl";
         public static final String PROP_USE_AS_STORE = "UseAsStore";
-        public static final String PROP_EMAIL_HOST = "EmailHost";
-        public static final String PROP_EMAIL_PORT = "EmailPort";
-        public static final String PROP_EMAIL_USERNAME = "EmailUsername";
-        public static final String PROP_EMAIL_PASSWORD = "EmailPassword";
         public static final String PROP_SITE_STATUS = "SiteStatus";
         public static final String PROP_LOCALE = "Locale";
         public static final String PROP_TEMPLATE_ID = "TemplateId";
+        public static final String PROP_SITE_EMAIL_ID = "SiteEmailId";
         
 
         private Integer siteId;
@@ -74,17 +74,9 @@
                 
         private String logoTitle;
                 
-        private String logoImage;
+        private String logoImageUrl;
                 
         private Integer useAsStore;
-                
-        private String emailHost;
-                
-        private Integer emailPort;
-                
-        private String emailUsername;
-                
-        private String emailPassword;
                 
         private Integer siteStatus;
                 
@@ -92,6 +84,8 @@
                 
         private Integer templateId;
         private Template template;        
+        private Integer siteEmailId;
+        private SiteEmail siteEmail;        
                  
         ArrayList<SiteAttribute> siteAttributeList; 
         ArrayList<SiteFolder> siteFolderList; 
@@ -111,15 +105,12 @@
        this.mode = 0; 
        this.url = ""; 
        this.logoTitle = ""; 
-       this.logoImage = ""; 
+       this.logoImageUrl = ""; 
        this.useAsStore = 0; 
-       this.emailHost = ""; 
-       this.emailPort = 0; 
-       this.emailUsername = ""; 
-       this.emailPassword = ""; 
        this.siteStatus = 0; 
        this.locale = ""; 
        this.templateId = 0; 
+       this.siteEmailId = 0; 
         
        siteAttributeList = null; 
         siteFolderList = null; 
@@ -154,23 +145,17 @@
                 
             builder.add("logoTitle", logoTitle == null ? "" : logoTitle);
                 
-            builder.add("logoImage", logoImage == null ? "" : logoImage);
+            builder.add("logoImageUrl", logoImageUrl == null ? "" : logoImageUrl);
                 
             builder.add("useAsStore", useAsStore == null ? 0 : useAsStore);
-                
-            builder.add("emailHost", emailHost == null ? "" : emailHost);
-                
-            builder.add("emailPort", emailPort == null ? 0 : emailPort);
-                
-            builder.add("emailUsername", emailUsername == null ? "" : emailUsername);
-                
-            builder.add("emailPassword", emailPassword == null ? "" : emailPassword);
                 
             builder.add("siteStatus", siteStatus == null ? 0 : siteStatus);
                 
             builder.add("locale", locale == null ? "" : locale);
                 
             builder.add("templateId", templateId == null ? 0 : templateId);
+                
+            builder.add("siteEmailId", siteEmailId == null ? 0 : siteEmailId);
         
         
     
@@ -183,18 +168,16 @@
      
      
      
-     
-     
-     
-     
      if(template != null) template.addJson(builder);
+        
+     if(siteEmail != null) siteEmail.addJson(builder);
         
               
         }
        
        public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_SITE_NAME) || column.equals(Site.PROP_DOMAIN) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_URL) || column.equals(Site.PROP_LOGO_TITLE) || column.equals(Site.PROP_LOGO_IMAGE) || column.equals(Site.PROP_USE_AS_STORE) || column.equals(Site.PROP_EMAIL_HOST) || column.equals(Site.PROP_EMAIL_PORT) || column.equals(Site.PROP_EMAIL_USERNAME) || column.equals(Site.PROP_EMAIL_PASSWORD) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_LOCALE) || column.equals(Site.PROP_TEMPLATE_ID) )
+            if(column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_SITE_NAME) || column.equals(Site.PROP_DOMAIN) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_URL) || column.equals(Site.PROP_LOGO_TITLE) || column.equals(Site.PROP_LOGO_IMAGE_URL) || column.equals(Site.PROP_USE_AS_STORE) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_LOCALE) || column.equals(Site.PROP_TEMPLATE_ID) || column.equals(Site.PROP_SITE_EMAIL_ID) )
             {
                 return column;
             }
@@ -214,7 +197,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_USE_AS_STORE) || column.equals(Site.PROP_EMAIL_PORT) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_TEMPLATE_ID) )
+            if (column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_SITE_NAME) || column.equals(Site.PROP_DOMAIN) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_URL) || column.equals(Site.PROP_LOGO_TITLE) || column.equals(Site.PROP_LOGO_IMAGE_URL) || column.equals(Site.PROP_USE_AS_STORE) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_LOCALE) || column.equals(Site.PROP_TEMPLATE_ID) || column.equals(Site.PROP_SITE_EMAIL_ID) )
             {
                 return true;
             }        
@@ -226,10 +209,10 @@
                                
         public static Site process(ResultSet rs) throws SQLException
         {        
-            return new Site(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getString(9), rs.getInt(10), rs.getString(11), rs.getString(12), rs.getInt(13), rs.getString(14), rs.getInt(15));
+            return new Site(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getString(10), rs.getInt(11), rs.getInt(12));
         }
               
-       public Site(Integer SiteId, String SiteName, String Domain, Integer Mode, String Url, String LogoTitle, String LogoImage, Integer UseAsStore, String EmailHost, Integer EmailPort, String EmailUsername, String EmailPassword, Integer SiteStatus, String Locale, Integer TemplateId)
+       public Site(Integer SiteId, String SiteName, String Domain, Integer Mode, String Url, String LogoTitle, String LogoImageUrl, Integer UseAsStore, Integer SiteStatus, String Locale, Integer TemplateId, Integer SiteEmailId)
        {
             this.siteId = SiteId;
        this.siteName = SiteName;
@@ -237,15 +220,12 @@
        this.mode = Mode;
        this.url = Url;
        this.logoTitle = LogoTitle;
-       this.logoImage = LogoImage;
+       this.logoImageUrl = LogoImageUrl;
        this.useAsStore = UseAsStore;
-       this.emailHost = EmailHost;
-       this.emailPort = EmailPort;
-       this.emailUsername = EmailUsername;
-       this.emailPassword = EmailPassword;
        this.siteStatus = SiteStatus;
        this.locale = Locale;
        this.templateId = TemplateId;
+       this.siteEmailId = SiteEmailId;
               
        siteAttributeList = null; 
         siteFolderList = null; 
@@ -331,14 +311,14 @@
             
             
         
-            public String getLogoImage()
+            public String getLogoImageUrl()
             {
-                return this.logoImage;
+                return this.logoImageUrl;
             }
             
-            public void setLogoImage(String LogoImage)
+            public void setLogoImageUrl(String LogoImageUrl)
             {
-                this.logoImage = LogoImage;
+                this.logoImageUrl = LogoImageUrl;
             }
             
             
@@ -351,54 +331,6 @@
             public void setUseAsStore(Integer UseAsStore)
             {
                 this.useAsStore = UseAsStore;
-            }
-            
-            
-        
-            public String getEmailHost()
-            {
-                return this.emailHost;
-            }
-            
-            public void setEmailHost(String EmailHost)
-            {
-                this.emailHost = EmailHost;
-            }
-            
-            
-        
-            public Integer getEmailPort()
-            {
-                return this.emailPort;
-            }
-            
-            public void setEmailPort(Integer EmailPort)
-            {
-                this.emailPort = EmailPort;
-            }
-            
-            
-        
-            public String getEmailUsername()
-            {
-                return this.emailUsername;
-            }
-            
-            public void setEmailUsername(String EmailUsername)
-            {
-                this.emailUsername = EmailUsername;
-            }
-            
-            
-        
-            public String getEmailPassword()
-            {
-                return this.emailPassword;
-            }
-            
-            public void setEmailPassword(String EmailPassword)
-            {
-                this.emailPassword = EmailPassword;
             }
             
             
@@ -447,6 +379,30 @@
                 public void setTemplate(Template template)
                 {
                     this.template = template;
+                }
+                   
+            
+        
+            public Integer getSiteEmailId()
+            {
+                return this.siteEmailId;
+            }
+            
+            public void setSiteEmailId(Integer SiteEmailId)
+            {
+                this.siteEmailId = SiteEmailId;
+            }
+            
+            
+                   
+            public SiteEmail getSiteEmail()
+                {
+                    return this.siteEmail;
+                }
+
+                public void setSiteEmail(SiteEmail siteEmail)
+                {
+                    this.siteEmail = siteEmail;
                 }
                    
             

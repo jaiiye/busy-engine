@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.LocalizedString;
@@ -27,10 +46,6 @@ public interface LocalizedStringService
       public Result<LocalizedString> store(String userName, Integer localizedStringId, Integer locale, String stringValue, Integer textStringId);
       public Result<LocalizedString> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

@@ -56,11 +56,9 @@ public class ServiceChargeServiceImpl extends AbstractService implements Service
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ServiceChargeServiceImpl() 
     {
-        super();
-        
+        super();        
         serviceChargeDao = new ServiceChargeDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ServiceChargeServiceImpl extends AbstractService implements Service
     
     public ServiceChargeServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         serviceChargeDao = (ServiceChargeDao) context.getAttribute("serviceChargeDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

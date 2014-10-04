@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -126,7 +129,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(UserGroup.PROP_USER_GROUP_ID) || column.equals(UserGroup.PROP_SITE_ID) || column.equals(UserGroup.PROP_DISCOUNT_ID) )
+            if (column.equals(UserGroup.PROP_USER_GROUP_ID) || column.equals(UserGroup.PROP_GROUP_NAME) || column.equals(UserGroup.PROP_SITE_ID) || column.equals(UserGroup.PROP_DISCOUNT_ID) )
             {
                 return true;
             }        

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -140,7 +143,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(OrderItem.PROP_ORDER_ITEM_ID) || column.equals(OrderItem.PROP_CUSTOMER_ORDER_ID) || column.equals(OrderItem.PROP_ITEM_ID) || column.equals(OrderItem.PROP_QUANTITY) || column.equals(OrderItem.PROP_UNIT_PRICE) )
+            if (column.equals(OrderItem.PROP_ORDER_ITEM_ID) || column.equals(OrderItem.PROP_CUSTOMER_ORDER_ID) || column.equals(OrderItem.PROP_ITEM_ID) || column.equals(OrderItem.PROP_QUANTITY) || column.equals(OrderItem.PROP_OPTION_NAME) || column.equals(OrderItem.PROP_UNIT_PRICE) )
             {
                 return true;
             }        

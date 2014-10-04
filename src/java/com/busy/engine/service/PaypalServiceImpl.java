@@ -56,11 +56,9 @@ public class PaypalServiceImpl extends AbstractService implements PaypalService
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public PaypalServiceImpl() 
     {
-        super();
-        
+        super();        
         paypalDao = new PaypalDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class PaypalServiceImpl extends AbstractService implements PaypalService
     
     public PaypalServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         paypalDao = (PaypalDao) context.getAttribute("paypalDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

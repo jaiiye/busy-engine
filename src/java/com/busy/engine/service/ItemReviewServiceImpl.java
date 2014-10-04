@@ -56,11 +56,9 @@ public class ItemReviewServiceImpl extends AbstractService implements ItemReview
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ItemReviewServiceImpl() 
     {
-        super();
-        
+        super();        
         itemReviewDao = new ItemReviewDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ItemReviewServiceImpl extends AbstractService implements ItemReview
     
     public ItemReviewServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         itemReviewDao = (ItemReviewDao) context.getAttribute("itemReviewDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

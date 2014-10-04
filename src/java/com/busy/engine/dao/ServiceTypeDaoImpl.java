@@ -355,7 +355,7 @@
                 ServiceType.checkColumnSize(obj.getDesciption(), 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE service_type SET com.busy.util.DatabaseColumn@181e653a=?,com.busy.util.DatabaseColumn@5b3feddc=? WHERE ServiceTypeId=?;");                    
+                prepareStatement("UPDATE service_type SET com.busy.util.DatabaseColumn@68d22fb7=?,com.busy.util.DatabaseColumn@c0bf6d1=? WHERE ServiceTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getServiceTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDesciption());

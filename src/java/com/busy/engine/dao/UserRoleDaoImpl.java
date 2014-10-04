@@ -27,6 +27,13 @@ public class UserRoleDaoImpl extends BasicConnection implements Serializable, Us
         cachingEnabled = enableCache;
     }
 
+    
+    @Override
+    public UserRole find(String id)
+    {
+        return findByColumn("UserRole", id, null, null).get(0);
+    }
+
     private static class UserRoleCache
     {
 
@@ -85,12 +92,6 @@ public class UserRoleDaoImpl extends BasicConnection implements Serializable, Us
             closeConnection();
         }
         return userRole;
-    }
-
-    @Override
-    public UserRole find(String id)
-    {
-        return findByColumn("UserRoleId", id.toString(), null, null).get(0);
     }
 
     @Override

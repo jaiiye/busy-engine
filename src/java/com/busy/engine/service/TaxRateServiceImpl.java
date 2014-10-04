@@ -56,11 +56,9 @@ public class TaxRateServiceImpl extends AbstractService implements TaxRateServic
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public TaxRateServiceImpl() 
     {
-        super();
-        
+        super();        
         taxRateDao = new TaxRateDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class TaxRateServiceImpl extends AbstractService implements TaxRateServic
     
     public TaxRateServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         taxRateDao = (TaxRateDao) context.getAttribute("taxRateDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -160,7 +163,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(OptionAvailability.PROP_OPTION_AVAILABILITY_ID) || column.equals(OptionAvailability.PROP_ITEM_ID) || column.equals(OptionAvailability.PROP_ITEM_OPTION_ID) || column.equals(OptionAvailability.PROP_ITEM_AVAILABILITY_ID) || column.equals(OptionAvailability.PROP_AVAILABLE_QUANTITY) || column.equals(OptionAvailability.PROP_PRICE) || column.equals(OptionAvailability.PROP_MAXIMUM_QUANTITY) )
+            if (column.equals(OptionAvailability.PROP_OPTION_AVAILABILITY_ID) || column.equals(OptionAvailability.PROP_ITEM_ID) || column.equals(OptionAvailability.PROP_ITEM_OPTION_ID) || column.equals(OptionAvailability.PROP_ITEM_AVAILABILITY_ID) || column.equals(OptionAvailability.PROP_AVAILABLE_QUANTITY) || column.equals(OptionAvailability.PROP_PRICE) || column.equals(OptionAvailability.PROP_AVAILABLE_FROM) || column.equals(OptionAvailability.PROP_AVAILABLE_TO) || column.equals(OptionAvailability.PROP_MAXIMUM_QUANTITY) )
             {
                 return true;
             }        

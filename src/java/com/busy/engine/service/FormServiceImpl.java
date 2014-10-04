@@ -56,11 +56,9 @@ public class FormServiceImpl extends AbstractService implements FormService
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public FormServiceImpl() 
     {
-        super();
-        
+        super();        
         formDao = new FormDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class FormServiceImpl extends AbstractService implements FormService
     
     public FormServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         formDao = (FormDao) context.getAttribute("formDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

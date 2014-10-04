@@ -1413,6 +1413,30 @@ public class ServiceHandler extends AbstractHandler
                     break;
                 }
 
+                case "siteEmail":
+                {
+                    try
+                    {
+                        switch (pp.getOperation())
+                        {
+                            case "find":
+                                generateFindServiceResult(new SiteEmailServiceImpl(request.getSession().getServletContext()).find(sessionUser.getUsername(), Integer.parseInt(getRequiredParameter(request, "siteEmailId"))), out);
+                                break;
+                            case "findAll":
+                                generateFindAllServiceResult(new SiteEmailServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
+                                break;
+                            default:
+                                out.print(getJsonErrorMsg("Invalid Operation"));
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        out.print(getJsonErrorMsg(ex.getMessage()));
+                    }
+                    break;
+                }
+
                 case "siteFile":
                 {
                     try
@@ -1832,6 +1856,30 @@ public class ServiceHandler extends AbstractHandler
                                 break;
                             case "findAll":
                                 generateFindAllServiceResult(new UserGroupServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
+                                break;
+                            default:
+                                out.print(getJsonErrorMsg("Invalid Operation"));
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        out.print(getJsonErrorMsg(ex.getMessage()));
+                    }
+                    break;
+                }
+
+                case "userRole":
+                {
+                    try
+                    {
+                        switch (pp.getOperation())
+                        {
+                            case "find":
+                                generateFindServiceResult(new UserRoleServiceImpl(request.getSession().getServletContext()).find(sessionUser.getUsername(), getRequiredParameter(request, "roleName")), out);
+                                break;
+                            case "findAll":
+                                generateFindAllServiceResult(new UserRoleServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
                                 break;
                             default:
                                 out.print(getJsonErrorMsg("Invalid Operation"));
@@ -3404,7 +3452,7 @@ public class ServiceHandler extends AbstractHandler
                         switch (pp.getOperation())
                         {
                             case "store":
-                                generateStoreServiceResult(new SiteServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("siteId")), obj.getString("siteName"), obj.getString("domain"), getIntegerValue(obj.get("mode")), obj.getString("url"), obj.getString("logoTitle"), obj.getString("logoImage"), getIntegerValue(obj.get("useAsStore")), obj.getString("emailHost"), getIntegerValue(obj.get("emailPort")), obj.getString("emailUsername"), obj.getString("emailPassword"), getIntegerValue(obj.get("siteStatus")), obj.getString("locale"), getIntegerValue(obj.get("templateId"))), out);
+                                generateStoreServiceResult(new SiteServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("siteId")), obj.getString("siteName"), obj.getString("domain"), getIntegerValue(obj.get("mode")), obj.getString("url"), obj.getString("logoTitle"), obj.getString("logoImageUrl"), getIntegerValue(obj.get("useAsStore")), getIntegerValue(obj.get("siteStatus")), obj.getString("locale"), getIntegerValue(obj.get("templateId")), getIntegerValue(obj.get("siteEmailId"))), out);
                                 break;
                             case "remove":
                                 generateRemoveServiceResult(new SiteServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("siteId"))), out);
@@ -3434,6 +3482,32 @@ public class ServiceHandler extends AbstractHandler
                                 break;
                             case "remove":
                                 generateRemoveServiceResult(new SiteAttributeServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("siteAttributeId"))), out);
+                                break;
+                            default:
+                                out.print(getJsonErrorMsg("Invalid Operation"));
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        out.print(getJsonErrorMsg(ex.getMessage()));
+                    }
+                    break;
+                }
+
+                case "siteEmail":
+                {
+                    try
+                    {
+                        JsonObject obj = parseJsonObject(getRequiredParameter(request, "data"));
+
+                        switch (pp.getOperation())
+                        {
+                            case "store":
+                                generateStoreServiceResult(new SiteEmailServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("siteEmailId")), obj.getString("host"), getIntegerValue(obj.get("port")), obj.getString("username"), obj.getString("password")), out);
+                                break;
+                            case "remove":
+                                generateRemoveServiceResult(new SiteEmailServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("siteEmailId"))), out);
                                 break;
                             default:
                                 out.print(getJsonErrorMsg("Invalid Operation"));
@@ -3914,6 +3988,32 @@ public class ServiceHandler extends AbstractHandler
                     }
                     break;
                 }
+
+//                case "userRole":
+//                {
+//                    try
+//                    {
+//                        JsonObject obj = parseJsonObject(getRequiredParameter(request, "data"));
+//
+//                        switch (pp.getOperation())
+//                        {
+//                            case "store":
+//                                generateStoreServiceResult(new UserRoleServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), obj.get("userRoleId"), obj.getString("roleName")), out);
+//                                break;
+//                            case "remove":
+//                                generateRemoveServiceResult(new UserRoleServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("userRoleId"))), out);
+//                                break;
+//                            default:
+//                                out.print(getJsonErrorMsg("Invalid Operation"));
+//                                break;
+//                        }
+//                    }
+//                    catch (Exception ex)
+//                    {
+//                        out.print(getJsonErrorMsg(ex.getMessage()));
+//                    }
+//                    break;
+//                }
 
                 case "userService":
                 {

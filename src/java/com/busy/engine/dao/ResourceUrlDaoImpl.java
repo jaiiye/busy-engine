@@ -394,7 +394,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE resource_url SET com.busy.util.DatabaseColumn@7eeb0bb5=?,com.busy.util.DatabaseColumn@df69739=?,com.busy.util.DatabaseColumn@18e1bdac=? WHERE ResourceUrlId=?;");                    
+                prepareStatement("UPDATE resource_url SET com.busy.util.DatabaseColumn@f4138a=?,com.busy.util.DatabaseColumn@b65418c=?,com.busy.util.DatabaseColumn@6adb57c2=? WHERE ResourceUrlId=?;");                    
                 preparedStatement.setInt(0, obj.getResourceUrlId());
                 preparedStatement.setString(1, obj.getUrl());
                 preparedStatement.setInt(2, obj.getTemplateId());

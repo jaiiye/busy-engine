@@ -223,6 +223,9 @@
                             
                                 getRecordById("Template", site.getTemplateId().toString());
                                 site.setTemplate(Template.process(rs));               
+                            
+                                getRecordById("SiteEmail", site.getSiteEmailId().toString());
+                                site.setSiteEmail(SiteEmail.process(rs));               
                                                     
                         }
                     }
@@ -255,6 +258,9 @@
                             
                                 getRecordById("Template", site.getTemplateId().toString());
                                 site.setTemplate(Template.process(rs));               
+                            
+                                getRecordById("SiteEmail", site.getSiteEmailId().toString());
+                                site.setSiteEmail(SiteEmail.process(rs));               
                               
                         }
                     
@@ -342,34 +348,28 @@
                 
                 Site.checkColumnSize(obj.getUrl(), 255);
                 Site.checkColumnSize(obj.getLogoTitle(), 100);
-                Site.checkColumnSize(obj.getLogoImage(), 255);
+                Site.checkColumnSize(obj.getLogoImageUrl(), 255);
                 
-                Site.checkColumnSize(obj.getEmailHost(), 255);
-                
-                Site.checkColumnSize(obj.getEmailUsername(), 255);
-                Site.checkColumnSize(obj.getEmailPassword(), 45);
                 
                 Site.checkColumnSize(obj.getLocale(), 100);
+                
                 
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO site(SiteId,SiteName,Domain,Mode,Url,LogoTitle,LogoImage,UseAsStore,EmailHost,EmailPort,EmailUsername,EmailPassword,SiteStatus,Locale,TemplateId,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO site(SiteId,SiteName,Domain,Mode,Url,LogoTitle,LogoImageUrl,UseAsStore,SiteStatus,Locale,TemplateId,SiteEmailId,) VALUES (?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setInt(0, obj.getSiteId());
                 preparedStatement.setString(1, obj.getSiteName());
                 preparedStatement.setString(2, obj.getDomain());
                 preparedStatement.setInt(3, obj.getMode());
                 preparedStatement.setString(4, obj.getUrl());
                 preparedStatement.setString(5, obj.getLogoTitle());
-                preparedStatement.setString(6, obj.getLogoImage());
+                preparedStatement.setString(6, obj.getLogoImageUrl());
                 preparedStatement.setInt(7, obj.getUseAsStore());
-                preparedStatement.setString(8, obj.getEmailHost());
-                preparedStatement.setInt(9, obj.getEmailPort());
-                preparedStatement.setString(10, obj.getEmailUsername());
-                preparedStatement.setString(11, obj.getEmailPassword());
-                preparedStatement.setInt(12, obj.getSiteStatus());
-                preparedStatement.setString(13, obj.getLocale());
-                preparedStatement.setInt(14, obj.getTemplateId());
+                preparedStatement.setInt(8, obj.getSiteStatus());
+                preparedStatement.setString(9, obj.getLocale());
+                preparedStatement.setInt(10, obj.getTemplateId());
+                preparedStatement.setInt(11, obj.getSiteEmailId());
                 
                 preparedStatement.executeUpdate();
 
@@ -410,34 +410,28 @@
                 
                 Site.checkColumnSize(obj.getUrl(), 255);
                 Site.checkColumnSize(obj.getLogoTitle(), 100);
-                Site.checkColumnSize(obj.getLogoImage(), 255);
+                Site.checkColumnSize(obj.getLogoImageUrl(), 255);
                 
-                Site.checkColumnSize(obj.getEmailHost(), 255);
-                
-                Site.checkColumnSize(obj.getEmailUsername(), 255);
-                Site.checkColumnSize(obj.getEmailPassword(), 45);
                 
                 Site.checkColumnSize(obj.getLocale(), 100);
                 
+                
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site SET com.busy.util.DatabaseColumn@76984b5f=?,com.busy.util.DatabaseColumn@5d9084e=?,com.busy.util.DatabaseColumn@a3f22e6=?,com.busy.util.DatabaseColumn@5548302f=?,com.busy.util.DatabaseColumn@613e4b6a=?,com.busy.util.DatabaseColumn@2c68b47b=?,com.busy.util.DatabaseColumn@5fb38b02=?,com.busy.util.DatabaseColumn@4b6e1193=?,com.busy.util.DatabaseColumn@5818768f=?,com.busy.util.DatabaseColumn@31baca9b=?,com.busy.util.DatabaseColumn@7212ac35=?,com.busy.util.DatabaseColumn@494bd96d=?,com.busy.util.DatabaseColumn@52fc72c5=?,com.busy.util.DatabaseColumn@35758413=? WHERE SiteId=?;");                    
+                prepareStatement("UPDATE site SET com.busy.util.DatabaseColumn@c6fd67c=?,com.busy.util.DatabaseColumn@5615d88e=?,com.busy.util.DatabaseColumn@1d3c730d=?,com.busy.util.DatabaseColumn@5074ead1=?,com.busy.util.DatabaseColumn@22da1a95=?,com.busy.util.DatabaseColumn@5af377e8=?,com.busy.util.DatabaseColumn@24a9c3a0=?,com.busy.util.DatabaseColumn@53fc9786=?,com.busy.util.DatabaseColumn@218031de=?,com.busy.util.DatabaseColumn@600d5e31=?,com.busy.util.DatabaseColumn@a532553=? WHERE SiteId=?;");                    
                 preparedStatement.setInt(0, obj.getSiteId());
                 preparedStatement.setString(1, obj.getSiteName());
                 preparedStatement.setString(2, obj.getDomain());
                 preparedStatement.setInt(3, obj.getMode());
                 preparedStatement.setString(4, obj.getUrl());
                 preparedStatement.setString(5, obj.getLogoTitle());
-                preparedStatement.setString(6, obj.getLogoImage());
+                preparedStatement.setString(6, obj.getLogoImageUrl());
                 preparedStatement.setInt(7, obj.getUseAsStore());
-                preparedStatement.setString(8, obj.getEmailHost());
-                preparedStatement.setInt(9, obj.getEmailPort());
-                preparedStatement.setString(10, obj.getEmailUsername());
-                preparedStatement.setString(11, obj.getEmailPassword());
-                preparedStatement.setInt(12, obj.getSiteStatus());
-                preparedStatement.setString(13, obj.getLocale());
-                preparedStatement.setInt(14, obj.getTemplateId());
-                preparedStatement.setInt(15, obj.getSiteId());
+                preparedStatement.setInt(8, obj.getSiteStatus());
+                preparedStatement.setString(9, obj.getLocale());
+                preparedStatement.setInt(10, obj.getTemplateId());
+                preparedStatement.setInt(11, obj.getSiteEmailId());
+                preparedStatement.setInt(12, obj.getSiteId());
                 preparedStatement.executeUpdate();
                 
                 if (cachingEnabled)
@@ -481,6 +475,9 @@
                     
                             getRecordById("Template", site.getTemplateId().toString());
                             site.setTemplate(Template.process(rs));                                       
+                    
+                            getRecordById("SiteEmail", site.getSiteEmailId().toString());
+                            site.setSiteEmail(SiteEmail.process(rs));                                       
                     
                     }
                 catch (SQLException ex)

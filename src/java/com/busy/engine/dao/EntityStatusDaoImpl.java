@@ -358,7 +358,7 @@
                 EntityStatus.checkColumnSize(obj.getAppliesTo(), 100);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE entity_status SET com.busy.util.DatabaseColumn@7dda50a=?,com.busy.util.DatabaseColumn@7f926e14=?,com.busy.util.DatabaseColumn@672bde6e=? WHERE EntityStatusId=?;");                    
+                prepareStatement("UPDATE entity_status SET com.busy.util.DatabaseColumn@37873be0=?,com.busy.util.DatabaseColumn@67b5005b=?,com.busy.util.DatabaseColumn@28e3e2f4=? WHERE EntityStatusId=?;");                    
                 preparedStatement.setInt(0, obj.getEntityStatusId());
                 preparedStatement.setInt(1, obj.getStatusCode());
                 preparedStatement.setString(2, obj.getStatusName());

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -146,7 +149,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ServiceCharge.PROP_SERVICE_CHARGE_ID) || column.equals(ServiceCharge.PROP_USER_SERVICE_ID) )
+            if (column.equals(ServiceCharge.PROP_SERVICE_CHARGE_ID) || column.equals(ServiceCharge.PROP_CHARGE_NAME) || column.equals(ServiceCharge.PROP_DESCRIPTION) || column.equals(ServiceCharge.PROP_RATE) || column.equals(ServiceCharge.PROP_UNITS) || column.equals(ServiceCharge.PROP_DATE) || column.equals(ServiceCharge.PROP_USER_SERVICE_ID) )
             {
                 return true;
             }        

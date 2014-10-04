@@ -388,7 +388,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE localized_string SET com.busy.util.DatabaseColumn@41e91ee1=?,com.busy.util.DatabaseColumn@da75557=?,com.busy.util.DatabaseColumn@58d71f2f=? WHERE LocalizedStringId=?;");                    
+                prepareStatement("UPDATE localized_string SET com.busy.util.DatabaseColumn@7d6ade4e=?,com.busy.util.DatabaseColumn@37dc0238=?,com.busy.util.DatabaseColumn@194579f3=? WHERE LocalizedStringId=?;");                    
                 preparedStatement.setInt(0, obj.getLocalizedStringId());
                 preparedStatement.setInt(1, obj.getLocale());
                 preparedStatement.setString(2, obj.getStringValue());

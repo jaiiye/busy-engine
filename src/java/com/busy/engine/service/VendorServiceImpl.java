@@ -56,11 +56,9 @@ public class VendorServiceImpl extends AbstractService implements VendorService
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public VendorServiceImpl() 
     {
-        super();
-        
+        super();        
         vendorDao = new VendorDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class VendorServiceImpl extends AbstractService implements VendorService
     
     public VendorServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         vendorDao = (VendorDao) context.getAttribute("vendorDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

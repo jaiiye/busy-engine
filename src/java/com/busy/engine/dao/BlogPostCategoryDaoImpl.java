@@ -391,7 +391,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE blog_post_category SET com.busy.util.DatabaseColumn@433ea51b=?,com.busy.util.DatabaseColumn@11484e93=? WHERE BlogPostCategoryId=?;");                    
+                prepareStatement("UPDATE blog_post_category SET com.busy.util.DatabaseColumn@30b55ecf=?,com.busy.util.DatabaseColumn@3e607f77=? WHERE BlogPostCategoryId=?;");                    
                 preparedStatement.setInt(0, obj.getBlogPostCategoryId());
                 preparedStatement.setInt(1, obj.getBlogPostId());
                 preparedStatement.setInt(2, obj.getPostCategoryId());

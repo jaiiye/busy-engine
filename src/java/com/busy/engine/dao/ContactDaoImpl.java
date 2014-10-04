@@ -379,7 +379,7 @@
                 Contact.checkColumnSize(obj.getInfo(), 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE contact SET com.busy.util.DatabaseColumn@1812c116=?,com.busy.util.DatabaseColumn@493ee261=?,com.busy.util.DatabaseColumn@7ca6227e=?,com.busy.util.DatabaseColumn@12c8d493=?,com.busy.util.DatabaseColumn@1c5cbdad=?,com.busy.util.DatabaseColumn@22cf69ad=?,com.busy.util.DatabaseColumn@6f370a58=?,com.busy.util.DatabaseColumn@3b0f2761=?,com.busy.util.DatabaseColumn@42c74478=?,com.busy.util.DatabaseColumn@1b1ccf8c=? WHERE ContactId=?;");                    
+                prepareStatement("UPDATE contact SET com.busy.util.DatabaseColumn@729546fa=?,com.busy.util.DatabaseColumn@688e1543=?,com.busy.util.DatabaseColumn@704f0028=?,com.busy.util.DatabaseColumn@77ade8f9=?,com.busy.util.DatabaseColumn@2fd7d260=?,com.busy.util.DatabaseColumn@376beed4=?,com.busy.util.DatabaseColumn@3f2de651=?,com.busy.util.DatabaseColumn@27df2b6d=?,com.busy.util.DatabaseColumn@368ab924=?,com.busy.util.DatabaseColumn@5effec6f=? WHERE ContactId=?;");                    
                 preparedStatement.setInt(0, obj.getContactId());
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getFirstName());

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -110,7 +113,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(UserActionType.PROP_USER_ACTION_TYPE_ID) )
+            if (column.equals(UserActionType.PROP_USER_ACTION_TYPE_ID) || column.equals(UserActionType.PROP_TYPE_NAME) )
             {
                 return true;
             }        

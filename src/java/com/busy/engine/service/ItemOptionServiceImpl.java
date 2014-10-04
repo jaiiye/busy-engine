@@ -56,11 +56,9 @@ public class ItemOptionServiceImpl extends AbstractService implements ItemOption
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ItemOptionServiceImpl() 
     {
-        super();
-        
+        super();        
         itemOptionDao = new ItemOptionDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ItemOptionServiceImpl extends AbstractService implements ItemOption
     
     public ItemOptionServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         itemOptionDao = (ItemOptionDao) context.getAttribute("itemOptionDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

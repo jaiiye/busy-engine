@@ -403,7 +403,7 @@
                 CustomerOrder.checkColumnSize(obj.getCustomerIp(), 100);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE customer_order SET com.busy.util.DatabaseColumn@44cbee78=?,com.busy.util.DatabaseColumn@1ed0012a=?,com.busy.util.DatabaseColumn@33f2c95d=?,com.busy.util.DatabaseColumn@76cef191=? WHERE CustomerOrderId=?;");                    
+                prepareStatement("UPDATE customer_order SET com.busy.util.DatabaseColumn@242b038a=?,com.busy.util.DatabaseColumn@6a817e49=?,com.busy.util.DatabaseColumn@70dd5f8=?,com.busy.util.DatabaseColumn@2f685314=? WHERE CustomerOrderId=?;");                    
                 preparedStatement.setInt(0, obj.getCustomerOrderId());
                 preparedStatement.setInt(1, obj.getCustomerId());
                 preparedStatement.setInt(2, obj.getOrderId());

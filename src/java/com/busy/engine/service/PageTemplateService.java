@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.PageTemplate;
@@ -27,10 +46,6 @@ public interface PageTemplateService
       public Result<PageTemplate> store(String userName, Integer pageTemplateId, String name, String markup);
       public Result<PageTemplate> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

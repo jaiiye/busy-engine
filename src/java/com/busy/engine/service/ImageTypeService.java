@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ImageType;
@@ -27,10 +46,6 @@ public interface ImageTypeService
       public Result<ImageType> store(String userName, Integer imageTypeId, String typeName, String description);
       public Result<ImageType> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

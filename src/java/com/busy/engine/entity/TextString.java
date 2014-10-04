@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -110,7 +113,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(TextString.PROP_TEXT_STRING_ID) )
+            if (column.equals(TextString.PROP_TEXT_STRING_ID) || column.equals(TextString.PROP_KEY) )
             {
                 return true;
             }        

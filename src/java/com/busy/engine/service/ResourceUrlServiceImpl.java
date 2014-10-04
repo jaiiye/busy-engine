@@ -56,11 +56,9 @@ public class ResourceUrlServiceImpl extends AbstractService implements ResourceU
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ResourceUrlServiceImpl() 
     {
-        super();
-        
+        super();        
         resourceUrlDao = new ResourceUrlDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ResourceUrlServiceImpl extends AbstractService implements ResourceU
     
     public ResourceUrlServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         resourceUrlDao = (ResourceUrlDao) context.getAttribute("resourceUrlDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -225,7 +228,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(User.PROP_USER_ID) || column.equals(User.PROP_USER_STATUS) || column.equals(User.PROP_RANK) || column.equals(User.PROP_ITEM_BRAND_ID) || column.equals(User.PROP_USER_TYPE_ID) || column.equals(User.PROP_ADDRESS_ID) || column.equals(User.PROP_CONTACT_ID) || column.equals(User.PROP_USER_GROUP_ID) )
+            if (column.equals(User.PROP_USER_ID) || column.equals(User.PROP_USERNAME) || column.equals(User.PROP_PASSWORD) || column.equals(User.PROP_EMAIL) || column.equals(User.PROP_SECURITY_QUESTION) || column.equals(User.PROP_SECURITY_ANSWER) || column.equals(User.PROP_REGISTER_DATE) || column.equals(User.PROP_IMAGE_URL) || column.equals(User.PROP_USER_STATUS) || column.equals(User.PROP_RANK) || column.equals(User.PROP_WEB_URL) || column.equals(User.PROP_ITEM_BRAND_ID) || column.equals(User.PROP_USER_TYPE_ID) || column.equals(User.PROP_ADDRESS_ID) || column.equals(User.PROP_CONTACT_ID) || column.equals(User.PROP_USER_GROUP_ID) )
             {
                 return true;
             }        

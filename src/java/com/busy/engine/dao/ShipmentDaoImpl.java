@@ -400,7 +400,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE shipment SET com.busy.util.DatabaseColumn@4a44139f=?,com.busy.util.DatabaseColumn@3e8f768d=?,com.busy.util.DatabaseColumn@7ec452a3=?,com.busy.util.DatabaseColumn@1b0af7a9=?,com.busy.util.DatabaseColumn@71b8d7bc=?,com.busy.util.DatabaseColumn@34c6ec18=?,com.busy.util.DatabaseColumn@68cbe169=? WHERE ShipmentId=?;");                    
+                prepareStatement("UPDATE shipment SET com.busy.util.DatabaseColumn@4ff77724=?,com.busy.util.DatabaseColumn@1708d861=?,com.busy.util.DatabaseColumn@43dd333=?,com.busy.util.DatabaseColumn@1e6d0415=?,com.busy.util.DatabaseColumn@6a571eab=?,com.busy.util.DatabaseColumn@3bcd0850=?,com.busy.util.DatabaseColumn@5183e051=? WHERE ShipmentId=?;");                    
                 preparedStatement.setInt(0, obj.getShipmentId());
                 preparedStatement.setDate(1, new java.sql.Date(obj.getCreatedOn().getTime()));
                 preparedStatement.setString(2, obj.getTrackingNumber());

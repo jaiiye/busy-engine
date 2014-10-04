@@ -397,7 +397,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_action SET com.busy.util.DatabaseColumn@349abe34=?,com.busy.util.DatabaseColumn@4c35b0c0=?,com.busy.util.DatabaseColumn@2436ecb4=?,com.busy.util.DatabaseColumn@55fe630f=? WHERE UserActionId=?;");                    
+                prepareStatement("UPDATE user_action SET com.busy.util.DatabaseColumn@39016b90=?,com.busy.util.DatabaseColumn@7de631cb=?,com.busy.util.DatabaseColumn@653303f4=?,com.busy.util.DatabaseColumn@3d4c1e66=? WHERE UserActionId=?;");                    
                 preparedStatement.setInt(0, obj.getUserActionId());
                 preparedStatement.setDate(1, new java.sql.Date(obj.getDate().getTime()));
                 preparedStatement.setString(2, obj.getDetail());

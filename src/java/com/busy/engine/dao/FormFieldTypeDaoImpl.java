@@ -355,7 +355,7 @@
                 FormFieldType.checkColumnSize(obj.getInputType(), 45);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE form_field_type SET com.busy.util.DatabaseColumn@112359f4=?,com.busy.util.DatabaseColumn@2c98e479=? WHERE FormFieldTypeId=?;");                    
+                prepareStatement("UPDATE form_field_type SET com.busy.util.DatabaseColumn@5b338dbc=?,com.busy.util.DatabaseColumn@7b408f30=? WHERE FormFieldTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getFormFieldTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getInputType());

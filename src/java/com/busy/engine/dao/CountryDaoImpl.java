@@ -361,7 +361,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE country SET com.busy.util.DatabaseColumn@19e923c=?,com.busy.util.DatabaseColumn@4e823a30=?,com.busy.util.DatabaseColumn@40de485a=?,com.busy.util.DatabaseColumn@501628f5=? WHERE CountryId=?;");                    
+                prepareStatement("UPDATE country SET com.busy.util.DatabaseColumn@5524125f=?,com.busy.util.DatabaseColumn@514f61f9=?,com.busy.util.DatabaseColumn@21f6d6c8=?,com.busy.util.DatabaseColumn@31435172=? WHERE CountryId=?;");                    
                 preparedStatement.setInt(0, obj.getCountryId());
                 preparedStatement.setString(1, obj.getName());
                 preparedStatement.setString(2, obj.getIsoCode());

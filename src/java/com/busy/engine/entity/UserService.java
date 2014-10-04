@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -176,7 +179,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(UserService.PROP_USER_SERVICE_ID) || column.equals(UserService.PROP_DEPOSIT_AMOUNT) || column.equals(UserService.PROP_USER_RANK) || column.equals(UserService.PROP_BLOG_ID) || column.equals(UserService.PROP_USER_ID) || column.equals(UserService.PROP_SERVICE_ID) )
+            if (column.equals(UserService.PROP_USER_SERVICE_ID) || column.equals(UserService.PROP_START_DATE) || column.equals(UserService.PROP_END_DATE) || column.equals(UserService.PROP_DETAILS) || column.equals(UserService.PROP_CONTRACT_URL) || column.equals(UserService.PROP_DELIVERABLE_URL) || column.equals(UserService.PROP_DEPOSIT_AMOUNT) || column.equals(UserService.PROP_USER_RANK) || column.equals(UserService.PROP_BLOG_ID) || column.equals(UserService.PROP_USER_ID) || column.equals(UserService.PROP_SERVICE_ID) )
             {
                 return true;
             }        

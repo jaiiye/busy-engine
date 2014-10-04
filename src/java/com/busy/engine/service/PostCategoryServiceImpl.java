@@ -56,11 +56,9 @@ public class PostCategoryServiceImpl extends AbstractService implements PostCate
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public PostCategoryServiceImpl() 
     {
-        super();
-        
+        super();        
         postCategoryDao = new PostCategoryDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class PostCategoryServiceImpl extends AbstractService implements PostCate
     
     public PostCategoryServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         postCategoryDao = (PostCategoryDao) context.getAttribute("postCategoryDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

@@ -56,11 +56,9 @@ public class ItemDiscountServiceImpl extends AbstractService implements ItemDisc
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ItemDiscountServiceImpl() 
     {
-        super();
-        
+        super();        
         itemDiscountDao = new ItemDiscountDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ItemDiscountServiceImpl extends AbstractService implements ItemDisc
     
     public ItemDiscountServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         itemDiscountDao = (ItemDiscountDao) context.getAttribute("itemDiscountDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

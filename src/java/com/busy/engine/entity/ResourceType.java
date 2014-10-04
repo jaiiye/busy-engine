@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -117,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ResourceType.PROP_RESOURCE_TYPE_ID) )
+            if (column.equals(ResourceType.PROP_RESOURCE_TYPE_ID) || column.equals(ResourceType.PROP_TYPE_NAME) || column.equals(ResourceType.PROP_TYPE_VALUE) )
             {
                 return true;
             }        

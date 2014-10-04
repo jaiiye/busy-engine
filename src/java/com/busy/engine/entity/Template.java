@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -148,7 +151,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Template.PROP_TEMPLATE_ID) || column.equals(Template.PROP_TEMPLATE_STATUS) || column.equals(Template.PROP_TEMPLATE_TYPE_ID) || column.equals(Template.PROP_PARENT_TEMPLATE_ID) )
+            if (column.equals(Template.PROP_TEMPLATE_ID) || column.equals(Template.PROP_TEMPLATE_NAME) || column.equals(Template.PROP_MARKUP) || column.equals(Template.PROP_TEMPLATE_STATUS) || column.equals(Template.PROP_TEMPLATE_TYPE_ID) || column.equals(Template.PROP_PARENT_TEMPLATE_ID) )
             {
                 return true;
             }        

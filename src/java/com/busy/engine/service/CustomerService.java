@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.Customer;
@@ -27,10 +46,6 @@ public interface CustomerService
       public Result<Customer> store(String userName, Integer customerId, Integer contactId, Integer userId, Integer billingAddressId, Integer shippingAddressId, Integer customerStatus);
       public Result<Customer> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

@@ -56,11 +56,9 @@ public class TextStringServiceImpl extends AbstractService implements TextString
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public TextStringServiceImpl() 
     {
-        super();
-        
+        super();        
         textStringDao = new TextStringDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class TextStringServiceImpl extends AbstractService implements TextString
     
     public TextStringServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         textStringDao = (TextStringDao) context.getAttribute("textStringDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

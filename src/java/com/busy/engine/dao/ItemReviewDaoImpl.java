@@ -391,7 +391,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_review SET com.busy.util.DatabaseColumn@193e93d9=?,com.busy.util.DatabaseColumn@b6da6c8=?,com.busy.util.DatabaseColumn@67632c65=?,com.busy.util.DatabaseColumn@3c8b61c6=? WHERE ItemReviewId=?;");                    
+                prepareStatement("UPDATE item_review SET com.busy.util.DatabaseColumn@71906391=?,com.busy.util.DatabaseColumn@496edf07=?,com.busy.util.DatabaseColumn@6a66127=?,com.busy.util.DatabaseColumn@4fbc50c5=? WHERE ItemReviewId=?;");                    
                 preparedStatement.setInt(0, obj.getItemReviewId());
                 preparedStatement.setInt(1, obj.getItemId());
                 preparedStatement.setInt(2, obj.getRating());

@@ -412,7 +412,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE vendor SET com.busy.util.DatabaseColumn@2d0b38e6=?,com.busy.util.DatabaseColumn@8adf061=?,com.busy.util.DatabaseColumn@5abd6e94=?,com.busy.util.DatabaseColumn@52bbe3d5=?,com.busy.util.DatabaseColumn@26832d6c=?,com.busy.util.DatabaseColumn@414aef25=?,com.busy.util.DatabaseColumn@70b2e056=? WHERE VendorId=?;");                    
+                prepareStatement("UPDATE vendor SET com.busy.util.DatabaseColumn@47a4f766=?,com.busy.util.DatabaseColumn@4507368=?,com.busy.util.DatabaseColumn@346aa265=?,com.busy.util.DatabaseColumn@521ee1c2=?,com.busy.util.DatabaseColumn@32e12320=?,com.busy.util.DatabaseColumn@35addd27=?,com.busy.util.DatabaseColumn@54b5387d=? WHERE VendorId=?;");                    
                 preparedStatement.setInt(0, obj.getVendorId());
                 preparedStatement.setString(1, obj.getVendorName());
                 preparedStatement.setString(2, obj.getDescription());

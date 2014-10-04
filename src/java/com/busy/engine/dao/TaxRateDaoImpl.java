@@ -400,7 +400,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE tax_rate SET com.busy.util.DatabaseColumn@1fa4d86c=?,com.busy.util.DatabaseColumn@76c0f1e0=?,com.busy.util.DatabaseColumn@7d575e08=?,com.busy.util.DatabaseColumn@1fc7ba27=?,com.busy.util.DatabaseColumn@2699760b=? WHERE TaxRateId=?;");                    
+                prepareStatement("UPDATE tax_rate SET com.busy.util.DatabaseColumn@463f7efb=?,com.busy.util.DatabaseColumn@d8339da=?,com.busy.util.DatabaseColumn@4c9803b9=?,com.busy.util.DatabaseColumn@47e2cfd2=?,com.busy.util.DatabaseColumn@7a17a973=? WHERE TaxRateId=?;");                    
                 preparedStatement.setInt(0, obj.getTaxRateId());
                 preparedStatement.setString(1, obj.getTaxCategory());
                 preparedStatement.setDouble(2, obj.getPercentage());

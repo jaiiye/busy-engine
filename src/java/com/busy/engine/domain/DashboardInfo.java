@@ -1,7 +1,5 @@
 package com.busy.engine.domain;
 
-import com.busy.engine.dao.DashboardDao;
-import com.busy.engine.dao.UserActionDao;
 import com.busy.engine.dao.DashboardDaoImpl;
 import com.busy.engine.dao.UserActionDaoImpl;
 import com.busy.engine.entity.Dashboard;

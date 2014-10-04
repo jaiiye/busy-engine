@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -124,7 +127,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ResourceUrl.PROP_RESOURCE_URL_ID) || column.equals(ResourceUrl.PROP_TEMPLATE_ID) || column.equals(ResourceUrl.PROP_RESOURCE_TYPE_ID) )
+            if (column.equals(ResourceUrl.PROP_RESOURCE_URL_ID) || column.equals(ResourceUrl.PROP_URL) || column.equals(ResourceUrl.PROP_TEMPLATE_ID) || column.equals(ResourceUrl.PROP_RESOURCE_TYPE_ID) )
             {
                 return true;
             }        

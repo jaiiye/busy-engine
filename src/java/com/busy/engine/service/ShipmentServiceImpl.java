@@ -56,11 +56,9 @@ public class ShipmentServiceImpl extends AbstractService implements ShipmentServ
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ShipmentServiceImpl() 
     {
-        super();
-        
+        super();        
         shipmentDao = new ShipmentDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ShipmentServiceImpl extends AbstractService implements ShipmentServ
     
     public ShipmentServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         shipmentDao = (ShipmentDao) context.getAttribute("shipmentDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

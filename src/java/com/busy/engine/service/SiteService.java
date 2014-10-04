@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.Site;
@@ -24,13 +43,9 @@ public interface SiteService
 {
       public Result<Site> find(String userName, Integer id);
       public Result<List<Site>> findAll(String userName); 
-      public Result<Site> store(String userName, Integer siteId, String siteName, String domain, Integer mode, String url, String logoTitle, String logoImage, Integer useAsStore, String emailHost, Integer emailPort, String emailUsername, String emailPassword, Integer siteStatus, String locale, Integer templateId);
+      public Result<Site> store(String userName, Integer siteId, String siteName, String domain, Integer mode, String url, String logoTitle, String logoImageUrl, Integer useAsStore, Integer siteStatus, String locale, Integer templateId, Integer siteEmailId);
       public Result<Site> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

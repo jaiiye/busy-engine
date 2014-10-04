@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.Slider;
@@ -27,10 +46,6 @@ public interface SliderService
       public Result<Slider> store(String userName, Integer sliderId, String sliderName, Integer sliderTypeId, Integer formId);
       public Result<Slider> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

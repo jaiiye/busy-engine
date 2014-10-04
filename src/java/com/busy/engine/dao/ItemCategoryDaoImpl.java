@@ -391,7 +391,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_category SET com.busy.util.DatabaseColumn@1a7bc55d=?,com.busy.util.DatabaseColumn@2182f821=? WHERE ItemCategoryId=?;");                    
+                prepareStatement("UPDATE item_category SET com.busy.util.DatabaseColumn@6215f9e4=?,com.busy.util.DatabaseColumn@5657045=? WHERE ItemCategoryId=?;");                    
                 preparedStatement.setInt(0, obj.getItemCategoryId());
                 preparedStatement.setInt(1, obj.getCategoryId());
                 preparedStatement.setInt(2, obj.getItemId());

@@ -391,7 +391,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_attribute SET com.busy.util.DatabaseColumn@7f0feb14=?,com.busy.util.DatabaseColumn@b2d45ac=?,com.busy.util.DatabaseColumn@5212899d=?,com.busy.util.DatabaseColumn@4e00524d=? WHERE SiteAttributeId=?;");                    
+                prepareStatement("UPDATE site_attribute SET com.busy.util.DatabaseColumn@1ec7d22b=?,com.busy.util.DatabaseColumn@6344cef7=?,com.busy.util.DatabaseColumn@4775f728=?,com.busy.util.DatabaseColumn@1dfcfcb5=? WHERE SiteAttributeId=?;");                    
                 preparedStatement.setInt(0, obj.getSiteAttributeId());
                 preparedStatement.setString(1, obj.getAttributeKey());
                 preparedStatement.setString(2, obj.getAttributeValue());

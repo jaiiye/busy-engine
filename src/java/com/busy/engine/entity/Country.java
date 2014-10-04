@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -135,7 +138,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Country.PROP_COUNTRY_ID) || column.equals(Country.PROP_ISO_NUMBER) || column.equals(Country.PROP_HAS_VAT) )
+            if (column.equals(Country.PROP_COUNTRY_ID) || column.equals(Country.PROP_NAME) || column.equals(Country.PROP_ISO_CODE) || column.equals(Country.PROP_ISO_NUMBER) || column.equals(Country.PROP_HAS_VAT) )
             {
                 return true;
             }        

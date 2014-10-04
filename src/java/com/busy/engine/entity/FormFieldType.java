@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -117,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(FormFieldType.PROP_FORM_FIELD_TYPE_ID) )
+            if (column.equals(FormFieldType.PROP_FORM_FIELD_TYPE_ID) || column.equals(FormFieldType.PROP_TYPE_NAME) || column.equals(FormFieldType.PROP_INPUT_TYPE) )
             {
                 return true;
             }        

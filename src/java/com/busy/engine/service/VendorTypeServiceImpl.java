@@ -56,11 +56,9 @@ public class VendorTypeServiceImpl extends AbstractService implements VendorType
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public VendorTypeServiceImpl() 
     {
-        super();
-        
+        super();        
         vendorTypeDao = new VendorTypeDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class VendorTypeServiceImpl extends AbstractService implements VendorType
     
     public VendorTypeServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         vendorTypeDao = (VendorTypeDao) context.getAttribute("vendorTypeDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

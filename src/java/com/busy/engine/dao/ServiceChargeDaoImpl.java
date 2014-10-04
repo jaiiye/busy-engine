@@ -397,7 +397,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE service_charge SET com.busy.util.DatabaseColumn@75666511=?,com.busy.util.DatabaseColumn@1cbafaf8=?,com.busy.util.DatabaseColumn@4ba55f60=?,com.busy.util.DatabaseColumn@62c431d2=?,com.busy.util.DatabaseColumn@24cc8e76=?,com.busy.util.DatabaseColumn@6f6acd2d=? WHERE ServiceChargeId=?;");                    
+                prepareStatement("UPDATE service_charge SET com.busy.util.DatabaseColumn@5ad1161d=?,com.busy.util.DatabaseColumn@1ebfecad=?,com.busy.util.DatabaseColumn@3208111d=?,com.busy.util.DatabaseColumn@4039f136=?,com.busy.util.DatabaseColumn@128a76d2=?,com.busy.util.DatabaseColumn@73312aaa=? WHERE ServiceChargeId=?;");                    
                 preparedStatement.setInt(0, obj.getServiceChargeId());
                 preparedStatement.setString(1, obj.getChargeName());
                 preparedStatement.setString(2, obj.getDescription());

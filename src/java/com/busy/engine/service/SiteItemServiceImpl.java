@@ -56,11 +56,9 @@ public class SiteItemServiceImpl extends AbstractService implements SiteItemServ
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public SiteItemServiceImpl() 
     {
-        super();
-        
+        super();        
         siteItemDao = new SiteItemDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class SiteItemServiceImpl extends AbstractService implements SiteItemServ
     
     public SiteItemServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         siteItemDao = (SiteItemDao) context.getAttribute("siteItemDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

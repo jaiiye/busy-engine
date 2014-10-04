@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.BlogType;
@@ -27,10 +46,6 @@ public interface BlogTypeService
       public Result<BlogType> store(String userName, Integer blogTypeId, String typeName);
       public Result<BlogType> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

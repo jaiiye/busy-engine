@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ItemCategory;
@@ -27,10 +46,6 @@ public interface ItemCategoryService
       public Result<ItemCategory> store(String userName, Integer itemCategoryId, Integer categoryId, Integer itemId);
       public Result<ItemCategory> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

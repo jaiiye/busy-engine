@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.SiteAttribute;
@@ -27,10 +46,6 @@ public interface SiteAttributeService
       public Result<SiteAttribute> store(String userName, Integer siteAttributeId, String attributeKey, String attributeValue, String attributeType, Integer siteId);
       public Result<SiteAttribute> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

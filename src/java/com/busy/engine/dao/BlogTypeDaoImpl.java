@@ -352,7 +352,7 @@
                 BlogType.checkColumnSize(obj.getTypeName(), 100);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE blog_type SET com.busy.util.DatabaseColumn@6af75c29=? WHERE BlogTypeId=?;");                    
+                prepareStatement("UPDATE blog_type SET com.busy.util.DatabaseColumn@13b87b33=? WHERE BlogTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getBlogTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setInt(2, obj.getBlogTypeId());

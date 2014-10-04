@@ -412,7 +412,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE comment SET com.busy.util.DatabaseColumn@181f562c=?,com.busy.util.DatabaseColumn@46e36c6b=?,com.busy.util.DatabaseColumn@172977e0=?,com.busy.util.DatabaseColumn@1d890b12=?,com.busy.util.DatabaseColumn@7f4590b9=?,com.busy.util.DatabaseColumn@22982b0e=?,com.busy.util.DatabaseColumn@7e52ceca=? WHERE CommentId=?;");                    
+                prepareStatement("UPDATE comment SET com.busy.util.DatabaseColumn@21f4875a=?,com.busy.util.DatabaseColumn@37c6d1a7=?,com.busy.util.DatabaseColumn@4192b1fc=?,com.busy.util.DatabaseColumn@7600bc55=?,com.busy.util.DatabaseColumn@73cb3b98=?,com.busy.util.DatabaseColumn@720187af=?,com.busy.util.DatabaseColumn@26c8c542=? WHERE CommentId=?;");                    
                 preparedStatement.setInt(0, obj.getCommentId());
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getContent());

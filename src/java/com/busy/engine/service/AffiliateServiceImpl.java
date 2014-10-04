@@ -56,11 +56,9 @@ public class AffiliateServiceImpl extends AbstractService implements AffiliateSe
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public AffiliateServiceImpl() 
     {
-        super();
-        
+        super();        
         affiliateDao = new AffiliateDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class AffiliateServiceImpl extends AbstractService implements AffiliateSe
     
     public AffiliateServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         affiliateDao = (AffiliateDao) context.getAttribute("affiliateDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

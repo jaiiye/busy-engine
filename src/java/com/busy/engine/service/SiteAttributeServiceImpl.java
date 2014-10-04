@@ -56,11 +56,9 @@ public class SiteAttributeServiceImpl extends AbstractService implements SiteAtt
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public SiteAttributeServiceImpl() 
     {
-        super();
-        
+        super();        
         siteAttributeDao = new SiteAttributeDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class SiteAttributeServiceImpl extends AbstractService implements SiteAtt
     
     public SiteAttributeServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         siteAttributeDao = (SiteAttributeDao) context.getAttribute("siteAttributeDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ResourceUrl;
@@ -27,10 +46,6 @@ public interface ResourceUrlService
       public Result<ResourceUrl> store(String userName, Integer resourceUrlId, String url, Integer templateId, Integer resourceTypeId);
       public Result<ResourceUrl> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

@@ -367,7 +367,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE knowledge_base SET com.busy.util.DatabaseColumn@2185c29e=?,com.busy.util.DatabaseColumn@3324a06d=?,com.busy.util.DatabaseColumn@1b8268d0=?,com.busy.util.DatabaseColumn@78dcce3f=?,com.busy.util.DatabaseColumn@77c27288=?,com.busy.util.DatabaseColumn@617393d5=? WHERE KnowledgeBaseId=?;");                    
+                prepareStatement("UPDATE knowledge_base SET com.busy.util.DatabaseColumn@79ab3cd5=?,com.busy.util.DatabaseColumn@1a8a160d=?,com.busy.util.DatabaseColumn@3eb7367b=?,com.busy.util.DatabaseColumn@71856d55=?,com.busy.util.DatabaseColumn@51e8aa24=?,com.busy.util.DatabaseColumn@1b18f46a=? WHERE KnowledgeBaseId=?;");                    
                 preparedStatement.setInt(0, obj.getKnowledgeBaseId());
                 preparedStatement.setString(1, obj.getKnowledgeBaseName());
                 preparedStatement.setString(2, obj.getDescription());

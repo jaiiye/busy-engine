@@ -56,11 +56,9 @@ public class ReturnRequestServiceImpl extends AbstractService implements ReturnR
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ReturnRequestServiceImpl() 
     {
-        super();
-        
+        super();        
         returnRequestDao = new ReturnRequestDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ReturnRequestServiceImpl extends AbstractService implements ReturnR
     
     public ReturnRequestServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         returnRequestDao = (ReturnRequestDao) context.getAttribute("returnRequestDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

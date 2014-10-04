@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.OptionAvailability;
@@ -27,10 +46,6 @@ public interface OptionAvailabilityService
       public Result<OptionAvailability> store(String userName, Integer optionAvailabilityId, Integer itemId, Integer itemOptionId, Integer itemAvailabilityId, Integer availableQuantity, Double price, Date availableFrom, Date availableTo, Integer maximumQuantity);
       public Result<OptionAvailability> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

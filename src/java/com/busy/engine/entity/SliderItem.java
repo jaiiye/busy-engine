@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -151,7 +154,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SliderItem.PROP_SLIDER_ITEM_ID) || column.equals(SliderItem.PROP_RANK) || column.equals(SliderItem.PROP_SLIDER_ID) )
+            if (column.equals(SliderItem.PROP_SLIDER_ITEM_ID) || column.equals(SliderItem.PROP_TITLE) || column.equals(SliderItem.PROP_DESCRIPTION) || column.equals(SliderItem.PROP_URL) || column.equals(SliderItem.PROP_IMAGE_NAME) || column.equals(SliderItem.PROP_ALTERNATE_TEXT) || column.equals(SliderItem.PROP_RANK) || column.equals(SliderItem.PROP_SLIDER_ID) )
             {
                 return true;
             }        

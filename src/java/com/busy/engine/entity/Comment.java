@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -153,7 +156,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Comment.PROP_COMMENT_ID) || column.equals(Comment.PROP_COMMENT_STATUS) || column.equals(Comment.PROP_USER_ID) || column.equals(Comment.PROP_BLOG_POST_ID) || column.equals(Comment.PROP_ITEM_REVIEW_ID) )
+            if (column.equals(Comment.PROP_COMMENT_ID) || column.equals(Comment.PROP_TITLE) || column.equals(Comment.PROP_CONTENT) || column.equals(Comment.PROP_DATE) || column.equals(Comment.PROP_COMMENT_STATUS) || column.equals(Comment.PROP_USER_ID) || column.equals(Comment.PROP_BLOG_POST_ID) || column.equals(Comment.PROP_ITEM_REVIEW_ID) )
             {
                 return true;
             }        

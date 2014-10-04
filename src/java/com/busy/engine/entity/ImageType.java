@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -117,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ImageType.PROP_IMAGE_TYPE_ID) )
+            if (column.equals(ImageType.PROP_IMAGE_TYPE_ID) || column.equals(ImageType.PROP_TYPE_NAME) || column.equals(ImageType.PROP_DESCRIPTION) )
             {
                 return true;
             }        

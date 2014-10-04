@@ -56,11 +56,9 @@ public class SiteLanguageServiceImpl extends AbstractService implements SiteLang
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public SiteLanguageServiceImpl() 
     {
-        super();
-        
+        super();        
         siteLanguageDao = new SiteLanguageDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class SiteLanguageServiceImpl extends AbstractService implements SiteLang
     
     public SiteLanguageServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         siteLanguageDao = (SiteLanguageDao) context.getAttribute("siteLanguageDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

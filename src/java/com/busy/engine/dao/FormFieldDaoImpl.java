@@ -418,7 +418,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE form_field SET com.busy.util.DatabaseColumn@6a4aed2a=?,com.busy.util.DatabaseColumn@41451242=?,com.busy.util.DatabaseColumn@63c819dc=?,com.busy.util.DatabaseColumn@210e6ae4=?,com.busy.util.DatabaseColumn@1c90e052=?,com.busy.util.DatabaseColumn@75ae3680=?,com.busy.util.DatabaseColumn@568bd710=?,com.busy.util.DatabaseColumn@400de6f=?,com.busy.util.DatabaseColumn@1f093ccd=?,com.busy.util.DatabaseColumn@1b97039a=?,com.busy.util.DatabaseColumn@132c64af=? WHERE FormFieldId=?;");                    
+                prepareStatement("UPDATE form_field SET com.busy.util.DatabaseColumn@1406351e=?,com.busy.util.DatabaseColumn@119480b4=?,com.busy.util.DatabaseColumn@404f056=?,com.busy.util.DatabaseColumn@134ffcba=?,com.busy.util.DatabaseColumn@36449508=?,com.busy.util.DatabaseColumn@3e03254=?,com.busy.util.DatabaseColumn@20c5e43e=?,com.busy.util.DatabaseColumn@4c0366b0=?,com.busy.util.DatabaseColumn@5e7d56ed=?,com.busy.util.DatabaseColumn@5c8dade4=?,com.busy.util.DatabaseColumn@5366565f=? WHERE FormFieldId=?;");                    
                 preparedStatement.setInt(0, obj.getFormFieldId());
                 preparedStatement.setString(1, obj.getFieldName());
                 preparedStatement.setString(2, obj.getLabel());

@@ -391,7 +391,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE mailinglist SET com.busy.util.DatabaseColumn@3601348f=?,com.busy.util.DatabaseColumn@65a5747d=?,com.busy.util.DatabaseColumn@57599fe7=?,com.busy.util.DatabaseColumn@6e306457=? WHERE MailinglistId=?;");                    
+                prepareStatement("UPDATE mailinglist SET com.busy.util.DatabaseColumn@6771174d=?,com.busy.util.DatabaseColumn@3bec7d0=?,com.busy.util.DatabaseColumn@61ec5052=?,com.busy.util.DatabaseColumn@11dcec2c=? WHERE MailinglistId=?;");                    
                 preparedStatement.setInt(0, obj.getMailinglistId());
                 preparedStatement.setString(1, obj.getFullName());
                 preparedStatement.setString(2, obj.getEmail());

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -124,7 +127,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(UserType.PROP_USER_TYPE_ID) )
+            if (column.equals(UserType.PROP_USER_TYPE_ID) || column.equals(UserType.PROP_TYPE_NAME) || column.equals(UserType.PROP_DESCRIPTION) || column.equals(UserType.PROP_REDIRECT_URL) )
             {
                 return true;
             }        

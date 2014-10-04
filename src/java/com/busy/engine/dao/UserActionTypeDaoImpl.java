@@ -352,7 +352,7 @@
                 UserActionType.checkColumnSize(obj.getTypeName(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_action_type SET com.busy.util.DatabaseColumn@3d81090c=? WHERE UserActionTypeId=?;");                    
+                prepareStatement("UPDATE user_action_type SET com.busy.util.DatabaseColumn@6511ac88=? WHERE UserActionTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getUserActionTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setInt(2, obj.getUserActionTypeId());

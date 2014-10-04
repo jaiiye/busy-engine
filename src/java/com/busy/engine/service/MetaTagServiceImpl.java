@@ -56,11 +56,9 @@ public class MetaTagServiceImpl extends AbstractService implements MetaTagServic
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public MetaTagServiceImpl() 
     {
-        super();
-        
+        super();        
         metaTagDao = new MetaTagDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class MetaTagServiceImpl extends AbstractService implements MetaTagServic
     
     public MetaTagServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         metaTagDao = (MetaTagDao) context.getAttribute("metaTagDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

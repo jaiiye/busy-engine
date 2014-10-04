@@ -56,11 +56,9 @@ public class FormFieldTypeServiceImpl extends AbstractService implements FormFie
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public FormFieldTypeServiceImpl() 
     {
-        super();
-        
+        super();        
         formFieldTypeDao = new FormFieldTypeDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class FormFieldTypeServiceImpl extends AbstractService implements FormFie
     
     public FormFieldTypeServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         formFieldTypeDao = (FormFieldTypeDao) context.getAttribute("formFieldTypeDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

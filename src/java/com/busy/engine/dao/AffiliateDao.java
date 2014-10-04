@@ -18,6 +18,21 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.dao;
 
 import com.busy.engine.entity.Affiliate;

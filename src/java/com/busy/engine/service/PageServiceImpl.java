@@ -56,11 +56,9 @@ public class PageServiceImpl extends AbstractService implements PageService
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public PageServiceImpl() 
     {
-        super();
-        
+        super();        
         pageDao = new PageDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class PageServiceImpl extends AbstractService implements PageService
     
     public PageServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         pageDao = (PageDao) context.getAttribute("pageDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

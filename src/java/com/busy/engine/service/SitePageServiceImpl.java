@@ -56,11 +56,9 @@ public class SitePageServiceImpl extends AbstractService implements SitePageServ
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public SitePageServiceImpl() 
     {
-        super();
-        
+        super();        
         sitePageDao = new SitePageDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class SitePageServiceImpl extends AbstractService implements SitePageServ
     
     public SitePageServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         sitePageDao = (SitePageDao) context.getAttribute("sitePageDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

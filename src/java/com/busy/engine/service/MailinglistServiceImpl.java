@@ -56,11 +56,9 @@ public class MailinglistServiceImpl extends AbstractService implements Mailingli
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public MailinglistServiceImpl() 
     {
-        super();
-        
+        super();        
         mailinglistDao = new MailinglistDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class MailinglistServiceImpl extends AbstractService implements Mailingli
     
     public MailinglistServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         mailinglistDao = (MailinglistDao) context.getAttribute("mailinglistDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

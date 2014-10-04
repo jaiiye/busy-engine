@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ItemAttributeType;
@@ -27,10 +46,6 @@ public interface ItemAttributeTypeService
       public Result<ItemAttributeType> store(String userName, Integer itemAttributeTypeId, String attributeName, String description);
       public Result<ItemAttributeType> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

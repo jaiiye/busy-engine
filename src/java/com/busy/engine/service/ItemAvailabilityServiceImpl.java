@@ -56,11 +56,9 @@ public class ItemAvailabilityServiceImpl extends AbstractService implements Item
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ItemAvailabilityServiceImpl() 
     {
-        super();
-        
+        super();        
         itemAvailabilityDao = new ItemAvailabilityDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ItemAvailabilityServiceImpl extends AbstractService implements Item
     
     public ItemAvailabilityServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         itemAvailabilityDao = (ItemAvailabilityDao) context.getAttribute("itemAvailabilityDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

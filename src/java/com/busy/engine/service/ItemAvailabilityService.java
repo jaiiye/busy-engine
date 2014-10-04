@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ItemAvailability;
@@ -27,10 +46,6 @@ public interface ItemAvailabilityService
       public Result<ItemAvailability> store(String userName, Integer itemAvailabilityId, String type);
       public Result<ItemAvailability> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

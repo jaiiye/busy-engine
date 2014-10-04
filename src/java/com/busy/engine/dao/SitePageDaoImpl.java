@@ -391,7 +391,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_page SET com.busy.util.DatabaseColumn@1f4795e=?,com.busy.util.DatabaseColumn@2ba82ded=? WHERE SitePageId=?;");                    
+                prepareStatement("UPDATE site_page SET com.busy.util.DatabaseColumn@5367a452=?,com.busy.util.DatabaseColumn@4329c8f8=? WHERE SitePageId=?;");                    
                 preparedStatement.setInt(0, obj.getSitePageId());
                 preparedStatement.setInt(1, obj.getSiteId());
                 preparedStatement.setInt(2, obj.getPageId());

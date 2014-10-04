@@ -352,7 +352,7 @@
                 PostCategory.checkColumnSize(obj.getCategoryName(), 100);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE post_category SET com.busy.util.DatabaseColumn@3cb6fe03=? WHERE PostCategoryId=?;");                    
+                prepareStatement("UPDATE post_category SET com.busy.util.DatabaseColumn@52c6339b=? WHERE PostCategoryId=?;");                    
                 preparedStatement.setInt(0, obj.getPostCategoryId());
                 preparedStatement.setString(1, obj.getCategoryName());
                 preparedStatement.setInt(2, obj.getPostCategoryId());

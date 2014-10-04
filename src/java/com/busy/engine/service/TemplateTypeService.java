@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.TemplateType;
@@ -27,10 +46,6 @@ public interface TemplateTypeService
       public Result<TemplateType> store(String userName, Integer templateTypeId, String typeName, String typeValue);
       public Result<TemplateType> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

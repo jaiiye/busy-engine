@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -137,7 +140,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(RecurringPayment.PROP_RECURRING_PAYMENT_ID) || column.equals(RecurringPayment.PROP_CYCLE_LENGTH) || column.equals(RecurringPayment.PROP_CYCLE_PERIOD) || column.equals(RecurringPayment.PROP_TOTAL_CYCLES) || column.equals(RecurringPayment.PROP_ORDER_ID) )
+            if (column.equals(RecurringPayment.PROP_RECURRING_PAYMENT_ID) || column.equals(RecurringPayment.PROP_CYCLE_LENGTH) || column.equals(RecurringPayment.PROP_CYCLE_PERIOD) || column.equals(RecurringPayment.PROP_TOTAL_CYCLES) || column.equals(RecurringPayment.PROP_START_DATE) || column.equals(RecurringPayment.PROP_ORDER_ID) )
             {
                 return true;
             }        

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -179,7 +182,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Contact.PROP_CONTACT_ID) || column.equals(Contact.PROP_CONTACT_STATUS) )
+            if (column.equals(Contact.PROP_CONTACT_ID) || column.equals(Contact.PROP_TITLE) || column.equals(Contact.PROP_FIRST_NAME) || column.equals(Contact.PROP_LAST_NAME) || column.equals(Contact.PROP_POSITION) || column.equals(Contact.PROP_PHONE) || column.equals(Contact.PROP_FAX) || column.equals(Contact.PROP_EMAIL) || column.equals(Contact.PROP_CONTACT_STATUS) || column.equals(Contact.PROP_WEB_URL) || column.equals(Contact.PROP_INFO) )
             {
                 return true;
             }        

@@ -355,7 +355,7 @@
                 Locale.checkColumnSize(obj.getLocaleCharacterSet(), 25);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE locale SET com.busy.util.DatabaseColumn@6890c715=?,com.busy.util.DatabaseColumn@eb49f4d=? WHERE LocaleId=?;");                    
+                prepareStatement("UPDATE locale SET com.busy.util.DatabaseColumn@59f00ed2=?,com.busy.util.DatabaseColumn@6f43d3b=? WHERE LocaleId=?;");                    
                 preparedStatement.setInt(0, obj.getLocaleId());
                 preparedStatement.setString(1, obj.getLocaleString());
                 preparedStatement.setString(2, obj.getLocaleCharacterSet());

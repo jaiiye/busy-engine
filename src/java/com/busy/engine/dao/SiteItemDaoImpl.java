@@ -391,7 +391,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_item SET com.busy.util.DatabaseColumn@38c9ee9d=?,com.busy.util.DatabaseColumn@28e74c2a=? WHERE SiteItemId=?;");                    
+                prepareStatement("UPDATE site_item SET com.busy.util.DatabaseColumn@52d8e95=?,com.busy.util.DatabaseColumn@7c7f55ea=? WHERE SiteItemId=?;");                    
                 preparedStatement.setInt(0, obj.getSiteItemId());
                 preparedStatement.setInt(1, obj.getSiteId());
                 preparedStatement.setInt(2, obj.getItemId());

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -183,7 +186,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Affiliate.PROP_AFFILIATE_ID) || column.equals(Affiliate.PROP_SERVICE_HOURS) || column.equals(Affiliate.PROP_AFFILIATE_STATUS) || column.equals(Affiliate.PROP_USER_ID) || column.equals(Affiliate.PROP_CONTACT_ID) || column.equals(Affiliate.PROP_ADDRESS_ID) )
+            if (column.equals(Affiliate.PROP_AFFILIATE_ID) || column.equals(Affiliate.PROP_COMPANY_NAME) || column.equals(Affiliate.PROP_EMAIL) || column.equals(Affiliate.PROP_PHONE) || column.equals(Affiliate.PROP_FAX) || column.equals(Affiliate.PROP_WEB_URL) || column.equals(Affiliate.PROP_DETAILS) || column.equals(Affiliate.PROP_SERVICE_HOURS) || column.equals(Affiliate.PROP_AFFILIATE_STATUS) || column.equals(Affiliate.PROP_USER_ID) || column.equals(Affiliate.PROP_CONTACT_ID) || column.equals(Affiliate.PROP_ADDRESS_ID) )
             {
                 return true;
             }        

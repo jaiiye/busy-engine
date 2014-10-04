@@ -56,11 +56,9 @@ public class SiteServiceImpl extends AbstractService implements SiteService
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public SiteServiceImpl() 
     {
-        super();
-        
+        super();        
         siteDao = new SiteDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class SiteServiceImpl extends AbstractService implements SiteService
     
     public SiteServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         siteDao = (SiteDao) context.getAttribute("siteDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
@@ -117,7 +114,7 @@ public class SiteServiceImpl extends AbstractService implements SiteService
     }
 
     @Override
-    public Result<Site> store(String userName, Integer id, String siteName, String domain, Integer mode, String url, String logoTitle, String logoImage, Integer useAsStore, String emailHost, Integer emailPort, String emailUsername, String emailPassword, Integer siteStatus, String locale, Integer templateId)
+    public Result<Site> store(String userName, Integer id, String siteName, String domain, Integer mode, String url, String logoTitle, String logoImageUrl, Integer useAsStore, Integer siteStatus, String locale, Integer templateId, Integer siteEmailId)
     {        
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
@@ -148,15 +145,12 @@ public class SiteServiceImpl extends AbstractService implements SiteService
         site.setMode(mode);
         site.setUrl(url);
         site.setLogoTitle(logoTitle);
-        site.setLogoImage(logoImage);
+        site.setLogoImageUrl(logoImageUrl);
         site.setUseAsStore(useAsStore);
-        site.setEmailHost(emailHost);
-        site.setEmailPort(emailPort);
-        site.setEmailUsername(emailUsername);
-        site.setEmailPassword(emailPassword);
         site.setSiteStatus(siteStatus);
         site.setLocale(locale);
         site.setTemplateId(templateId);
+        site.setSiteEmailId(siteEmailId);
         
         
         if (site.getId() == null) 

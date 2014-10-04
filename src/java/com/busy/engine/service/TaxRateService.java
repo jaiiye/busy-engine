@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.TaxRate;
@@ -27,10 +46,6 @@ public interface TaxRateService
       public Result<TaxRate> store(String userName, Integer taxRateId, String taxCategory, Double percentage, String zipPostalCode, Integer stateProvinceId, Integer countryId);
       public Result<TaxRate> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

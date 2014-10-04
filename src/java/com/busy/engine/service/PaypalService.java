@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.Paypal;
@@ -27,10 +46,6 @@ public interface PaypalService
       public Result<Paypal> store(String userName, Integer paypalId, String payPalUrl, String currencyCode, String apiUsername, String apiPassword, String apiSignature, String apiEndpoint, Boolean activeProfile, String returnUrl, String cancelUrl, String paymentType, String environment);
       public Result<Paypal> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

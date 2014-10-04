@@ -56,11 +56,9 @@ public class BlogPostCategoryServiceImpl extends AbstractService implements Blog
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public BlogPostCategoryServiceImpl() 
     {
-        super();
-        
+        super();        
         blogPostCategoryDao = new BlogPostCategoryDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class BlogPostCategoryServiceImpl extends AbstractService implements Blog
     
     public BlogPostCategoryServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         blogPostCategoryDao = (BlogPostCategoryDao) context.getAttribute("blogPostCategoryDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

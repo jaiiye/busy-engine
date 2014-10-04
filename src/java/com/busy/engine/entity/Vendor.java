@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -155,7 +158,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Vendor.PROP_VENDOR_ID) || column.equals(Vendor.PROP_RANK) || column.equals(Vendor.PROP_VENDOR_STATUS) || column.equals(Vendor.PROP_META_TAG_ID) || column.equals(Vendor.PROP_TEMPLATE_ID) || column.equals(Vendor.PROP_VENDOR_TYPE_ID) )
+            if (column.equals(Vendor.PROP_VENDOR_ID) || column.equals(Vendor.PROP_VENDOR_NAME) || column.equals(Vendor.PROP_DESCRIPTION) || column.equals(Vendor.PROP_RANK) || column.equals(Vendor.PROP_VENDOR_STATUS) || column.equals(Vendor.PROP_META_TAG_ID) || column.equals(Vendor.PROP_TEMPLATE_ID) || column.equals(Vendor.PROP_VENDOR_TYPE_ID) )
             {
                 return true;
             }        

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -138,7 +141,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_ID) || column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_TYPE_ID) || column.equals(ItemAttribute.PROP_ITEM_ID) )
+            if (column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_ID) || column.equals(ItemAttribute.PROP_KEY) || column.equals(ItemAttribute.PROP_VALUE) || column.equals(ItemAttribute.PROP_LOCALE) || column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_TYPE_ID) || column.equals(ItemAttribute.PROP_ITEM_ID) )
             {
                 return true;
             }        

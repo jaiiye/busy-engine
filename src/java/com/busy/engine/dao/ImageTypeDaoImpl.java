@@ -355,7 +355,7 @@
                 ImageType.checkColumnSize(obj.getDescription(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE image_type SET com.busy.util.DatabaseColumn@1fb101f6=?,com.busy.util.DatabaseColumn@66c51d43=? WHERE ImageTypeId=?;");                    
+                prepareStatement("UPDATE image_type SET com.busy.util.DatabaseColumn@69a9ef90=?,com.busy.util.DatabaseColumn@2c158c74=? WHERE ImageTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getImageTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDescription());

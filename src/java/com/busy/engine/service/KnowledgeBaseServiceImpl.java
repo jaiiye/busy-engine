@@ -56,11 +56,9 @@ public class KnowledgeBaseServiceImpl extends AbstractService implements Knowled
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public KnowledgeBaseServiceImpl() 
     {
-        super();
-        
+        super();        
         knowledgeBaseDao = new KnowledgeBaseDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class KnowledgeBaseServiceImpl extends AbstractService implements Knowled
     
     public KnowledgeBaseServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         knowledgeBaseDao = (KnowledgeBaseDao) context.getAttribute("knowledgeBaseDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

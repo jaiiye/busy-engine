@@ -56,11 +56,9 @@ public class ServiceServiceImpl extends AbstractService implements ServiceServic
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ServiceServiceImpl() 
     {
-        super();
-        
+        super();        
         serviceDao = new ServiceDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ServiceServiceImpl extends AbstractService implements ServiceServic
     
     public ServiceServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         serviceDao = (ServiceDao) context.getAttribute("serviceDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

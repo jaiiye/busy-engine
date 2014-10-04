@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.BlogPost;
@@ -27,10 +46,6 @@ public interface BlogPostService
       public Result<BlogPost> store(String userName, Integer blogPostId, String title, String content, String imageURL, String tags, Integer featured, Integer ratingSum, Integer voteCount, Integer commentCount, Integer postStatus, String excerpt, Date lastModified, String locale, Integer userId, Integer blogId, Integer metaTagId);
       public Result<BlogPost> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

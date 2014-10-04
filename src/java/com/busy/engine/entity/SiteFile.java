@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -124,7 +127,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SiteFile.PROP_SITE_FILE_ID) )
+            if (column.equals(SiteFile.PROP_SITE_FILE_ID) || column.equals(SiteFile.PROP_FILE_NAME) || column.equals(SiteFile.PROP_DESCRIPTION) || column.equals(SiteFile.PROP_LABEL) )
             {
                 return true;
             }        

@@ -56,11 +56,9 @@ public class ItemCategoryServiceImpl extends AbstractService implements ItemCate
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ItemCategoryServiceImpl() 
     {
-        super();
-        
+        super();        
         itemCategoryDao = new ItemCategoryDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ItemCategoryServiceImpl extends AbstractService implements ItemCate
     
     public ItemCategoryServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         itemCategoryDao = (ItemCategoryDao) context.getAttribute("itemCategoryDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

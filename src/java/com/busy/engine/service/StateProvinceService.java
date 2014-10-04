@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.StateProvince;
@@ -27,10 +46,6 @@ public interface StateProvinceService
       public Result<StateProvince> store(String userName, Integer stateProvinceId, String name, String abbreviation, Integer countryId);
       public Result<StateProvince> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

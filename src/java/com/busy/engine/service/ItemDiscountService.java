@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ItemDiscount;
@@ -27,10 +46,6 @@ public interface ItemDiscountService
       public Result<ItemDiscount> store(String userName, Integer itemDiscountId, Integer itemId, Integer discountId, Integer applyToOptions);
       public Result<ItemDiscount> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

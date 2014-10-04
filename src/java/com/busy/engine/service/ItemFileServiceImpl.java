@@ -56,11 +56,9 @@ public class ItemFileServiceImpl extends AbstractService implements ItemFileServ
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ItemFileServiceImpl() 
     {
-        super();
-        
+        super();        
         itemFileDao = new ItemFileDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ItemFileServiceImpl extends AbstractService implements ItemFileServ
     
     public ItemFileServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         itemFileDao = (ItemFileDao) context.getAttribute("itemFileDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

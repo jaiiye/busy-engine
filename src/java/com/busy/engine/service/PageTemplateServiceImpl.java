@@ -56,11 +56,9 @@ public class PageTemplateServiceImpl extends AbstractService implements PageTemp
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public PageTemplateServiceImpl() 
     {
-        super();
-        
+        super();        
         pageTemplateDao = new PageTemplateDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class PageTemplateServiceImpl extends AbstractService implements PageTemp
     
     public PageTemplateServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         pageTemplateDao = (PageTemplateDao) context.getAttribute("pageTemplateDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

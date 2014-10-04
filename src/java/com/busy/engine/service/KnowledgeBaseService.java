@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.KnowledgeBase;
@@ -27,10 +46,6 @@ public interface KnowledgeBaseService
       public Result<KnowledgeBase> store(String userName, Integer knowledgeBaseId, String knowledgeBaseName, String description, Integer rank, Date lastModified, Integer latestTopic, Integer latestPost);
       public Result<KnowledgeBase> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

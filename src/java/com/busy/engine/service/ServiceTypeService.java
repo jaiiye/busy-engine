@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ServiceType;
@@ -27,10 +46,6 @@ public interface ServiceTypeService
       public Result<ServiceType> store(String userName, Integer serviceTypeId, String typeName, String desciption);
       public Result<ServiceType> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

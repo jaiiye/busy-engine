@@ -56,11 +56,9 @@ public class SiteFileServiceImpl extends AbstractService implements SiteFileServ
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public SiteFileServiceImpl() 
     {
-        super();
-        
+        super();        
         siteFileDao = new SiteFileDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class SiteFileServiceImpl extends AbstractService implements SiteFileServ
     
     public SiteFileServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         siteFileDao = (SiteFileDao) context.getAttribute("siteFileDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

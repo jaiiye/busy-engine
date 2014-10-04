@@ -394,7 +394,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_image SET com.busy.util.DatabaseColumn@3c565a4a=?,com.busy.util.DatabaseColumn@385e77fb=?,com.busy.util.DatabaseColumn@7bc471ac=?,com.busy.util.DatabaseColumn@5255e7a=?,com.busy.util.DatabaseColumn@bafd09e=? WHERE ItemImageId=?;");                    
+                prepareStatement("UPDATE item_image SET com.busy.util.DatabaseColumn@705dc3b3=?,com.busy.util.DatabaseColumn@5cd6142b=?,com.busy.util.DatabaseColumn@62f4c062=?,com.busy.util.DatabaseColumn@52d0a858=?,com.busy.util.DatabaseColumn@4c8ea9ea=? WHERE ItemImageId=?;");                    
                 preparedStatement.setInt(0, obj.getItemImageId());
                 preparedStatement.setString(1, obj.getImageName());
                 preparedStatement.setString(2, obj.getThumbnailName());

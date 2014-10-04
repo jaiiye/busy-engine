@@ -355,7 +355,7 @@
                 TemplateType.checkColumnSize(obj.getTypeValue(), 45);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE template_type SET com.busy.util.DatabaseColumn@3429c259=?,com.busy.util.DatabaseColumn@3a2292e1=? WHERE TemplateTypeId=?;");                    
+                prepareStatement("UPDATE template_type SET com.busy.util.DatabaseColumn@3243f937=?,com.busy.util.DatabaseColumn@555de8fd=? WHERE TemplateTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getTemplateTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getTypeValue());

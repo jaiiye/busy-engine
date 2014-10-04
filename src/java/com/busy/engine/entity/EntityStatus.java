@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -122,7 +125,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(EntityStatus.PROP_ENTITY_STATUS_ID) || column.equals(EntityStatus.PROP_STATUS_CODE) )
+            if (column.equals(EntityStatus.PROP_ENTITY_STATUS_ID) || column.equals(EntityStatus.PROP_STATUS_CODE) || column.equals(EntityStatus.PROP_STATUS_NAME) || column.equals(EntityStatus.PROP_APPLIES_TO) )
             {
                 return true;
             }        

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -115,7 +118,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(PageTemplate.PROP_PAGE_TEMPLATE_ID) )
+            if (column.equals(PageTemplate.PROP_PAGE_TEMPLATE_ID) || column.equals(PageTemplate.PROP_NAME) || column.equals(PageTemplate.PROP_MARKUP) )
             {
                 return true;
             }        

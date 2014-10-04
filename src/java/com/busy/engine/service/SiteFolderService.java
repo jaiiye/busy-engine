@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.SiteFolder;
@@ -27,10 +46,6 @@ public interface SiteFolderService
       public Result<SiteFolder> store(String userName, Integer siteFolderId, String folderName, String description, Integer rank, Integer siteId);
       public Result<SiteFolder> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

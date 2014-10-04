@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -145,7 +148,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(KnowledgeBase.PROP_KNOWLEDGE_BASE_ID) || column.equals(KnowledgeBase.PROP_RANK) || column.equals(KnowledgeBase.PROP_LATEST_TOPIC) || column.equals(KnowledgeBase.PROP_LATEST_POST) )
+            if (column.equals(KnowledgeBase.PROP_KNOWLEDGE_BASE_ID) || column.equals(KnowledgeBase.PROP_KNOWLEDGE_BASE_NAME) || column.equals(KnowledgeBase.PROP_DESCRIPTION) || column.equals(KnowledgeBase.PROP_RANK) || column.equals(KnowledgeBase.PROP_LAST_MODIFIED) || column.equals(KnowledgeBase.PROP_LATEST_TOPIC) || column.equals(KnowledgeBase.PROP_LATEST_POST) )
             {
                 return true;
             }        

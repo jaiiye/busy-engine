@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -117,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ServiceType.PROP_SERVICE_TYPE_ID) )
+            if (column.equals(ServiceType.PROP_SERVICE_TYPE_ID) || column.equals(ServiceType.PROP_TYPE_NAME) || column.equals(ServiceType.PROP_DESCIPTION) )
             {
                 return true;
             }        

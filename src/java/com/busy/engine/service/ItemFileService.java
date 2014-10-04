@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ItemFile;
@@ -27,10 +46,6 @@ public interface ItemFileService
       public Result<ItemFile> store(String userName, Integer itemFileId, String fileName, String description, String label, Integer hidden, Integer itemId);
       public Result<ItemFile> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

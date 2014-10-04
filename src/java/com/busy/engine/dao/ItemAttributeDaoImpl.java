@@ -400,7 +400,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_attribute SET com.busy.util.DatabaseColumn@604cf8b6=?,com.busy.util.DatabaseColumn@374820a1=?,com.busy.util.DatabaseColumn@56831f4b=?,com.busy.util.DatabaseColumn@2a8e5d21=?,com.busy.util.DatabaseColumn@2d80898e=? WHERE ItemAttributeId=?;");                    
+                prepareStatement("UPDATE item_attribute SET com.busy.util.DatabaseColumn@29c12ee4=?,com.busy.util.DatabaseColumn@69aea540=?,com.busy.util.DatabaseColumn@1b01a40d=?,com.busy.util.DatabaseColumn@400f4846=?,com.busy.util.DatabaseColumn@6099f8ad=? WHERE ItemAttributeId=?;");                    
                 preparedStatement.setInt(0, obj.getItemAttributeId());
                 preparedStatement.setString(1, obj.getKey());
                 preparedStatement.setString(2, obj.getValue());

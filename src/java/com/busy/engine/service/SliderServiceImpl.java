@@ -56,11 +56,9 @@ public class SliderServiceImpl extends AbstractService implements SliderService
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public SliderServiceImpl() 
     {
-        super();
-        
+        super();        
         sliderDao = new SliderDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class SliderServiceImpl extends AbstractService implements SliderService
     
     public SliderServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         sliderDao = (SliderDao) context.getAttribute("sliderDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

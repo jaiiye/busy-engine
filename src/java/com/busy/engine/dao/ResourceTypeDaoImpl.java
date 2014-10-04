@@ -355,7 +355,7 @@
                 ResourceType.checkColumnSize(obj.getTypeValue(), 150);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE resource_type SET com.busy.util.DatabaseColumn@2302eed8=?,com.busy.util.DatabaseColumn@704d7804=? WHERE ResourceTypeId=?;");                    
+                prepareStatement("UPDATE resource_type SET com.busy.util.DatabaseColumn@2ccd0a88=?,com.busy.util.DatabaseColumn@53c382a1=? WHERE ResourceTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getResourceTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getTypeValue());

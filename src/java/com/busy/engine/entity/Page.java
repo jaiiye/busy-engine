@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -156,7 +159,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Page.PROP_PAGE_ID) || column.equals(Page.PROP_PAGE_STATUS) || column.equals(Page.PROP_FORM_ID) || column.equals(Page.PROP_SLIDER_ID) || column.equals(Page.PROP_META_TAG_ID) || column.equals(Page.PROP_TEMPLATE_ID) )
+            if (column.equals(Page.PROP_PAGE_ID) || column.equals(Page.PROP_PAGE_NAME) || column.equals(Page.PROP_CONTENT) || column.equals(Page.PROP_PAGE_STATUS) || column.equals(Page.PROP_FORM_ID) || column.equals(Page.PROP_SLIDER_ID) || column.equals(Page.PROP_META_TAG_ID) || column.equals(Page.PROP_TEMPLATE_ID) )
             {
                 return true;
             }        

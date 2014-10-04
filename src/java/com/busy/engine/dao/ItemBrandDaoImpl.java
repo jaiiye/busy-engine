@@ -355,7 +355,7 @@
                 ItemBrand.checkColumnSize(obj.getDescription(), 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_brand SET com.busy.util.DatabaseColumn@3c1a1875=?,com.busy.util.DatabaseColumn@62757fde=? WHERE ItemBrandId=?;");                    
+                prepareStatement("UPDATE item_brand SET com.busy.util.DatabaseColumn@38ffe5b1=?,com.busy.util.DatabaseColumn@5b451a38=? WHERE ItemBrandId=?;");                    
                 preparedStatement.setInt(0, obj.getItemBrandId());
                 preparedStatement.setString(1, obj.getBrandName());
                 preparedStatement.setString(2, obj.getDescription());

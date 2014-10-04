@@ -400,7 +400,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE template SET com.busy.util.DatabaseColumn@11bad3ea=?,com.busy.util.DatabaseColumn@7dc3fba9=?,com.busy.util.DatabaseColumn@14a85b74=?,com.busy.util.DatabaseColumn@6a5d2710=?,com.busy.util.DatabaseColumn@2d3f9c32=? WHERE TemplateId=?;");                    
+                prepareStatement("UPDATE template SET com.busy.util.DatabaseColumn@67069da6=?,com.busy.util.DatabaseColumn@5d41d167=?,com.busy.util.DatabaseColumn@40f9f001=?,com.busy.util.DatabaseColumn@6f55dd54=?,com.busy.util.DatabaseColumn@3c6d86b5=? WHERE TemplateId=?;");                    
                 preparedStatement.setInt(0, obj.getTemplateId());
                 preparedStatement.setString(1, obj.getTemplateName());
                 preparedStatement.setString(2, obj.getMarkup());

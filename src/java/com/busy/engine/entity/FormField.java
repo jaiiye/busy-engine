@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -180,7 +183,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(FormField.PROP_FORM_FIELD_ID) || column.equals(FormField.PROP_RANK) || column.equals(FormField.PROP_OPTIONAL) || column.equals(FormField.PROP_FORM_FIELD_TYPE_ID) || column.equals(FormField.PROP_FORM_ID) )
+            if (column.equals(FormField.PROP_FORM_FIELD_ID) || column.equals(FormField.PROP_FIELD_NAME) || column.equals(FormField.PROP_LABEL) || column.equals(FormField.PROP_ERROR_TEXT) || column.equals(FormField.PROP_VALIDATION_REGEX) || column.equals(FormField.PROP_RANK) || column.equals(FormField.PROP_DEFAULT_VALUE) || column.equals(FormField.PROP_OPTIONS) || column.equals(FormField.PROP_GROUP_NAME) || column.equals(FormField.PROP_OPTIONAL) || column.equals(FormField.PROP_FORM_FIELD_TYPE_ID) || column.equals(FormField.PROP_FORM_ID) )
             {
                 return true;
             }        

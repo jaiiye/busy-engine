@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ServiceCharge;
@@ -27,10 +46,6 @@ public interface ServiceChargeService
       public Result<ServiceCharge> store(String userName, Integer serviceChargeId, String chargeName, String description, String rate, String units, Date date, Integer userServiceId);
       public Result<ServiceCharge> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

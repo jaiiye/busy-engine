@@ -421,7 +421,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_service SET com.busy.util.DatabaseColumn@50082a89=?,com.busy.util.DatabaseColumn@1f6a9b48=?,com.busy.util.DatabaseColumn@5764bf5d=?,com.busy.util.DatabaseColumn@256d2a22=?,com.busy.util.DatabaseColumn@34201064=?,com.busy.util.DatabaseColumn@7fdb7d73=?,com.busy.util.DatabaseColumn@d37bb82=?,com.busy.util.DatabaseColumn@4147bc3c=?,com.busy.util.DatabaseColumn@75d02740=?,com.busy.util.DatabaseColumn@5144fc6c=? WHERE UserServiceId=?;");                    
+                prepareStatement("UPDATE user_service SET com.busy.util.DatabaseColumn@5eb87906=?,com.busy.util.DatabaseColumn@c513d6a=?,com.busy.util.DatabaseColumn@7fa03079=?,com.busy.util.DatabaseColumn@3798fb9=?,com.busy.util.DatabaseColumn@1e14a699=?,com.busy.util.DatabaseColumn@1b2b625c=?,com.busy.util.DatabaseColumn@65f6bab8=?,com.busy.util.DatabaseColumn@2abde5f8=?,com.busy.util.DatabaseColumn@11a6be58=?,com.busy.util.DatabaseColumn@51df17b2=? WHERE UserServiceId=?;");                    
                 preparedStatement.setInt(0, obj.getUserServiceId());
                 preparedStatement.setDate(1, new java.sql.Date(obj.getStartDate().getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(obj.getEndDate().getTime()));

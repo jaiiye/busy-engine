@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.RelatedItem;
@@ -27,10 +46,6 @@ public interface RelatedItemService
       public Result<RelatedItem> store(String userName, Integer relatedItemId, Integer item1, Integer item2);
       public Result<RelatedItem> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ItemType;
@@ -27,10 +46,6 @@ public interface ItemTypeService
       public Result<ItemType> store(String userName, Integer itemTypeId, String typeName, Integer rank);
       public Result<ItemType> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

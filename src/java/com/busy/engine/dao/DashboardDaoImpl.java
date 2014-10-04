@@ -391,7 +391,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE dashboard SET com.busy.util.DatabaseColumn@572ad941=?,com.busy.util.DatabaseColumn@440cb121=?,com.busy.util.DatabaseColumn@7e682186=?,com.busy.util.DatabaseColumn@91f2e0=?,com.busy.util.DatabaseColumn@170c362=?,com.busy.util.DatabaseColumn@2054ffd4=?,com.busy.util.DatabaseColumn@1f8f9e49=?,com.busy.util.DatabaseColumn@100669aa=?,com.busy.util.DatabaseColumn@17eac31b=?,com.busy.util.DatabaseColumn@1047346d=?,com.busy.util.DatabaseColumn@73599dfa=?,com.busy.util.DatabaseColumn@50b1e102=?,com.busy.util.DatabaseColumn@11021214=?,com.busy.util.DatabaseColumn@38cfb805=? WHERE DashboardId=?;");                    
+                prepareStatement("UPDATE dashboard SET com.busy.util.DatabaseColumn@3b6b6102=?,com.busy.util.DatabaseColumn@1cae767=?,com.busy.util.DatabaseColumn@241a2c77=?,com.busy.util.DatabaseColumn@4b71c03=?,com.busy.util.DatabaseColumn@64b40ee6=?,com.busy.util.DatabaseColumn@32132cc8=?,com.busy.util.DatabaseColumn@471fc769=?,com.busy.util.DatabaseColumn@7bf49c8d=?,com.busy.util.DatabaseColumn@3ff37e2b=?,com.busy.util.DatabaseColumn@142d6071=?,com.busy.util.DatabaseColumn@2db0d912=?,com.busy.util.DatabaseColumn@72ff38dd=?,com.busy.util.DatabaseColumn@5659128f=?,com.busy.util.DatabaseColumn@2988cedd=? WHERE DashboardId=?;");                    
                 preparedStatement.setInt(0, obj.getDashboardId());
                 preparedStatement.setInt(1, obj.getUserCount());
                 preparedStatement.setInt(2, obj.getBlogPostCount());

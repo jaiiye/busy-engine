@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -130,7 +133,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SiteAttribute.PROP_SITE_ATTRIBUTE_ID) || column.equals(SiteAttribute.PROP_SITE_ID) )
+            if (column.equals(SiteAttribute.PROP_SITE_ATTRIBUTE_ID) || column.equals(SiteAttribute.PROP_ATTRIBUTE_KEY) || column.equals(SiteAttribute.PROP_ATTRIBUTE_VALUE) || column.equals(SiteAttribute.PROP_ATTRIBUTE_TYPE) || column.equals(SiteAttribute.PROP_SITE_ID) )
             {
                 return true;
             }        

@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.Locale;
@@ -27,10 +46,6 @@ public interface LocaleService
       public Result<Locale> store(String userName, Integer localeId, String localeString, String localeCharacterSet);
       public Result<Locale> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

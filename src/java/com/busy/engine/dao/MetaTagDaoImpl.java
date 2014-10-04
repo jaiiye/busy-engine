@@ -358,7 +358,7 @@
                 MetaTag.checkColumnSize(obj.getKeywords(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE meta_tag SET com.busy.util.DatabaseColumn@15441284=?,com.busy.util.DatabaseColumn@3841053=?,com.busy.util.DatabaseColumn@3a098c3b=? WHERE MetaTagId=?;");                    
+                prepareStatement("UPDATE meta_tag SET com.busy.util.DatabaseColumn@66243b11=?,com.busy.util.DatabaseColumn@220f46c0=?,com.busy.util.DatabaseColumn@22a9cc20=? WHERE MetaTagId=?;");                    
                 preparedStatement.setInt(0, obj.getMetaTagId());
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getDescription());

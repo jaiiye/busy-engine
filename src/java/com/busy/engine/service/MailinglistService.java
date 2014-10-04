@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.Mailinglist;
@@ -27,10 +46,6 @@ public interface MailinglistService
       public Result<Mailinglist> store(String userName, Integer mailinglistId, String fullName, String email, Integer listStatus, Integer userId);
       public Result<Mailinglist> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

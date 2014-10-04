@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -110,7 +113,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ItemAvailability.PROP_ITEM_AVAILABILITY_ID) )
+            if (column.equals(ItemAvailability.PROP_ITEM_AVAILABILITY_ID) || column.equals(ItemAvailability.PROP_TYPE) )
             {
                 return true;
             }        

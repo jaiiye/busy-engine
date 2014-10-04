@@ -56,11 +56,9 @@ public class ItemBrandServiceImpl extends AbstractService implements ItemBrandSe
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ItemBrandServiceImpl() 
     {
-        super();
-        
+        super();        
         itemBrandDao = new ItemBrandDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ItemBrandServiceImpl extends AbstractService implements ItemBrandSe
     
     public ItemBrandServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         itemBrandDao = (ItemBrandDao) context.getAttribute("itemBrandDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

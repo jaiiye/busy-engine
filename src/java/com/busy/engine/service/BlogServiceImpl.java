@@ -56,11 +56,9 @@ public class BlogServiceImpl extends AbstractService implements BlogService
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public BlogServiceImpl() 
     {
-        super();
-        
+        super();        
         blogDao = new BlogDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class BlogServiceImpl extends AbstractService implements BlogService
     
     public BlogServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         blogDao = (BlogDao) context.getAttribute("blogDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

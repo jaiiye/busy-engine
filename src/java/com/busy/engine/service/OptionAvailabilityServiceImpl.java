@@ -56,11 +56,9 @@ public class OptionAvailabilityServiceImpl extends AbstractService implements Op
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public OptionAvailabilityServiceImpl() 
     {
-        super();
-        
+        super();        
         optionAvailabilityDao = new OptionAvailabilityDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class OptionAvailabilityServiceImpl extends AbstractService implements Op
     
     public OptionAvailabilityServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         optionAvailabilityDao = (OptionAvailabilityDao) context.getAttribute("optionAvailabilityDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

@@ -355,7 +355,7 @@
                 PageTemplate.checkColumnSize(obj.getMarkup(), 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE page_template SET com.busy.util.DatabaseColumn@6cae7d61=?,com.busy.util.DatabaseColumn@d0c4c3d=? WHERE PageTemplateId=?;");                    
+                prepareStatement("UPDATE page_template SET com.busy.util.DatabaseColumn@7f9e32dd=?,com.busy.util.DatabaseColumn@65dfa1fa=? WHERE PageTemplateId=?;");                    
                 preparedStatement.setInt(0, obj.getPageTemplateId());
                 preparedStatement.setString(1, obj.getName());
                 preparedStatement.setString(2, obj.getMarkup());

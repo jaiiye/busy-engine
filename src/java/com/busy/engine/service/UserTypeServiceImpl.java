@@ -56,11 +56,9 @@ public class UserTypeServiceImpl extends AbstractService implements UserTypeServ
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public UserTypeServiceImpl() 
     {
-        super();
-        
+        super();        
         userTypeDao = new UserTypeDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class UserTypeServiceImpl extends AbstractService implements UserTypeServ
     
     public UserTypeServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         userTypeDao = (UserTypeDao) context.getAttribute("userTypeDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

@@ -56,11 +56,9 @@ public class UserGroupServiceImpl extends AbstractService implements UserGroupSe
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public UserGroupServiceImpl() 
     {
-        super();
-        
+        super();        
         userGroupDao = new UserGroupDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class UserGroupServiceImpl extends AbstractService implements UserGroupSe
     
     public UserGroupServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         userGroupDao = (UserGroupDao) context.getAttribute("userGroupDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

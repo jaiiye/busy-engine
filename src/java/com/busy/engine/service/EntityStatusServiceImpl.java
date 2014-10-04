@@ -56,11 +56,9 @@ public class EntityStatusServiceImpl extends AbstractService implements EntitySt
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public EntityStatusServiceImpl() 
     {
-        super();
-        
+        super();        
         entityStatusDao = new EntityStatusDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class EntityStatusServiceImpl extends AbstractService implements EntitySt
     
     public EntityStatusServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         entityStatusDao = (EntityStatusDao) context.getAttribute("entityStatusDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

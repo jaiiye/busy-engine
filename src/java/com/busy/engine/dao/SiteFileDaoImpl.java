@@ -358,7 +358,7 @@
                 SiteFile.checkColumnSize(obj.getLabel(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_file SET com.busy.util.DatabaseColumn@20f00bd8=?,com.busy.util.DatabaseColumn@724a3d09=?,com.busy.util.DatabaseColumn@84ceac=? WHERE SiteFileId=?;");                    
+                prepareStatement("UPDATE site_file SET com.busy.util.DatabaseColumn@7dd7fbed=?,com.busy.util.DatabaseColumn@7a4b643a=?,com.busy.util.DatabaseColumn@3c36d27d=? WHERE SiteFileId=?;");                    
                 preparedStatement.setInt(0, obj.getSiteFileId());
                 preparedStatement.setString(1, obj.getFileName());
                 preparedStatement.setString(2, obj.getDescription());

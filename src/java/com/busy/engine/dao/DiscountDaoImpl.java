@@ -376,7 +376,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE discount SET com.busy.util.DatabaseColumn@193d9918=?,com.busy.util.DatabaseColumn@fb7c9db=?,com.busy.util.DatabaseColumn@1d81de06=?,com.busy.util.DatabaseColumn@3bc8bf6d=?,com.busy.util.DatabaseColumn@4ec80455=?,com.busy.util.DatabaseColumn@7f80e546=?,com.busy.util.DatabaseColumn@6ce2655e=?,com.busy.util.DatabaseColumn@122f9c78=?,com.busy.util.DatabaseColumn@1ccbd8c4=? WHERE DiscountId=?;");                    
+                prepareStatement("UPDATE discount SET com.busy.util.DatabaseColumn@40222029=?,com.busy.util.DatabaseColumn@4229d319=?,com.busy.util.DatabaseColumn@7665db7f=?,com.busy.util.DatabaseColumn@55fa43a1=?,com.busy.util.DatabaseColumn@488125f=?,com.busy.util.DatabaseColumn@835a8cc=?,com.busy.util.DatabaseColumn@50532496=?,com.busy.util.DatabaseColumn@57b38276=?,com.busy.util.DatabaseColumn@136d7835=? WHERE DiscountId=?;");                    
                 preparedStatement.setInt(0, obj.getDiscountId());
                 preparedStatement.setString(1, obj.getDiscountName());
                 preparedStatement.setDouble(2, obj.getDiscountAmount());

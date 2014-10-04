@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.SiteLanguage;
@@ -27,10 +46,6 @@ public interface SiteLanguageService
       public Result<SiteLanguage> store(String userName, Integer siteLanguageId, String languageName, String locale, Integer rtl, String flagFileName, Integer siteId);
       public Result<SiteLanguage> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

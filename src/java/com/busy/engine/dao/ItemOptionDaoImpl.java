@@ -355,7 +355,7 @@
                 ItemOption.checkColumnSize(obj.getDescription(), 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_option SET com.busy.util.DatabaseColumn@13bdb150=?,com.busy.util.DatabaseColumn@41bcd48a=? WHERE ItemOptionId=?;");                    
+                prepareStatement("UPDATE item_option SET com.busy.util.DatabaseColumn@57687cfc=?,com.busy.util.DatabaseColumn@7ed2fb07=? WHERE ItemOptionId=?;");                    
                 preparedStatement.setInt(0, obj.getItemOptionId());
                 preparedStatement.setString(1, obj.getOptionName());
                 preparedStatement.setString(2, obj.getDescription());

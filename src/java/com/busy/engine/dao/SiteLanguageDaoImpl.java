@@ -394,7 +394,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_language SET com.busy.util.DatabaseColumn@305b12cb=?,com.busy.util.DatabaseColumn@54755d8=?,com.busy.util.DatabaseColumn@7c571ce9=?,com.busy.util.DatabaseColumn@579582bf=?,com.busy.util.DatabaseColumn@3fb00fcc=? WHERE SiteLanguageId=?;");                    
+                prepareStatement("UPDATE site_language SET com.busy.util.DatabaseColumn@33d013af=?,com.busy.util.DatabaseColumn@278744be=?,com.busy.util.DatabaseColumn@1f0aad7a=?,com.busy.util.DatabaseColumn@2a9c349b=?,com.busy.util.DatabaseColumn@1962070c=? WHERE SiteLanguageId=?;");                    
                 preparedStatement.setInt(0, obj.getSiteLanguageId());
                 preparedStatement.setString(1, obj.getLanguageName());
                 preparedStatement.setString(2, obj.getLocale());

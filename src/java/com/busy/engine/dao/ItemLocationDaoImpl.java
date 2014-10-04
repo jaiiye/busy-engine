@@ -406,7 +406,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_location SET com.busy.util.DatabaseColumn@2f60d32c=?,com.busy.util.DatabaseColumn@44c6609d=?,com.busy.util.DatabaseColumn@266c45a8=?,com.busy.util.DatabaseColumn@24845cc2=?,com.busy.util.DatabaseColumn@d5412cd=? WHERE ItemLocationId=?;");                    
+                prepareStatement("UPDATE item_location SET com.busy.util.DatabaseColumn@2487657e=?,com.busy.util.DatabaseColumn@74782e8a=?,com.busy.util.DatabaseColumn@5a8ecbc7=?,com.busy.util.DatabaseColumn@144c67cf=?,com.busy.util.DatabaseColumn@b7f4cad=? WHERE ItemLocationId=?;");                    
                 preparedStatement.setInt(0, obj.getItemLocationId());
                 preparedStatement.setString(1, obj.getLatitude());
                 preparedStatement.setString(2, obj.getLongitude());

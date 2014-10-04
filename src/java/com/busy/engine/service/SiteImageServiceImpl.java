@@ -56,11 +56,9 @@ public class SiteImageServiceImpl extends AbstractService implements SiteImageSe
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public SiteImageServiceImpl() 
     {
-        super();
-        
+        super();        
         siteImageDao = new SiteImageDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class SiteImageServiceImpl extends AbstractService implements SiteImageSe
     
     public SiteImageServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         siteImageDao = (SiteImageDao) context.getAttribute("siteImageDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

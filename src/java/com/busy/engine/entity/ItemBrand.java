@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -119,7 +122,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ItemBrand.PROP_ITEM_BRAND_ID) )
+            if (column.equals(ItemBrand.PROP_ITEM_BRAND_ID) || column.equals(ItemBrand.PROP_BRAND_NAME) || column.equals(ItemBrand.PROP_DESCRIPTION) )
             {
                 return true;
             }        

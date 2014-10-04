@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.SitePage;
@@ -27,10 +46,6 @@ public interface SitePageService
       public Result<SitePage> store(String userName, Integer sitePageId, Integer siteId, Integer pageId);
       public Result<SitePage> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

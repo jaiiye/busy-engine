@@ -436,7 +436,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE blog_post SET com.busy.util.DatabaseColumn@1a5ad3af=?,com.busy.util.DatabaseColumn@6e4770f6=?,com.busy.util.DatabaseColumn@8d54d1f=?,com.busy.util.DatabaseColumn@84f15ce=?,com.busy.util.DatabaseColumn@44c468c3=?,com.busy.util.DatabaseColumn@11d1706d=?,com.busy.util.DatabaseColumn@334e7afd=?,com.busy.util.DatabaseColumn@435ff83f=?,com.busy.util.DatabaseColumn@243a12e7=?,com.busy.util.DatabaseColumn@3ef25c15=?,com.busy.util.DatabaseColumn@7e2b40a4=?,com.busy.util.DatabaseColumn@4289c15e=?,com.busy.util.DatabaseColumn@36d05ec2=?,com.busy.util.DatabaseColumn@1aeebef9=?,com.busy.util.DatabaseColumn@3e64f360=? WHERE BlogPostId=?;");                    
+                prepareStatement("UPDATE blog_post SET com.busy.util.DatabaseColumn@b01d785=?,com.busy.util.DatabaseColumn@1b2be3e2=?,com.busy.util.DatabaseColumn@2a4c8ee=?,com.busy.util.DatabaseColumn@777e4c6e=?,com.busy.util.DatabaseColumn@724600fb=?,com.busy.util.DatabaseColumn@3636d9a2=?,com.busy.util.DatabaseColumn@12f19432=?,com.busy.util.DatabaseColumn@1769a73e=?,com.busy.util.DatabaseColumn@55ea3cf0=?,com.busy.util.DatabaseColumn@55111426=?,com.busy.util.DatabaseColumn@4b5f5ab2=?,com.busy.util.DatabaseColumn@115544b0=?,com.busy.util.DatabaseColumn@15dce7d6=?,com.busy.util.DatabaseColumn@4831716f=?,com.busy.util.DatabaseColumn@798a3811=? WHERE BlogPostId=?;");                    
                 preparedStatement.setInt(0, obj.getBlogPostId());
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getContent());

@@ -56,11 +56,9 @@ public class DashboardServiceImpl extends AbstractService implements DashboardSe
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public DashboardServiceImpl() 
     {
-        super();
-        
+        super();        
         dashboardDao = new DashboardDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class DashboardServiceImpl extends AbstractService implements DashboardSe
     
     public DashboardServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         dashboardDao = (DashboardDao) context.getAttribute("dashboardDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

@@ -56,11 +56,9 @@ public class StateProvinceServiceImpl extends AbstractService implements StatePr
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public StateProvinceServiceImpl() 
     {
-        super();
-        
+        super();        
         stateProvinceDao = new StateProvinceDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class StateProvinceServiceImpl extends AbstractService implements StatePr
     
     public StateProvinceServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         stateProvinceDao = (StateProvinceDao) context.getAttribute("stateProvinceDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

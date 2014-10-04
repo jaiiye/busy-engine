@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ItemLocation;
@@ -27,10 +46,6 @@ public interface ItemLocationService
       public Result<ItemLocation> store(String userName, Integer itemLocationId, String latitude, String longitude, Integer itemId, Integer addressId, Integer contactId);
       public Result<ItemLocation> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

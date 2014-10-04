@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -145,7 +148,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SiteImage.PROP_SITE_IMAGE_ID) || column.equals(SiteImage.PROP_RANK) || column.equals(SiteImage.PROP_IMAGE_TYPE_ID) || column.equals(SiteImage.PROP_SITE_ID) )
+            if (column.equals(SiteImage.PROP_SITE_IMAGE_ID) || column.equals(SiteImage.PROP_FILE_NAME) || column.equals(SiteImage.PROP_DESCRIPTION) || column.equals(SiteImage.PROP_LINK_URL) || column.equals(SiteImage.PROP_RANK) || column.equals(SiteImage.PROP_IMAGE_TYPE_ID) || column.equals(SiteImage.PROP_SITE_ID) )
             {
                 return true;
             }        

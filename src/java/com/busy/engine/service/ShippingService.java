@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.Shipping;
@@ -27,10 +46,6 @@ public interface ShippingService
       public Result<Shipping> store(String userName, Integer shippingId, String methodName, Double quantity, String unitOfMeasure, Double ratePerUnitCost, Double additionalCost, Integer stateProvinceId, Integer countryId);
       public Result<Shipping> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

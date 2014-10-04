@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -110,7 +113,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(BlogType.PROP_BLOG_TYPE_ID) )
+            if (column.equals(BlogType.PROP_BLOG_TYPE_ID) || column.equals(BlogType.PROP_TYPE_NAME) )
             {
                 return true;
             }        

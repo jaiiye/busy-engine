@@ -391,7 +391,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE file_folder SET com.busy.util.DatabaseColumn@cc4c7=?,com.busy.util.DatabaseColumn@325cafa4=? WHERE FileFolderId=?;");                    
+                prepareStatement("UPDATE file_folder SET com.busy.util.DatabaseColumn@29c8a6b8=?,com.busy.util.DatabaseColumn@1740370c=? WHERE FileFolderId=?;");                    
                 preparedStatement.setInt(0, obj.getFileFolderId());
                 preparedStatement.setInt(1, obj.getSiteFileId());
                 preparedStatement.setInt(2, obj.getSiteFolderId());

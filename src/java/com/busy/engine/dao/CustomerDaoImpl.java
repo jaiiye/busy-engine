@@ -341,7 +341,7 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
         {
 
             openConnection();
-            prepareStatement("UPDATE customer SET com.busy.util.DatabaseColumn@44e6bbe7=?,com.busy.util.DatabaseColumn@27143046=?,com.busy.util.DatabaseColumn@15ff3576=?,com.busy.util.DatabaseColumn@5f678acb=?,com.busy.util.DatabaseColumn@2eaf3b43=? WHERE CustomerId=?;");
+            prepareStatement("UPDATE customer SET com.busy.util.DatabaseColumn@362ea91d=?,com.busy.util.DatabaseColumn@34201002=?,com.busy.util.DatabaseColumn@4babe02d=?,com.busy.util.DatabaseColumn@410282c4=?,com.busy.util.DatabaseColumn@2a7bdb8=? WHERE CustomerId=?;");
             preparedStatement.setInt(0, obj.getCustomerId());
             preparedStatement.setInt(1, obj.getContactId());
             preparedStatement.setInt(2, obj.getUserId());

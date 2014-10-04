@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ItemImage;
@@ -27,10 +46,6 @@ public interface ItemImageService
       public Result<ItemImage> store(String userName, Integer itemImageId, String imageName, String thumbnailName, String alternateText, Integer rank, Integer itemId);
       public Result<ItemImage> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

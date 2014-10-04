@@ -56,11 +56,9 @@ public class DiscountServiceImpl extends AbstractService implements DiscountServ
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public DiscountServiceImpl() 
     {
-        super();
-        
+        super();        
         discountDao = new DiscountDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class DiscountServiceImpl extends AbstractService implements DiscountServ
     
     public DiscountServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         discountDao = (DiscountDao) context.getAttribute("discountDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

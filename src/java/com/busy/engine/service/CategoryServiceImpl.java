@@ -56,11 +56,9 @@ public class CategoryServiceImpl extends AbstractService implements CategoryServ
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public CategoryServiceImpl() 
     {
-        super();
-        
+        super();        
         categoryDao = new CategoryDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class CategoryServiceImpl extends AbstractService implements CategoryServ
     
     public CategoryServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         categoryDao = (CategoryDao) context.getAttribute("categoryDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

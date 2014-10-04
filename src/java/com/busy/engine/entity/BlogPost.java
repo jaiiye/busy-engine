@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -213,7 +216,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(BlogPost.PROP_BLOG_POST_ID) || column.equals(BlogPost.PROP_FEATURED) || column.equals(BlogPost.PROP_RATING_SUM) || column.equals(BlogPost.PROP_VOTE_COUNT) || column.equals(BlogPost.PROP_COMMENT_COUNT) || column.equals(BlogPost.PROP_POST_STATUS) || column.equals(BlogPost.PROP_USER_ID) || column.equals(BlogPost.PROP_BLOG_ID) || column.equals(BlogPost.PROP_META_TAG_ID) )
+            if (column.equals(BlogPost.PROP_BLOG_POST_ID) || column.equals(BlogPost.PROP_TITLE) || column.equals(BlogPost.PROP_CONTENT) || column.equals(BlogPost.PROP_IMAGE_U_R_L) || column.equals(BlogPost.PROP_TAGS) || column.equals(BlogPost.PROP_FEATURED) || column.equals(BlogPost.PROP_RATING_SUM) || column.equals(BlogPost.PROP_VOTE_COUNT) || column.equals(BlogPost.PROP_COMMENT_COUNT) || column.equals(BlogPost.PROP_POST_STATUS) || column.equals(BlogPost.PROP_EXCERPT) || column.equals(BlogPost.PROP_LAST_MODIFIED) || column.equals(BlogPost.PROP_LOCALE) || column.equals(BlogPost.PROP_USER_ID) || column.equals(BlogPost.PROP_BLOG_ID) || column.equals(BlogPost.PROP_META_TAG_ID) )
             {
                 return true;
             }        

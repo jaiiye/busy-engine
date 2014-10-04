@@ -388,7 +388,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE state_province SET com.busy.util.DatabaseColumn@42d74746=?,com.busy.util.DatabaseColumn@78902d96=?,com.busy.util.DatabaseColumn@5e53d17d=? WHERE StateProvinceId=?;");                    
+                prepareStatement("UPDATE state_province SET com.busy.util.DatabaseColumn@24858c69=?,com.busy.util.DatabaseColumn@2964d7ab=?,com.busy.util.DatabaseColumn@21ed3f1f=? WHERE StateProvinceId=?;");                    
                 preparedStatement.setInt(0, obj.getStateProvinceId());
                 preparedStatement.setString(1, obj.getName());
                 preparedStatement.setString(2, obj.getAbbreviation());

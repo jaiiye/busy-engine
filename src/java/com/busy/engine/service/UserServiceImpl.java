@@ -1,8 +1,11 @@
 package com.busy.engine.service;
+
 import com.busy.engine.dao.UserDao;
 import com.busy.engine.dao.UserDaoImpl;
+
 import com.busy.engine.dao.UserRoleDao;
 import com.busy.engine.dao.UserRoleDaoImpl;
+import com.busy.engine.entity.User;
 import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
@@ -15,12 +18,14 @@ public class UserServiceImpl extends AbstractService implements UserService
 {
 
     protected UserDao userDao;
+
     protected UserRoleDao userRoleDao;
 
     public UserServiceImpl()
     {
         super();
         userDao = new UserDaoImpl();
+
         userRoleDao = new UserRoleDaoImpl();
     }
 
@@ -28,6 +33,7 @@ public class UserServiceImpl extends AbstractService implements UserService
     {
         super();
         userDao = (UserDao) context.getAttribute("userDao");
+
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
@@ -213,7 +219,8 @@ public class UserServiceImpl extends AbstractService implements UserService
             }
         }
     }
-
+    
+    
     @Override
     public Result<User> findByUsernamePassword(String username, String password)
     {

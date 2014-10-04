@@ -56,11 +56,9 @@ public class CustomerOrderServiceImpl extends AbstractService implements Custome
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public CustomerOrderServiceImpl() 
     {
-        super();
-        
+        super();        
         customerOrderDao = new CustomerOrderDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class CustomerOrderServiceImpl extends AbstractService implements Custome
     
     public CustomerOrderServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         customerOrderDao = (CustomerOrderDao) context.getAttribute("customerOrderDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

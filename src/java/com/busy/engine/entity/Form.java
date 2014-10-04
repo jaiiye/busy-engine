@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -156,7 +159,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Form.PROP_FORM_ID) || column.equals(Form.PROP_RESETTABLE) || column.equals(Form.PROP_FILE_UPLOAD) )
+            if (column.equals(Form.PROP_FORM_ID) || column.equals(Form.PROP_FORM_NAME) || column.equals(Form.PROP_DESCRIPTION) || column.equals(Form.PROP_SUBMISSION_EMAIL) || column.equals(Form.PROP_SUBMISSION_METHOD) || column.equals(Form.PROP_ACTION) || column.equals(Form.PROP_RESETTABLE) || column.equals(Form.PROP_FILE_UPLOAD) )
             {
                 return true;
             }        

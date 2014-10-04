@@ -56,11 +56,9 @@ public class OrderServiceImpl extends AbstractService implements OrderService
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public OrderServiceImpl() 
     {
-        super();
-        
+        super();        
         orderDao = new OrderDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class OrderServiceImpl extends AbstractService implements OrderService
     
     public OrderServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         orderDao = (OrderDao) context.getAttribute("orderDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

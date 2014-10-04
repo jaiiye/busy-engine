@@ -394,7 +394,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE category SET com.busy.util.DatabaseColumn@22384566=?,com.busy.util.DatabaseColumn@5253c34f=?,com.busy.util.DatabaseColumn@29f5a26d=? WHERE CategoryId=?;");                    
+                prepareStatement("UPDATE category SET com.busy.util.DatabaseColumn@340605ff=?,com.busy.util.DatabaseColumn@262b25bc=?,com.busy.util.DatabaseColumn@528a7767=? WHERE CategoryId=?;");                    
                 preparedStatement.setInt(0, obj.getCategoryId());
                 preparedStatement.setString(1, obj.getCategoryName());
                 preparedStatement.setInt(2, obj.getDiscountId());

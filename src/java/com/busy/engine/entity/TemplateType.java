@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -117,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(TemplateType.PROP_TEMPLATE_TYPE_ID) )
+            if (column.equals(TemplateType.PROP_TEMPLATE_TYPE_ID) || column.equals(TemplateType.PROP_TYPE_NAME) || column.equals(TemplateType.PROP_TYPE_VALUE) )
             {
                 return true;
             }        

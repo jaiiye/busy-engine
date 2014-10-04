@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -117,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SliderType.PROP_SLIDER_TYPE_ID) )
+            if (column.equals(SliderType.PROP_SLIDER_TYPE_ID) || column.equals(SliderType.PROP_TYPE_NAME) || column.equals(SliderType.PROP_CODE) )
             {
                 return true;
             }        

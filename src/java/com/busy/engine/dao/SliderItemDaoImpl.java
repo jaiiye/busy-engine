@@ -400,7 +400,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE slider_item SET com.busy.util.DatabaseColumn@43045a2e=?,com.busy.util.DatabaseColumn@5803c06d=?,com.busy.util.DatabaseColumn@388f3ec3=?,com.busy.util.DatabaseColumn@7e18ca4=?,com.busy.util.DatabaseColumn@66d5635c=?,com.busy.util.DatabaseColumn@2093c743=?,com.busy.util.DatabaseColumn@61ab9cb4=? WHERE SliderItemId=?;");                    
+                prepareStatement("UPDATE slider_item SET com.busy.util.DatabaseColumn@69106c13=?,com.busy.util.DatabaseColumn@5a72e6c4=?,com.busy.util.DatabaseColumn@3307c670=?,com.busy.util.DatabaseColumn@682fe8de=?,com.busy.util.DatabaseColumn@235613c=?,com.busy.util.DatabaseColumn@4f3ce378=?,com.busy.util.DatabaseColumn@428598a9=? WHERE SliderItemId=?;");                    
                 preparedStatement.setInt(0, obj.getSliderItemId());
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getDescription());

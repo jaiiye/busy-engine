@@ -56,11 +56,9 @@ public class ItemImageServiceImpl extends AbstractService implements ItemImageSe
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ItemImageServiceImpl() 
     {
-        super();
-        
+        super();        
         itemImageDao = new ItemImageDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ItemImageServiceImpl extends AbstractService implements ItemImageSe
     
     public ItemImageServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         itemImageDao = (ItemImageDao) context.getAttribute("itemImageDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

@@ -394,7 +394,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE slider SET com.busy.util.DatabaseColumn@466beaf6=?,com.busy.util.DatabaseColumn@22e6475e=?,com.busy.util.DatabaseColumn@2ed099b8=? WHERE SliderId=?;");                    
+                prepareStatement("UPDATE slider SET com.busy.util.DatabaseColumn@e261df8=?,com.busy.util.DatabaseColumn@598eb2db=?,com.busy.util.DatabaseColumn@1d40f31a=? WHERE SliderId=?;");                    
                 preparedStatement.setInt(0, obj.getSliderId());
                 preparedStatement.setString(1, obj.getSliderName());
                 preparedStatement.setInt(2, obj.getSliderTypeId());

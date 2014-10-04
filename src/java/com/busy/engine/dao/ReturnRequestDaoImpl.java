@@ -400,7 +400,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE return_request SET com.busy.util.DatabaseColumn@759194e9=?,com.busy.util.DatabaseColumn@42775951=?,com.busy.util.DatabaseColumn@664f7755=?,com.busy.util.DatabaseColumn@6ce25d77=?,com.busy.util.DatabaseColumn@152daade=?,com.busy.util.DatabaseColumn@6d68c4fb=?,com.busy.util.DatabaseColumn@7000f3dc=? WHERE ReturnRequestId=?;");                    
+                prepareStatement("UPDATE return_request SET com.busy.util.DatabaseColumn@1ceac31=?,com.busy.util.DatabaseColumn@3cbb363f=?,com.busy.util.DatabaseColumn@351a72ea=?,com.busy.util.DatabaseColumn@5984f664=?,com.busy.util.DatabaseColumn@2d5f6641=?,com.busy.util.DatabaseColumn@4830b71b=?,com.busy.util.DatabaseColumn@2e5b01d5=? WHERE ReturnRequestId=?;");                    
                 preparedStatement.setInt(0, obj.getReturnRequestId());
                 preparedStatement.setInt(1, obj.getQuantity());
                 preparedStatement.setDate(2, new java.sql.Date(obj.getRequestDate().getTime()));

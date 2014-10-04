@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.UserActionType;
@@ -27,10 +46,6 @@ public interface UserActionTypeService
       public Result<UserActionType> store(String userName, Integer userActionTypeId, String typeName);
       public Result<UserActionType> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

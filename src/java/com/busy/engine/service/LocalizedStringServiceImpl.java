@@ -56,11 +56,9 @@ public class LocalizedStringServiceImpl extends AbstractService implements Local
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public LocalizedStringServiceImpl() 
     {
-        super();
-        
+        super();        
         localizedStringDao = new LocalizedStringDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class LocalizedStringServiceImpl extends AbstractService implements Local
     
     public LocalizedStringServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         localizedStringDao = (LocalizedStringDao) context.getAttribute("localizedStringDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

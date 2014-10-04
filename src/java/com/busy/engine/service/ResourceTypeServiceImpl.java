@@ -56,11 +56,9 @@ public class ResourceTypeServiceImpl extends AbstractService implements Resource
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ResourceTypeServiceImpl() 
     {
-        super();
-        
+        super();        
         resourceTypeDao = new ResourceTypeDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ResourceTypeServiceImpl extends AbstractService implements Resource
     
     public ResourceTypeServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         resourceTypeDao = (ResourceTypeDao) context.getAttribute("resourceTypeDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

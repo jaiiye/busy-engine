@@ -355,7 +355,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE related_item SET com.busy.util.DatabaseColumn@2d40608d=?,com.busy.util.DatabaseColumn@70ed8f5e=? WHERE RelatedItemId=?;");                    
+                prepareStatement("UPDATE related_item SET com.busy.util.DatabaseColumn@18774561=?,com.busy.util.DatabaseColumn@1824f787=? WHERE RelatedItemId=?;");                    
                 preparedStatement.setInt(0, obj.getRelatedItemId());
                 preparedStatement.setInt(1, obj.getItem1());
                 preparedStatement.setInt(2, obj.getItem2());

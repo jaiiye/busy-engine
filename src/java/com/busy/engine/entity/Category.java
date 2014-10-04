@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -126,7 +129,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Category.PROP_CATEGORY_ID) || column.equals(Category.PROP_DISCOUNT_ID) || column.equals(Category.PROP_PARENT_CATEGORY_ID) )
+            if (column.equals(Category.PROP_CATEGORY_ID) || column.equals(Category.PROP_CATEGORY_NAME) || column.equals(Category.PROP_DISCOUNT_ID) || column.equals(Category.PROP_PARENT_CATEGORY_ID) )
             {
                 return true;
             }        

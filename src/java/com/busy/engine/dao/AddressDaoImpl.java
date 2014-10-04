@@ -379,7 +379,7 @@
                 Address.checkColumnSize(obj.getLocale(), 10);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE address SET com.busy.util.DatabaseColumn@4c2bde9e=?,com.busy.util.DatabaseColumn@541eebb2=?,com.busy.util.DatabaseColumn@3f1cea82=?,com.busy.util.DatabaseColumn@3cfc0892=?,com.busy.util.DatabaseColumn@2e31eebd=?,com.busy.util.DatabaseColumn@dd1c3b2=?,com.busy.util.DatabaseColumn@55c17070=?,com.busy.util.DatabaseColumn@9255ac2=?,com.busy.util.DatabaseColumn@2840195d=?,com.busy.util.DatabaseColumn@2b0f83b4=? WHERE AddressId=?;");                    
+                prepareStatement("UPDATE address SET com.busy.util.DatabaseColumn@5d221140=?,com.busy.util.DatabaseColumn@4c8516cb=?,com.busy.util.DatabaseColumn@2973587f=?,com.busy.util.DatabaseColumn@3518cd6d=?,com.busy.util.DatabaseColumn@787d729f=?,com.busy.util.DatabaseColumn@1caa1015=?,com.busy.util.DatabaseColumn@2fa9035f=?,com.busy.util.DatabaseColumn@5c29c062=?,com.busy.util.DatabaseColumn@4fd3a8f2=?,com.busy.util.DatabaseColumn@3b533a5=? WHERE AddressId=?;");                    
                 preparedStatement.setInt(0, obj.getAddressId());
                 preparedStatement.setString(1, obj.getRecipient());
                 preparedStatement.setString(2, obj.getAddress1());

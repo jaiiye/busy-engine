@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.SiteItem;
@@ -27,10 +46,6 @@ public interface SiteItemService
       public Result<SiteItem> store(String userName, Integer siteItemId, Integer siteId, Integer itemId);
       public Result<SiteItem> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

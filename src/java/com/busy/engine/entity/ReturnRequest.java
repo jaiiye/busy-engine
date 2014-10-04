@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -151,7 +154,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ReturnRequest.PROP_RETURN_REQUEST_ID) || column.equals(ReturnRequest.PROP_QUANTITY) || column.equals(ReturnRequest.PROP_REQUEST_STATUS) || column.equals(ReturnRequest.PROP_ORDER_ITEM_ID) )
+            if (column.equals(ReturnRequest.PROP_RETURN_REQUEST_ID) || column.equals(ReturnRequest.PROP_QUANTITY) || column.equals(ReturnRequest.PROP_REQUEST_DATE) || column.equals(ReturnRequest.PROP_RETURN_REASON) || column.equals(ReturnRequest.PROP_REQUESTED_ACTION) || column.equals(ReturnRequest.PROP_NOTES) || column.equals(ReturnRequest.PROP_REQUEST_STATUS) || column.equals(ReturnRequest.PROP_ORDER_ITEM_ID) )
             {
                 return true;
             }        

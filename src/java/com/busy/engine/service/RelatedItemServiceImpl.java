@@ -56,11 +56,9 @@ public class RelatedItemServiceImpl extends AbstractService implements RelatedIt
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public RelatedItemServiceImpl() 
     {
-        super();
-        
+        super();        
         relatedItemDao = new RelatedItemDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class RelatedItemServiceImpl extends AbstractService implements RelatedIt
     
     public RelatedItemServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         relatedItemDao = (RelatedItemDao) context.getAttribute("relatedItemDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

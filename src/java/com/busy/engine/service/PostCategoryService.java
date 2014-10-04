@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.PostCategory;
@@ -27,10 +46,6 @@ public interface PostCategoryService
       public Result<PostCategory> store(String userName, Integer postCategoryId, String categoryName);
       public Result<PostCategory> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

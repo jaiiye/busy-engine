@@ -56,11 +56,9 @@ public class ContactServiceImpl extends AbstractService implements ContactServic
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ContactServiceImpl() 
     {
-        super();
-        
+        super();        
         contactDao = new ContactDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ContactServiceImpl extends AbstractService implements ContactServic
     
     public ContactServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         contactDao = (ContactDao) context.getAttribute("contactDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

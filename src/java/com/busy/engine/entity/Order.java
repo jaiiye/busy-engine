@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -263,7 +266,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Order.PROP_ORDER_ID) || column.equals(Order.PROP_AMOUNT_BILLED) || column.equals(Order.PROP_TRANSACTION_FEE) || column.equals(Order.PROP_SUBTOTAL_AMOUNT) || column.equals(Order.PROP_DISCOUNT_AMOUNT) || column.equals(Order.PROP_TAX_AMOUNT) || column.equals(Order.PROP_SHIPPING_AMOUNT) || column.equals(Order.PROP_TOTAL_AMOUNT) || column.equals(Order.PROP_REFUND_AMOUNT) || column.equals(Order.PROP_ORDER_STATUS) || column.equals(Order.PROP_SHIPPING_ID) || column.equals(Order.PROP_AFFILIATE_ID) )
+            if (column.equals(Order.PROP_ORDER_ID) || column.equals(Order.PROP_ORDER_DATE) || column.equals(Order.PROP_SHIP_DATE) || column.equals(Order.PROP_PAYMENT_METHOD) || column.equals(Order.PROP_PURCHASE_ORDER) || column.equals(Order.PROP_TRANSACTION_ID) || column.equals(Order.PROP_AMOUNT_BILLED) || column.equals(Order.PROP_PAYMENT_STATUS) || column.equals(Order.PROP_PENDING_REASON) || column.equals(Order.PROP_PAYMENT_TYPE) || column.equals(Order.PROP_TRANSACTION_FEE) || column.equals(Order.PROP_CURRENCY_CODE) || column.equals(Order.PROP_PAYER_ID) || column.equals(Order.PROP_SUBTOTAL_AMOUNT) || column.equals(Order.PROP_DISCOUNT_AMOUNT) || column.equals(Order.PROP_TAX_AMOUNT) || column.equals(Order.PROP_SHIPPING_AMOUNT) || column.equals(Order.PROP_TOTAL_AMOUNT) || column.equals(Order.PROP_REFUND_AMOUNT) || column.equals(Order.PROP_NOTES) || column.equals(Order.PROP_ORDER_STATUS) || column.equals(Order.PROP_SHIPPING_ID) || column.equals(Order.PROP_AFFILIATE_ID) )
             {
                 return true;
             }        

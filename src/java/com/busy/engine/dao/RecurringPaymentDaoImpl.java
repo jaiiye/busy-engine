@@ -394,7 +394,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE recurring_payment SET com.busy.util.DatabaseColumn@70f8ec23=?,com.busy.util.DatabaseColumn@77382ce9=?,com.busy.util.DatabaseColumn@3189af1f=?,com.busy.util.DatabaseColumn@1b66a69b=?,com.busy.util.DatabaseColumn@2c48d820=? WHERE RecurringPaymentId=?;");                    
+                prepareStatement("UPDATE recurring_payment SET com.busy.util.DatabaseColumn@45af61f=?,com.busy.util.DatabaseColumn@51190865=?,com.busy.util.DatabaseColumn@62642fad=?,com.busy.util.DatabaseColumn@488d83e6=?,com.busy.util.DatabaseColumn@1b346ee6=? WHERE RecurringPaymentId=?;");                    
                 preparedStatement.setInt(0, obj.getRecurringPaymentId());
                 preparedStatement.setInt(1, obj.getCycleLength());
                 preparedStatement.setInt(2, obj.getCyclePeriod());

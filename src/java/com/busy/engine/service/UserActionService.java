@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.UserAction;
@@ -27,10 +46,6 @@ public interface UserActionService
       public Result<UserAction> store(String userName, Integer userActionId, Date date, String detail, Integer userActionTypeId, Integer userId);
       public Result<UserAction> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

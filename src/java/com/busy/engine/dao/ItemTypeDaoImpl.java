@@ -355,7 +355,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_type SET com.busy.util.DatabaseColumn@b04d408=?,com.busy.util.DatabaseColumn@529e97b=? WHERE ItemTypeId=?;");                    
+                prepareStatement("UPDATE item_type SET com.busy.util.DatabaseColumn@474e6d5=?,com.busy.util.DatabaseColumn@3e02d097=? WHERE ItemTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getItemTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setInt(2, obj.getRank());

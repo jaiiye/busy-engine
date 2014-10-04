@@ -56,11 +56,9 @@ public class LocaleServiceImpl extends AbstractService implements LocaleService
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public LocaleServiceImpl() 
     {
-        super();
-        
+        super();        
         localeDao = new LocaleDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class LocaleServiceImpl extends AbstractService implements LocaleService
     
     public LocaleServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         localeDao = (LocaleDao) context.getAttribute("localeDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

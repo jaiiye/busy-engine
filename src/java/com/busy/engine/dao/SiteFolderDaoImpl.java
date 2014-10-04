@@ -391,7 +391,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_folder SET com.busy.util.DatabaseColumn@4b198d33=?,com.busy.util.DatabaseColumn@15b6f179=?,com.busy.util.DatabaseColumn@70f8a265=?,com.busy.util.DatabaseColumn@7b58f439=? WHERE SiteFolderId=?;");                    
+                prepareStatement("UPDATE site_folder SET com.busy.util.DatabaseColumn@e11809a=?,com.busy.util.DatabaseColumn@3ce9d4f5=?,com.busy.util.DatabaseColumn@14189351=?,com.busy.util.DatabaseColumn@34663879=? WHERE SiteFolderId=?;");                    
                 preparedStatement.setInt(0, obj.getSiteFolderId());
                 preparedStatement.setString(1, obj.getFolderName());
                 preparedStatement.setString(2, obj.getDescription());

@@ -406,7 +406,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE shipping SET com.busy.util.DatabaseColumn@3387c983=?,com.busy.util.DatabaseColumn@7804a4c8=?,com.busy.util.DatabaseColumn@43d3bc59=?,com.busy.util.DatabaseColumn@43afd1e4=?,com.busy.util.DatabaseColumn@4ee9c3c3=?,com.busy.util.DatabaseColumn@13961c32=?,com.busy.util.DatabaseColumn@4df94b6d=? WHERE ShippingId=?;");                    
+                prepareStatement("UPDATE shipping SET com.busy.util.DatabaseColumn@36e41315=?,com.busy.util.DatabaseColumn@7404f198=?,com.busy.util.DatabaseColumn@13e3c8ad=?,com.busy.util.DatabaseColumn@30a1e1cc=?,com.busy.util.DatabaseColumn@264b2076=?,com.busy.util.DatabaseColumn@75108d16=?,com.busy.util.DatabaseColumn@78bb85b9=? WHERE ShippingId=?;");                    
                 preparedStatement.setInt(0, obj.getShippingId());
                 preparedStatement.setString(1, obj.getMethodName());
                 preparedStatement.setDouble(2, obj.getQuantity());

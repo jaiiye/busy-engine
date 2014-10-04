@@ -56,11 +56,9 @@ public class CustomerServiceImpl extends AbstractService implements CustomerServ
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public CustomerServiceImpl() 
     {
-        super();
-        
+        super();        
         customerDao = new CustomerDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class CustomerServiceImpl extends AbstractService implements CustomerServ
     
     public CustomerServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         customerDao = (CustomerDao) context.getAttribute("customerDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

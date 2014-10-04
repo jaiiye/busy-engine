@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -138,7 +141,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(TaxRate.PROP_TAX_RATE_ID) || column.equals(TaxRate.PROP_PERCENTAGE) || column.equals(TaxRate.PROP_STATE_PROVINCE_ID) || column.equals(TaxRate.PROP_COUNTRY_ID) )
+            if (column.equals(TaxRate.PROP_TAX_RATE_ID) || column.equals(TaxRate.PROP_TAX_CATEGORY) || column.equals(TaxRate.PROP_PERCENTAGE) || column.equals(TaxRate.PROP_ZIP_POSTAL_CODE) || column.equals(TaxRate.PROP_STATE_PROVINCE_ID) || column.equals(TaxRate.PROP_COUNTRY_ID) )
             {
                 return true;
             }        

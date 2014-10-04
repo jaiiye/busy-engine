@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ResourceType;
@@ -27,10 +46,6 @@ public interface ResourceTypeService
       public Result<ResourceType> store(String userName, Integer resourceTypeId, String typeName, String typeValue);
       public Result<ResourceType> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

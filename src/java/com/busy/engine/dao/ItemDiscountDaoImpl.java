@@ -394,7 +394,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_discount SET com.busy.util.DatabaseColumn@f5a1132=?,com.busy.util.DatabaseColumn@dc476b7=?,com.busy.util.DatabaseColumn@37d2e812=? WHERE ItemDiscountId=?;");                    
+                prepareStatement("UPDATE item_discount SET com.busy.util.DatabaseColumn@4fc5c95e=?,com.busy.util.DatabaseColumn@3d5b82a7=?,com.busy.util.DatabaseColumn@1149b8f4=? WHERE ItemDiscountId=?;");                    
                 preparedStatement.setInt(0, obj.getItemDiscountId());
                 preparedStatement.setInt(1, obj.getItemId());
                 preparedStatement.setInt(2, obj.getDiscountId());

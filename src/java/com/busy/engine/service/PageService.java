@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.Page;
@@ -27,10 +46,6 @@ public interface PageService
       public Result<Page> store(String userName, Integer pageId, String pageName, String content, Integer pageStatus, Integer formId, Integer sliderId, Integer metaTagId, Integer templateId);
       public Result<Page> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

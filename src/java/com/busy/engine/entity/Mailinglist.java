@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -130,7 +133,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Mailinglist.PROP_MAILINGLIST_ID) || column.equals(Mailinglist.PROP_LIST_STATUS) || column.equals(Mailinglist.PROP_USER_ID) )
+            if (column.equals(Mailinglist.PROP_MAILINGLIST_ID) || column.equals(Mailinglist.PROP_FULL_NAME) || column.equals(Mailinglist.PROP_EMAIL) || column.equals(Mailinglist.PROP_LIST_STATUS) || column.equals(Mailinglist.PROP_USER_ID) )
             {
                 return true;
             }        

@@ -26,6 +26,9 @@
 
 
 
+
+
+
  
 
 
@@ -130,7 +133,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(MetaTag.PROP_META_TAG_ID) )
+            if (column.equals(MetaTag.PROP_META_TAG_ID) || column.equals(MetaTag.PROP_TITLE) || column.equals(MetaTag.PROP_DESCRIPTION) || column.equals(MetaTag.PROP_KEYWORDS) )
             {
                 return true;
             }        

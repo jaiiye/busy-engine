@@ -56,11 +56,9 @@ public class ItemLocationServiceImpl extends AbstractService implements ItemLoca
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ItemLocationServiceImpl() 
     {
-        super();
-        
+        super();        
         itemLocationDao = new ItemLocationDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ItemLocationServiceImpl extends AbstractService implements ItemLoca
     
     public ItemLocationServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         itemLocationDao = (ItemLocationDao) context.getAttribute("itemLocationDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

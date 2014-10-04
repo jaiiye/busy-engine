@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.ItemBrand;
@@ -27,10 +46,6 @@ public interface ItemBrandService
       public Result<ItemBrand> store(String userName, Integer itemBrandId, String brandName, String description);
       public Result<ItemBrand> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

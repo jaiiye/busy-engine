@@ -352,7 +352,7 @@
                 ItemAvailability.checkColumnSize(obj.getType(), 45);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_availability SET com.busy.util.DatabaseColumn@55579fcc=? WHERE ItemAvailabilityId=?;");                    
+                prepareStatement("UPDATE item_availability SET com.busy.util.DatabaseColumn@20ab9789=? WHERE ItemAvailabilityId=?;");                    
                 preparedStatement.setInt(0, obj.getItemAvailabilityId());
                 preparedStatement.setString(1, obj.getType());
                 preparedStatement.setInt(2, obj.getItemAvailabilityId());

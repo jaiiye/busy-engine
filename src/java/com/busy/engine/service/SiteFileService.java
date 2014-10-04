@@ -13,6 +13,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.service;
 
 import com.busy.engine.entity.SiteFile;
@@ -27,10 +46,6 @@ public interface SiteFileService
       public Result<SiteFile> store(String userName, Integer siteFileId, String fileName, String description, String label);
       public Result<SiteFile> remove(String userName, Integer id);
 }    
-
-
-
-
 
 
 

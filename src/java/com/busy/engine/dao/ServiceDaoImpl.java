@@ -400,7 +400,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE service SET com.busy.util.DatabaseColumn@b7f8f41=?,com.busy.util.DatabaseColumn@66830fd1=?,com.busy.util.DatabaseColumn@497c6694=?,com.busy.util.DatabaseColumn@4932ecf0=?,com.busy.util.DatabaseColumn@3ec07710=? WHERE ServiceId=?;");                    
+                prepareStatement("UPDATE service SET com.busy.util.DatabaseColumn@5d6231f3=?,com.busy.util.DatabaseColumn@38b0f2f8=?,com.busy.util.DatabaseColumn@4436b386=?,com.busy.util.DatabaseColumn@4bd9765=?,com.busy.util.DatabaseColumn@481cc3a8=? WHERE ServiceId=?;");                    
                 preparedStatement.setInt(0, obj.getServiceId());
                 preparedStatement.setString(1, obj.getServiceName());
                 preparedStatement.setString(2, obj.getDescription());

@@ -56,11 +56,9 @@ public class CountryServiceImpl extends AbstractService implements CountryServic
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public CountryServiceImpl() 
     {
-        super();
-        
+        super();        
         countryDao = new CountryDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class CountryServiceImpl extends AbstractService implements CountryServic
     
     public CountryServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         countryDao = (CountryDao) context.getAttribute("countryDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

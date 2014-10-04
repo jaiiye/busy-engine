@@ -56,11 +56,9 @@ public class FileFolderServiceImpl extends AbstractService implements FileFolder
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public FileFolderServiceImpl() 
     {
-        super();
-        
+        super();        
         fileFolderDao = new FileFolderDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class FileFolderServiceImpl extends AbstractService implements FileFolder
     
     public FileFolderServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         fileFolderDao = (FileFolderDao) context.getAttribute("fileFolderDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

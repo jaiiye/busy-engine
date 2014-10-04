@@ -56,11 +56,9 @@ public class ItemAttributeTypeServiceImpl extends AbstractService implements Ite
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-
     public ItemAttributeTypeServiceImpl() 
     {
-        super();
-        
+        super();        
         itemAttributeTypeDao = new ItemAttributeTypeDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
@@ -68,8 +66,7 @@ public class ItemAttributeTypeServiceImpl extends AbstractService implements Ite
     
     public ItemAttributeTypeServiceImpl(ServletContext context) 
     {
-        super();
-        
+        super();        
         itemAttributeTypeDao = (ItemAttributeTypeDao) context.getAttribute("itemAttributeTypeDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");

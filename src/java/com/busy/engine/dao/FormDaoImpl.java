@@ -370,7 +370,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE form SET com.busy.util.DatabaseColumn@3c1a024b=?,com.busy.util.DatabaseColumn@13c19b7d=?,com.busy.util.DatabaseColumn@3112fbe1=?,com.busy.util.DatabaseColumn@26d80ca7=?,com.busy.util.DatabaseColumn@4abc5a6d=?,com.busy.util.DatabaseColumn@55b93a34=?,com.busy.util.DatabaseColumn@73d20e91=? WHERE FormId=?;");                    
+                prepareStatement("UPDATE form SET com.busy.util.DatabaseColumn@696fa525=?,com.busy.util.DatabaseColumn@52757ab4=?,com.busy.util.DatabaseColumn@43d0556d=?,com.busy.util.DatabaseColumn@10e70f93=?,com.busy.util.DatabaseColumn@435c627=?,com.busy.util.DatabaseColumn@7decaccf=?,com.busy.util.DatabaseColumn@3c56f522=? WHERE FormId=?;");                    
                 preparedStatement.setInt(0, obj.getFormId());
                 preparedStatement.setString(1, obj.getFormName());
                 preparedStatement.setString(2, obj.getDescription());

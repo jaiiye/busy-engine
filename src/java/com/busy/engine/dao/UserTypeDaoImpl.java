@@ -358,7 +358,7 @@
                 UserType.checkColumnSize(obj.getRedirectUrl(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_type SET com.busy.util.DatabaseColumn@1e700e7d=?,com.busy.util.DatabaseColumn@731ef163=?,com.busy.util.DatabaseColumn@1fed7005=? WHERE UserTypeId=?;");                    
+                prepareStatement("UPDATE user_type SET com.busy.util.DatabaseColumn@79bfbebc=?,com.busy.util.DatabaseColumn@6346c8=?,com.busy.util.DatabaseColumn@37a33282=? WHERE UserTypeId=?;");                    
                 preparedStatement.setInt(0, obj.getUserTypeId());
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDescription());
