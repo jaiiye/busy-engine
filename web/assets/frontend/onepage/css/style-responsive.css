@@ -27,13 +27,14 @@
 		float: none;
 		padding: 0;
 		margin-right: 15px;
+		margin-left: 15px;
 	}
 	.header-mobi-ext .header-navigation li:first-child a {
 		border-top: 1px solid #efefef;
 	}
 	.header-mobi-ext .header-navigation a {
 		border-bottom: 1px solid #efefef;
-		padding: 10px 30px 10px 0;
+		padding: 10px 10px 10px 0;
 		position: relative;
 		color: #666;
 	}
@@ -42,12 +43,6 @@
 		border-bottom: 1px solid #efefef;
 		background: #dd4632;
 		color: #fff;
-	}
-	.header-mobi-ext .header-navigation a:after {
-	    content: "•";
-	    right: 15px;
-	    position: absolute;
-	    top: 10px;
 	}
 
 	.checkout-block .row div {

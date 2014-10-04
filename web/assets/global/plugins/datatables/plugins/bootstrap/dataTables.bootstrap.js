@@ -181,12 +181,12 @@ $.extend($.fn.dataTableExt.oPagination, {
                 }
             };
 
-			$(nPaging).append(
+            $(nPaging).append(
                 '<ul class="pagination">' +
-                '<li class="prev disabled"><a href="#" ><i class="fa fa-angle-double-left"></i></a></li>' +
-                '<li class="prev disabled"><a href="#" ><i class="fa fa-angle-left"></i></a></li>' +
-                '<li class="next disabled"><a href="#" ><i class="fa fa-angle-right"></i></a></li>' +
-                '<li class="next disabled"><a href="#" ><i class="fa fa-angle-double-right"></i></a></li>' +
+                '<li class="prev disabled"><a href="#" title="' + oLang.sFirst + '"><i class="fa fa-angle-double-left"></i></a></li>' +
+                '<li class="prev disabled"><a href="#" title="' + oLang.sPrevious + '"><i class="fa fa-angle-left"></i></a></li>' +
+                '<li class="next disabled"><a href="#" title="' + oLang.sNext + '"><i class="fa fa-angle-right"></i></a></li>' +
+                '<li class="next disabled"><a href="#" title="' + oLang.sLast + '"><i class="fa fa-angle-double-right"></i></a></li>' +
                 '</ul>'
             );
             var els = $('a', nPaging);
@@ -348,6 +348,12 @@ $.extend($.fn.dataTableExt.oPagination, {
 
             for (i = 0, iLen = an.length; i < iLen; i++) {
                 var wrapper = $(an[i]).parents(".dataTables_wrapper");
+
+                if (oPaging.iTotal <= 0) {
+                    $('.dataTables_paginate, .dataTables_length', wrapper).hide();
+                } else {
+                    $('.dataTables_paginate, .dataTables_length', wrapper).show();
+                }
 
                 if (oPaging.iTotalPages <= 0) {
                     $('.dataTables_paginate, .dataTables_length .seperator', wrapper).hide();

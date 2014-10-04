@@ -130,7 +130,7 @@ public class BasicConnection
             prepareStatement(query);
             preparedStatement.setInt(1, limit);
             preparedStatement.setInt(2, offset);
-            rs = preparedStatement.executeQuery(query);
+            rs = preparedStatement.executeQuery();
         }
         catch (Exception ex) 
         {
@@ -148,21 +148,21 @@ public class BasicConnection
             {
                 query += ";";            
                 prepareStatement(query);
-                rs = preparedStatement.executeQuery(query);
+                rs = preparedStatement.executeQuery();
             }
             else if(limit == null && offset != null)
             {                
                 query += " OFFSET ?;";   
                 prepareStatement(query);
                 preparedStatement.setInt(1, offset);
-                rs = preparedStatement.executeQuery(query);
+                rs = preparedStatement.executeQuery();
             }
             else if(limit != null && offset == null)
             {                
                 query += " LIMIT ?;";   
                 prepareStatement(query);
                 preparedStatement.setInt(1, limit);
-                rs = preparedStatement.executeQuery(query);
+                rs = preparedStatement.executeQuery();
             }
             else
             {                
@@ -170,7 +170,8 @@ public class BasicConnection
                 prepareStatement(query);
                 preparedStatement.setInt(1, limit);
                 preparedStatement.setInt(2, offset);
-                rs = preparedStatement.executeQuery(query);
+                rs = preparedStatement.executeQuery();
+                
             }
         }
         catch (Exception ex) 

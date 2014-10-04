@@ -1,56 +1,87 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
-package com.busy.engine.util;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
- * @author Sourena
+ * @author Sourena Nasiriamini
  */
 public class test
 {
-    
-//    public static String generateTableNameFromColumnName(String columnName)
-//    {
-//        String objectName = columnName.replace("Id", "");
-//        StringBuilder tableName = new StringBuilder();
-//
-//        for (int i = 0; i < objectName.length(); i++) 
-//        {
-//            if ( Character.isUpperCase(objectName.charAt(i))) 
-//            {
-//                if(i == 0)
-//                {
-//                    //beginning of word
-//                    tableName.append(Character.toLowerCase(objectName.charAt(i)));                
-//                }
-//                else
-//                {
-//                    tableName.append("_").append(Character.toLowerCase(objectName.charAt(i)));                
-//                }
-//            }
-//            else
-//            {
-//                tableName.append(objectName.charAt(i));                
-//            }
-//        }
-//
-//        return tableName.toString();
-//    }
-    
-    public static void main(String[] args)
-    {        
-//        System.out.println("result: " + generateTableNameFromColumnName("UserActionTypeId")); 
-//        System.out.println("result: " + generateTableNameFromColumnName("UserId")); 
-//        System.out.println("result: " + generateTableNameFromColumnName("SiteImageId"));
-        
-//        if(3 || 5)
-//        {
-//            
-//        }
+    public static void outputSumOfKeyCounts(String fileName)
+    {
+        Map<String, Integer> keyCounts = new HashMap<>();
+
+        //try with resources automatically closes the "reader" resource
+        try (BufferedReader reader = new BufferedReader(new java.io.FileReader(fileName)))
+        {
+            for (String s = reader.readLine(); s != null; s = reader.readLine())
+            {
+                String[] result = s.split(",");
+                String key = result[0];
+                int keyCount = Integer.parseInt(result[1]);
+
+                int count = keyCounts.containsKey(key) ? keyCounts.get(key) : 0;
+                keyCounts.put(key, count + keyCount);
+            }
+            for (Entry e : keyCounts.entrySet())
+            {
+                System.out.print("The total for " + e.getKey() + " is " + e.getValue() + ". ");
+            }
+        }
+        catch (IOException | NumberFormatException e)
+        {
+            System.out.print("Error: " + e.getMessage() + ". ");
+        }
     }
-    
+
+    public static boolean isPalindrome(String stringToTest)
+    {
+        StringBuilder result = new StringBuilder();
+
+        //cleanup the string
+        for (char c : stringToTest.toCharArray())
+        {
+            if (Character.isLetterOrDigit(c))
+            {
+                result.append(c);
+            }
+        }
+
+        //test for palindrome
+        String cleanString = result.toString().toLowerCase();
+        int n = cleanString.length();
+
+        for (int i = 0; i < (n / 2) + 1; ++i)
+        {
+            if (cleanString.charAt(i) != cleanString.charAt(n - i - 1))
+            {
+                System.out.println("String is NOT a palindrome.");
+                return false;
+            }
+        }
+
+        System.out.println("String is a palindrome.");
+        return true;
+    }
+
+    public static void main(String[] args)
+    {
+        // Question 1 test
+        //file contains:
+        //John,2
+        //Jane,3
+        //John,4
+        //Jane,5    
+        outputSumOfKeyCounts("E:/input.txt");
+        System.out.println("");
+
+        //palindrome test
+        isPalindrome("Madam, I'm Adam.");
+        isPalindrome("A Toyota’s a Toyota.");
+        isPalindrome("A Honda’s a Toyota.");
+    }
 }
