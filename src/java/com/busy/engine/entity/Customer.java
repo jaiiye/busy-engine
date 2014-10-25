@@ -124,6 +124,7 @@ public class Customer extends AbstractEntity implements EntityItem<Integer>
 
     public static Customer process(ResultSet rs) throws SQLException
     {
+        rs.first();
         return new Customer(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getInt(6));
     }
 

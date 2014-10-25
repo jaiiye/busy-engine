@@ -62,9 +62,9 @@
 <!DOCTYPE html> 
 <html>
     <head>            
-        <%@include file="default_meta_tags.jsp" %>
-        <%@include file="default_styles.jsp" %>
-        <%@include file="default_scripts.jsp" %>
+        <%@include file="meta_tags.jsp" %>
+        <%@include file="styles.jsp" %>
+        <%@include file="scripts.jsp" %>
     </head>
     	
     <c:choose>

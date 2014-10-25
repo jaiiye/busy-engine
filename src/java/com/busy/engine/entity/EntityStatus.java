@@ -125,7 +125,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(EntityStatus.PROP_ENTITY_STATUS_ID) || column.equals(EntityStatus.PROP_STATUS_CODE) || column.equals(EntityStatus.PROP_STATUS_NAME) || column.equals(EntityStatus.PROP_APPLIES_TO) )
+            if (column.equals(EntityStatus.PROP_ENTITY_STATUS_ID) || column.equals(EntityStatus.PROP_STATUS_CODE) )
             {
                 return true;
             }        
@@ -136,7 +136,8 @@
         }
                                
         public static EntityStatus process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new EntityStatus(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4));
         }
               

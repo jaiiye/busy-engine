@@ -216,7 +216,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(BlogPost.PROP_BLOG_POST_ID) || column.equals(BlogPost.PROP_TITLE) || column.equals(BlogPost.PROP_CONTENT) || column.equals(BlogPost.PROP_IMAGE_U_R_L) || column.equals(BlogPost.PROP_TAGS) || column.equals(BlogPost.PROP_FEATURED) || column.equals(BlogPost.PROP_RATING_SUM) || column.equals(BlogPost.PROP_VOTE_COUNT) || column.equals(BlogPost.PROP_COMMENT_COUNT) || column.equals(BlogPost.PROP_POST_STATUS) || column.equals(BlogPost.PROP_EXCERPT) || column.equals(BlogPost.PROP_LAST_MODIFIED) || column.equals(BlogPost.PROP_LOCALE) || column.equals(BlogPost.PROP_USER_ID) || column.equals(BlogPost.PROP_BLOG_ID) || column.equals(BlogPost.PROP_META_TAG_ID) )
+            if (column.equals(BlogPost.PROP_BLOG_POST_ID) || column.equals(BlogPost.PROP_FEATURED) || column.equals(BlogPost.PROP_RATING_SUM) || column.equals(BlogPost.PROP_VOTE_COUNT) || column.equals(BlogPost.PROP_COMMENT_COUNT) || column.equals(BlogPost.PROP_POST_STATUS) || column.equals(BlogPost.PROP_USER_ID) || column.equals(BlogPost.PROP_BLOG_ID) || column.equals(BlogPost.PROP_META_TAG_ID) )
             {
                 return true;
             }        
@@ -227,7 +227,8 @@
         }
                                
         public static BlogPost process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new BlogPost(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7), rs.getInt(8), rs.getInt(9), rs.getInt(10), rs.getString(11), rs.getDate(12), rs.getString(13), rs.getInt(14), rs.getInt(15), rs.getInt(16));
         }
               

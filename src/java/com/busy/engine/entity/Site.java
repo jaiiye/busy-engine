@@ -197,7 +197,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_SITE_NAME) || column.equals(Site.PROP_DOMAIN) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_URL) || column.equals(Site.PROP_LOGO_TITLE) || column.equals(Site.PROP_LOGO_IMAGE_URL) || column.equals(Site.PROP_USE_AS_STORE) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_LOCALE) || column.equals(Site.PROP_TEMPLATE_ID) || column.equals(Site.PROP_SITE_EMAIL_ID) )
+            if (column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_USE_AS_STORE) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_TEMPLATE_ID) || column.equals(Site.PROP_SITE_EMAIL_ID) )
             {
                 return true;
             }        
@@ -208,7 +208,8 @@
         }
                                
         public static Site process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Site(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getString(10), rs.getInt(11), rs.getInt(12));
         }
               

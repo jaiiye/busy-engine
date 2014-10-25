@@ -140,7 +140,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SiteLanguage.PROP_SITE_LANGUAGE_ID) || column.equals(SiteLanguage.PROP_LANGUAGE_NAME) || column.equals(SiteLanguage.PROP_LOCALE) || column.equals(SiteLanguage.PROP_RTL) || column.equals(SiteLanguage.PROP_FLAG_FILE_NAME) || column.equals(SiteLanguage.PROP_SITE_ID) )
+            if (column.equals(SiteLanguage.PROP_SITE_LANGUAGE_ID) || column.equals(SiteLanguage.PROP_RTL) || column.equals(SiteLanguage.PROP_SITE_ID) )
             {
                 return true;
             }        
@@ -151,7 +151,8 @@
         }
                                
         public static SiteLanguage process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new SiteLanguage(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getInt(6));
         }
               

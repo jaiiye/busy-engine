@@ -120,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ServiceType.PROP_SERVICE_TYPE_ID) || column.equals(ServiceType.PROP_TYPE_NAME) || column.equals(ServiceType.PROP_DESCIPTION) )
+            if (column.equals(ServiceType.PROP_SERVICE_TYPE_ID) )
             {
                 return true;
             }        
@@ -131,7 +131,8 @@
         }
                                
         public static ServiceType process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ServiceType(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
               

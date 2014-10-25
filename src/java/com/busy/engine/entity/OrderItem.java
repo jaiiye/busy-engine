@@ -143,7 +143,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(OrderItem.PROP_ORDER_ITEM_ID) || column.equals(OrderItem.PROP_CUSTOMER_ORDER_ID) || column.equals(OrderItem.PROP_ITEM_ID) || column.equals(OrderItem.PROP_QUANTITY) || column.equals(OrderItem.PROP_OPTION_NAME) || column.equals(OrderItem.PROP_UNIT_PRICE) )
+            if (column.equals(OrderItem.PROP_ORDER_ITEM_ID) || column.equals(OrderItem.PROP_CUSTOMER_ORDER_ID) || column.equals(OrderItem.PROP_ITEM_ID) || column.equals(OrderItem.PROP_QUANTITY) || column.equals(OrderItem.PROP_UNIT_PRICE) )
             {
                 return true;
             }        
@@ -154,7 +154,8 @@
         }
                                
         public static OrderItem process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new OrderItem(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getString(5), rs.getDouble(6));
         }
               

@@ -154,7 +154,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Shipment.PROP_SHIPMENT_ID) || column.equals(Shipment.PROP_CREATED_ON) || column.equals(Shipment.PROP_TRACKING_NUMBER) || column.equals(Shipment.PROP_TOTAL_WEIGHT) || column.equals(Shipment.PROP_SHIP_DATE) || column.equals(Shipment.PROP_DELIVERY_DATE) || column.equals(Shipment.PROP_ITEM_QUANTITY) || column.equals(Shipment.PROP_ORDER_ID) )
+            if (column.equals(Shipment.PROP_SHIPMENT_ID) || column.equals(Shipment.PROP_TOTAL_WEIGHT) || column.equals(Shipment.PROP_ITEM_QUANTITY) || column.equals(Shipment.PROP_ORDER_ID) )
             {
                 return true;
             }        
@@ -165,7 +165,8 @@
         }
                                
         public static Shipment process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Shipment(rs.getInt(1), rs.getDate(2), rs.getString(3), rs.getDouble(4), rs.getDate(5), rs.getDate(6), rs.getInt(7), rs.getInt(8));
         }
               

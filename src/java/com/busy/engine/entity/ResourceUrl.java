@@ -127,7 +127,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ResourceUrl.PROP_RESOURCE_URL_ID) || column.equals(ResourceUrl.PROP_URL) || column.equals(ResourceUrl.PROP_TEMPLATE_ID) || column.equals(ResourceUrl.PROP_RESOURCE_TYPE_ID) )
+            if (column.equals(ResourceUrl.PROP_RESOURCE_URL_ID) || column.equals(ResourceUrl.PROP_TEMPLATE_ID) || column.equals(ResourceUrl.PROP_RESOURCE_TYPE_ID) )
             {
                 return true;
             }        
@@ -138,7 +138,8 @@
         }
                                
         public static ResourceUrl process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ResourceUrl(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4));
         }
               

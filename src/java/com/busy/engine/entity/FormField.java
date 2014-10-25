@@ -183,7 +183,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(FormField.PROP_FORM_FIELD_ID) || column.equals(FormField.PROP_FIELD_NAME) || column.equals(FormField.PROP_LABEL) || column.equals(FormField.PROP_ERROR_TEXT) || column.equals(FormField.PROP_VALIDATION_REGEX) || column.equals(FormField.PROP_RANK) || column.equals(FormField.PROP_DEFAULT_VALUE) || column.equals(FormField.PROP_OPTIONS) || column.equals(FormField.PROP_GROUP_NAME) || column.equals(FormField.PROP_OPTIONAL) || column.equals(FormField.PROP_FORM_FIELD_TYPE_ID) || column.equals(FormField.PROP_FORM_ID) )
+            if (column.equals(FormField.PROP_FORM_FIELD_ID) || column.equals(FormField.PROP_RANK) || column.equals(FormField.PROP_OPTIONAL) || column.equals(FormField.PROP_FORM_FIELD_TYPE_ID) || column.equals(FormField.PROP_FORM_ID) )
             {
                 return true;
             }        
@@ -194,7 +194,8 @@
         }
                                
         public static FormField process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new FormField(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getInt(10), rs.getInt(11), rs.getInt(12));
         }
               

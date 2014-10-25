@@ -120,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(TemplateType.PROP_TEMPLATE_TYPE_ID) || column.equals(TemplateType.PROP_TYPE_NAME) || column.equals(TemplateType.PROP_TYPE_VALUE) )
+            if (column.equals(TemplateType.PROP_TEMPLATE_TYPE_ID) )
             {
                 return true;
             }        
@@ -131,7 +131,8 @@
         }
                                
         public static TemplateType process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new TemplateType(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
               

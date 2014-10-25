@@ -2,6 +2,7 @@ package com.busy.engine.data;
 
 import com.busy.engine.util.Validator;
 import com.busy.engine.dao.SiteDaoImpl;
+import com.busy.engine.dao.SiteEmailDaoImpl;
 import com.busy.engine.dao.TextStringDaoImpl;
 import com.busy.engine.entity.Site;
 import com.busy.engine.entity.TextString;
@@ -173,7 +174,8 @@ public class Add extends HttpServlet
                         Site info = new SiteDaoImpl().find(1);
 
                         //send an identical message to site admin notifying him/her of the confirmation email being sent
-                        EMail.setBcc(info.getEmailUsername());
+                        info.setSiteEmail(new SiteEmailDaoImpl().find(info.getSiteEmailId()));                        
+                        EMail.setBcc(info.getSiteEmail().getUsername());
 
                         String title = "Confirmation Request:";
                         String template = Database.getTemplate("EmailTemplate");
@@ -668,7 +670,7 @@ public class Add extends HttpServlet
                                 + " <a href=\"" + (site.getMode() == 1 ? site.getDomain() : site.getUrl()) + "/ConfirmUserEmail?EMail=" + request.getParameter("email") + "&Key=" + ActivationKey.makeKey(request.getParameter("name")) + "\">Click Here...</a>";
 
                         //prepare a confirmation email to send to the user to confirm their email address
-                        EmailComposer email = new EmailComposer(request.getParameter("name"), "Confirmation Request:", body, request.getParameter("email"), site.getEmailUsername(), request.getServletContext().getRealPath("/images-site/"), site);
+                        EmailComposer email = new EmailComposer(request.getParameter("name"), "Confirmation Request:", body, request.getParameter("email"), site.getSiteEmail().getUsername(), request.getServletContext().getRealPath("/images-site/"), site);
                         email.prepareEmail();
                         email.sendEmail();
 

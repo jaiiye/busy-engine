@@ -140,7 +140,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ItemFile.PROP_ITEM_FILE_ID) || column.equals(ItemFile.PROP_FILE_NAME) || column.equals(ItemFile.PROP_DESCRIPTION) || column.equals(ItemFile.PROP_LABEL) || column.equals(ItemFile.PROP_HIDDEN) || column.equals(ItemFile.PROP_ITEM_ID) )
+            if (column.equals(ItemFile.PROP_ITEM_FILE_ID) || column.equals(ItemFile.PROP_HIDDEN) || column.equals(ItemFile.PROP_ITEM_ID) )
             {
                 return true;
             }        
@@ -151,7 +151,8 @@
         }
                                
         public static ItemFile process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ItemFile(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
         }
               

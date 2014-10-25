@@ -120,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ImageType.PROP_IMAGE_TYPE_ID) || column.equals(ImageType.PROP_TYPE_NAME) || column.equals(ImageType.PROP_DESCRIPTION) )
+            if (column.equals(ImageType.PROP_IMAGE_TYPE_ID) )
             {
                 return true;
             }        
@@ -131,7 +131,8 @@
         }
                                
         public static ImageType process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ImageType(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
               

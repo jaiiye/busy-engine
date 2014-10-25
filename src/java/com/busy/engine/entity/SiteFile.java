@@ -127,7 +127,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SiteFile.PROP_SITE_FILE_ID) || column.equals(SiteFile.PROP_FILE_NAME) || column.equals(SiteFile.PROP_DESCRIPTION) || column.equals(SiteFile.PROP_LABEL) )
+            if (column.equals(SiteFile.PROP_SITE_FILE_ID) )
             {
                 return true;
             }        
@@ -138,7 +138,8 @@
         }
                                
         public static SiteFile process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new SiteFile(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
         }
               

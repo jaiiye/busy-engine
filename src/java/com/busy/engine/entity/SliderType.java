@@ -120,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SliderType.PROP_SLIDER_TYPE_ID) || column.equals(SliderType.PROP_TYPE_NAME) || column.equals(SliderType.PROP_CODE) )
+            if (column.equals(SliderType.PROP_SLIDER_TYPE_ID) )
             {
                 return true;
             }        
@@ -131,7 +131,8 @@
         }
                                
         public static SliderType process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new SliderType(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
               

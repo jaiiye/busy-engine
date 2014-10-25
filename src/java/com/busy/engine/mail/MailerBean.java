@@ -8,7 +8,9 @@ package com.busy.engine.mail;
  */
 
 import com.busy.engine.dao.SiteDaoImpl;
+import com.busy.engine.dao.SiteEmailDaoImpl;
 import com.busy.engine.entity.Site;
+import com.busy.engine.entity.SiteEmail;
 import java.io.*;
 import java.util.*;
 import javax.activation.DataHandler;
@@ -26,18 +28,16 @@ public final class MailerBean implements Serializable
 {	    
     private final static Site siteInfo = new SiteDaoImpl().find(1);
     
-    private final static int mode = siteInfo.getMode(); // 1 for production, 2 for testing
-    final static String host = siteInfo.getEmailUsername();    
-    final static String username = siteInfo.getEmailUsername();
-    final static String password = siteInfo.getEmailPassword();
+    private final static int mode = siteInfo.getMode(); // 1 for production, 2 for testing        
+    final static SiteEmail email = new SiteEmailDaoImpl().find(siteInfo.getSiteEmailId());
     static Session session;        
             
     /* Bean Properties */
     
     private static String serverUrl = (siteInfo.getMode()== 1 ? siteInfo.getDomain() : siteInfo.getUrl());
     
-    private static String toReceiver = siteInfo.getEmailUsername(); //default notification email, unless overriden
-    private static String from = "\"" + serverUrl.replace("www.", "")  + "\"<" + siteInfo.getEmailUsername() + ">";
+    private static String toReceiver = email.getUsername(); //default notification email, unless overriden
+    private static String from = "\"" + serverUrl.replace("www.", "")  + "\"<" + email.getUsername() + ">";
     private String subject = "Request from " + serverUrl + " on " + Calendar.getInstance().getTime();
     private String bcc = " ";
     private String html_message = " ";
@@ -58,16 +58,16 @@ public final class MailerBean implements Serializable
         {
             props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.host", siteInfo.getEmailHost());//smtp.gmail.com
-            props.put("mail.smtp.port", siteInfo.getEmailPort());//587
+            props.put("mail.smtp.host", email.getHost());//smtp.gmail.com
+            props.put("mail.smtp.port", email.getPort());//587
             
             session = Session.getInstance(props,
                 new javax.mail.Authenticator() 
                 {
-                      protected PasswordAuthentication getPasswordAuthentication() 
-                      {
-                              return new PasswordAuthentication(username, password);
-                      }
+                    protected PasswordAuthentication getPasswordAuthentication() 
+                    {
+                        return new PasswordAuthentication(email.getUsername(), email.getPassword());
+                    }
                 });
         }
     }        

@@ -138,7 +138,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Country.PROP_COUNTRY_ID) || column.equals(Country.PROP_NAME) || column.equals(Country.PROP_ISO_CODE) || column.equals(Country.PROP_ISO_NUMBER) || column.equals(Country.PROP_HAS_VAT) )
+            if (column.equals(Country.PROP_COUNTRY_ID) || column.equals(Country.PROP_ISO_NUMBER) || column.equals(Country.PROP_HAS_VAT) )
             {
                 return true;
             }        
@@ -149,7 +149,8 @@
         }
                                
         public static Country process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Country(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5));
         }
               

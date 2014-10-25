@@ -120,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(FormFieldType.PROP_FORM_FIELD_TYPE_ID) || column.equals(FormFieldType.PROP_TYPE_NAME) || column.equals(FormFieldType.PROP_INPUT_TYPE) )
+            if (column.equals(FormFieldType.PROP_FORM_FIELD_TYPE_ID) )
             {
                 return true;
             }        
@@ -131,7 +131,8 @@
         }
                                
         public static FormFieldType process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new FormFieldType(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
               

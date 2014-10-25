@@ -120,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ResourceType.PROP_RESOURCE_TYPE_ID) || column.equals(ResourceType.PROP_TYPE_NAME) || column.equals(ResourceType.PROP_TYPE_VALUE) )
+            if (column.equals(ResourceType.PROP_RESOURCE_TYPE_ID) )
             {
                 return true;
             }        
@@ -131,7 +131,8 @@
         }
                                
         public static ResourceType process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ResourceType(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
               

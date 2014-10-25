@@ -133,7 +133,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SiteAttribute.PROP_SITE_ATTRIBUTE_ID) || column.equals(SiteAttribute.PROP_ATTRIBUTE_KEY) || column.equals(SiteAttribute.PROP_ATTRIBUTE_VALUE) || column.equals(SiteAttribute.PROP_ATTRIBUTE_TYPE) || column.equals(SiteAttribute.PROP_SITE_ID) )
+            if (column.equals(SiteAttribute.PROP_SITE_ATTRIBUTE_ID) || column.equals(SiteAttribute.PROP_SITE_ID) )
             {
                 return true;
             }        
@@ -144,7 +144,8 @@
         }
                                
         public static SiteAttribute process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new SiteAttribute(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5));
         }
               

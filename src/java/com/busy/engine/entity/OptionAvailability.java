@@ -163,7 +163,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(OptionAvailability.PROP_OPTION_AVAILABILITY_ID) || column.equals(OptionAvailability.PROP_ITEM_ID) || column.equals(OptionAvailability.PROP_ITEM_OPTION_ID) || column.equals(OptionAvailability.PROP_ITEM_AVAILABILITY_ID) || column.equals(OptionAvailability.PROP_AVAILABLE_QUANTITY) || column.equals(OptionAvailability.PROP_PRICE) || column.equals(OptionAvailability.PROP_AVAILABLE_FROM) || column.equals(OptionAvailability.PROP_AVAILABLE_TO) || column.equals(OptionAvailability.PROP_MAXIMUM_QUANTITY) )
+            if (column.equals(OptionAvailability.PROP_OPTION_AVAILABILITY_ID) || column.equals(OptionAvailability.PROP_ITEM_ID) || column.equals(OptionAvailability.PROP_ITEM_OPTION_ID) || column.equals(OptionAvailability.PROP_ITEM_AVAILABILITY_ID) || column.equals(OptionAvailability.PROP_AVAILABLE_QUANTITY) || column.equals(OptionAvailability.PROP_PRICE) || column.equals(OptionAvailability.PROP_MAXIMUM_QUANTITY) )
             {
                 return true;
             }        
@@ -174,7 +174,8 @@
         }
                                
         public static OptionAvailability process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new OptionAvailability(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6), rs.getDate(7), rs.getDate(8), rs.getInt(9));
         }
               

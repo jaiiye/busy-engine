@@ -148,7 +148,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SiteImage.PROP_SITE_IMAGE_ID) || column.equals(SiteImage.PROP_FILE_NAME) || column.equals(SiteImage.PROP_DESCRIPTION) || column.equals(SiteImage.PROP_LINK_URL) || column.equals(SiteImage.PROP_RANK) || column.equals(SiteImage.PROP_IMAGE_TYPE_ID) || column.equals(SiteImage.PROP_SITE_ID) )
+            if (column.equals(SiteImage.PROP_SITE_IMAGE_ID) || column.equals(SiteImage.PROP_RANK) || column.equals(SiteImage.PROP_IMAGE_TYPE_ID) || column.equals(SiteImage.PROP_SITE_ID) )
             {
                 return true;
             }        
@@ -159,7 +159,8 @@
         }
                                
         public static SiteImage process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new SiteImage(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getInt(7));
         }
               

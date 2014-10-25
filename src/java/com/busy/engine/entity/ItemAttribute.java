@@ -141,7 +141,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_ID) || column.equals(ItemAttribute.PROP_KEY) || column.equals(ItemAttribute.PROP_VALUE) || column.equals(ItemAttribute.PROP_LOCALE) || column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_TYPE_ID) || column.equals(ItemAttribute.PROP_ITEM_ID) )
+            if (column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_ID) || column.equals(ItemAttribute.PROP_ITEM_ATTRIBUTE_TYPE_ID) || column.equals(ItemAttribute.PROP_ITEM_ID) )
             {
                 return true;
             }        
@@ -152,7 +152,8 @@
         }
                                
         public static ItemAttribute process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ItemAttribute(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
         }
               

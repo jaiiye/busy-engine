@@ -24,7 +24,7 @@ public class EmailComposer
         this.blindCarbonCopy = blindCarbonCopy;
         this.storeImagePath = storeImagePath;       
         EMail = new MailerBean();
-        EMail.setImage(storeImagePath + '/' + siteInfo.getLogoImage());
+        EMail.setImage(storeImagePath + '/' + siteInfo.getLogoImageUrl());
         this.siteInfo = siteInfo;
     }
     

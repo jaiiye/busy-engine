@@ -175,7 +175,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Discount.PROP_DISCOUNT_ID) || column.equals(Discount.PROP_DISCOUNT_NAME) || column.equals(Discount.PROP_DISCOUNT_AMOUNT) || column.equals(Discount.PROP_DISCOUNT_PERCENT) || column.equals(Discount.PROP_START_DATE) || column.equals(Discount.PROP_END_DATE) || column.equals(Discount.PROP_COUPON_CODE) || column.equals(Discount.PROP_DISCOUNT_STATUS) || column.equals(Discount.PROP_ASK_COUPON_CODE) || column.equals(Discount.PROP_USE_PERCENTAGE) )
+            if (column.equals(Discount.PROP_DISCOUNT_ID) || column.equals(Discount.PROP_DISCOUNT_AMOUNT) || column.equals(Discount.PROP_DISCOUNT_PERCENT) || column.equals(Discount.PROP_DISCOUNT_STATUS) || column.equals(Discount.PROP_ASK_COUPON_CODE) || column.equals(Discount.PROP_USE_PERCENTAGE) )
             {
                 return true;
             }        
@@ -186,7 +186,8 @@
         }
                                
         public static Discount process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Discount(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getDouble(4), rs.getDate(5), rs.getDate(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getInt(10));
         }
               

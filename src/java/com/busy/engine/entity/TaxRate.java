@@ -141,7 +141,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(TaxRate.PROP_TAX_RATE_ID) || column.equals(TaxRate.PROP_TAX_CATEGORY) || column.equals(TaxRate.PROP_PERCENTAGE) || column.equals(TaxRate.PROP_ZIP_POSTAL_CODE) || column.equals(TaxRate.PROP_STATE_PROVINCE_ID) || column.equals(TaxRate.PROP_COUNTRY_ID) )
+            if (column.equals(TaxRate.PROP_TAX_RATE_ID) || column.equals(TaxRate.PROP_PERCENTAGE) || column.equals(TaxRate.PROP_STATE_PROVINCE_ID) || column.equals(TaxRate.PROP_COUNTRY_ID) )
             {
                 return true;
             }        
@@ -152,7 +152,8 @@
         }
                                
         public static TaxRate process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new TaxRate(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getString(4), rs.getInt(5), rs.getInt(6));
         }
               

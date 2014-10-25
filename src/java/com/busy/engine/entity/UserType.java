@@ -127,7 +127,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(UserType.PROP_USER_TYPE_ID) || column.equals(UserType.PROP_TYPE_NAME) || column.equals(UserType.PROP_DESCRIPTION) || column.equals(UserType.PROP_REDIRECT_URL) )
+            if (column.equals(UserType.PROP_USER_TYPE_ID) )
             {
                 return true;
             }        
@@ -138,7 +138,8 @@
         }
                                
         public static UserType process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new UserType(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
         }
               

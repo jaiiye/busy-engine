@@ -158,7 +158,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Vendor.PROP_VENDOR_ID) || column.equals(Vendor.PROP_VENDOR_NAME) || column.equals(Vendor.PROP_DESCRIPTION) || column.equals(Vendor.PROP_RANK) || column.equals(Vendor.PROP_VENDOR_STATUS) || column.equals(Vendor.PROP_META_TAG_ID) || column.equals(Vendor.PROP_TEMPLATE_ID) || column.equals(Vendor.PROP_VENDOR_TYPE_ID) )
+            if (column.equals(Vendor.PROP_VENDOR_ID) || column.equals(Vendor.PROP_RANK) || column.equals(Vendor.PROP_VENDOR_STATUS) || column.equals(Vendor.PROP_META_TAG_ID) || column.equals(Vendor.PROP_TEMPLATE_ID) || column.equals(Vendor.PROP_VENDOR_TYPE_ID) )
             {
                 return true;
             }        
@@ -169,7 +169,8 @@
         }
                                
         public static Vendor process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Vendor(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7), rs.getInt(8));
         }
               

@@ -130,7 +130,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(StateProvince.PROP_STATE_PROVINCE_ID) || column.equals(StateProvince.PROP_NAME) || column.equals(StateProvince.PROP_ABBREVIATION) || column.equals(StateProvince.PROP_COUNTRY_ID) )
+            if (column.equals(StateProvince.PROP_STATE_PROVINCE_ID) || column.equals(StateProvince.PROP_COUNTRY_ID) )
             {
                 return true;
             }        
@@ -141,7 +141,8 @@
         }
                                
         public static StateProvince process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new StateProvince(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4));
         }
               

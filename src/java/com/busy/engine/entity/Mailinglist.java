@@ -133,7 +133,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Mailinglist.PROP_MAILINGLIST_ID) || column.equals(Mailinglist.PROP_FULL_NAME) || column.equals(Mailinglist.PROP_EMAIL) || column.equals(Mailinglist.PROP_LIST_STATUS) || column.equals(Mailinglist.PROP_USER_ID) )
+            if (column.equals(Mailinglist.PROP_MAILINGLIST_ID) || column.equals(Mailinglist.PROP_LIST_STATUS) || column.equals(Mailinglist.PROP_USER_ID) )
             {
                 return true;
             }        
@@ -144,7 +144,8 @@
         }
                                
         public static Mailinglist process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Mailinglist(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5));
         }
               

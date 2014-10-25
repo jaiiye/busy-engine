@@ -908,6 +908,137 @@ public class Database extends BasicConnection
     }
     
     
+    public static Map<String, String> getSiteAttributesMap(String type)
+    {
+        ResultSet rs2;
+        Map<String, String> attributes = new HashMap<String, String>();
+
+        try
+        {
+            openConnection();
+            String query = "SELECT * FROM site_attribute sa;";
+            if(type != null) 
+            {
+                query = "SELECT * FROM site_attribute sa WHERE AttributeType='" + type + "';";
+            }
+            rs2 = statement.executeQuery(query);
+
+            while(rs2.next())
+            {
+                attributes.put(rs2.getString(2),rs2.getString(3));
+            }
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Get getSiteAttributesMap error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
+        return attributes;
+    }
+    
+    
+    public static HashMap<String,Object> getSiteStructure()
+    {
+        ArrayList<SiteImage> headerImages = new ArrayList<SiteImage>();
+        ArrayList<SiteImage> sliderImages = new ArrayList<SiteImage>();
+        String socialLinks = "";
+        String pageNavigation = "";
+        String pageToolbar = "";
+        String pageFooter = "";
+        
+        System.out.println("getSiteStructure called!");
+        
+        try
+        {   
+            sliderImages = new SiteImageDaoImpl().findByColumn(SiteImage.PROP_IMAGE_TYPE_ID, "2", null, null);
+            headerImages = new SiteImageDaoImpl().findByColumn(SiteImage.PROP_IMAGE_TYPE_ID, "3", null, null);
+            
+            runQuery("SELECT PageName, Content FROM page WHERE PageName='MainNavigation' OR PageName='MainSocialLinks' OR PageName='MainToolbar' OR PageName='MainFooter';");
+         
+            while(rs.next())
+            {
+                if(rs.getString(1).equals("MainNavigation"))
+                {
+                    pageNavigation =  rs.getString(2);
+                }
+                if(rs.getString(1).equals("MainSocialLinks"))
+                {
+                    socialLinks =  rs.getString(2);
+                }
+                if(rs.getString(1).equals("MainToolbar"))
+                {
+                    pageToolbar =  rs.getString(2);
+                }
+                if(rs.getString(1).equals("MainFooter"))
+                {
+                    pageFooter =  rs.getString(2);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.out.println("getSiteStructure error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+        
+        HashMap<String,Object> siteStructure = new HashMap<String,Object>();
+        siteStructure.put("headerImages", headerImages);
+        siteStructure.put("sliderImages", sliderImages);
+        siteStructure.put("socialLinks", socialLinks);
+        siteStructure.put("pageNavigation", pageNavigation);
+        siteStructure.put("pageToolbar", pageToolbar);
+        siteStructure.put("pageFooter", pageFooter);
+        return siteStructure;
+    }
+    
+    public static ArrayList<AbstractMap.SimpleEntry> getLanguageStrings(String siteId)
+    {
+        ArrayList<AbstractMap.SimpleEntry> attributes = new ArrayList<>();
+        ResultSet rs7;
+
+        try
+        {
+            openConnection();
+            
+            String query = "SELECT Locale FROM site WHERE siteId= " + siteId;
+            rs7 = statement.executeQuery(query);
+            String locale = "";
+
+            while(rs7.next())
+            {
+                locale = rs7.getString(1);
+            }
+            
+            query = "SELECT ls.StringId, ls.LocaleId, TextStringKey, StringValue, LocaleString  FROM locale l, text_string s, localized_string ls WHERE ls.LocaleId = l.LocaleId AND ls.StringId = s.TextStringId AND ls.LocaleId = " + locale + ";";
+            System.out.println(query);
+            rs7 = statement.executeQuery(query);
+
+            while(rs7.next())
+            {
+                String key = rs7.getString(3); 
+                String val = rs7.getString(4); 
+                attributes.add(new AbstractMap.SimpleEntry<String,String>(key,val));
+            }
+        }
+        catch (Exception ex)
+        {
+            System.out.println("geLanguageStrings error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+        
+        return attributes;
+    }
+    
     /*
     public static ArrayList<SiteFile> getSiteFiles(String folderId)
     {
@@ -2240,37 +2371,6 @@ public class Database extends BasicConnection
         return attributes;
     }
     
-    public static Map<String, String> getSiteAttributesMap(String type)
-    {
-        ResultSet rs2;
-        Map<String, String> attributes = new HashMap<String, String>();
-
-        try
-        {
-            openConnection();
-            String query = "SELECT * FROM site_attribute sa;";
-            if(type != null) 
-            {
-                query = "SELECT * FROM site_attribute sa WHERE AttributeType='" + type + "';";
-            }
-            rs2 = statement.executeQuery(query);
-
-            while(rs2.next())
-            {
-                attributes.put(rs2.getString(2),rs2.getString(3));
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Get getSiteAttributesMap error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-
-        return attributes;
-    }
     
         
     public static ArrayList<LocalizedString> getLocalizedStrings(String stringId)
@@ -2561,71 +2661,6 @@ public class Database extends BasicConnection
         return imageInfo;
     }
     
-    public static HashMap<String,Object> getSiteStructure()
-    {
-        ArrayList<Image> headerImages = new ArrayList<Image>();
-        ArrayList<Image> sliderImages = new ArrayList<Image>();
-        String socialLinks = "";
-        String pageNavigation = "";
-        String pageToolbar = "";
-        String pageFooter = "";
-        
-        System.out.println("getSiteStructure called!");
-        
-        try
-        {
-            runQuery("SELECT * FROM image WHERE TypeId = 3 OR TypeId = 5 ORDER BY Rank;");
-            while(rs.next())
-            {
-                if(rs.getString(2).equals("3"))
-                {
-                    sliderImages.add(new Image(Integer.parseInt(rs.getString(1)),Integer.parseInt(rs.getString(2)),Integer.parseInt(rs.getString(3)),rs.getString(4),rs.getString(5),rs.getString(6),Integer.parseInt(rs.getString(7))));    
-                }
-                if(rs.getString(2).equals("5"))
-                {
-                    headerImages.add(new Image(Integer.parseInt(rs.getString(1)),Integer.parseInt(rs.getString(2)),Integer.parseInt(rs.getString(3)),rs.getString(4),rs.getString(5),rs.getString(6),Integer.parseInt(rs.getString(7))));
-                }                
-            }
-            
-            rs = statement.executeQuery("SELECT InfoName, InfoDescription FROM info WHERE InfoName='MainNavigation' OR InfoName='MainSocialLinks' OR InfoName='MainToolbar' OR InfoName='MainFooter';");
-            while(rs.next())
-            {
-                if(rs.getString(1).equals("MainNavigation"))
-                {
-                    pageNavigation =  rs.getString(2);
-                }
-                if(rs.getString(1).equals("MainSocialLinks"))
-                {
-                    socialLinks =  rs.getString(2);
-                }
-                if(rs.getString(1).equals("MainToolbar"))
-                {
-                    pageToolbar =  rs.getString(2);
-                }
-                if(rs.getString(1).equals("MainFooter"))
-                {
-                    pageFooter =  rs.getString(2);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("getSiteStructure error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-        
-        HashMap<String,Object> siteStructure = new HashMap<String,Object>();
-        siteStructure.put("headerImages", headerImages);
-        siteStructure.put("sliderImages", sliderImages);
-        siteStructure.put("socialLinks", socialLinks);
-        siteStructure.put("pageNavigation", pageNavigation);
-        siteStructure.put("pageToolbar", pageToolbar);
-        siteStructure.put("pageFooter", pageFooter);
-        return siteStructure;
-    }
     
     public static ArrayList<User> getAllUsersWithInfo()
     {
@@ -2976,47 +3011,7 @@ public class Database extends BasicConnection
         return fieldOptions;
     }
         
-    public static ArrayList<AbstractMap.SimpleEntry> getLanguageStrings()
-    {
-        ArrayList<AbstractMap.SimpleEntry> attributes = new ArrayList<AbstractMap.SimpleEntry>();
-        ResultSet rs7;
-
-        try
-        {
-            openConnection();
-            
-            String query = "SELECT StoreLocalization FROM store_info";
-            System.out.println(query);
-            rs7 = statement.executeQuery(query);
-            String storeLocale = "";
-
-            while(rs7.next())
-            {
-                storeLocale = rs7.getString(1);
-            }
-            
-            query = "SELECT ls.StringId, ls.LocaleId, TextStringKey, StringValue, LocaleString  FROM locale l, text_string s, localized_string ls WHERE ls.LocaleId = l.LocaleId AND ls.StringId = s.TextStringId AND ls.LocaleId = " + storeLocale + ";";
-            System.out.println(query);
-            rs7 = statement.executeQuery(query);
-
-            while(rs7.next())
-            {
-                String key = rs7.getString(3); 
-                String val = rs7.getString(4); 
-                attributes.add(new AbstractMap.SimpleEntry<String,String>(key,val));
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("geLanguageStrings error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-        
-        return attributes;
-    }
+    
     
     public static ArrayList<ShippingMethod> getShippingMethods()
     {

@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 
 public class UserRole extends AbstractEntity implements EntityItem<String>
 {
-
     private static final long serialVersionUID = 1L;
     public static final String PROP_USER_NAME = "UserName";
     public static final String PROP_ROLE_NAME = "RoleName";

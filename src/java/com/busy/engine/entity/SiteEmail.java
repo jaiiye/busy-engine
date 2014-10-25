@@ -134,7 +134,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SiteEmail.PROP_SITE_EMAIL_ID) || column.equals(SiteEmail.PROP_HOST) || column.equals(SiteEmail.PROP_PORT) || column.equals(SiteEmail.PROP_USERNAME) || column.equals(SiteEmail.PROP_PASSWORD) )
+            if (column.equals(SiteEmail.PROP_SITE_EMAIL_ID) || column.equals(SiteEmail.PROP_PORT) )
             {
                 return true;
             }        
@@ -145,7 +145,8 @@
         }
                                
         public static SiteEmail process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new SiteEmail(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getString(4), rs.getString(5));
         }
               

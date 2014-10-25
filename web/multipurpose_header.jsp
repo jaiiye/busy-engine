@@ -1,6 +1,7 @@
 <%@ page import="java.util.*" %>
-<%@ page import="com.transitionsoft.*"%>
-<%@ page import="com.transitionsoft.dao.*"%>
+<%@ page import="com.busy.engine.dao.*"%>
+<%@ page import="com.busy.engine.data.*"%>
+<%@ page import="com.busy.engine.entity.*"%>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 
@@ -40,22 +41,22 @@
     <section class="main-header">
         <p class="title">        
             <%
-				// get title images
-				for (Image img : (ArrayList<Image>)pageStructure.get("headerImages"))
-				{
+                            // get title images
+                            for (SiteImage img : (ArrayList<SiteImage>)pageStructure.get("headerImages"))
+                            {
 			%>
-					<a href="<%= img.getImageLinkUrl()%>"><img src="images-site/<%= img.getImageFileName()%>" border="0"  alt="<%= img.getImageDescription()%>"></a>	
+                                <a href="<%= img.getLinkUrl()%>"><img src="images-site/<%= img.getFileName()%>" border="0"  alt="<%= img.getDescription()%>"></a>	
 			<%
-				}
-				//if the strings are not available then load them from the database only once!
-				if (application.getAttribute("index-header-link-1") == null)
-				{
-					for (AbstractMap.SimpleEntry e : Database.getLanguageStrings())
-					{
-						application.setAttribute((String) e.getKey(), e.getValue());
-						System.out.println("setting Application attribute: (" + e.getKey() + ":" + e.getValue() + ")");
-					}
-				}
+                            }
+                            //if the strings are not available then load them from the database only once!
+                            if (application.getAttribute("index-header-link-1") == null)
+                            {
+                                    for (AbstractMap.SimpleEntry e : Database.getLanguageStrings("1"))
+                                    {
+                                            application.setAttribute((String) e.getKey(), e.getValue());
+                                            System.out.println("setting Application attribute: (" + e.getKey() + ":" + e.getValue() + ")");
+                                    }
+                            }
 		
 			%> 
         </p>

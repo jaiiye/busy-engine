@@ -129,7 +129,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Category.PROP_CATEGORY_ID) || column.equals(Category.PROP_CATEGORY_NAME) || column.equals(Category.PROP_DISCOUNT_ID) || column.equals(Category.PROP_PARENT_CATEGORY_ID) )
+            if (column.equals(Category.PROP_CATEGORY_ID) || column.equals(Category.PROP_DISCOUNT_ID) || column.equals(Category.PROP_PARENT_CATEGORY_ID) )
             {
                 return true;
             }        
@@ -140,7 +140,8 @@
         }
                                
         public static Category process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Category(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4));
         }
               

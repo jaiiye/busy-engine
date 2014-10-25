@@ -113,7 +113,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(UserActionType.PROP_USER_ACTION_TYPE_ID) || column.equals(UserActionType.PROP_TYPE_NAME) )
+            if (column.equals(UserActionType.PROP_USER_ACTION_TYPE_ID) )
             {
                 return true;
             }        
@@ -124,7 +124,8 @@
         }
                                
         public static UserActionType process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new UserActionType(rs.getInt(1), rs.getString(2));
         }
               

@@ -266,7 +266,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Order.PROP_ORDER_ID) || column.equals(Order.PROP_ORDER_DATE) || column.equals(Order.PROP_SHIP_DATE) || column.equals(Order.PROP_PAYMENT_METHOD) || column.equals(Order.PROP_PURCHASE_ORDER) || column.equals(Order.PROP_TRANSACTION_ID) || column.equals(Order.PROP_AMOUNT_BILLED) || column.equals(Order.PROP_PAYMENT_STATUS) || column.equals(Order.PROP_PENDING_REASON) || column.equals(Order.PROP_PAYMENT_TYPE) || column.equals(Order.PROP_TRANSACTION_FEE) || column.equals(Order.PROP_CURRENCY_CODE) || column.equals(Order.PROP_PAYER_ID) || column.equals(Order.PROP_SUBTOTAL_AMOUNT) || column.equals(Order.PROP_DISCOUNT_AMOUNT) || column.equals(Order.PROP_TAX_AMOUNT) || column.equals(Order.PROP_SHIPPING_AMOUNT) || column.equals(Order.PROP_TOTAL_AMOUNT) || column.equals(Order.PROP_REFUND_AMOUNT) || column.equals(Order.PROP_NOTES) || column.equals(Order.PROP_ORDER_STATUS) || column.equals(Order.PROP_SHIPPING_ID) || column.equals(Order.PROP_AFFILIATE_ID) )
+            if (column.equals(Order.PROP_ORDER_ID) || column.equals(Order.PROP_AMOUNT_BILLED) || column.equals(Order.PROP_TRANSACTION_FEE) || column.equals(Order.PROP_SUBTOTAL_AMOUNT) || column.equals(Order.PROP_DISCOUNT_AMOUNT) || column.equals(Order.PROP_TAX_AMOUNT) || column.equals(Order.PROP_SHIPPING_AMOUNT) || column.equals(Order.PROP_TOTAL_AMOUNT) || column.equals(Order.PROP_REFUND_AMOUNT) || column.equals(Order.PROP_ORDER_STATUS) || column.equals(Order.PROP_SHIPPING_ID) || column.equals(Order.PROP_AFFILIATE_ID) )
             {
                 return true;
             }        
@@ -277,7 +277,8 @@
         }
                                
         public static Order process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Order(rs.getInt(1), rs.getDate(2), rs.getDate(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getDouble(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getDouble(11), rs.getString(12), rs.getString(13), rs.getDouble(14), rs.getDouble(15), rs.getDouble(16), rs.getDouble(17), rs.getDouble(18), rs.getDouble(19), rs.getString(20), rs.getInt(21), rs.getInt(22), rs.getInt(23));
         }
               

@@ -129,7 +129,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(UserGroup.PROP_USER_GROUP_ID) || column.equals(UserGroup.PROP_GROUP_NAME) || column.equals(UserGroup.PROP_SITE_ID) || column.equals(UserGroup.PROP_DISCOUNT_ID) )
+            if (column.equals(UserGroup.PROP_USER_GROUP_ID) || column.equals(UserGroup.PROP_SITE_ID) || column.equals(UserGroup.PROP_DISCOUNT_ID) )
             {
                 return true;
             }        
@@ -140,7 +140,8 @@
         }
                                
         public static UserGroup process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new UserGroup(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4));
         }
               

@@ -129,7 +129,8 @@
         }
                                
         public static RelatedItem process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new RelatedItem(rs.getInt(1), rs.getInt(2), rs.getInt(3));
         }
               

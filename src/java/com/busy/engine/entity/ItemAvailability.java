@@ -113,7 +113,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ItemAvailability.PROP_ITEM_AVAILABILITY_ID) || column.equals(ItemAvailability.PROP_TYPE) )
+            if (column.equals(ItemAvailability.PROP_ITEM_AVAILABILITY_ID) )
             {
                 return true;
             }        
@@ -124,7 +124,8 @@
         }
                                
         public static ItemAvailability process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ItemAvailability(rs.getInt(1), rs.getString(2));
         }
               

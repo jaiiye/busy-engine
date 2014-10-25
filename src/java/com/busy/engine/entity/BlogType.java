@@ -113,7 +113,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(BlogType.PROP_BLOG_TYPE_ID) || column.equals(BlogType.PROP_TYPE_NAME) )
+            if (column.equals(BlogType.PROP_BLOG_TYPE_ID) )
             {
                 return true;
             }        
@@ -124,7 +124,8 @@
         }
                                
         public static BlogType process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new BlogType(rs.getInt(1), rs.getString(2));
         }
               

@@ -4768,9 +4768,8 @@ public class Operations extends HttpServlet
                         response.sendRedirect("admin/UserRoleUI.jsp?id=" + request.getParameter("userName") + "&SuccessMsg=Updated UserRole Successfully!");
                         break;
                     case 3:  //delete
-                        userRoleDao.removeById(Integer.parseInt(request.getParameter("id")));
+                        userRoleDao.removeById(request.getParameter("userName") + "-" + request.getParameter("roleName"));
                         Database.RecordUserObjectDeletionAction(user.getUserId().toString(), user.getUsername(), currentTime, "UserRole", request.getParameter("id"));
-
                         response.sendRedirect("admin/UserRoleUI.jsp?SuccessMsg=Deleted UserRole Successfully!");
                         break;
                     case 4:  //remove all records

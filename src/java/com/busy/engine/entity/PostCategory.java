@@ -113,7 +113,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(PostCategory.PROP_POST_CATEGORY_ID) || column.equals(PostCategory.PROP_CATEGORY_NAME) )
+            if (column.equals(PostCategory.PROP_POST_CATEGORY_ID) )
             {
                 return true;
             }        
@@ -124,7 +124,8 @@
         }
                                
         public static PostCategory process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new PostCategory(rs.getInt(1), rs.getString(2));
         }
               

@@ -118,7 +118,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Locale.PROP_LOCALE_ID) || column.equals(Locale.PROP_LOCALE_STRING) || column.equals(Locale.PROP_LOCALE_CHARACTER_SET) )
+            if (column.equals(Locale.PROP_LOCALE_ID) )
             {
                 return true;
             }        
@@ -129,7 +129,8 @@
         }
                                
         public static Locale process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Locale(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
               

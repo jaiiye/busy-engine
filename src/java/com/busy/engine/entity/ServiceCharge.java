@@ -149,7 +149,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ServiceCharge.PROP_SERVICE_CHARGE_ID) || column.equals(ServiceCharge.PROP_CHARGE_NAME) || column.equals(ServiceCharge.PROP_DESCRIPTION) || column.equals(ServiceCharge.PROP_RATE) || column.equals(ServiceCharge.PROP_UNITS) || column.equals(ServiceCharge.PROP_DATE) || column.equals(ServiceCharge.PROP_USER_SERVICE_ID) )
+            if (column.equals(ServiceCharge.PROP_SERVICE_CHARGE_ID) || column.equals(ServiceCharge.PROP_USER_SERVICE_ID) )
             {
                 return true;
             }        
@@ -160,7 +160,8 @@
         }
                                
         public static ServiceCharge process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ServiceCharge(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getDate(6), rs.getInt(7));
         }
               

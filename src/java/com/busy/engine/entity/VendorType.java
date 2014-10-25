@@ -113,7 +113,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(VendorType.PROP_VENDOR_TYPE_ID) || column.equals(VendorType.PROP_TYPE_NAME) )
+            if (column.equals(VendorType.PROP_VENDOR_TYPE_ID) )
             {
                 return true;
             }        
@@ -124,7 +124,8 @@
         }
                                
         public static VendorType process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new VendorType(rs.getInt(1), rs.getString(2));
         }
               

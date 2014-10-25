@@ -113,7 +113,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(TextString.PROP_TEXT_STRING_ID) || column.equals(TextString.PROP_KEY) )
+            if (column.equals(TextString.PROP_TEXT_STRING_ID) )
             {
                 return true;
             }        
@@ -124,7 +124,8 @@
         }
                                
         public static TextString process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new TextString(rs.getInt(1), rs.getString(2));
         }
               

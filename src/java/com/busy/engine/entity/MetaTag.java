@@ -133,7 +133,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(MetaTag.PROP_META_TAG_ID) || column.equals(MetaTag.PROP_TITLE) || column.equals(MetaTag.PROP_DESCRIPTION) || column.equals(MetaTag.PROP_KEYWORDS) )
+            if (column.equals(MetaTag.PROP_META_TAG_ID) )
             {
                 return true;
             }        
@@ -144,7 +144,8 @@
         }
                                
         public static MetaTag process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new MetaTag(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
         }
               

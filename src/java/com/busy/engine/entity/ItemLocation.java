@@ -142,7 +142,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ItemLocation.PROP_ITEM_LOCATION_ID) || column.equals(ItemLocation.PROP_LATITUDE) || column.equals(ItemLocation.PROP_LONGITUDE) || column.equals(ItemLocation.PROP_ITEM_ID) || column.equals(ItemLocation.PROP_ADDRESS_ID) || column.equals(ItemLocation.PROP_CONTACT_ID) )
+            if (column.equals(ItemLocation.PROP_ITEM_LOCATION_ID) || column.equals(ItemLocation.PROP_ITEM_ID) || column.equals(ItemLocation.PROP_ADDRESS_ID) || column.equals(ItemLocation.PROP_CONTACT_ID) )
             {
                 return true;
             }        
@@ -153,7 +153,8 @@
         }
                                
         public static ItemLocation process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ItemLocation(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6));
         }
               

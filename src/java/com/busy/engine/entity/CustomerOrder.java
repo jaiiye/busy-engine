@@ -137,7 +137,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(CustomerOrder.PROP_CUSTOMER_ORDER_ID) || column.equals(CustomerOrder.PROP_CUSTOMER_ID) || column.equals(CustomerOrder.PROP_ORDER_ID) || column.equals(CustomerOrder.PROP_DISCOUNT_ID) || column.equals(CustomerOrder.PROP_CUSTOMER_IP) )
+            if (column.equals(CustomerOrder.PROP_CUSTOMER_ORDER_ID) || column.equals(CustomerOrder.PROP_CUSTOMER_ID) || column.equals(CustomerOrder.PROP_ORDER_ID) || column.equals(CustomerOrder.PROP_DISCOUNT_ID) )
             {
                 return true;
             }        
@@ -148,7 +148,8 @@
         }
                                
         public static CustomerOrder process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new CustomerOrder(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getString(5));
         }
               

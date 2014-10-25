@@ -122,7 +122,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ItemBrand.PROP_ITEM_BRAND_ID) || column.equals(ItemBrand.PROP_BRAND_NAME) || column.equals(ItemBrand.PROP_DESCRIPTION) )
+            if (column.equals(ItemBrand.PROP_ITEM_BRAND_ID) )
             {
                 return true;
             }        
@@ -133,7 +133,8 @@
         }
                                
         public static ItemBrand process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ItemBrand(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
               

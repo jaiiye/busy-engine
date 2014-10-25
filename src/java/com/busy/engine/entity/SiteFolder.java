@@ -135,7 +135,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(SiteFolder.PROP_SITE_FOLDER_ID) || column.equals(SiteFolder.PROP_FOLDER_NAME) || column.equals(SiteFolder.PROP_DESCRIPTION) || column.equals(SiteFolder.PROP_RANK) || column.equals(SiteFolder.PROP_SITE_ID) )
+            if (column.equals(SiteFolder.PROP_SITE_FOLDER_ID) || column.equals(SiteFolder.PROP_RANK) || column.equals(SiteFolder.PROP_SITE_ID) )
             {
                 return true;
             }        
@@ -146,7 +146,8 @@
         }
                                
         public static SiteFolder process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new SiteFolder(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5));
         }
               

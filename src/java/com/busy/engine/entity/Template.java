@@ -151,7 +151,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Template.PROP_TEMPLATE_ID) || column.equals(Template.PROP_TEMPLATE_NAME) || column.equals(Template.PROP_MARKUP) || column.equals(Template.PROP_TEMPLATE_STATUS) || column.equals(Template.PROP_TEMPLATE_TYPE_ID) || column.equals(Template.PROP_PARENT_TEMPLATE_ID) )
+            if (column.equals(Template.PROP_TEMPLATE_ID) || column.equals(Template.PROP_TEMPLATE_STATUS) || column.equals(Template.PROP_TEMPLATE_TYPE_ID) || column.equals(Template.PROP_PARENT_TEMPLATE_ID) )
             {
                 return true;
             }        
@@ -162,7 +162,8 @@
         }
                                
         public static Template process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Template(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6));
         }
               

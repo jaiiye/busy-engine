@@ -143,7 +143,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Service.PROP_SERVICE_ID) || column.equals(Service.PROP_SERVICE_NAME) || column.equals(Service.PROP_DESCRIPTION) || column.equals(Service.PROP_SERVICE_STATUS) || column.equals(Service.PROP_SERVICE_CHARGE_ID) || column.equals(Service.PROP_SERVICE_TYPE_ID) )
+            if (column.equals(Service.PROP_SERVICE_ID) || column.equals(Service.PROP_SERVICE_STATUS) || column.equals(Service.PROP_SERVICE_CHARGE_ID) || column.equals(Service.PROP_SERVICE_TYPE_ID) )
             {
                 return true;
             }        
@@ -154,7 +154,8 @@
         }
                                
         public static Service process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Service(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6));
         }
               

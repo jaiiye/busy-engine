@@ -131,7 +131,8 @@
         }
                                
         public static FileFolder process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new FileFolder(rs.getInt(1), rs.getInt(2), rs.getInt(3));
         }
               

@@ -1,4 +1,7 @@
 <%@ page import="java.util.*" %>
+<%@ page import="com.busy.engine.dao.*" %>
+<%@ page import="com.busy.engine.entity.*" %>
+<%@ page import="com.busy.engine.data.*" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 
 <%! 
@@ -24,8 +27,8 @@
         blogId = Integer.parseInt(request.getParameter("id"));
 	}
 	
-	Blog b = Database.getBlog(blogId);
-	int blogType = Integer.parseInt(b.getBlogType());
+	Blog b = new BlogDaoImpl().find(blogId);
+	int blogType = b.getBlogTypeId();
 %>
 
 
@@ -45,7 +48,7 @@
         <div class="root">	
             <%@include file="multipurpose_header.jsp" %>       
             <section class="content">  
-            <h1><%= b.getBlogName() %></h1>           
+            <h1><%= b.getTopic() %></h1>           
             <% if(blogType == 1 || blogType == 2) {%>
 	       	<section class="main postlist">
             <% } %>
@@ -59,15 +62,20 @@
             	<section class="columns">
             <% } %>            
         <%			
-        	ArrayList<Post> posts = Database.getPosts(blogId, pageNumber);			
-        	i = 1;			
-	        for(Post p : posts)
+        	BlogPostDaoImpl dao = new BlogPostDaoImpl();
+                ArrayList<BlogPost> posts = dao.findByColumn(BlogPost.PROP_BLOG_ID, b.getBlogId().toString(), null, null);			
+                for(BlogPost p : posts)
 	        {
-			ArrayList<Comment> postComments = p.getComments();
-			String postLink = "blogPost.jsp?id=" + p.getPostId();	
-			String postDate = p.getPostDate().substring(0,10);
-			String postTitle = p.getPostTitle();
-			String postBody = p.getPostBody().length() >= 150 ?  p.getPostBody().substring(0,150).replaceAll("\\<.*?>","") + "..." : p.getPostBody().replaceAll("\\<.*?>","");		
+                    dao.getRelatedInfo(p);
+                }
+        	i = 1;			
+	        for(BlogPost p : posts)
+	        {
+			ArrayList<Comment> postComments = p.getCommentList();
+			String postLink = "blogPost.jsp?id=" + p.getBlogPostId();	
+			String postDate = p.getLastModified().toString().substring(0,10);
+			String postTitle = p.getTitle();
+			String postBody = p.getContent().length() >= 150 ?  p.getContent().substring(0,150).replaceAll("\\<.*?>","") + "..." : p.getContent().replaceAll("\\<.*?>","");		
         %>        
         	<% if(blogType == 1 || blogType == 2|| blogType ==3) {%>
             	<article class="post">
@@ -80,28 +88,28 @@
             <% } %>
                 <% if(blogType == 1 ) { %>
                         <h2><a href="<%= postLink %>"><%= postTitle %></a></h2>
-                        <p class="post-meta"><%= postDate %><span>|</span> by <%=p.getPostUserName()%> <span>|</span><a href="<%= postLink %>" class="comment-link"><%=postComments.size()%> comments</a></p>                    
-                        <div class="img medium"><a href="<%= postLink %>"><img src="images/<%=p.getPostPicURL()%>" alt=""></a></div>
+                        <p class="post-meta"><%= postDate %><span>|</span> by <%=p.getUser().getUsername()%> <span>|</span><a href="<%= postLink %>" class="comment-link"><%=postComments.size()%> comments</a></p>                    
+                        <div class="img medium"><a href="<%= postLink %>"><img src="images/<%=p.getImageURL()%>" alt=""></a></div>
                         <p><%= postBody %></p>
-                    	<p class="tags"><strong>Tags</strong>: <%=p.getPostTags()%></p>
+                    	<p class="tags"><strong>Tags</strong>: <%=p.getTags()%></p>
                     <% 
                     }
                     if(blogType == 2 || blogType == 3 ) { 
                     %>
                         <h2><a href="<%= postLink %>"><%= postTitle %></a></h2>
-                        <p class="post-meta"><%= postDate %><span>|</span> by <%=p.getPostUserName()%> <span>|</span>
+                        <p class="post-meta"><%= postDate %><span>|</span> by <%=p.getUser().getUsername()%> <span>|</span>
                             <a href="<%= postLink %>" class="comment-link"><%=postComments.size()%> comments</a></p>
-                        <a href="<%= postLink %>"><img src="images/<%=p.getPostPicURL()%>" alt=""></a>                        
+                        <a href="<%= postLink %>"><img src="images/<%=p.getImageURL()%>" alt=""></a>                        
                         <p><%= postBody %></p>
-                    	<p class="tags"><strong>Tags</strong>: <%=p.getPostTags()%></p>
+                    	<p class="tags"><strong>Tags</strong>: <%=p.getTags()%></p>
                     <% 
                     }
                     if(blogType == 4 || blogType == 5 ) { 
                     %>
-	                    <div class="img"><a href="<%= postLink %>"><img src="images/<%=p.getPostPicURL()%>" alt=""></a></div>
+	                    <div class="img"><a href="<%= postLink %>"><img src="images/<%=p.getImageURL()%>" alt=""></a></div>
                         <h2><a href="<%= postLink %>"><%= postTitle %></a></h2>
-                        <p class="post-meta"><%= postDate %><span>|</span> by <%=p.getPostUserName()%> <span>|</span>
-                            <a href="<%= postLink %>" class="comment-link"><%=postComments.size()%> comments</a></p>
+                        <p class="post-meta"><%= postDate %><span>|</span> by <%= p.getUser().getUsername() %> <span>|</span>
+                            <a href="<%= postLink %>" class="comment-link"><%=postComments == null ? "0" : postComments.size()%> comments</a></p>
                         <p><%= postBody %></p>
                     <% 
 					}

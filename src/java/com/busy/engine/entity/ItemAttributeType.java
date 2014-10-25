@@ -120,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ItemAttributeType.PROP_ITEM_ATTRIBUTE_TYPE_ID) || column.equals(ItemAttributeType.PROP_ATTRIBUTE_NAME) || column.equals(ItemAttributeType.PROP_DESCRIPTION) )
+            if (column.equals(ItemAttributeType.PROP_ITEM_ATTRIBUTE_TYPE_ID) )
             {
                 return true;
             }        
@@ -131,7 +131,8 @@
         }
                                
         public static ItemAttributeType process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ItemAttributeType(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
               

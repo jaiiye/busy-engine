@@ -134,7 +134,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(UserAction.PROP_USER_ACTION_ID) || column.equals(UserAction.PROP_DATE) || column.equals(UserAction.PROP_DETAIL) || column.equals(UserAction.PROP_USER_ACTION_TYPE_ID) || column.equals(UserAction.PROP_USER_ID) )
+            if (column.equals(UserAction.PROP_USER_ACTION_ID) || column.equals(UserAction.PROP_USER_ACTION_TYPE_ID) || column.equals(UserAction.PROP_USER_ID) )
             {
                 return true;
             }        
@@ -145,7 +145,8 @@
         }
                                
         public static UserAction process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new UserAction(rs.getInt(1), rs.getDate(2), rs.getString(3), rs.getInt(4), rs.getInt(5));
         }
               

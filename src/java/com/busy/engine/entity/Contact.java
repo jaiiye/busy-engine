@@ -182,7 +182,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Contact.PROP_CONTACT_ID) || column.equals(Contact.PROP_TITLE) || column.equals(Contact.PROP_FIRST_NAME) || column.equals(Contact.PROP_LAST_NAME) || column.equals(Contact.PROP_POSITION) || column.equals(Contact.PROP_PHONE) || column.equals(Contact.PROP_FAX) || column.equals(Contact.PROP_EMAIL) || column.equals(Contact.PROP_CONTACT_STATUS) || column.equals(Contact.PROP_WEB_URL) || column.equals(Contact.PROP_INFO) )
+            if (column.equals(Contact.PROP_CONTACT_ID) || column.equals(Contact.PROP_CONTACT_STATUS) )
             {
                 return true;
             }        
@@ -193,7 +193,8 @@
         }
                                
         public static Contact process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Contact(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getInt(9), rs.getString(10), rs.getString(11));
         }
               

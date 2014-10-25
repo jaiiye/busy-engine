@@ -159,7 +159,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Page.PROP_PAGE_ID) || column.equals(Page.PROP_PAGE_NAME) || column.equals(Page.PROP_CONTENT) || column.equals(Page.PROP_PAGE_STATUS) || column.equals(Page.PROP_FORM_ID) || column.equals(Page.PROP_SLIDER_ID) || column.equals(Page.PROP_META_TAG_ID) || column.equals(Page.PROP_TEMPLATE_ID) )
+            if (column.equals(Page.PROP_PAGE_ID) || column.equals(Page.PROP_PAGE_STATUS) || column.equals(Page.PROP_FORM_ID) || column.equals(Page.PROP_SLIDER_ID) || column.equals(Page.PROP_META_TAG_ID) || column.equals(Page.PROP_TEMPLATE_ID) )
             {
                 return true;
             }        
@@ -170,7 +170,8 @@
         }
                                
         public static Page process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new Page(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7), rs.getInt(8));
         }
               

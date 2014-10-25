@@ -120,7 +120,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(ItemOption.PROP_ITEM_OPTION_ID) || column.equals(ItemOption.PROP_OPTION_NAME) || column.equals(ItemOption.PROP_DESCRIPTION) )
+            if (column.equals(ItemOption.PROP_ITEM_OPTION_ID) )
             {
                 return true;
             }        
@@ -131,7 +131,8 @@
         }
                                
         public static ItemOption process(ResultSet rs) throws SQLException
-        {        
+        {           
+            rs.first();
             return new ItemOption(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
               
