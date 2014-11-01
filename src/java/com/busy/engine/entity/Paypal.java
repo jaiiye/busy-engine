@@ -90,7 +90,7 @@ public class Paypal extends AbstractEntity implements EntityItem<Integer>
 
         builder.add("apiEndpoint", apiEndpoint == null ? "" : apiEndpoint);
 
-        builder.add("activeProfile", (boolean) (activeProfile == null ? "false" : activeProfile));
+        builder.add("activeProfile",  (boolean) (activeProfile == null ? "false" : activeProfile));
 
         builder.add("returnUrl", returnUrl == null ? "" : returnUrl);
 
@@ -136,7 +136,10 @@ public class Paypal extends AbstractEntity implements EntityItem<Integer>
 
     public static Paypal process(ResultSet rs) throws SQLException
     {
-        rs.first();
+        if (rs.getRow() == 0)
+        {
+            rs.first();
+        }
         return new Paypal(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getBoolean(8), rs.getString(9), rs.getString(10), rs.getString(11), rs.getString(12));
     }
 

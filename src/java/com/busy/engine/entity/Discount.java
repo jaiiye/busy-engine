@@ -187,7 +187,10 @@
                                
         public static Discount process(ResultSet rs) throws SQLException
         {           
-            rs.first();
+            if(rs.getRow() == 0)
+            {
+                rs.first();
+            }
             return new Discount(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getDouble(4), rs.getDate(5), rs.getDate(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getInt(10));
         }
               

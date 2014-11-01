@@ -191,7 +191,10 @@
                                
         public static UserService process(ResultSet rs) throws SQLException
         {           
-            rs.first();
+            if(rs.getRow() == 0)
+            {
+                rs.first();
+            }
             return new UserService(rs.getInt(1), rs.getDate(2), rs.getDate(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getDouble(7), rs.getInt(8), rs.getInt(9), rs.getInt(10), rs.getInt(11));
         }
               

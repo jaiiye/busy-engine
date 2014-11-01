@@ -214,7 +214,10 @@
                                
         public static Dashboard process(ResultSet rs) throws SQLException
         {           
-            rs.first();
+            if(rs.getRow() == 0)
+            {
+                rs.first();
+            }
             return new Dashboard(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7), rs.getInt(8), rs.getInt(9), rs.getInt(10), rs.getInt(11), rs.getInt(12), rs.getInt(13), rs.getInt(14), rs.getInt(15));
         }
               

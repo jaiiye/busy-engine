@@ -125,7 +125,10 @@
                                
         public static TextString process(ResultSet rs) throws SQLException
         {           
-            rs.first();
+            if(rs.getRow() == 0)
+            {
+                rs.first();
+            }
             return new TextString(rs.getInt(1), rs.getString(2));
         }
               

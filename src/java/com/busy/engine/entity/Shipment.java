@@ -166,7 +166,10 @@
                                
         public static Shipment process(ResultSet rs) throws SQLException
         {           
-            rs.first();
+            if(rs.getRow() == 0)
+            {
+                rs.first();
+            }
             return new Shipment(rs.getInt(1), rs.getDate(2), rs.getString(3), rs.getDouble(4), rs.getDate(5), rs.getDate(6), rs.getInt(7), rs.getInt(8));
         }
               

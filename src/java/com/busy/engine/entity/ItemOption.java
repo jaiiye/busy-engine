@@ -132,7 +132,10 @@
                                
         public static ItemOption process(ResultSet rs) throws SQLException
         {           
-            rs.first();
+            if(rs.getRow() == 0)
+            {
+                rs.first();
+            }
             return new ItemOption(rs.getInt(1), rs.getString(2), rs.getString(3));
         }
               

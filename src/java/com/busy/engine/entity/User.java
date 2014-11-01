@@ -202,7 +202,10 @@ public class User extends AbstractEntity implements EntityItem<Integer>
 
     public static User process(ResultSet rs) throws SQLException
     {
-        rs.first();
+        if (rs.getRow() == 0)
+        {
+            rs.first();
+        }
         return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getDate(7), rs.getString(8), rs.getInt(9), rs.getInt(10), rs.getString(11), rs.getInt(12), rs.getInt(13), rs.getInt(14), rs.getInt(15), rs.getInt(16));
     }
 

@@ -1,7 +1,5 @@
 package com.busy.engine.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.json.JsonObjectBuilder;
@@ -75,6 +73,10 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
 
     public static UserRole process(ResultSet rs) throws SQLException
     {
+        if (rs.getRow() == 0)
+        {
+            rs.first();
+        }
         return new UserRole(rs.getString(1), rs.getString(2));
     }
 
@@ -82,7 +84,6 @@ public class UserRole extends AbstractEntity implements EntityItem<String>
     {
         this.userName = UserName;
         this.roleName = RoleName;
-
     }
 
     public String getUserName()

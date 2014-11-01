@@ -132,7 +132,10 @@
                                
         public static SiteItem process(ResultSet rs) throws SQLException
         {           
-            rs.first();
+            if(rs.getRow() == 0)
+            {
+                rs.first();
+            }
             return new SiteItem(rs.getInt(1), rs.getInt(2), rs.getInt(3));
         }
               

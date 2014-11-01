@@ -146,7 +146,10 @@
                                
         public static SiteEmail process(ResultSet rs) throws SQLException
         {           
-            rs.first();
+            if(rs.getRow() == 0)
+            {
+                rs.first();
+            }
             return new SiteEmail(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getString(4), rs.getString(5));
         }
               

@@ -138,7 +138,10 @@
                                
         public static LocalizedString process(ResultSet rs) throws SQLException
         {           
-            rs.first();
+            if(rs.getRow() == 0)
+            {
+                rs.first();
+            }
             return new LocalizedString(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4));
         }
               

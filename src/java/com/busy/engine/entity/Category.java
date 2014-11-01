@@ -141,7 +141,10 @@
                                
         public static Category process(ResultSet rs) throws SQLException
         {           
-            rs.first();
+            if(rs.getRow() == 0)
+            {
+                rs.first();
+            }
             return new Category(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4));
         }
               

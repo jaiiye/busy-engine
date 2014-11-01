@@ -132,7 +132,10 @@
                                
         public static BlogPostCategory process(ResultSet rs) throws SQLException
         {           
-            rs.first();
+            if(rs.getRow() == 0)
+            {
+                rs.first();
+            }
             return new BlogPostCategory(rs.getInt(1), rs.getInt(2), rs.getInt(3));
         }
               

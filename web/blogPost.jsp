@@ -1,4 +1,6 @@
 <%@ page import="java.util.*" %>
+<%@ page import="com.busy.engine.entity.*" %>
+<%@ page import="com.busy.engine.dao.*" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 
 <%! 
@@ -36,16 +38,19 @@
             <%@include file="multipurpose_header.jsp" %>       
             <section class="content"> 
 		<section class="main single">
-        <%
-        	Post p = Database.getPost(postId);
-			ArrayList<Comment> postComments = p.getComments();
+        <%        	
+            BlogPostDao dao = new BlogPostDaoImpl();
+            BlogPost p = dao.find(postId);
+            dao.getRelatedInfo(p);
+            dao.getRelatedObjects(p);
+            ArrayList<Comment> postComments = p.getCommentList();
         %>        
             <article class="post">
-                    <h1><a href="#"><%=p.getPostTitle()%></a></h1>
-                    <p class="post-meta"><%=p.getPostDate().substring(0,10)%><span>|</span> by <a href="#" class="author"><%=p.getPostUserName()%></a> <span>|</span><a href="#" class="comment-link"><%=postComments.size()%> comments</a></p>
-                    <p><img src="images/<%=p.getPostPicURL()%>" alt=""><p>
-                    <p><%= p.getPostBody() %></p>
-                    <p class="tags"><strong>Tags</strong>: <%=p.getPostTags()%></p>                                
+                    <h1><a href="#"><%=p.getTitle()%></a></h1>
+                    <p class="post-meta"><%=p.getLastModified().toString().substring(0,10)%><span>|</span> by <a href="#" class="author"><%=p.getUser().getUsername()%></a> <span>|</span><a href="#" class="comment-link"><%=postComments.size()%> comments</a></p>
+                    <p><img src="images/<%=p.getImageURL()%>" alt=""><p>
+                    <p><%= p.getContent() %></p>
+                    <p class="tags"><strong>Tags</strong>: <%=p.getTags()%></p>                                
             </article>            
             
             <section class="comments">
@@ -58,11 +63,11 @@
                     <li class="comment even">
                         <div class="comment-author vcard">
                             <img alt="" src="images/unknown.jpg" class="avatar avatar-32 photo" height="32" width="32">		
-                            <cite class="fn"><%= pc.getCommentTitle()%></cite>
-                            <p class="comment-meta commentmetadata"><%= pc.getCommentDate().substring(0,10)%></p>
+                            <cite class="fn"><%= pc.getTitle()%></cite>
+                            <p class="comment-meta commentmetadata"><%= pc.getDate().toString().substring(0,10)%></p>
                         </div>
                         <div class="comment-body">
-                            <p><%= pc.getCommentBody()%></p>
+                            <p><%= pc.getContent()%></p>
                         </div>						
                     </li>        
                 <%
@@ -74,7 +79,7 @@
                 <section class="comment-form">
                     <h2><span>Leave a Comment</span></h2>
                     <form action="add.jsp?fn=BlogPost" name="addBlogPost" method="post">
-                        <input type="hidden" name="postId" value="<%=p.getPostId()%>" />
+                        <input type="hidden" name="postId" value="<%= p.getBlogPostId()%>" />
                         <input type="hidden" name="UserId" value="999" />
                         <input name="PostCommentDate" type="hidden" value="<%= getCurrentDate().substring(0, 19)%>"/>
                         <fieldset>
