@@ -16,6 +16,7 @@ public class Preferences
 
     public Preferences()
     {
+        //added some test comments, safe to remove
         siteInfo = new SiteDaoImpl().findByColumn(Site.PROP_SITE_ID, "1", null, null).get(0);
         siteEmail = new SiteEmailDaoImpl().find(siteInfo.getSiteEmailId());
         
