@@ -1,5 +1,5 @@
 <%@page import="java.text.*"%>
-<%@page import="com.busy.dao.*"%>
+<%@page import="com.busy.engine.domain.*"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 
 <%
@@ -140,15 +140,15 @@
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane active" id="tab_1_1">
-                					<div class="row">
+                                    <div class="row">
                                         <div class="col-md-6 col-sm-12">
                                             <div class="portlet yellow box">
                                                 <div class="portlet-title">
                                                     <div class="caption">
-                                                        <i class="fa fa-cogs"></i>Site Administration
+                                                        <i class="fa fa-cogs"></i>Site Email Administration
                                                     </div>
                                                     <div class="actions">
-                                                        <a href="SiteInfoUI.jsp?id=${preferences.siteInfo.siteInfoId}" class="btn default btn-sm">
+                                                        <a href="SiteInfoUI.jsp?id=${preferences.siteInfo.siteId}" class="btn default btn-sm">
                                                             <i class="fa fa-pencil"></i> Edit
                                                         </a>
                                                     </div>
@@ -156,10 +156,10 @@
                                                 <div class="portlet-body">
                                                     <div class="row static-info">
                                                         <div class="col-md-4 name">
-                                                             Administrator Name:
+                                                             Host:
                                                         </div>
                                                         <div class="col-md-8 value">
-                                                             ${preferences.siteInfo.siteAdministratorName}
+                                                             ${preferences.siteEmail.host}
                                                         </div>
                                                     </div>
                                                     <div class="row static-info">
@@ -167,122 +167,21 @@
                                                              Administrator Email:
                                                         </div>
                                                         <div class="col-md-8 value">
-                                                             ${preferences.siteInfo.siteAdministratorEmail}
+                                                             ${preferences.siteEmail.username}
                                                             <span class="label label-info label-sm">
                                                                  Email Confirmed
                                                             </span>
                                                         </div>
-                                                    </div>
-                                                    <div class="row static-info">
-                                                        <div class="col-md-4 name">
-                                                             Notifications Email:
-                                                        </div>
-                                                        <div class="col-md-8 value">
-                                                            <span class="label label-success">
-                                                             ${preferences.siteInfo.siteNotificationEmail}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row static-info">
-                                                        <div class="col-md-4 name">
-                                                             URL:
-                                                        </div>
-                                                        <div class="col-md-8 value">
-                                                             ${preferences.siteInfo.siteURL}
-                                                        </div>
-                                                    </div>
-                                                    <div class="row static-info">
-                                                        <div class="col-md-4 name">
-                                                             Testing URL:
-                                                        </div>
-                                                        <div class="col-md-8 value">
-                                                             ${preferences.siteInfo.siteTestingURL}
-                                                        </div>
-                                                    </div>
-                                                    <div class="row static-info">
-                                                        <div class="col-md-4 name">
-                                                             Mode: 
-                                                        </div>
-                                                        <div class="col-md-8 value">
-                                                            <c:choose>
-                                                                <c:when test="${preferences.siteInfo.siteMode==1}"><span class="label label-success">Live</span></c:when> 
-                                                                <c:when test="${preferences.siteInfo.siteMode==2}"><span class="label label-info">Testing</c:when>  
-                                                                <c:otherwise><span class="label label-info">Unknown</span></c:otherwise>   
-                                                             </c:choose>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row static-info">
-                                                        <div class="col-md-4 name">
-                                                             Testing Email:
-                                                        </div>
-                                                        <div class="col-md-8 value">
-                                                             ${preferences.siteInfo.siteTestingEmail}
-                                                        </div>
-                                                    </div>
-                                                    <div class="row static-info">
-                                                        <div class="col-md-4 name">
-                                                             Email Password:
-                                                        </div>
-                                                        <div class="col-md-8 value">
-                                                             ${preferences.siteInfo.siteTestingEmailPassword}
-                                                        </div>
-                                                    </div>
+                                                    </div>                                                    
                                                 </div>
                                             </div>
                                         </div>
+                                                            
                                         <div class="col-md-6 col-sm-12">
                                             <div class="portlet blue box">
                                                 <div class="portlet-title">
                                                     <div class="caption">
-                                                        <i class="fa fa-shopping-cart"></i>Store Information
-                                                    </div>
-                                                    <div class="actions">
-                                                        <a href="StoreInfoUI.jsp?id=${preferences.storeInfo.storeInfoId}" class="btn default btn-sm">
-                                                            <i class="fa fa-pencil"></i> Edit
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                                <div class="portlet-body">
-                                                    <div class="row static-info">
-                                                        <div class="col-md-4 name">
-                                                             Logo Title:
-                                                        </div>
-                                                        <div class="col-md-8 value">
-                                                             ${preferences.storeInfo.storeLogoTitle}
-                                                        </div>
-                                                    </div>
-                                                    <div class="row static-info">
-                                                        <div class="col-md-4 name">
-                                                             Logo Image URL:
-                                                        </div>
-                                                        <div class="col-md-8 value">
-                                                             ${preferences.storeInfo.storeLogoImage}
-                                                        </div>
-                                                    </div>
-                                                    <div class="row static-info">
-                                                        <div class="col-md-4 name">
-                                                             Store Name:
-                                                        </div>
-                                                        <div class="col-md-8 value">
-                                                             ${preferences.storeInfo.storeName}
-                                                        </div>
-                                                    </div>
-                                                    <div class="row static-info">
-                                                        <div class="col-md-4 name">
-                                                             Company Name:
-                                                        </div>
-                                                        <div class="col-md-8 value">
-                                                             ${preferences.storeInfo.companyName}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-12">
-                                            <div class="portlet blue box">
-                                                <div class="portlet-title">
-                                                    <div class="caption">
-                                                        <i class="fa fa-flag"></i>Store Localization
+                                                        <i class="fa fa-flag"></i>Site Localization
                                                     </div>
                                                 </div>
                                                 <div class="portlet-body">
@@ -311,7 +210,85 @@
                                                 </div>
                                             </div>
                                         </div>
-									</div>
+                                                            
+                                        <div class="col-md-6 col-sm-12">
+                                            <div class="portlet blue box">
+                                                <div class="portlet-title">
+                                                    <div class="caption">
+                                                        <i class="fa fa-shopping-cart"></i>Site Information
+                                                    </div>
+                                                    <div class="actions">
+                                                        <a href="StoreInfoUI.jsp?id=${preferences.siteInfo.siteId}" class="btn default btn-sm">
+                                                            <i class="fa fa-pencil"></i> Edit
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="portlet-body">
+                                                    <div class="row static-info">
+                                                        <div class="col-md-4 name">
+                                                             Logo Title:
+                                                        </div>
+                                                        <div class="col-md-8 value">
+                                                             ${preferences.siteInfo.logoTitle}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row static-info">
+                                                        <div class="col-md-4 name">
+                                                             Logo Image URL:
+                                                        </div>
+                                                        <div class="col-md-8 value">
+                                                             ${preferences.siteInfo.logoImageUrl}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row static-info">
+                                                        <div class="col-md-4 name">
+                                                             Site Name:
+                                                        </div>
+                                                        <div class="col-md-8 value">
+                                                             ${preferences.siteInfo.siteName}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row static-info">
+                                                        <div class="col-md-4 name">
+                                                             Domain Name:
+                                                        </div>
+                                                        <div class="col-md-8 value">
+                                                             ${preferences.siteInfo.domain}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row static-info">
+                                                        <div class="col-md-4 name">
+                                                             URL:
+                                                        </div>
+                                                        <div class="col-md-8 value">
+                                                             ${preferences.siteInfo.url}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row static-info">
+                                                        <div class="col-md-4 name">
+                                                             Mode:
+                                                        </div>
+                                                        <div class="col-md-8 value">
+                                                             ${preferences.siteInfo.mode}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row static-info">
+                                                        <div class="col-md-4 name">
+                                                             Status: 
+                                                        </div>
+                                                        <div class="col-md-8 value">
+                                                            <c:choose>
+                                                                <c:when test="${preferences.siteInfo.siteStatus==1}"><span class="label label-success">Deleted</span></c:when> 
+                                                                <c:when test="${preferences.siteInfo.siteStatus==2}"><span class="label label-info">Active</c:when>  
+                                                                <c:when test="${preferences.siteInfo.siteStatus==3}"><span class="label label-info">Inactive</c:when>
+                                                                <c:otherwise><span class="label label-info">Unknown</span></c:otherwise>   
+                                                             </c:choose>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+				</div>
                 </div>
                 <div class="tab-pane" id="tab_1_2">
                     <div class="row profile">
@@ -346,7 +323,7 @@
                                                      PayPal URL:
                                                 </div>
                                                 <div class="col-md-7 value">
-                                                     ${preferences.paypalInfo.payPalURL}
+                                                     ${preferences.paypalInfo.payPalUrl}
                                                 </div>
                                             </div>
                                             <div class="row static-info">
@@ -354,7 +331,7 @@
                                                      API UserName:
                                                 </div>
                                                 <div class="col-md-7 value">
-                                                     ${preferences.paypalInfo.apiUserName}
+                                                     ${preferences.paypalInfo.apiUsername}
                                                 </div>
                                             </div>
                                             <div class="row static-info">
@@ -402,7 +379,7 @@
                                                      Return URL:
                                                 </div>
                                                 <div class="col-md-7 value">
-                                                     ${preferences.paypalInfo.returnURL}
+                                                     ${preferences.paypalInfo.returnUrl}
                                                 </div>
                                             </div>
                                             <div class="row static-info">
@@ -410,7 +387,7 @@
                                                      Cancel URL:
                                                 </div>
                                                 <div class="col-md-7 value">
-                                                     ${preferences.paypalInfo.cancelURL}
+                                                     ${preferences.paypalInfo.cancelUrl}
                                                 </div>
                                             </div>
                                             <div class="row static-info">
