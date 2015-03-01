@@ -1,8 +1,14 @@
 package com.busy.engine.web;
 
+import com.busy.engine.entity.AbstractEntity;
 import com.busy.engine.entity.JsonItem;
+import com.busy.engine.entity.User;
+import com.busy.engine.vo.Result;
+import static com.busy.engine.web.SecurityHelper.getSessionUser;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -13,6 +19,7 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Provides base functionality for all AJAX driven handler classes. 
@@ -21,6 +28,13 @@ import javax.servlet.http.HttpServlet;
  */
 public abstract class AbstractHandler extends HttpServlet
 {
+    protected SimpleDateFormat operatingDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    protected SimpleDateFormat getOperatingDateFormat()
+    {
+        return operatingDateFormat;
+    }    
+    
     /**
      * Processes the List of results and constructs a JSON representation in the
      * format
@@ -146,4 +160,65 @@ public abstract class AbstractHandler extends HttpServlet
         
         return value;
     }
+    
+    protected String getRequiredParameter(HttpServletRequest request, String paramName) throws Exception
+    {
+        String value = request.getParameter(paramName);
+        if (value == null || value.equals(""))
+        {
+            throw new Exception("Invalid required parameter was passed.");
+        }
+        else
+        {
+            return value;
+        }
+    }
+
+    protected void generateFindServiceResult(Result<? extends AbstractEntity> result, PrintWriter out)
+    {
+        if (result.isSuccess())
+        {
+            out.print(getJsonSuccessData(result.getData()));
+        }
+        else
+        {
+            out.print(getJsonErrorMsg(result.getMsg()));
+        }
+    }
+
+    protected void generateFindAllServiceResult(Result<? extends List<? extends AbstractEntity>> result, PrintWriter out)
+    {
+        if (result.isSuccess())
+        {
+            out.print(getJsonSuccessData(result.getData()));
+        }
+        else
+        {
+            out.print(getJsonErrorMsg(result.getMsg()));
+        }
+    }
+
+    protected void generateStoreServiceResult(Result<? extends AbstractEntity> result, PrintWriter out)
+    {
+        if (result.isSuccess())
+        {
+            out.print(getJsonSuccessData(result.getData()));
+        }
+        else
+        {
+            out.print(getJsonErrorMsg(result.getMsg()));
+        }
+    }
+
+    protected void generateRemoveServiceResult(Result<?> result, PrintWriter out)
+    {
+        if (result.isSuccess())
+        {
+            out.print(getJsonSuccessMsg(result.getMsg()));
+        }
+        else
+        {
+            out.print(getJsonErrorMsg(result.getMsg()));
+        }
+    }   
 }

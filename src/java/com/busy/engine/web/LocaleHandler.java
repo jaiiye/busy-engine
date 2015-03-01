@@ -1,3 +1,38 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.web;
 
 import com.busy.engine.entity.User;
@@ -10,14 +45,14 @@ import com.busy.engine.util.PathProcessor;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.busy.engine.service.ServiceServiceImpl;
+import com.busy.engine.service.LocaleServiceImpl;
 import static com.busy.engine.web.AbstractHandler.getJsonErrorMsg;
 import static com.busy.engine.web.SecurityHelper.getSessionUser;
 
-@WebServlet("/rest/Service/*")
-public class ServiceHandler extends AbstractHandler
-{
 
+@WebServlet("/rest/Locale/*")
+public class LocaleHandler extends AbstractHandler
+{
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
@@ -36,10 +71,10 @@ public class ServiceHandler extends AbstractHandler
                 switch (new PathProcessor(request.getPathInfo()).getOperation())
                 {
                     case "find":
-                        generateFindServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).find(sessionUser.getUsername(), Integer.parseInt(getRequiredParameter(request, "serviceId"))), out);
+                        generateFindServiceResult(new LocaleServiceImpl(request.getSession().getServletContext()).find(sessionUser.getUsername(), Integer.parseInt(getRequiredParameter(request, "localeId"))), out);
                         break;
                     case "findAll":
-                        generateFindAllServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
+                        generateFindAllServiceResult(new LocaleServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
                         break;
                     default:
                         out.print(getJsonErrorMsg("Invalid Operation"));
@@ -52,6 +87,7 @@ public class ServiceHandler extends AbstractHandler
             }
         }
     }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -73,10 +109,10 @@ public class ServiceHandler extends AbstractHandler
                 switch (new PathProcessor(request.getPathInfo()).getOperation())
                 {
                     case "store":
-                        generateStoreServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("serviceId")), obj.getString("serviceName"), obj.getString("description"), getIntegerValue(obj.get("serviceStatus")), getIntegerValue(obj.get("serviceChargeId")), getIntegerValue(obj.get("serviceTypeId"))), out);
+                        generateStoreServiceResult(new LocaleServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("localeId")), obj.getString("localeString"), obj.getString("localeCharacterSet")), out);
                         break;
                     case "remove":
-                        generateRemoveServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("serviceId"))), out);
+                        generateRemoveServiceResult(new LocaleServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("localeId"))), out);
                         break;
                     default:
                         out.print(getJsonErrorMsg("Invalid Operation"));
@@ -88,11 +124,12 @@ public class ServiceHandler extends AbstractHandler
                 out.print(getJsonErrorMsg(ex.getMessage()));
             }
         }
-    }
+    }    
 
     @Override
     public String getServletInfo()
     {
-        return "Handles the requests for Service resource with the following format: rest/Service/{Id:optional}";
+        return "Handles the requests for Locale resource with the following format: rest/Locale/{Id:optional}";
     }
 }
+

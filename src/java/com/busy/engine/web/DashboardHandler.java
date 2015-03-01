@@ -1,3 +1,38 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.web;
 
 import com.busy.engine.entity.User;
@@ -10,14 +45,14 @@ import com.busy.engine.util.PathProcessor;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.busy.engine.service.ServiceServiceImpl;
+import com.busy.engine.service.DashboardServiceImpl;
 import static com.busy.engine.web.AbstractHandler.getJsonErrorMsg;
 import static com.busy.engine.web.SecurityHelper.getSessionUser;
 
-@WebServlet("/rest/Service/*")
-public class ServiceHandler extends AbstractHandler
-{
 
+@WebServlet("/rest/Dashboard/*")
+public class DashboardHandler extends AbstractHandler
+{
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
@@ -36,10 +71,10 @@ public class ServiceHandler extends AbstractHandler
                 switch (new PathProcessor(request.getPathInfo()).getOperation())
                 {
                     case "find":
-                        generateFindServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).find(sessionUser.getUsername(), Integer.parseInt(getRequiredParameter(request, "serviceId"))), out);
+                        generateFindServiceResult(new DashboardServiceImpl(request.getSession().getServletContext()).find(sessionUser.getUsername(), Integer.parseInt(getRequiredParameter(request, "dashboardId"))), out);
                         break;
                     case "findAll":
-                        generateFindAllServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
+                        generateFindAllServiceResult(new DashboardServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
                         break;
                     default:
                         out.print(getJsonErrorMsg("Invalid Operation"));
@@ -52,6 +87,7 @@ public class ServiceHandler extends AbstractHandler
             }
         }
     }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -73,10 +109,10 @@ public class ServiceHandler extends AbstractHandler
                 switch (new PathProcessor(request.getPathInfo()).getOperation())
                 {
                     case "store":
-                        generateStoreServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("serviceId")), obj.getString("serviceName"), obj.getString("description"), getIntegerValue(obj.get("serviceStatus")), getIntegerValue(obj.get("serviceChargeId")), getIntegerValue(obj.get("serviceTypeId"))), out);
+                        generateStoreServiceResult(new DashboardServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("dashboardId")), getIntegerValue(obj.get("userCount")), getIntegerValue(obj.get("blogPostCount")), getIntegerValue(obj.get("itemCount")), getIntegerValue(obj.get("orderCount")), getIntegerValue(obj.get("siteFileCount")), getIntegerValue(obj.get("imageCount")), getIntegerValue(obj.get("blogCount")), getIntegerValue(obj.get("commentCount")), getIntegerValue(obj.get("pageCount")), getIntegerValue(obj.get("formCount")), getIntegerValue(obj.get("sliderCount")), getIntegerValue(obj.get("itemBrandCount")), getIntegerValue(obj.get("categoryCount")), getIntegerValue(obj.get("itemOptionCount"))), out);
                         break;
                     case "remove":
-                        generateRemoveServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("serviceId"))), out);
+                        generateRemoveServiceResult(new DashboardServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("dashboardId"))), out);
                         break;
                     default:
                         out.print(getJsonErrorMsg("Invalid Operation"));
@@ -88,11 +124,12 @@ public class ServiceHandler extends AbstractHandler
                 out.print(getJsonErrorMsg(ex.getMessage()));
             }
         }
-    }
+    }    
 
     @Override
     public String getServletInfo()
     {
-        return "Handles the requests for Service resource with the following format: rest/Service/{Id:optional}";
+        return "Handles the requests for Dashboard resource with the following format: rest/Dashboard/{Id:optional}";
     }
 }
+

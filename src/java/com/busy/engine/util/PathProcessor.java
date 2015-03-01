@@ -9,27 +9,24 @@ import java.util.regex.Pattern;
  */
 public class PathProcessor
 {
-    //private Integer id = null;
-    private String resource = "";
+//    private Integer id = null;
     private String operation = "";
     
 
     public PathProcessor(String pathInfo)
     {
-        //tries to extract a resource name followed by an operation and an optional number as id of resource
-        
-        //Pattern p = Pattern.compile("/([^/]+)/([^/]+)(/([0-9]*))*"); // ex: /item/find/12
-        Pattern p = Pattern.compile("/([^/]+)/([^/]+)");
+        //tries to extract an operation and an optional number as id of resource        
+        Pattern p = Pattern.compile("/([^/]+)(/([0-9]*))*"); // ex: /find/12
         Matcher m = p.matcher(pathInfo);
+        
         if (m.find()) 
         {
-            resource = m.group(1);
-            operation = m.group(2).replace(".json", "");
-            //String Id = m.group(3) == null ? null : m.group(3).replace("/", "");
-            //if(Id != null && (!Id.equals("")))
-            //{
-            //    id = Integer.parseInt(Id);
-            //}            
+            operation = m.group(1).replace(".json", "");
+//            String Id = m.group(2) == null ? null : m.group(2).replace("/", "");
+//            if(Id != null && (!Id.equals("")))
+//            {
+//                id = Integer.parseInt(Id);
+//            }            
         }
     }
 
@@ -38,10 +35,10 @@ public class PathProcessor
 //        return id;
 //    }
     
-    public String getResource()
-    {
-        return resource;
-    }
+//    public String getResource()
+//    {
+//        return resource;
+//    }
     
     public String getOperation()
     {
@@ -50,12 +47,12 @@ public class PathProcessor
     
     public static void main(String[] args)
     {
-        //PathProcessor pp = new PathProcessor("/item/find.json");
-        PathProcessor pp = new PathProcessor("/item/findall.json");
-        //PathProcessor pp = new PathProcessor("/item/remove.json");
-        System.out.println("Resource: " + pp.getResource());
+        //PathProcessor pp = new PathProcessor("/find.json/12");
+        //PathProcessor pp = new PathProcessor("/findall.json");
+        PathProcessor pp = new PathProcessor("/remove.json/1");
+        //System.out.println("Resource: " + pp.getResource());
         System.out.println("Operation: " + pp.getOperation());
-        //System.out.println("id: " + pp.getId());
+//        System.out.println("id: " + pp.getId());
     }
 
 }

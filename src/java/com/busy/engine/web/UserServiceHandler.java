@@ -10,12 +10,12 @@ import com.busy.engine.util.PathProcessor;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.busy.engine.service.ServiceServiceImpl;
+import com.busy.engine.service.UserServiceServiceImpl;
 import static com.busy.engine.web.AbstractHandler.getJsonErrorMsg;
 import static com.busy.engine.web.SecurityHelper.getSessionUser;
 
-@WebServlet("/rest/Service/*")
-public class ServiceHandler extends AbstractHandler
+@WebServlet("/rest/UserService/*")
+public class UserServiceHandler extends AbstractHandler
 {
 
     @Override
@@ -36,10 +36,10 @@ public class ServiceHandler extends AbstractHandler
                 switch (new PathProcessor(request.getPathInfo()).getOperation())
                 {
                     case "find":
-                        generateFindServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).find(sessionUser.getUsername(), Integer.parseInt(getRequiredParameter(request, "serviceId"))), out);
+                        generateFindServiceResult(new UserServiceServiceImpl(request.getSession().getServletContext()).find(sessionUser.getUsername(), Integer.parseInt(getRequiredParameter(request, "userServiceId"))), out);
                         break;
                     case "findAll":
-                        generateFindAllServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
+                        generateFindAllServiceResult(new UserServiceServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
                         break;
                     default:
                         out.print(getJsonErrorMsg("Invalid Operation"));
@@ -73,10 +73,10 @@ public class ServiceHandler extends AbstractHandler
                 switch (new PathProcessor(request.getPathInfo()).getOperation())
                 {
                     case "store":
-                        generateStoreServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("serviceId")), obj.getString("serviceName"), obj.getString("description"), getIntegerValue(obj.get("serviceStatus")), getIntegerValue(obj.get("serviceChargeId")), getIntegerValue(obj.get("serviceTypeId"))), out);
+                        generateStoreServiceResult(new UserServiceServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("userServiceId")), getOperatingDateFormat().parse(obj.getString("startDate")), getOperatingDateFormat().parse(obj.getString("endDate")), obj.getString("details"), obj.getString("contractUrl"), obj.getString("deliverableUrl"), obj.getJsonNumber("depositAmount").doubleValue(), getIntegerValue(obj.get("userRank")), getIntegerValue(obj.get("blogId")), getIntegerValue(obj.get("userId")), getIntegerValue(obj.get("serviceId"))), out);
                         break;
                     case "remove":
-                        generateRemoveServiceResult(new ServiceServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("serviceId"))), out);
+                        generateRemoveServiceResult(new UserServiceServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("userServiceId"))), out);
                         break;
                     default:
                         out.print(getJsonErrorMsg("Invalid Operation"));
@@ -93,6 +93,6 @@ public class ServiceHandler extends AbstractHandler
     @Override
     public String getServletInfo()
     {
-        return "Handles the requests for Service resource with the following format: rest/Service/{Id:optional}";
+        return "Handles the requests for UserService resource with the following format: rest/UserService/{Id:optional}";
     }
 }
