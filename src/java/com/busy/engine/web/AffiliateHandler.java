@@ -1,38 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.web;
 
 import com.busy.engine.entity.User;
@@ -49,10 +14,10 @@ import com.busy.engine.service.AffiliateServiceImpl;
 import static com.busy.engine.web.AbstractHandler.getJsonErrorMsg;
 import static com.busy.engine.web.SecurityHelper.getSessionUser;
 
-
 @WebServlet("/rest/Affiliate/*")
 public class AffiliateHandler extends AbstractHandler
 {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
@@ -87,7 +52,6 @@ public class AffiliateHandler extends AbstractHandler
             }
         }
     }
-
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -124,7 +88,7 @@ public class AffiliateHandler extends AbstractHandler
                 out.print(getJsonErrorMsg(ex.getMessage()));
             }
         }
-    }    
+    }
 
     @Override
     public String getServletInfo()
@@ -132,4 +96,3 @@ public class AffiliateHandler extends AbstractHandler
         return "Handles the requests for Affiliate resource with the following format: rest/Affiliate/{Id:optional}";
     }
 }
-
