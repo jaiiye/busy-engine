@@ -35,13 +35,13 @@
 
 package com.busy.engine.service;
 
-import com.busy.engine.dao.DashboardDao;
-import com.busy.engine.dao.DashboardDaoImpl;
+import com.busy.engine.dao.TenantDao;
+import com.busy.engine.dao.TenantDaoImpl;
 import com.busy.engine.dao.UserDao;
 import com.busy.engine.dao.UserDaoImpl;
 import com.busy.engine.dao.UserRoleDao;
 import com.busy.engine.dao.UserRoleDaoImpl;
-import com.busy.engine.entity.Dashboard;
+import com.busy.engine.entity.Tenant;
 import com.busy.engine.entity.User;
 import com.busy.engine.entity.UserRole;
 import com.busy.engine.vo.Result;
@@ -50,36 +50,36 @@ import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
-public class DashboardServiceImpl extends AbstractService implements DashboardService 
+public class TenantServiceImpl extends AbstractService implements TenantService 
 {
-    protected DashboardDao dashboardDao;    
+    protected TenantDao tenantDao;    
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
     
-    public DashboardServiceImpl() 
+    public TenantServiceImpl() 
     {
         super();        
-        dashboardDao = new DashboardDaoImpl();
+        tenantDao = new TenantDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
     }
     
-    public DashboardServiceImpl(ServletContext context) 
+    public TenantServiceImpl(ServletContext context) 
     {
         super();        
-        dashboardDao = (DashboardDao) context.getAttribute("dashboardDao");
+        tenantDao = (TenantDao) context.getAttribute("tenantDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
     }
 
     @Override
-    public Result<Dashboard> find(String userName, Integer id)
+    public Result<Tenant> find(String userName, Integer id)
     {
         try
         {
             if (isValidUser(userName, userDao)) 
             {
-                return ResultFactory.getSuccessResult(dashboardDao.find(id));
+                return ResultFactory.getSuccessResult(tenantDao.find(id));
             }
             else 
             {            
@@ -93,14 +93,14 @@ public class DashboardServiceImpl extends AbstractService implements DashboardSe
     }
     
     @Override
-    public Result<List<Dashboard>> findAll(String userName) 
+    public Result<List<Tenant>> findAll(String userName) 
     {
         try
         {
             if (isValidUser(userName, userDao)) 
             {
-                List<Dashboard> dashboardList =  dashboardDao.findAll(null, null);
-                return ResultFactory.getSuccessResult(dashboardList);
+                List<Tenant> tenantList =  tenantDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(tenantList);
             } 
             else 
             {
@@ -114,7 +114,7 @@ public class DashboardServiceImpl extends AbstractService implements DashboardSe
     }
 
     @Override
-    public Result<Dashboard> store(String userName, Integer id, Integer userCount, Integer blogPostCount, Integer itemCount, Integer orderCount, Integer siteFileCount, Integer imageCount, Integer blogCount, Integer commentCount, Integer pageCount, Integer formCount, Integer sliderCount, Integer itemBrandCount, Integer categoryCount, Integer itemOptionCount, Integer fileCount, Integer folderCount, Integer emailCount)
+    public Result<Tenant> store(String userName, Integer id, String name, String logo, Integer dashboardId)
     {        
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
@@ -124,56 +124,42 @@ public class DashboardServiceImpl extends AbstractService implements DashboardSe
             return ResultFactory.getFailResult(ROLE_INVALID);
         }
 
-        Dashboard dashboard;
+        Tenant tenant;
 
         if (id == null) 
         {
-            dashboard = new Dashboard();
+            tenant = new Tenant();
         } 
         else 
         {
-            dashboard = dashboardDao.find(id);
+            tenant = tenantDao.find(id);
 
-            if (dashboard == null) 
+            if (tenant == null) 
             {
-                return ResultFactory.getFailResult("Unable to find Dashboard instance with Id=" + id);
+                return ResultFactory.getFailResult("Unable to find Tenant instance with Id=" + id);
             }
         }
 
-        dashboard.setUserCount(userCount);
-        dashboard.setBlogPostCount(blogPostCount);
-        dashboard.setItemCount(itemCount);
-        dashboard.setOrderCount(orderCount);
-        dashboard.setSiteFileCount(siteFileCount);
-        dashboard.setImageCount(imageCount);
-        dashboard.setBlogCount(blogCount);
-        dashboard.setCommentCount(commentCount);
-        dashboard.setPageCount(pageCount);
-        dashboard.setFormCount(formCount);
-        dashboard.setSliderCount(sliderCount);
-        dashboard.setItemBrandCount(itemBrandCount);
-        dashboard.setCategoryCount(categoryCount);
-        dashboard.setItemOptionCount(itemOptionCount);
-        dashboard.setFileCount(fileCount);
-        dashboard.setFolderCount(folderCount);
-        dashboard.setEmailCount(emailCount);
+        tenant.setName(name);
+        tenant.setLogo(logo);
+        tenant.setDashboardId(dashboardId);
         
         
-        if (dashboard.getId() == null) 
+        if (tenant.getId() == null) 
         {
-            dashboardDao.add(dashboard);
+            tenantDao.add(tenant);
         } 
         else 
         {
-            dashboard = dashboardDao.update(dashboard);
+            tenant = tenantDao.update(tenant);
         }
 
-        return ResultFactory.getSuccessResult(dashboard);
+        return ResultFactory.getSuccessResult(tenant);
 
     }
   
     @Override
-    public Result<Dashboard> remove(String userName, Integer id)
+    public Result<Tenant> remove(String userName, Integer id)
     {
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
@@ -185,47 +171,47 @@ public class DashboardServiceImpl extends AbstractService implements DashboardSe
 
         if (id == null) 
         {
-            return ResultFactory.getFailResult("Unable to remove Dashboard [null id]");
+            return ResultFactory.getFailResult("Unable to remove Tenant [null id]");
         } 
 
-        Dashboard dashboard = dashboardDao.find(id);
+        Tenant tenant = tenantDao.find(id);
 
-        if (dashboard == null) 
+        if (tenant == null) 
         {
-            return ResultFactory.getFailResult("Unable to load Dashboard for removal with id=" + id);
+            return ResultFactory.getFailResult("Unable to load Tenant for removal with id=" + id);
         } 
         else 
         {
             //if all related objects are empty for the given object then we can erase this object
-            dashboardDao.getRelatedObjects(dashboard);
+            tenantDao.getRelatedObjects(tenant);
             
             String relatedObjectNames = "";
             boolean canBeDeleted = true;
             
                         
-            if(dashboard.getSiteList().size() != 0)
+            if(tenant.getSiteList().size() != 0)
             {
                 relatedObjectNames += "Site ";  
                 canBeDeleted = false;
             }
                         
-            if(dashboard.getTenantList().size() != 0)
+            if(tenant.getTenantAttributeList().size() != 0)
             {
-                relatedObjectNames += "Tenant ";  
+                relatedObjectNames += "TenantAttribute ";  
                 canBeDeleted = false;
             }
                           
             
             if(canBeDeleted)
             {                
-                dashboardDao.remove(dashboard);
+                tenantDao.remove(tenant);
                 
-                String msg = "Dashboard with Id: " + dashboard.getId() + " was deleted by " + userName;
+                String msg = "Tenant with Id: " + tenant.getId() + " was deleted by " + userName;
                 return ResultFactory.getSuccessResultMsg(msg);                
             }
             else 
             {
-                return ResultFactory.getFailResult("Dashboard is used with to [" + relatedObjectNames + "] and could not be deleted");
+                return ResultFactory.getFailResult("Tenant is used with to [" + relatedObjectNames + "] and could not be deleted");
             }            
         }
     }

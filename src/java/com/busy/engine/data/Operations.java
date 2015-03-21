@@ -12,7 +12,6 @@ import static com.busy.engine.web.SecurityHelper.setSessionUser;
 
 public class Operations extends HttpServlet
 {
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
         String userName = request.getUserPrincipal().getName();
@@ -786,7 +785,7 @@ public class Operations extends HttpServlet
                 switch (Integer.parseInt(request.getParameter("action")))
                 {
                     case 1: //create                        
-                        int id = dashboardDao.add(new Dashboard(null, Integer.parseInt(request.getParameter("userCount")), Integer.parseInt(request.getParameter("blogPostCount")), Integer.parseInt(request.getParameter("itemCount")), Integer.parseInt(request.getParameter("orderCount")), Integer.parseInt(request.getParameter("siteFileCount")), Integer.parseInt(request.getParameter("imageCount")), Integer.parseInt(request.getParameter("blogCount")), Integer.parseInt(request.getParameter("commentCount")), Integer.parseInt(request.getParameter("pageCount")), Integer.parseInt(request.getParameter("formCount")), Integer.parseInt(request.getParameter("sliderCount")), Integer.parseInt(request.getParameter("itemBrandCount")), Integer.parseInt(request.getParameter("categoryCount")), Integer.parseInt(request.getParameter("itemOptionCount"))));
+                        int id = dashboardDao.add(new Dashboard(null, Integer.parseInt(request.getParameter("userCount")), Integer.parseInt(request.getParameter("blogPostCount")), Integer.parseInt(request.getParameter("itemCount")), Integer.parseInt(request.getParameter("orderCount")), Integer.parseInt(request.getParameter("siteFileCount")), Integer.parseInt(request.getParameter("imageCount")), Integer.parseInt(request.getParameter("blogCount")), Integer.parseInt(request.getParameter("commentCount")), Integer.parseInt(request.getParameter("pageCount")), Integer.parseInt(request.getParameter("formCount")), Integer.parseInt(request.getParameter("sliderCount")), Integer.parseInt(request.getParameter("itemBrandCount")), Integer.parseInt(request.getParameter("categoryCount")), Integer.parseInt(request.getParameter("itemOptionCount")), Integer.parseInt(request.getParameter("fileCount")), Integer.parseInt(request.getParameter("folderCount")), Integer.parseInt(request.getParameter("emailCount"))));
                         if (id != 0)
                         {
                             Database.RecordUserObjectCreationAction(user.getUserId().toString(), user.getUsername(), currentTime, "Dashboard", id);
@@ -795,7 +794,7 @@ public class Operations extends HttpServlet
                         response.sendRedirect("admin/DashboardUI.jsp?SuccessMsg=Added Dashboard Successfully!");
                         break;
                     case 2: //update            
-                        dashboardDao.update(new Dashboard(Integer.parseInt(request.getParameter("dashboardId")), Integer.parseInt(request.getParameter("userCount")), Integer.parseInt(request.getParameter("blogPostCount")), Integer.parseInt(request.getParameter("itemCount")), Integer.parseInt(request.getParameter("orderCount")), Integer.parseInt(request.getParameter("siteFileCount")), Integer.parseInt(request.getParameter("imageCount")), Integer.parseInt(request.getParameter("blogCount")), Integer.parseInt(request.getParameter("commentCount")), Integer.parseInt(request.getParameter("pageCount")), Integer.parseInt(request.getParameter("formCount")), Integer.parseInt(request.getParameter("sliderCount")), Integer.parseInt(request.getParameter("itemBrandCount")), Integer.parseInt(request.getParameter("categoryCount")), Integer.parseInt(request.getParameter("itemOptionCount"))));
+                        dashboardDao.update(new Dashboard(Integer.parseInt(request.getParameter("dashboardId")), Integer.parseInt(request.getParameter("userCount")), Integer.parseInt(request.getParameter("blogPostCount")), Integer.parseInt(request.getParameter("itemCount")), Integer.parseInt(request.getParameter("orderCount")), Integer.parseInt(request.getParameter("siteFileCount")), Integer.parseInt(request.getParameter("imageCount")), Integer.parseInt(request.getParameter("blogCount")), Integer.parseInt(request.getParameter("commentCount")), Integer.parseInt(request.getParameter("pageCount")), Integer.parseInt(request.getParameter("formCount")), Integer.parseInt(request.getParameter("sliderCount")), Integer.parseInt(request.getParameter("itemBrandCount")), Integer.parseInt(request.getParameter("categoryCount")), Integer.parseInt(request.getParameter("itemOptionCount")), Integer.parseInt(request.getParameter("fileCount")), Integer.parseInt(request.getParameter("folderCount")), Integer.parseInt(request.getParameter("emailCount"))));
                         Database.RecordUserObjectUpdateAction(user.getUserId().toString(), user.getUsername(), currentTime, "Dashboard", Integer.parseInt(request.getParameter("dashboardId")));
                         response.sendRedirect("admin/DashboardUI.jsp?id=" + request.getParameter("dashboardId") + "&SuccessMsg=Updated Dashboard Successfully!");
                         break;
@@ -2637,68 +2636,6 @@ public class Operations extends HttpServlet
             }
         }
 
-        if (request.getParameter("form").equals("page_template"))
-        {
-            try
-            {
-                PageTemplateDao pageTemplateDao = (PageTemplateDao) this.getServletContext().getAttribute("pageTemplateDao");
-
-                switch (Integer.parseInt(request.getParameter("action")))
-                {
-                    case 1: //create                        
-                        int id = pageTemplateDao.add(new PageTemplate(null, request.getParameter("name"), request.getParameter("markup")));
-                        if (id != 0)
-                        {
-                            Database.RecordUserObjectCreationAction(user.getUserId().toString(), user.getUsername(), currentTime, "PageTemplate", id);
-                        }
-
-                        response.sendRedirect("admin/PageTemplateUI.jsp?SuccessMsg=Added PageTemplate Successfully!");
-                        break;
-                    case 2: //update            
-                        pageTemplateDao.update(new PageTemplate(Integer.parseInt(request.getParameter("pageTemplateId")), request.getParameter("name"), request.getParameter("markup")));
-                        Database.RecordUserObjectUpdateAction(user.getUserId().toString(), user.getUsername(), currentTime, "PageTemplate", Integer.parseInt(request.getParameter("pageTemplateId")));
-                        response.sendRedirect("admin/PageTemplateUI.jsp?id=" + request.getParameter("pageTemplateId") + "&SuccessMsg=Updated PageTemplate Successfully!");
-                        break;
-                    case 3:  //delete
-                        pageTemplateDao.removeById(Integer.parseInt(request.getParameter("id")));
-                        Database.RecordUserObjectDeletionAction(user.getUserId().toString(), user.getUsername(), currentTime, "PageTemplate", request.getParameter("id"));
-
-                        response.sendRedirect("admin/PageTemplateUI.jsp?SuccessMsg=Deleted PageTemplate Successfully!");
-                        break;
-                    case 4:  //remove all records
-                        pageTemplateDao.removeAll();
-                        Database.RecordUserObjectClearAction(user.getUserId().toString(), user.getUsername(), currentTime, "PageTemplate");
-                        response.sendRedirect("admin/PageTemplateUI.jsp?SuccessMsg=Removed All Records Successfully!");
-                        break;
-                    default:
-                        response.sendRedirect("admin/PageTemplateUI.jsp?ErrorMsg=Error editing PageTemplate, Invalid Action.");
-                        break;
-                }
-            }
-            catch (Exception e)
-            {
-                System.out.println("Error:" + e.getMessage());
-                switch (Integer.parseInt(request.getParameter("action")))
-                {
-                    case 1:
-                        response.sendRedirect("admin/PageTemplateUI.jsp?ErrorMsg=Error adding PageTemplate.");
-                        break; //create
-                    case 2:
-                        response.sendRedirect("admin/PageTemplateUI.jsp?ErrorMsg=Error editing PageTemplate.");
-                        break; //update                                                    
-                    case 3:
-                        response.sendRedirect("admin/PageTemplateUI.jsp?ErrorMsg=Error deleting PageTemplate.");
-                        break; //delete                                                    
-                    case 4:
-                        response.sendRedirect("admin/PageTemplateUI.jsp?ErrorMsg=Error clearing PageTemplate.");
-                        break; //clear                          
-                    default:
-                        response.sendRedirect("admin/PageTemplateUI.jsp?ErrorMsg=Unknown Error PageTemplate, possibly an invalid action.");
-                        break;
-                }
-            }
-        }
-
         if (request.getParameter("form").equals("paypal"))
         {
             try
@@ -3452,7 +3389,7 @@ public class Operations extends HttpServlet
                 switch (Integer.parseInt(request.getParameter("action")))
                 {
                     case 1: //create                        
-                        int id = siteDao.add(new Site(null, request.getParameter("siteName"), request.getParameter("domain"), Integer.parseInt(request.getParameter("mode")), request.getParameter("url"), request.getParameter("logoTitle"), request.getParameter("logoImageUrl"), Integer.parseInt(request.getParameter("useAsStore")), Integer.parseInt(request.getParameter("siteStatus")), request.getParameter("locale"), Integer.parseInt(request.getParameter("templateId")), Integer.parseInt(request.getParameter("siteEmailId"))));
+                        int id = siteDao.add(new Site(null, request.getParameter("siteName"), request.getParameter("domain"), Integer.parseInt(request.getParameter("mode")), request.getParameter("url"), request.getParameter("logoTitle"), request.getParameter("logoImageUrl"), Integer.parseInt(request.getParameter("useAsStore")), Integer.parseInt(request.getParameter("siteStatus")), request.getParameter("locale"), Integer.parseInt(request.getParameter("templateId")), Integer.parseInt(request.getParameter("siteEmailId")), Integer.parseInt(request.getParameter("dashboardId")), Integer.parseInt(request.getParameter("tenantId"))));
                         if (id != 0)
                         {
                             Database.RecordUserObjectCreationAction(user.getUserId().toString(), user.getUsername(), currentTime, "Site", id);
@@ -3461,7 +3398,7 @@ public class Operations extends HttpServlet
                         response.sendRedirect("admin/SiteUI.jsp?SuccessMsg=Added Site Successfully!");
                         break;
                     case 2: //update            
-                        siteDao.update(new Site(Integer.parseInt(request.getParameter("siteId")), request.getParameter("siteName"), request.getParameter("domain"), Integer.parseInt(request.getParameter("mode")), request.getParameter("url"), request.getParameter("logoTitle"), request.getParameter("logoImageUrl"), Integer.parseInt(request.getParameter("useAsStore")), Integer.parseInt(request.getParameter("siteStatus")), request.getParameter("locale"), Integer.parseInt(request.getParameter("templateId")), Integer.parseInt(request.getParameter("siteEmailId"))));
+                        siteDao.update(new Site(Integer.parseInt(request.getParameter("siteId")), request.getParameter("siteName"), request.getParameter("domain"), Integer.parseInt(request.getParameter("mode")), request.getParameter("url"), request.getParameter("logoTitle"), request.getParameter("logoImageUrl"), Integer.parseInt(request.getParameter("useAsStore")), Integer.parseInt(request.getParameter("siteStatus")), request.getParameter("locale"), Integer.parseInt(request.getParameter("templateId")), Integer.parseInt(request.getParameter("siteEmailId")), Integer.parseInt(request.getParameter("dashboardId")), Integer.parseInt(request.getParameter("tenantId"))));
                         Database.RecordUserObjectUpdateAction(user.getUserId().toString(), user.getUsername(), currentTime, "Site", Integer.parseInt(request.getParameter("siteId")));
                         response.sendRedirect("admin/SiteUI.jsp?id=" + request.getParameter("siteId") + "&SuccessMsg=Updated Site Successfully!");
                         break;
@@ -4435,6 +4372,130 @@ public class Operations extends HttpServlet
             }
         }
 
+        if (request.getParameter("form").equals("tenant"))
+        {
+            try
+            {
+                TenantDao tenantDao = (TenantDao) this.getServletContext().getAttribute("tenantDao");
+
+                switch (Integer.parseInt(request.getParameter("action")))
+                {
+                    case 1: //create                        
+                        int id = tenantDao.add(new Tenant(null, request.getParameter("name"), request.getParameter("logo"), Integer.parseInt(request.getParameter("dashboardId"))));
+                        if (id != 0)
+                        {
+                            Database.RecordUserObjectCreationAction(user.getUserId().toString(), user.getUsername(), currentTime, "Tenant", id);
+                        }
+
+                        response.sendRedirect("admin/TenantUI.jsp?SuccessMsg=Added Tenant Successfully!");
+                        break;
+                    case 2: //update            
+                        tenantDao.update(new Tenant(Integer.parseInt(request.getParameter("tenantId")), request.getParameter("name"), request.getParameter("logo"), Integer.parseInt(request.getParameter("dashboardId"))));
+                        Database.RecordUserObjectUpdateAction(user.getUserId().toString(), user.getUsername(), currentTime, "Tenant", Integer.parseInt(request.getParameter("tenantId")));
+                        response.sendRedirect("admin/TenantUI.jsp?id=" + request.getParameter("tenantId") + "&SuccessMsg=Updated Tenant Successfully!");
+                        break;
+                    case 3:  //delete
+                        tenantDao.removeById(Integer.parseInt(request.getParameter("id")));
+                        Database.RecordUserObjectDeletionAction(user.getUserId().toString(), user.getUsername(), currentTime, "Tenant", request.getParameter("id"));
+
+                        response.sendRedirect("admin/TenantUI.jsp?SuccessMsg=Deleted Tenant Successfully!");
+                        break;
+                    case 4:  //remove all records
+                        tenantDao.removeAll();
+                        Database.RecordUserObjectClearAction(user.getUserId().toString(), user.getUsername(), currentTime, "Tenant");
+                        response.sendRedirect("admin/TenantUI.jsp?SuccessMsg=Removed All Records Successfully!");
+                        break;
+                    default:
+                        response.sendRedirect("admin/TenantUI.jsp?ErrorMsg=Error editing Tenant, Invalid Action.");
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                System.out.println("Error:" + e.getMessage());
+                switch (Integer.parseInt(request.getParameter("action")))
+                {
+                    case 1:
+                        response.sendRedirect("admin/TenantUI.jsp?ErrorMsg=Error adding Tenant.");
+                        break; //create
+                    case 2:
+                        response.sendRedirect("admin/TenantUI.jsp?ErrorMsg=Error editing Tenant.");
+                        break; //update                                                    
+                    case 3:
+                        response.sendRedirect("admin/TenantUI.jsp?ErrorMsg=Error deleting Tenant.");
+                        break; //delete                                                    
+                    case 4:
+                        response.sendRedirect("admin/TenantUI.jsp?ErrorMsg=Error clearing Tenant.");
+                        break; //clear                          
+                    default:
+                        response.sendRedirect("admin/TenantUI.jsp?ErrorMsg=Unknown Error Tenant, possibly an invalid action.");
+                        break;
+                }
+            }
+        }
+
+        if (request.getParameter("form").equals("tenant_attribute"))
+        {
+            try
+            {
+                TenantAttributeDao tenantAttributeDao = (TenantAttributeDao) this.getServletContext().getAttribute("tenantAttributeDao");
+
+                switch (Integer.parseInt(request.getParameter("action")))
+                {
+                    case 1: //create                        
+                        int id = tenantAttributeDao.add(new TenantAttribute(null, request.getParameter("attributeKey"), request.getParameter("attributeValue"), Integer.parseInt(request.getParameter("tenantId"))));
+                        if (id != 0)
+                        {
+                            Database.RecordUserObjectCreationAction(user.getUserId().toString(), user.getUsername(), currentTime, "TenantAttribute", id);
+                        }
+
+                        response.sendRedirect("admin/TenantAttributeUI.jsp?SuccessMsg=Added TenantAttribute Successfully!");
+                        break;
+                    case 2: //update            
+                        tenantAttributeDao.update(new TenantAttribute(Integer.parseInt(request.getParameter("tenantAttributeId")), request.getParameter("attributeKey"), request.getParameter("attributeValue"), Integer.parseInt(request.getParameter("tenantId"))));
+                        Database.RecordUserObjectUpdateAction(user.getUserId().toString(), user.getUsername(), currentTime, "TenantAttribute", Integer.parseInt(request.getParameter("tenantAttributeId")));
+                        response.sendRedirect("admin/TenantAttributeUI.jsp?id=" + request.getParameter("tenantAttributeId") + "&SuccessMsg=Updated TenantAttribute Successfully!");
+                        break;
+                    case 3:  //delete
+                        tenantAttributeDao.removeById(Integer.parseInt(request.getParameter("id")));
+                        Database.RecordUserObjectDeletionAction(user.getUserId().toString(), user.getUsername(), currentTime, "TenantAttribute", request.getParameter("id"));
+
+                        response.sendRedirect("admin/TenantAttributeUI.jsp?SuccessMsg=Deleted TenantAttribute Successfully!");
+                        break;
+                    case 4:  //remove all records
+                        tenantAttributeDao.removeAll();
+                        Database.RecordUserObjectClearAction(user.getUserId().toString(), user.getUsername(), currentTime, "TenantAttribute");
+                        response.sendRedirect("admin/TenantAttributeUI.jsp?SuccessMsg=Removed All Records Successfully!");
+                        break;
+                    default:
+                        response.sendRedirect("admin/TenantAttributeUI.jsp?ErrorMsg=Error editing TenantAttribute, Invalid Action.");
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                System.out.println("Error:" + e.getMessage());
+                switch (Integer.parseInt(request.getParameter("action")))
+                {
+                    case 1:
+                        response.sendRedirect("admin/TenantAttributeUI.jsp?ErrorMsg=Error adding TenantAttribute.");
+                        break; //create
+                    case 2:
+                        response.sendRedirect("admin/TenantAttributeUI.jsp?ErrorMsg=Error editing TenantAttribute.");
+                        break; //update                                                    
+                    case 3:
+                        response.sendRedirect("admin/TenantAttributeUI.jsp?ErrorMsg=Error deleting TenantAttribute.");
+                        break; //delete                                                    
+                    case 4:
+                        response.sendRedirect("admin/TenantAttributeUI.jsp?ErrorMsg=Error clearing TenantAttribute.");
+                        break; //clear                          
+                    default:
+                        response.sendRedirect("admin/TenantAttributeUI.jsp?ErrorMsg=Unknown Error TenantAttribute, possibly an invalid action.");
+                        break;
+                }
+            }
+        }
+
         if (request.getParameter("form").equals("text_string"))
         {
             try
@@ -4770,6 +4831,7 @@ public class Operations extends HttpServlet
                     case 3:  //delete
                         userRoleDao.removeById(request.getParameter("userName") + "-" + request.getParameter("roleName"));
                         Database.RecordUserObjectDeletionAction(user.getUserId().toString(), user.getUsername(), currentTime, "UserRole", request.getParameter("id"));
+
                         response.sendRedirect("admin/UserRoleUI.jsp?SuccessMsg=Deleted UserRole Successfully!");
                         break;
                     case 4:  //remove all records

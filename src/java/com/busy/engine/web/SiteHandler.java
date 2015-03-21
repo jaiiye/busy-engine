@@ -1,3 +1,38 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package com.busy.engine.web;
 
 import com.busy.engine.entity.User;
@@ -14,10 +49,10 @@ import com.busy.engine.service.SiteServiceImpl;
 import static com.busy.engine.web.AbstractHandler.getJsonErrorMsg;
 import static com.busy.engine.web.SecurityHelper.getSessionUser;
 
-@WebServlet("/Site/*")
+
+@WebServlet("/rest/Site/*")
 public class SiteHandler extends AbstractHandler
 {
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
@@ -33,12 +68,12 @@ public class SiteHandler extends AbstractHandler
         {
             try
             {
-                switch (request.getPathInfo())
+                switch (new PathProcessor(request.getPathInfo()).getOperation())
                 {
-                    case "/find":
+                    case "find":
                         generateFindServiceResult(new SiteServiceImpl(request.getSession().getServletContext()).find(sessionUser.getUsername(), Integer.parseInt(getRequiredParameter(request, "siteId"))), out);
                         break;
-                    case "/findAll":
+                    case "findAll":
                         generateFindAllServiceResult(new SiteServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
                         break;
                     default:
@@ -52,6 +87,7 @@ public class SiteHandler extends AbstractHandler
             }
         }
     }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -73,7 +109,7 @@ public class SiteHandler extends AbstractHandler
                 switch (new PathProcessor(request.getPathInfo()).getOperation())
                 {
                     case "store":
-                        generateStoreServiceResult(new SiteServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("siteId")), obj.getString("siteName"), obj.getString("domain"), getIntegerValue(obj.get("mode")), obj.getString("url"), obj.getString("logoTitle"), obj.getString("logoImageUrl"), getIntegerValue(obj.get("useAsStore")), getIntegerValue(obj.get("siteStatus")), obj.getString("locale"), getIntegerValue(obj.get("templateId")), getIntegerValue(obj.get("siteEmailId"))), out);
+                        generateStoreServiceResult(new SiteServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("siteId")), obj.getString("siteName"), obj.getString("domain"), getIntegerValue(obj.get("mode")), obj.getString("url"), obj.getString("logoTitle"), obj.getString("logoImageUrl"), getIntegerValue(obj.get("useAsStore")), getIntegerValue(obj.get("siteStatus")), obj.getString("locale"), getIntegerValue(obj.get("templateId")), getIntegerValue(obj.get("siteEmailId")), getIntegerValue(obj.get("dashboardId")), getIntegerValue(obj.get("tenantId"))), out);
                         break;
                     case "remove":
                         generateRemoveServiceResult(new SiteServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("siteId"))), out);
@@ -88,7 +124,7 @@ public class SiteHandler extends AbstractHandler
                 out.print(getJsonErrorMsg(ex.getMessage()));
             }
         }
-    }
+    }    
 
     @Override
     public String getServletInfo()
@@ -96,3 +132,4 @@ public class SiteHandler extends AbstractHandler
         return "Handles the requests for Site resource with the following format: rest/Site/{Id:optional}";
     }
 }
+

@@ -79,7 +79,7 @@ CREATE TABLE country (CountryId int(10) unsigned NOT NULL AUTO_INCREMENT, Name v
 CREATE TABLE site_page (SitePageId int(10) unsigned NOT NULL AUTO_INCREMENT, SiteId int(10) unsigned NOT NULL, PageId int(10) unsigned NOT NULL, PRIMARY KEY (SitePageId));
 CREATE TABLE site_email (SiteEmailId int(10) unsigned NOT NULL AUTO_INCREMENT, Host varchar(255) NOT NULL, Port int(10) NOT NULL, Username varchar(255) NOT NULL, Password varchar(45) NOT NULL, PRIMARY KEY (SiteEmailId));
 CREATE TABLE tenant (TenantId int(10) unsigned NOT NULL AUTO_INCREMENT, Name varchar(255) NOT NULL, Logo varchar(255), DashboardId int(10) unsigned NOT NULL, PRIMARY KEY (TenantId));
-CREATE TABLE tenant_attribute (TenantAttribute int(10) unsigned NOT NULL AUTO_INCREMENT, AttributeKey varchar(100), AttributeValue varchar(255), TenantId int(10) unsigned NOT NULL, PRIMARY KEY (TenantAttribute));
+CREATE TABLE tenant_attribute (TenantAttributeId int(10) unsigned NOT NULL AUTO_INCREMENT, AttributeKey varchar(100), AttributeValue varchar(255), TenantId int(10) unsigned NOT NULL, PRIMARY KEY (TenantAttributeId));
 ALTER TABLE item ADD INDEX FKitem10508 (MetaTagId), ADD CONSTRAINT FKitem10508 FOREIGN KEY (MetaTagId) REFERENCES meta_tag (MetaTagId);
 ALTER TABLE item_file ADD INDEX FKitem_file957017 (ItemId), ADD CONSTRAINT FKitem_file957017 FOREIGN KEY (ItemId) REFERENCES item (ItemId);
 ALTER TABLE item_attribute ADD INDEX FKitem_attri17086 (ItemId), ADD CONSTRAINT FKitem_attri17086 FOREIGN KEY (ItemId) REFERENCES item (ItemId);

@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -321,10 +320,13 @@
                 
                 
                 
+                
+                
+                
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO dashboard(DashboardId,UserCount,BlogPostCount,ItemCount,OrderCount,SiteFileCount,ImageCount,BlogCount,CommentCount,PageCount,FormCount,SliderCount,ItemBrandCount,CategoryCount,ItemOptionCount,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO dashboard(DashboardId,UserCount,BlogPostCount,ItemCount,OrderCount,SiteFileCount,ImageCount,BlogCount,CommentCount,PageCount,FormCount,SliderCount,ItemBrandCount,CategoryCount,ItemOptionCount,FileCount,FolderCount,EmailCount,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setInt(0, obj.getDashboardId());
                 preparedStatement.setInt(1, obj.getUserCount());
                 preparedStatement.setInt(2, obj.getBlogPostCount());
@@ -340,6 +342,9 @@
                 preparedStatement.setInt(12, obj.getItemBrandCount());
                 preparedStatement.setInt(13, obj.getCategoryCount());
                 preparedStatement.setInt(14, obj.getItemOptionCount());
+                preparedStatement.setInt(15, obj.getFileCount());
+                preparedStatement.setInt(16, obj.getFolderCount());
+                preparedStatement.setInt(17, obj.getEmailCount());
                 
                 preparedStatement.executeUpdate();
 
@@ -389,9 +394,12 @@
                 
                 
                 
+                
+                
+                
                                   
                 openConnection();                           
-                prepareStatement("UPDATE dashboard SET com.busy.util.DatabaseColumn@3b6b6102=?,com.busy.util.DatabaseColumn@1cae767=?,com.busy.util.DatabaseColumn@241a2c77=?,com.busy.util.DatabaseColumn@4b71c03=?,com.busy.util.DatabaseColumn@64b40ee6=?,com.busy.util.DatabaseColumn@32132cc8=?,com.busy.util.DatabaseColumn@471fc769=?,com.busy.util.DatabaseColumn@7bf49c8d=?,com.busy.util.DatabaseColumn@3ff37e2b=?,com.busy.util.DatabaseColumn@142d6071=?,com.busy.util.DatabaseColumn@2db0d912=?,com.busy.util.DatabaseColumn@72ff38dd=?,com.busy.util.DatabaseColumn@5659128f=?,com.busy.util.DatabaseColumn@2988cedd=? WHERE DashboardId=?;");                    
+                prepareStatement("UPDATE dashboard SET com.busy.util.DatabaseColumn@1a0a1f0b=?,com.busy.util.DatabaseColumn@5f87f97c=?,com.busy.util.DatabaseColumn@15ac6969=?,com.busy.util.DatabaseColumn@4039ab31=?,com.busy.util.DatabaseColumn@a01067a=?,com.busy.util.DatabaseColumn@6aad525f=?,com.busy.util.DatabaseColumn@1c3c8942=?,com.busy.util.DatabaseColumn@1151d9d7=?,com.busy.util.DatabaseColumn@13612f51=?,com.busy.util.DatabaseColumn@13dea8c8=?,com.busy.util.DatabaseColumn@6bd04568=?,com.busy.util.DatabaseColumn@7450b6a4=?,com.busy.util.DatabaseColumn@6ed104d8=?,com.busy.util.DatabaseColumn@8af6922=?,com.busy.util.DatabaseColumn@61bd965a=?,com.busy.util.DatabaseColumn@10a9f95f=?,com.busy.util.DatabaseColumn@7638c856=? WHERE DashboardId=?;");                    
                 preparedStatement.setInt(0, obj.getDashboardId());
                 preparedStatement.setInt(1, obj.getUserCount());
                 preparedStatement.setInt(2, obj.getBlogPostCount());
@@ -407,7 +415,10 @@
                 preparedStatement.setInt(12, obj.getItemBrandCount());
                 preparedStatement.setInt(13, obj.getCategoryCount());
                 preparedStatement.setInt(14, obj.getItemOptionCount());
-                preparedStatement.setInt(15, obj.getDashboardId());
+                preparedStatement.setInt(15, obj.getFileCount());
+                preparedStatement.setInt(16, obj.getFolderCount());
+                preparedStatement.setInt(17, obj.getEmailCount());
+                preparedStatement.setInt(18, obj.getDashboardId());
                 preparedStatement.executeUpdate();
                 
                 if (cachingEnabled)
@@ -451,7 +462,9 @@
         @Override
         public void getRelatedObjects(Dashboard dashboard)
         {
-             
+            dashboard.setSiteList(new SiteDaoImpl().findByColumn("DashboardId", dashboard.getDashboardId().toString(),null,null));
+dashboard.setTenantList(new TenantDaoImpl().findByColumn("DashboardId", dashboard.getDashboardId().toString(),null,null));
+ 
         }
         
         @Override
@@ -589,6 +602,16 @@
             this.cachingEnabled = cachingEnabled;
         }
         
+                    
+        public void getRelatedSiteList(Dashboard dashboard)
+        {           
+            dashboard.setSiteList(new SiteDaoImpl().findByColumn("DashboardId", dashboard.getDashboardId().toString(),null,null));
+        }        
+                    
+        public void getRelatedTenantList(Dashboard dashboard)
+        {           
+            dashboard.setTenantList(new TenantDaoImpl().findByColumn("DashboardId", dashboard.getDashboardId().toString(),null,null));
+        }        
         
                              
     }

@@ -60,6 +60,8 @@
         public static final String PROP_LOCALE = "Locale";
         public static final String PROP_TEMPLATE_ID = "TemplateId";
         public static final String PROP_SITE_EMAIL_ID = "SiteEmailId";
+        public static final String PROP_DASHBOARD_ID = "DashboardId";
+        public static final String PROP_TENANT_ID = "TenantId";
         
 
         private Integer siteId;
@@ -86,6 +88,10 @@
         private Template template;        
         private Integer siteEmailId;
         private SiteEmail siteEmail;        
+        private Integer dashboardId;
+        private Dashboard dashboard;        
+        private Integer tenantId;
+        private Tenant tenant;        
                  
         ArrayList<SiteAttribute> siteAttributeList; 
         ArrayList<SiteFolder> siteFolderList; 
@@ -111,6 +117,8 @@
        this.locale = ""; 
        this.templateId = 0; 
        this.siteEmailId = 0; 
+       this.dashboardId = 0; 
+       this.tenantId = 0; 
         
        siteAttributeList = null; 
         siteFolderList = null; 
@@ -156,6 +164,10 @@
             builder.add("templateId", templateId == null ? 0 : templateId);
                 
             builder.add("siteEmailId", siteEmailId == null ? 0 : siteEmailId);
+                
+            builder.add("dashboardId", dashboardId == null ? 0 : dashboardId);
+                
+            builder.add("tenantId", tenantId == null ? 0 : tenantId);
         
         
     
@@ -172,12 +184,16 @@
         
      if(siteEmail != null) siteEmail.addJson(builder);
         
+     if(dashboard != null) dashboard.addJson(builder);
+        
+     if(tenant != null) tenant.addJson(builder);
+        
               
         }
        
        public static String checkColumnName(String column) throws SQLException
         {            
-            if(column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_SITE_NAME) || column.equals(Site.PROP_DOMAIN) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_URL) || column.equals(Site.PROP_LOGO_TITLE) || column.equals(Site.PROP_LOGO_IMAGE_URL) || column.equals(Site.PROP_USE_AS_STORE) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_LOCALE) || column.equals(Site.PROP_TEMPLATE_ID) || column.equals(Site.PROP_SITE_EMAIL_ID) )
+            if(column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_SITE_NAME) || column.equals(Site.PROP_DOMAIN) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_URL) || column.equals(Site.PROP_LOGO_TITLE) || column.equals(Site.PROP_LOGO_IMAGE_URL) || column.equals(Site.PROP_USE_AS_STORE) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_LOCALE) || column.equals(Site.PROP_TEMPLATE_ID) || column.equals(Site.PROP_SITE_EMAIL_ID) || column.equals(Site.PROP_DASHBOARD_ID) || column.equals(Site.PROP_TENANT_ID) )
             {
                 return column;
             }
@@ -197,7 +213,7 @@
                 
         public static boolean isColumnNumeric(String column)
         {
-            if (column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_USE_AS_STORE) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_TEMPLATE_ID) || column.equals(Site.PROP_SITE_EMAIL_ID) )
+            if (column.equals(Site.PROP_SITE_ID) || column.equals(Site.PROP_MODE) || column.equals(Site.PROP_USE_AS_STORE) || column.equals(Site.PROP_SITE_STATUS) || column.equals(Site.PROP_TEMPLATE_ID) || column.equals(Site.PROP_SITE_EMAIL_ID) || column.equals(Site.PROP_DASHBOARD_ID) || column.equals(Site.PROP_TENANT_ID) )
             {
                 return true;
             }        
@@ -213,10 +229,10 @@
             {
                 rs.first();
             }
-            return new Site(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getString(10), rs.getInt(11), rs.getInt(12));
+            return new Site(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getString(10), rs.getInt(11), rs.getInt(12), rs.getInt(13), rs.getInt(14));
         }
               
-       public Site(Integer SiteId, String SiteName, String Domain, Integer Mode, String Url, String LogoTitle, String LogoImageUrl, Integer UseAsStore, Integer SiteStatus, String Locale, Integer TemplateId, Integer SiteEmailId)
+       public Site(Integer SiteId, String SiteName, String Domain, Integer Mode, String Url, String LogoTitle, String LogoImageUrl, Integer UseAsStore, Integer SiteStatus, String Locale, Integer TemplateId, Integer SiteEmailId, Integer DashboardId, Integer TenantId)
        {
             this.siteId = SiteId;
        this.siteName = SiteName;
@@ -230,6 +246,8 @@
        this.locale = Locale;
        this.templateId = TemplateId;
        this.siteEmailId = SiteEmailId;
+       this.dashboardId = DashboardId;
+       this.tenantId = TenantId;
               
        siteAttributeList = null; 
         siteFolderList = null; 
@@ -407,6 +425,54 @@
                 public void setSiteEmail(SiteEmail siteEmail)
                 {
                     this.siteEmail = siteEmail;
+                }
+                   
+            
+        
+            public Integer getDashboardId()
+            {
+                return this.dashboardId;
+            }
+            
+            public void setDashboardId(Integer DashboardId)
+            {
+                this.dashboardId = DashboardId;
+            }
+            
+            
+                   
+            public Dashboard getDashboard()
+                {
+                    return this.dashboard;
+                }
+
+                public void setDashboard(Dashboard dashboard)
+                {
+                    this.dashboard = dashboard;
+                }
+                   
+            
+        
+            public Integer getTenantId()
+            {
+                return this.tenantId;
+            }
+            
+            public void setTenantId(Integer TenantId)
+            {
+                this.tenantId = TenantId;
+            }
+            
+            
+                   
+            public Tenant getTenant()
+                {
+                    return this.tenant;
+                }
+
+                public void setTenant(Tenant tenant)
+                {
+                    this.tenant = tenant;
                 }
                    
             

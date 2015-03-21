@@ -45,13 +45,13 @@ import com.busy.engine.util.PathProcessor;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.busy.engine.service.DashboardServiceImpl;
+import com.busy.engine.service.TenantServiceImpl;
 import static com.busy.engine.web.AbstractHandler.getJsonErrorMsg;
 import static com.busy.engine.web.SecurityHelper.getSessionUser;
 
 
-@WebServlet("/rest/Dashboard/*")
-public class DashboardHandler extends AbstractHandler
+@WebServlet("/rest/Tenant/*")
+public class TenantHandler extends AbstractHandler
 {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -71,10 +71,10 @@ public class DashboardHandler extends AbstractHandler
                 switch (new PathProcessor(request.getPathInfo()).getOperation())
                 {
                     case "find":
-                        generateFindServiceResult(new DashboardServiceImpl(request.getSession().getServletContext()).find(sessionUser.getUsername(), Integer.parseInt(getRequiredParameter(request, "dashboardId"))), out);
+                        generateFindServiceResult(new TenantServiceImpl(request.getSession().getServletContext()).find(sessionUser.getUsername(), Integer.parseInt(getRequiredParameter(request, "tenantId"))), out);
                         break;
                     case "findAll":
-                        generateFindAllServiceResult(new DashboardServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
+                        generateFindAllServiceResult(new TenantServiceImpl(request.getSession().getServletContext()).findAll(sessionUser.getUsername()), out);
                         break;
                     default:
                         out.print(getJsonErrorMsg("Invalid Operation"));
@@ -109,10 +109,10 @@ public class DashboardHandler extends AbstractHandler
                 switch (new PathProcessor(request.getPathInfo()).getOperation())
                 {
                     case "store":
-                        generateStoreServiceResult(new DashboardServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("dashboardId")), getIntegerValue(obj.get("userCount")), getIntegerValue(obj.get("blogPostCount")), getIntegerValue(obj.get("itemCount")), getIntegerValue(obj.get("orderCount")), getIntegerValue(obj.get("siteFileCount")), getIntegerValue(obj.get("imageCount")), getIntegerValue(obj.get("blogCount")), getIntegerValue(obj.get("commentCount")), getIntegerValue(obj.get("pageCount")), getIntegerValue(obj.get("formCount")), getIntegerValue(obj.get("sliderCount")), getIntegerValue(obj.get("itemBrandCount")), getIntegerValue(obj.get("categoryCount")), getIntegerValue(obj.get("itemOptionCount")), getIntegerValue(obj.get("fileCount")), getIntegerValue(obj.get("folderCount")), getIntegerValue(obj.get("emailCount"))), out);
+                        generateStoreServiceResult(new TenantServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("tenantId")), obj.getString("name"), obj.getString("logo"), getIntegerValue(obj.get("dashboardId"))), out);
                         break;
                     case "remove":
-                        generateRemoveServiceResult(new DashboardServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("dashboardId"))), out);
+                        generateRemoveServiceResult(new TenantServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("tenantId"))), out);
                         break;
                     default:
                         out.print(getJsonErrorMsg("Invalid Operation"));
@@ -129,7 +129,7 @@ public class DashboardHandler extends AbstractHandler
     @Override
     public String getServletInfo()
     {
-        return "Handles the requests for Dashboard resource with the following format: rest/Dashboard/{Id:optional}";
+        return "Handles the requests for Tenant resource with the following format: rest/Tenant/{Id:optional}";
     }
 }
 

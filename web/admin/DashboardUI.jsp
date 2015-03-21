@@ -212,6 +212,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                            <option value="ItemBrandCount" ${param.column == 'ItemBrandCount' ? "selected" : "" } >ItemBrandCount</option>                                                            
                                                            <option value="CategoryCount" ${param.column == 'CategoryCount' ? "selected" : "" } >CategoryCount</option>                                                            
                                                            <option value="ItemOptionCount" ${param.column == 'ItemOptionCount' ? "selected" : "" } >ItemOptionCount</option>                                                            
+                                                           <option value="FileCount" ${param.column == 'FileCount' ? "selected" : "" } >FileCount</option>                                                            
+                                                           <option value="FolderCount" ${param.column == 'FolderCount' ? "selected" : "" } >FolderCount</option>                                                            
+                                                           <option value="EmailCount" ${param.column == 'EmailCount' ? "selected" : "" } >EmailCount</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -371,6 +374,27 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label class="col-md-2 control-label" for="itemOptionCount">ItemOptionCount:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="itemOptionCount" class="form-control" value="${dashboard.itemOptionCount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="fileCount">FileCount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="fileCount" class="form-control" value="${dashboard.fileCount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="folderCount">FolderCount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="folderCount" class="form-control" value="${dashboard.folderCount}" />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="emailCount">EmailCount:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="emailCount" class="form-control" value="${dashboard.emailCount}" />
                                                     </div>
                                                 </div>
                                                 
@@ -594,6 +618,42 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     </div>
                                                 </div>
                                                 
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">FileCount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="fileCount" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">FolderCount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="folderCount" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">EmailCount</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <input type="text" name="emailCount" class="form-control" placeholder="Enter Integer" />                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
 
                                             </div>
 
@@ -643,8 +703,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label><input type="checkbox" checked data-column="12">ItemBrandCount</label> 
                                                     <label><input type="checkbox" checked data-column="13">CategoryCount</label> 
                                                     <label><input type="checkbox" checked data-column="14">ItemOptionCount</label> 
+                                                    <label><input type="checkbox" checked data-column="15">FileCount</label> 
+                                                    <label><input type="checkbox" checked data-column="16">FolderCount</label> 
+                                                    <label><input type="checkbox" checked data-column="17">EmailCount</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="15">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="18">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -671,6 +734,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <th>ItemBrandCount</th> 
                                                     <th>CategoryCount</th> 
                                                     <th>ItemOptionCount</th> 
+                                                    <th>FileCount</th> 
+                                                    <th>FolderCount</th> 
+                                                    <th>EmailCount</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -693,6 +759,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <td>${dashboard.itemBrandCount}</td> 
                                                     <td>${dashboard.categoryCount}</td> 
                                                     <td>${dashboard.itemOptionCount}</td> 
+                                                    <td>${dashboard.fileCount}</td> 
+                                                    <td>${dashboard.folderCount}</td> 
+                                                    <td>${dashboard.emailCount}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${dashboard.dashboardId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -834,7 +903,10 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         sliderCount:    { required: true, number: true }, 
                         itemBrandCount:    { required: true, number: true }, 
                         categoryCount:    { required: true, number: true }, 
-                        itemOptionCount:    { required: true, number: true } 
+                        itemOptionCount:    { required: true, number: true }, 
+                        fileCount:    { required: true, number: true }, 
+                        folderCount:    { required: true, number: true }, 
+                        emailCount:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              

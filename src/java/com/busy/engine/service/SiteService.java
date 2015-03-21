@@ -43,7 +43,7 @@ public interface SiteService
 {
       public Result<Site> find(String userName, Integer id);
       public Result<List<Site>> findAll(String userName); 
-      public Result<Site> store(String userName, Integer siteId, String siteName, String domain, Integer mode, String url, String logoTitle, String logoImageUrl, Integer useAsStore, Integer siteStatus, String locale, Integer templateId, Integer siteEmailId);
+      public Result<Site> store(String userName, Integer siteId, String siteName, String domain, Integer mode, String url, String logoTitle, String logoImageUrl, Integer useAsStore, Integer siteStatus, String locale, Integer templateId, Integer siteEmailId, Integer dashboardId, Integer tenantId);
       public Result<Site> remove(String userName, Integer id);
 }    
 

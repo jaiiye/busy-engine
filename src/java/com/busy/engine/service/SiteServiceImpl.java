@@ -114,7 +114,7 @@ public class SiteServiceImpl extends AbstractService implements SiteService
     }
 
     @Override
-    public Result<Site> store(String userName, Integer id, String siteName, String domain, Integer mode, String url, String logoTitle, String logoImageUrl, Integer useAsStore, Integer siteStatus, String locale, Integer templateId, Integer siteEmailId)
+    public Result<Site> store(String userName, Integer id, String siteName, String domain, Integer mode, String url, String logoTitle, String logoImageUrl, Integer useAsStore, Integer siteStatus, String locale, Integer templateId, Integer siteEmailId, Integer dashboardId, Integer tenantId)
     {        
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
@@ -151,6 +151,8 @@ public class SiteServiceImpl extends AbstractService implements SiteService
         site.setLocale(locale);
         site.setTemplateId(templateId);
         site.setSiteEmailId(siteEmailId);
+        site.setDashboardId(dashboardId);
+        site.setTenantId(tenantId);
         
         
         if (site.getId() == null) 

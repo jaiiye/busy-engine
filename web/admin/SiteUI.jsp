@@ -203,15 +203,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                            <option value="Mode" ${param.column == 'Mode' ? "selected" : "" } >Mode</option>                                                            
                                                            <option value="Url" ${param.column == 'Url' ? "selected" : "" } >Url</option>                                                            
                                                            <option value="LogoTitle" ${param.column == 'LogoTitle' ? "selected" : "" } >LogoTitle</option>                                                            
-                                                           <option value="LogoImage" ${param.column == 'LogoImage' ? "selected" : "" } >LogoImage</option>                                                            
+                                                           <option value="LogoImageUrl" ${param.column == 'LogoImageUrl' ? "selected" : "" } >LogoImageUrl</option>                                                            
                                                            <option value="UseAsStore" ${param.column == 'UseAsStore' ? "selected" : "" } >UseAsStore</option>                                                            
-                                                           <option value="EmailHost" ${param.column == 'EmailHost' ? "selected" : "" } >EmailHost</option>                                                            
-                                                           <option value="EmailPort" ${param.column == 'EmailPort' ? "selected" : "" } >EmailPort</option>                                                            
-                                                           <option value="EmailUsername" ${param.column == 'EmailUsername' ? "selected" : "" } >EmailUsername</option>                                                            
-                                                           <option value="EmailPassword" ${param.column == 'EmailPassword' ? "selected" : "" } >EmailPassword</option>                                                            
                                                            <option value="SiteStatus" ${param.column == 'SiteStatus' ? "selected" : "" } >SiteStatus</option>                                                            
                                                            <option value="Locale" ${param.column == 'Locale' ? "selected" : "" } >Locale</option>                                                            
                                                            <option value="TemplateId" ${param.column == 'TemplateId' ? "selected" : "" } >TemplateId</option>                                                            
+                                                           <option value="SiteEmailId" ${param.column == 'SiteEmailId' ? "selected" : "" } >SiteEmailId</option>                                                            
+                                                           <option value="DashboardId" ${param.column == 'DashboardId' ? "selected" : "" } >DashboardId</option>                                                            
+                                                           <option value="TenantId" ${param.column == 'TenantId' ? "selected" : "" } >TenantId</option>                                                            
                                                                                                                                                                                   
                                                         </select> 
                                                     </div>                                                         
@@ -312,9 +311,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="logoImage">LogoImage:</label>
+                                                    <label class="col-md-2 control-label" for="logoImageUrl">LogoImageUrl:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="logoImage" class="form-control maxlength-handler" maxlength="255" value="${site.logoImage}" />
+                                                        <input type="text" name="logoImageUrl" class="form-control maxlength-handler" maxlength="255" value="${site.logoImageUrl}" />
                                                     </div>
                                                 </div>
                                                 
@@ -322,34 +321,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label class="col-md-2 control-label" for="useAsStore">UseAsStore:</label>
                                                     <div  class="col-md-10">
                                                         <input type="text" name="useAsStore" class="form-control" value="${site.useAsStore}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="emailHost">EmailHost:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="emailHost" class="form-control maxlength-handler" maxlength="255" value="${site.emailHost}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="emailPort">EmailPort:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="emailPort" class="form-control" value="${site.emailPort}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="emailUsername">EmailUsername:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="emailUsername" class="form-control maxlength-handler" maxlength="255" value="${site.emailUsername}" />
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label" for="emailPassword">EmailPassword:</label>
-                                                    <div  class="col-md-10">
-                                                        <input type="text" name="emailPassword" class="form-control maxlength-handler" maxlength="45" value="${site.emailPassword}" />
                                                     </div>
                                                 </div>
                                                 
@@ -374,6 +345,39 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <select name="templateId" class="form-control">
                                                             <%Site x = (Site) pageContext.getAttribute("site"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("template", x.getTemplateId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="siteEmailId">SiteEmail:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="siteEmailId" class="form-control" value="${site.siteEmailId}" />
+                                                        <select name="siteEmailId" class="form-control">
+                                                            <%Site x = (Site) pageContext.getAttribute("site"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("site_email", x.getSiteEmailId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="dashboardId">Dashboard:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="dashboardId" class="form-control" value="${site.dashboardId}" />
+                                                        <select name="dashboardId" class="form-control">
+                                                            <%Site x = (Site) pageContext.getAttribute("site"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("dashboard", x.getDashboardId().toString(), 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label" for="tenantId">Tenant:</label>
+                                                    <div  class="col-md-10">
+                                                        <input type="text" name="tenantId" class="form-control" value="${site.tenantId}" />
+                                                        <select name="tenantId" class="form-control">
+                                                            <%Site x = (Site) pageContext.getAttribute("site"); %>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("tenant", x.getTenantId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -492,11 +496,11 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-2 control-label">LogoImage</label>
+                                                        <label class="col-md-2 control-label">LogoImageUrl</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="logoImage" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="logoImageUrl" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -509,54 +513,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <input type="text" name="useAsStore" class="form-control" placeholder="Enter Integer" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">EmailHost</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="emailHost" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">EmailPort</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="emailPort" class="form-control" placeholder="Enter Integer" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">EmailUsername</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="emailUsername" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">EmailPassword</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <input type="text" name="emailPassword" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="45" />                                                            
                                                             </div>
                                                         </div>
                                                     </div>
@@ -594,6 +550,48 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                                 <i class="fa"></i>
                                                                 <select name="templateId" class="form-control">
                                                                     <%= Database.generateSelectOptionsFromTableAndColumn("template", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">SiteEmailId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="siteEmailId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("site_email", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">DashboardId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="dashboardId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("dashboard", "", 2)%>
+                                                               </select>                                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label">TenantId</label>
+                                                        <div class="col-md-10" style="margin-bottom:25px;">
+                                                            <div class="input-icon right">
+                                                                <i class="fa"></i>
+                                                                <select name="tenantId" class="form-control">
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("tenant", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
@@ -640,17 +638,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label><input type="checkbox" checked data-column="3">Mode</label> 
                                                     <label><input type="checkbox" checked data-column="4">Url</label> 
                                                     <label><input type="checkbox" checked data-column="5">LogoTitle</label> 
-                                                    <label><input type="checkbox" checked data-column="6">LogoImage</label> 
+                                                    <label><input type="checkbox" checked data-column="6">LogoImageUrl</label> 
                                                     <label><input type="checkbox" checked data-column="7">UseAsStore</label> 
-                                                    <label><input type="checkbox" checked data-column="8">EmailHost</label> 
-                                                    <label><input type="checkbox" checked data-column="9">EmailPort</label> 
-                                                    <label><input type="checkbox" checked data-column="10">EmailUsername</label> 
-                                                    <label><input type="checkbox" checked data-column="11">EmailPassword</label> 
-                                                    <label><input type="checkbox" checked data-column="12">Status</label> 
-                                                    <label><input type="checkbox" checked data-column="13">Locale</label> 
-                                                    <label><input type="checkbox" checked data-column="14">TemplateId</label> 
+                                                    <label><input type="checkbox" checked data-column="8">Status</label> 
+                                                    <label><input type="checkbox" checked data-column="9">Locale</label> 
+                                                    <label><input type="checkbox" checked data-column="10">TemplateId</label> 
+                                                    <label><input type="checkbox" checked data-column="11">EmailId</label> 
+                                                    <label><input type="checkbox" checked data-column="12">DashboardId</label> 
+                                                    <label><input type="checkbox" checked data-column="13">TenantId</label> 
                                                     
-                                                    <label><input type="checkbox" checked data-column="15">Actions</label>
+                                                    <label><input type="checkbox" checked data-column="14">Actions</label>
                                                 </div>
                                             </div>                                                 
                                             <div class="btn-group">                                
@@ -668,15 +665,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <th>Mode</th> 
                                                     <th>Url</th> 
                                                     <th>LogoTitle</th> 
-                                                    <th>LogoImage</th> 
+                                                    <th>LogoImageUrl</th> 
                                                     <th>UseAsStore</th> 
-                                                    <th>EmailHost</th> 
-                                                    <th>EmailPort</th> 
-                                                    <th>EmailUsername</th> 
-                                                    <th>EmailPassword</th> 
                                                     <th>Status</th> 
                                                     <th>Locale</th> 
                                                     <th>TemplateId</th> 
+                                                    <th>EmailId</th> 
+                                                    <th>DashboardId</th> 
+                                                    <th>TenantId</th> 
                                                                                                         
                                                     <th>Actions</th> 
                                                 </tr>                                
@@ -690,15 +686,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <td>${site.mode}</td> 
                                                     <td>${site.url}</td> 
                                                     <td>${site.logoTitle}</td> 
-                                                    <td>${site.logoImage}</td> 
+                                                    <td>${site.logoImageUrl}</td> 
                                                     <td>${site.useAsStore}</td> 
-                                                    <td>${site.emailHost}</td> 
-                                                    <td>${site.emailPort}</td> 
-                                                    <td>${site.emailUsername}</td> 
-                                                    <td>${site.emailPassword}</td> 
                                                     <td>${site.siteStatus}</td> 
                                                     <td>${site.locale}</td> 
                                                     <td>${site.templateId}</td> 
+                                                    <td>${site.siteEmailId}</td> 
+                                                    <td>${site.dashboardId}</td> 
+                                                    <td>${site.tenantId}</td> 
                                                     
                                                     <td>
                                                         <button id="edit-item${site.siteId}" class="btn btn-sm green filter-submit margin-bottom"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;
@@ -832,15 +827,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         mode:    { required: true, number: true }, 
                         url:    { required: true, minlength: 1, maxlength: 255}, 
                         logoTitle:    { required: true, minlength: 1, maxlength: 100}, 
-                        logoImage:    { required: true, minlength: 1, maxlength: 255}, 
+                        logoImageUrl:    { required: true, minlength: 1, maxlength: 255}, 
                         useAsStore:    { required: true, number: true }, 
-                        emailHost:    { required: true, minlength: 1, maxlength: 255}, 
-                        emailPort:    { required: true, number: true }, 
-                        emailUsername:    { required: true, minlength: 1, maxlength: 255}, 
-                        emailPassword:    { required: true, minlength: 1, maxlength: 45}, 
                         siteStatus:    { required: true, number: true }, 
                         locale:    { required: true, minlength: 1, maxlength: 100}, 
-                        templateId:    { required: true, number: true } 
+                        templateId:    { required: true, number: true }, 
+                        siteEmailId:    { required: true, number: true }, 
+                        dashboardId:    { required: true, number: true }, 
+                        tenantId:    { required: true, number: true } 
                         
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              
