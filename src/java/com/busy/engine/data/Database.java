@@ -6,14 +6,11 @@ import static com.busy.engine.data.BasicConnection.rs;
 import static com.busy.engine.data.BasicConnection.statement;
 import com.busy.engine.entity.*;
 import com.busy.engine.dao.*;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 public class Database extends BasicConnection
 {
@@ -1037,6 +1034,22 @@ public class Database extends BasicConnection
         }
         
         return attributes;
+    }
+    
+    
+    public static ArrayList<Item> getAllItemsWithInfoByType(int type, String id, String category)
+    {
+        ArrayList<Item> items = new ItemDaoImpl().findByColumn(Item.PROP_ITEM_TYPE_ID, type + "", null, null);        
+        
+        for(Item i : items) {
+            i.setItemBrand(new ItemBrandDaoImpl().find(i.getItemBrandId()));
+            new ItemDaoImpl().getRelatedItemFileList(i);
+            new ItemDaoImpl().getRelatedItemCategoryList(i);
+            new ItemDaoImpl().getRelatedOptionAvailabilityList(i);
+            new ItemDaoImpl().getRelatedItemImageList(i);  
+            i.setMetaTag(new MetaTagDaoImpl().find(i.getMetaTagId()));
+        }                     
+        return items;
     }
     
     /*

@@ -1,8 +1,9 @@
 
 <%@page import="java.text.*" %>
 <%@page import="java.util.*" %>
-<%@page import="com.transitionsoft.dao.*" %>
-<%@page import="com.transitionsoft.*" %>
+<%@page import="com.busy.engine.dao.*" %>
+<%@page import="com.busy.engine.entity.*" %>
+<%@page import="com.busy.engine.data.*" %>
 
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
@@ -360,8 +361,8 @@
             <%
             for (Item item : items)
             {
-                    String msrpString = formatter.format(item.getItemMSRP());
-                    String costString = formatter.format(item.getItemPrice());
+                    String msrpString = formatter.format(item.getListPrice());
+                    String costString = formatter.format(item.getPrice());
             %>            
             <div class="row">                      
                 <div class="col-md-12">
@@ -408,13 +409,13 @@
                                         <a name="<%= item.getItemId()%>"></a>
                                         <div style="height: 700px; width:100%; overflow: auto; padding: 5px;">
                                             <%									
-                                            for(Image i : Database.getItemImages(item.getItemId()))
+                                            for(ItemImage i : item.getItemImageList())
                                             {
                                             %>
-                                                <a href="../items/<%= i.getImageFileName()%>" class="fancybox-button" data-rel="fancybox-button">
-                                                    <img class="shadow" src="../items/sm_<%= i.getImageFileName()%>" border="0" />
+                                                <a href="../items/<%= i.getImageName()%>" class="fancybox-button" data-rel="fancybox-button">
+                                                    <img class="shadow" src="../items/sm_<%= i.getImageName()%>" border="0" />
                                                 </a>
-                                                <a href="../Operations?form=item_image&action=3&id=<%= i.getImageId()%>">
+                                                <a href="../Operations?form=item_image&action=3&id=<%= i.getId()%>">
                                                     <img src="../images/delete.jpg" border="0" style="float:right" />
                                                 </a> 
                                                 <hr />                                 
@@ -448,7 +449,7 @@
                                                     <label class="col-md-2 control-label" for="desc">Description:</label>
                                                     <div  class="col-md-10">
                                                         <textarea name="desc" rows="8" class="ckeditor form-control">
-                                                            <%= item.getItemDescription()%>
+                                                            <%= item.getDescription()%>
                                                         </textarea>
                                                     </div>
                                                 </div>
@@ -461,51 +462,51 @@
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="shortDesc">Short Desc:</label>
                                                     <div  class="col-md-10">
-                                                        <input name="shortDesc" type="text" value="<%= item.getItemShortDescription()%>" size="50" class="form-control input-sm" />
+                                                        <input name="shortDesc" type="text" value="<%= item.getShortDescription()%>" size="50" class="form-control input-sm" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="brandId">Brand:</label>
                                                     <div  class="col-md-10">
                                                         <select name="brandId" class="form-control input-sm" >
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", item.getItemBrandId(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", item.getItemBrandId() + "", 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="listPrice">List Price:</label>
                                                     <div  class="col-md-10">
-                                                        <input name="listPrice" type="text" value="<%= item.getItemMSRP()%>" class="form-control input-sm" />
+                                                        <input name="listPrice" type="text" value="<%= item.getListPrice()%>" class="form-control input-sm" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="price">Price:</label>
                                                     <div  class="col-md-10">
-                                                        <input name="price" type="text" value="<%= item.getItemPrice()%>" class="form-control input-sm" />
+                                                        <input name="price" type="text" value="<%= item.getPrice()%>" class="form-control input-sm" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="adjust">Adjustment:</label>
                                                     <div  class="col-md-10">
-                                                        <input name="adjust" type="text" value="<%= item.getItemPriceAdjustment()%>" class="form-control input-sm" />
+                                                        <input name="adjust" type="text" value="<%= item.getAdjustment()%>" class="form-control input-sm" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="seotitle">SEO Title:</label>
                                                     <div  class="col-md-10">
-                                                        <input name="seotitle" type="text" value="<%= item.getItemSeoTitle()%>" size="45" class="form-control input-sm" />
+                                                        <input name="seotitle" type="text" value="<%= item.getMetaTag().getTitle() %>" size="45" class="form-control input-sm" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="seodesc">SEO Desc:</label>
                                                     <div  class="col-md-10">
-                                                        <input name="seodesc" type="text" value="<%= item.getItemSeoDescription()%>" size="45" class="form-control input-sm" />
+                                                        <input name="seodesc" type="text" value="<%= item.getMetaTag().getDescription() %>" size="45" class="form-control input-sm" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="seokeywords">SEO Keywords:</label>
                                                     <div  class="col-md-10">
-                                                        <input name="seokeywords" type="text" value="<%= item.getItemSeoKeywords()%>" size="45" class="form-control input-sm" />
+                                                        <input name="seokeywords" type="text" value="<%= item.getMetaTag().getKeywords() %>" size="45" class="form-control input-sm" />
                                                     </div>
                                                 </div>
                                                 <div class="form-actions right">
@@ -554,24 +555,24 @@
                                             <tr><td align="center">&nbsp;</td>
                                                 <td align="center">Opt</td><td align="center">Qty</td><td align="center">Availability</td></tr>
 
-                                            <%  for (Option o : item.getItemInfo().getItemOptions())
+                                            <%  for (OptionAvailability o : item.getOptionAvailabilityList())
                                                 {
                                             %>
                                             <tr>
                                                 <td align="center">
-                                                    <a href="delete.jsp?form=item_options_available&ItemId=<%= item.getItemId()%>&ItemOptionId=<%= o.getOptionId()%>">
+                                                    <a href="delete.jsp?form=item_options_available&ItemId=<%= item.getItemId()%>&ItemOptionId=<%= o.getId() %>">
                                                         <img src="../images/delete.jpg" border="0" />
                                                     </a>
                                                 </td>
                                                 <td align="center">
-                                                    <%= o.getOptionType()%> 
+                                                    <%= o.getItemAvailability().getType() %> 
                                                 </td>
                                                 <td align="center">
-                                                    <%= o.getOptionAvailableQuantity()%>                               
+                                                    <%= o.getAvailableQuantity() %>                               
                                                 </td>
                                                 <td align="center">
                                                     <select name="availability" class="form-control input-sm" >
-                                                        <%= Database.generateSelectOptionsFromTableAndColumn("item_availability", o.getOptionAvailability(), 2) %>
+                                                        <%= Database.generateSelectOptionsFromTableAndColumn("item_availability", o.getItemAvailabilityId() + "", 2) %>
                                                     </select>
                                                 </td>
                                             </tr>                                        
@@ -603,12 +604,12 @@
                                             </tr>
 
                                             <%
-                                                for (Category c : item.getItemInfo().getItemCategories())
+                                                for (ItemCategory c : item.getItemCategoryList())
                                                 {
                                             %>
                                             <tr>
                                                 <td align="center">
-                                                    <%= c.getCategoryName()%>
+                                                    <%= c.getCategory().getCategoryName()%>
                                                 </td>
                                                 <td align="center">
                                                     <a href="delete.jsp?form=item_categories&ItemId=<%= item.getItemId()%>&CategoryId=<%= c.getCategoryId()%>">
@@ -637,7 +638,7 @@
                                             <tr><td align="center" colspan="2"><h4>Files</h4></tr>
 
                                             <%
-                                                for (File f : item.getItemInfo().getItemFiles())
+                                                for (ItemFile f : item.getItemFileList())
                                                 {
                                             %>
                                             <tr>
@@ -873,13 +874,13 @@
                                         <%
                                         for (Item item : items)
                                         {
-                                                String msrpString = formatter.format(item.getItemMSRP());
-                                                String costString = formatter.format(item.getItemPrice());
+                                                String msrpString = formatter.format(item.getListPrice());
+                                                String costString = formatter.format(item.getPrice());
                                         %>
                                         <tr>
                                             <td><%= item.getItemId()%></td>
                                             <td><%= item.getItemName()%></td>
-                                            <td><%= item.getItemBrandName()%></td>
+                                            <td><%= item.getItemBrand().getBrandName()%></td>
                                             <td><%= msrpString%></td>
                                             <td><%= costString%></td>
                                             <td>
