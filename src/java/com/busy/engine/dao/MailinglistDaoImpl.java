@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public Mailinglist find(Integer id)
         {
             return findByColumn("MailinglistId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Mailinglist findWithInfo(Integer id)
+        {
+            Mailinglist mailinglist = findByColumn("MailinglistId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("User", mailinglist.getUserId().toString());
+                    mailinglist.setUser(User.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object Mailinglist method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return mailinglist;
         }
         
         @Override
@@ -344,8 +371,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO mailinglist(MailinglistId,FullName,Email,ListStatus,UserId,) VALUES (?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getMailinglistId());
+                prepareStatement("INSERT INTO mailinglist(FullName,Email,ListStatus,UserId) VALUES (?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getFullName());
                 preparedStatement.setString(2, obj.getEmail());
                 preparedStatement.setInt(3, obj.getListStatus());
@@ -391,8 +417,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE mailinglist SET com.busy.util.DatabaseColumn@6771174d=?,com.busy.util.DatabaseColumn@3bec7d0=?,com.busy.util.DatabaseColumn@61ec5052=?,com.busy.util.DatabaseColumn@11dcec2c=? WHERE MailinglistId=?;");                    
-                preparedStatement.setInt(0, obj.getMailinglistId());
+                prepareStatement("UPDATE mailinglist SET FullName=?,Email=?,ListStatus=?,UserId=? WHERE MailinglistId=?;");                    
                 preparedStatement.setString(1, obj.getFullName());
                 preparedStatement.setString(2, obj.getEmail());
                 preparedStatement.setInt(3, obj.getListStatus());
@@ -596,6 +621,34 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedUser(Mailinglist mailinglist)
+        {            
+            try
+            {                 
+                getRecordById("User", mailinglist.getUserId().toString());
+                mailinglist.setUser(User.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getUser error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedUserWithInfo(Mailinglist mailinglist)
+        {            
+            mailinglist.setUser(new UserDaoImpl().findWithInfo(mailinglist.getUserId()));
+        }
+          
+        
     }
 

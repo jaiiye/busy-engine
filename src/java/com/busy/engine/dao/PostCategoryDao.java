@@ -39,9 +39,9 @@ import com.busy.engine.entity.PostCategory;
 
 public interface PostCategoryDao extends IGenericDao<PostCategory, Integer>
 {
-                    
-      void getRelatedBlogPostCategoryList(PostCategory post_category);     
-        
+ 
+
+    void getRelatedBlogPostCategoryList(PostCategory post_category);
+      
 }
     
-

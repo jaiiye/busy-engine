@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public KnowledgeBase find(Integer id)
         {
             return findByColumn("KnowledgeBaseId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public KnowledgeBase findWithInfo(Integer id)
+        {
+            KnowledgeBase knowledgeBase = findByColumn("KnowledgeBaseId", id.toString(), null, null).get(0);
+            
+            
+            
+            return knowledgeBase;
         }
         
         @Override
@@ -316,8 +325,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO knowledge_base(KnowledgeBaseId,KnowledgeBaseName,Description,Rank,LastModified,LatestTopic,LatestPost,) VALUES (?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getKnowledgeBaseId());
+                prepareStatement("INSERT INTO knowledge_base(KnowledgeBaseName,Description,Rank,LastModified,LatestTopic,LatestPost) VALUES (?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getKnowledgeBaseName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getRank());
@@ -367,8 +375,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE knowledge_base SET com.busy.util.DatabaseColumn@79ab3cd5=?,com.busy.util.DatabaseColumn@1a8a160d=?,com.busy.util.DatabaseColumn@3eb7367b=?,com.busy.util.DatabaseColumn@71856d55=?,com.busy.util.DatabaseColumn@51e8aa24=?,com.busy.util.DatabaseColumn@1b18f46a=? WHERE KnowledgeBaseId=?;");                    
-                preparedStatement.setInt(0, obj.getKnowledgeBaseId());
+                prepareStatement("UPDATE knowledge_base SET KnowledgeBaseName=?,Description=?,Rank=?,LastModified=?,LatestTopic=?,LatestPost=? WHERE KnowledgeBaseId=?;");                    
                 preparedStatement.setString(1, obj.getKnowledgeBaseName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getRank());
@@ -564,6 +571,12 @@
             knowledge_base.setBlogList(new BlogDaoImpl().findByColumn("KnowledgeBaseId", knowledge_base.getKnowledgeBaseId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

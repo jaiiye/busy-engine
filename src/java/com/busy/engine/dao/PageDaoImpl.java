@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,43 @@
         public Page find(Integer id)
         {
             return findByColumn("PageId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Page findWithInfo(Integer id)
+        {
+            Page page = findByColumn("PageId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Form", page.getFormId().toString());
+                    page.setForm(Form.process(rs));               
+                
+                    getRecordById("Slider", page.getSliderId().toString());
+                    page.setSlider(Slider.process(rs));               
+                
+                    getRecordById("MetaTag", page.getMetaTagId().toString());
+                    page.setMetaTag(MetaTag.process(rs));               
+                
+                    getRecordById("Template", page.getTemplateId().toString());
+                    page.setTemplate(Template.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object Page method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return page;
         }
         
         @Override
@@ -365,8 +401,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO page(PageId,PageName,Content,PageStatus,FormId,SliderId,MetaTagId,TemplateId,) VALUES (?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getPageId());
+                prepareStatement("INSERT INTO page(PageName,Content,PageStatus,FormId,SliderId,MetaTagId,TemplateId) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getPageName());
                 preparedStatement.setString(2, obj.getContent());
                 preparedStatement.setInt(3, obj.getPageStatus());
@@ -418,8 +453,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE page SET com.busy.util.DatabaseColumn@7c804485=?,com.busy.util.DatabaseColumn@94e092a=?,com.busy.util.DatabaseColumn@362b7f86=?,com.busy.util.DatabaseColumn@6ce8f2b8=?,com.busy.util.DatabaseColumn@12b237cc=?,com.busy.util.DatabaseColumn@6b4c7be9=?,com.busy.util.DatabaseColumn@676ee49=? WHERE PageId=?;");                    
-                preparedStatement.setInt(0, obj.getPageId());
+                prepareStatement("UPDATE page SET PageName=?,Content=?,PageStatus=?,FormId=?,SliderId=?,MetaTagId=?,TemplateId=? WHERE PageId=?;");                    
                 preparedStatement.setString(1, obj.getPageName());
                 preparedStatement.setString(2, obj.getContent());
                 preparedStatement.setInt(3, obj.getPageStatus());
@@ -641,6 +675,100 @@
             page.setSitePageList(new SitePageDaoImpl().findByColumn("PageId", page.getPageId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedForm(Page page)
+        {            
+            try
+            {                 
+                getRecordById("Form", page.getFormId().toString());
+                page.setForm(Form.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getForm error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedSlider(Page page)
+        {            
+            try
+            {                 
+                getRecordById("Slider", page.getSliderId().toString());
+                page.setSlider(Slider.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSlider error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedMetaTag(Page page)
+        {            
+            try
+            {                 
+                getRecordById("MetaTag", page.getMetaTagId().toString());
+                page.setMetaTag(MetaTag.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getMetaTag error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedTemplate(Page page)
+        {            
+            try
+            {                 
+                getRecordById("Template", page.getTemplateId().toString());
+                page.setTemplate(Template.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getTemplate error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedFormWithInfo(Page page)
+        {            
+            page.setForm(new FormDaoImpl().findWithInfo(page.getFormId()));
+        }
+        
+        public void getRelatedSliderWithInfo(Page page)
+        {            
+            page.setSlider(new SliderDaoImpl().findWithInfo(page.getSliderId()));
+        }
+        
+        public void getRelatedMetaTagWithInfo(Page page)
+        {            
+            page.setMetaTag(new MetaTagDaoImpl().findWithInfo(page.getMetaTagId()));
+        }
+        
+        public void getRelatedTemplateWithInfo(Page page)
+        {            
+            page.setTemplate(new TemplateDaoImpl().findWithInfo(page.getTemplateId()));
+        }
+          
+        
     }
 

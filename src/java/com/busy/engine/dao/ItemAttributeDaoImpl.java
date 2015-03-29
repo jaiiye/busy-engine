@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public ItemAttribute find(Integer id)
         {
             return findByColumn("ItemAttributeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ItemAttribute findWithInfo(Integer id)
+        {
+            ItemAttribute itemAttribute = findByColumn("ItemAttributeId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("ItemAttributeType", itemAttribute.getItemAttributeTypeId().toString());
+                    itemAttribute.setItemAttributeType(ItemAttributeType.process(rs));               
+                
+                    getRecordById("Item", itemAttribute.getItemId().toString());
+                    itemAttribute.setItem(Item.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object ItemAttribute method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return itemAttribute;
         }
         
         @Override
@@ -351,8 +381,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO item_attribute(ItemAttributeId,Key,Value,Locale,ItemAttributeTypeId,ItemId,) VALUES (?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getItemAttributeId());
+                prepareStatement("INSERT INTO item_attribute(Key,Value,Locale,ItemAttributeTypeId,ItemId) VALUES (?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getKey());
                 preparedStatement.setString(2, obj.getValue());
                 preparedStatement.setString(3, obj.getLocale());
@@ -400,8 +429,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_attribute SET com.busy.util.DatabaseColumn@29c12ee4=?,com.busy.util.DatabaseColumn@69aea540=?,com.busy.util.DatabaseColumn@1b01a40d=?,com.busy.util.DatabaseColumn@400f4846=?,com.busy.util.DatabaseColumn@6099f8ad=? WHERE ItemAttributeId=?;");                    
-                preparedStatement.setInt(0, obj.getItemAttributeId());
+                prepareStatement("UPDATE item_attribute SET Key=?,Value=?,Locale=?,ItemAttributeTypeId=?,ItemId=? WHERE ItemAttributeId=?;");                    
                 preparedStatement.setString(1, obj.getKey());
                 preparedStatement.setString(2, obj.getValue());
                 preparedStatement.setString(3, obj.getLocale());
@@ -609,6 +637,56 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedItemAttributeType(ItemAttribute item_attribute)
+        {            
+            try
+            {                 
+                getRecordById("ItemAttributeType", item_attribute.getItemAttributeTypeId().toString());
+                item_attribute.setItemAttributeType(ItemAttributeType.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getItemAttributeType error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedItem(ItemAttribute item_attribute)
+        {            
+            try
+            {                 
+                getRecordById("Item", item_attribute.getItemId().toString());
+                item_attribute.setItem(Item.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getItem error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedItemAttributeTypeWithInfo(ItemAttribute item_attribute)
+        {            
+            item_attribute.setItemAttributeType(new ItemAttributeTypeDaoImpl().findWithInfo(item_attribute.getItemAttributeTypeId()));
+        }
+        
+        public void getRelatedItemWithInfo(ItemAttribute item_attribute)
+        {            
+            item_attribute.setItem(new ItemDaoImpl().findWithInfo(item_attribute.getItemId()));
+        }
+          
+        
     }
 

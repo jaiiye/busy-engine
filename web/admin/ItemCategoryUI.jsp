@@ -1,64 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-                                           
-                                           
-                                           
-                                           
-  
-            
-  
-  
- 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       
-
-
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.busy.engine.dao.*"%>
@@ -267,7 +206,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="categoryId">Category:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="categoryId" class="form-control" value="${item_category.categoryId}" />
                                                         <select name="categoryId" class="form-control">
                                                             <%ItemCategory x = (ItemCategory) pageContext.getAttribute("item_category"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("category", x.getCategoryId().toString(), 2)%>
@@ -278,9 +216,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="itemId">Item:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="itemId" class="form-control" value="${item_category.itemId}" />
                                                         <select name="itemId" class="form-control">
-                                                            <%ItemCategory x = (ItemCategory) pageContext.getAttribute("item_category"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("item", x.getItemId().toString(), 2)%>
                                                         </select>
                                                     </div>

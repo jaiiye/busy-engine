@@ -39,7 +39,8 @@ import com.busy.engine.entity.RelatedItem;
 
 public interface RelatedItemDao extends IGenericDao<RelatedItem, Integer>
 {
-          
+ 
+
+      
 }
     
-

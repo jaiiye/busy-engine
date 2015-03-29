@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public Shipping find(Integer id)
         {
             return findByColumn("ShippingId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Shipping findWithInfo(Integer id)
+        {
+            Shipping shipping = findByColumn("ShippingId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("StateProvince", shipping.getStateProvinceId().toString());
+                    shipping.setStateProvince(StateProvince.process(rs));               
+                
+                    getRecordById("Country", shipping.getCountryId().toString());
+                    shipping.setCountry(Country.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object Shipping method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return shipping;
         }
         
         @Override
@@ -353,8 +383,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO shipping(ShippingId,MethodName,Quantity,UnitOfMeasure,RatePerUnitCost,AdditionalCost,StateProvinceId,CountryId,) VALUES (?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getShippingId());
+                prepareStatement("INSERT INTO shipping(MethodName,Quantity,UnitOfMeasure,RatePerUnitCost,AdditionalCost,StateProvinceId,CountryId) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getMethodName());
                 preparedStatement.setDouble(2, obj.getQuantity());
                 preparedStatement.setString(3, obj.getUnitOfMeasure());
@@ -406,8 +435,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE shipping SET com.busy.util.DatabaseColumn@36e41315=?,com.busy.util.DatabaseColumn@7404f198=?,com.busy.util.DatabaseColumn@13e3c8ad=?,com.busy.util.DatabaseColumn@30a1e1cc=?,com.busy.util.DatabaseColumn@264b2076=?,com.busy.util.DatabaseColumn@75108d16=?,com.busy.util.DatabaseColumn@78bb85b9=? WHERE ShippingId=?;");                    
-                preparedStatement.setInt(0, obj.getShippingId());
+                prepareStatement("UPDATE shipping SET MethodName=?,Quantity=?,UnitOfMeasure=?,RatePerUnitCost=?,AdditionalCost=?,StateProvinceId=?,CountryId=? WHERE ShippingId=?;");                    
                 preparedStatement.setString(1, obj.getMethodName());
                 preparedStatement.setDouble(2, obj.getQuantity());
                 preparedStatement.setString(3, obj.getUnitOfMeasure());
@@ -623,6 +651,56 @@
             shipping.setOrderList(new OrderDaoImpl().findByColumn("ShippingId", shipping.getShippingId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedStateProvince(Shipping shipping)
+        {            
+            try
+            {                 
+                getRecordById("StateProvince", shipping.getStateProvinceId().toString());
+                shipping.setStateProvince(StateProvince.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getStateProvince error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedCountry(Shipping shipping)
+        {            
+            try
+            {                 
+                getRecordById("Country", shipping.getCountryId().toString());
+                shipping.setCountry(Country.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getCountry error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedStateProvinceWithInfo(Shipping shipping)
+        {            
+            shipping.setStateProvince(new StateProvinceDaoImpl().findWithInfo(shipping.getStateProvinceId()));
+        }
+        
+        public void getRelatedCountryWithInfo(Shipping shipping)
+        {            
+            shipping.setCountry(new CountryDaoImpl().findWithInfo(shipping.getCountryId()));
+        }
+          
+        
     }
 

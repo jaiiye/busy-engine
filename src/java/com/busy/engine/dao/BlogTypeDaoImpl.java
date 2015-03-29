@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public BlogType find(Integer id)
         {
             return findByColumn("BlogTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public BlogType findWithInfo(Integer id)
+        {
+            BlogType blogType = findByColumn("BlogTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return blogType;
         }
         
         @Override
@@ -311,8 +320,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO blog_type(BlogTypeId,TypeName,) VALUES (?);");                    
-                preparedStatement.setInt(0, obj.getBlogTypeId());
+                prepareStatement("INSERT INTO blog_type(TypeName) VALUES (?);");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 
                 preparedStatement.executeUpdate();
@@ -352,8 +360,7 @@
                 BlogType.checkColumnSize(obj.getTypeName(), 100);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE blog_type SET com.busy.util.DatabaseColumn@13b87b33=? WHERE BlogTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getBlogTypeId());
+                prepareStatement("UPDATE blog_type SET TypeName=? WHERE BlogTypeId=?;");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setInt(2, obj.getBlogTypeId());
                 preparedStatement.executeUpdate();
@@ -544,6 +551,12 @@
             blog_type.setBlogList(new BlogDaoImpl().findByColumn("BlogTypeId", blog_type.getBlogTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

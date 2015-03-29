@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public ItemAvailability find(Integer id)
         {
             return findByColumn("ItemAvailabilityId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ItemAvailability findWithInfo(Integer id)
+        {
+            ItemAvailability itemAvailability = findByColumn("ItemAvailabilityId", id.toString(), null, null).get(0);
+            
+            
+            
+            return itemAvailability;
         }
         
         @Override
@@ -311,8 +320,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO item_availability(ItemAvailabilityId,Type,) VALUES (?);");                    
-                preparedStatement.setInt(0, obj.getItemAvailabilityId());
+                prepareStatement("INSERT INTO item_availability(Type) VALUES (?);");                    
                 preparedStatement.setString(1, obj.getType());
                 
                 preparedStatement.executeUpdate();
@@ -352,8 +360,7 @@
                 ItemAvailability.checkColumnSize(obj.getType(), 45);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_availability SET com.busy.util.DatabaseColumn@20ab9789=? WHERE ItemAvailabilityId=?;");                    
-                preparedStatement.setInt(0, obj.getItemAvailabilityId());
+                prepareStatement("UPDATE item_availability SET Type=? WHERE ItemAvailabilityId=?;");                    
                 preparedStatement.setString(1, obj.getType());
                 preparedStatement.setInt(2, obj.getItemAvailabilityId());
                 preparedStatement.executeUpdate();
@@ -544,6 +551,12 @@
             item_availability.setOptionAvailabilityList(new OptionAvailabilityDaoImpl().findByColumn("ItemAvailabilityId", item_availability.getItemAvailabilityId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

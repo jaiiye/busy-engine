@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public SiteFile find(Integer id)
         {
             return findByColumn("SiteFileId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public SiteFile findWithInfo(Integer id)
+        {
+            SiteFile siteFile = findByColumn("SiteFileId", id.toString(), null, null).get(0);
+            
+            
+            
+            return siteFile;
         }
         
         @Override
@@ -313,8 +322,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO site_file(SiteFileId,FileName,Description,Label,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getSiteFileId());
+                prepareStatement("INSERT INTO site_file(FileName,Description,Label) VALUES (?,?,?);");                    
                 preparedStatement.setString(1, obj.getFileName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getLabel());
@@ -358,8 +366,7 @@
                 SiteFile.checkColumnSize(obj.getLabel(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_file SET com.busy.util.DatabaseColumn@7dd7fbed=?,com.busy.util.DatabaseColumn@7a4b643a=?,com.busy.util.DatabaseColumn@3c36d27d=? WHERE SiteFileId=?;");                    
-                preparedStatement.setInt(0, obj.getSiteFileId());
+                prepareStatement("UPDATE site_file SET FileName=?,Description=?,Label=? WHERE SiteFileId=?;");                    
                 preparedStatement.setString(1, obj.getFileName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getLabel());
@@ -552,6 +559,12 @@
             site_file.setFileFolderList(new FileFolderDaoImpl().findByColumn("SiteFileId", site_file.getSiteFileId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

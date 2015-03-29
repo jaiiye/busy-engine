@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public ItemType find(Integer id)
         {
             return findByColumn("ItemTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ItemType findWithInfo(Integer id)
+        {
+            ItemType itemType = findByColumn("ItemTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return itemType;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO item_type(ItemTypeId,TypeName,Rank,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getItemTypeId());
+                prepareStatement("INSERT INTO item_type(TypeName,Rank) VALUES (?,?);");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setInt(2, obj.getRank());
                 
@@ -355,8 +363,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_type SET com.busy.util.DatabaseColumn@474e6d5=?,com.busy.util.DatabaseColumn@3e02d097=? WHERE ItemTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getItemTypeId());
+                prepareStatement("UPDATE item_type SET TypeName=?,Rank=? WHERE ItemTypeId=?;");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setInt(2, obj.getRank());
                 preparedStatement.setInt(3, obj.getItemTypeId());
@@ -548,6 +555,12 @@
             item_type.setItemList(new ItemDaoImpl().findByColumn("ItemTypeId", item_type.getItemTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

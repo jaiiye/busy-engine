@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,40 @@
         public ItemLocation find(Integer id)
         {
             return findByColumn("ItemLocationId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ItemLocation findWithInfo(Integer id)
+        {
+            ItemLocation itemLocation = findByColumn("ItemLocationId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Item", itemLocation.getItemId().toString());
+                    itemLocation.setItem(Item.process(rs));               
+                
+                    getRecordById("Address", itemLocation.getAddressId().toString());
+                    itemLocation.setAddress(Address.process(rs));               
+                
+                    getRecordById("Contact", itemLocation.getContactId().toString());
+                    itemLocation.setContact(Contact.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object ItemLocation method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return itemLocation;
         }
         
         @Override
@@ -357,8 +390,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO item_location(ItemLocationId,Latitude,Longitude,ItemId,AddressId,ContactId,) VALUES (?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getItemLocationId());
+                prepareStatement("INSERT INTO item_location(Latitude,Longitude,ItemId,AddressId,ContactId) VALUES (?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getLatitude());
                 preparedStatement.setString(2, obj.getLongitude());
                 preparedStatement.setInt(3, obj.getItemId());
@@ -406,8 +438,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_location SET com.busy.util.DatabaseColumn@2487657e=?,com.busy.util.DatabaseColumn@74782e8a=?,com.busy.util.DatabaseColumn@5a8ecbc7=?,com.busy.util.DatabaseColumn@144c67cf=?,com.busy.util.DatabaseColumn@b7f4cad=? WHERE ItemLocationId=?;");                    
-                preparedStatement.setInt(0, obj.getItemLocationId());
+                prepareStatement("UPDATE item_location SET Latitude=?,Longitude=?,ItemId=?,AddressId=?,ContactId=? WHERE ItemLocationId=?;");                    
                 preparedStatement.setString(1, obj.getLatitude());
                 preparedStatement.setString(2, obj.getLongitude());
                 preparedStatement.setInt(3, obj.getItemId());
@@ -618,6 +649,78 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedItem(ItemLocation item_location)
+        {            
+            try
+            {                 
+                getRecordById("Item", item_location.getItemId().toString());
+                item_location.setItem(Item.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getItem error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedAddress(ItemLocation item_location)
+        {            
+            try
+            {                 
+                getRecordById("Address", item_location.getAddressId().toString());
+                item_location.setAddress(Address.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getAddress error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedContact(ItemLocation item_location)
+        {            
+            try
+            {                 
+                getRecordById("Contact", item_location.getContactId().toString());
+                item_location.setContact(Contact.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getContact error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedItemWithInfo(ItemLocation item_location)
+        {            
+            item_location.setItem(new ItemDaoImpl().findWithInfo(item_location.getItemId()));
+        }
+        
+        public void getRelatedAddressWithInfo(ItemLocation item_location)
+        {            
+            item_location.setAddress(new AddressDaoImpl().findWithInfo(item_location.getAddressId()));
+        }
+        
+        public void getRelatedContactWithInfo(ItemLocation item_location)
+        {            
+            item_location.setContact(new ContactDaoImpl().findWithInfo(item_location.getContactId()));
+        }
+          
+        
     }
 

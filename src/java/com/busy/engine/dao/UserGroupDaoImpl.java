@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public UserGroup find(Integer id)
         {
             return findByColumn("UserGroupId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public UserGroup findWithInfo(Integer id)
+        {
+            UserGroup userGroup = findByColumn("UserGroupId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Site", userGroup.getSiteId().toString());
+                    userGroup.setSite(Site.process(rs));               
+                
+                    getRecordById("Discount", userGroup.getDiscountId().toString());
+                    userGroup.setDiscount(Discount.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object UserGroup method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return userGroup;
         }
         
         @Override
@@ -349,8 +379,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO user_group(UserGroupId,GroupName,SiteId,DiscountId,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getUserGroupId());
+                prepareStatement("INSERT INTO user_group(GroupName,SiteId,DiscountId) VALUES (?,?,?);");                    
                 preparedStatement.setString(1, obj.getGroupName());
                 preparedStatement.setInt(2, obj.getSiteId());
                 preparedStatement.setInt(3, obj.getDiscountId());
@@ -394,8 +423,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_group SET com.busy.util.DatabaseColumn@46e1eb0f=?,com.busy.util.DatabaseColumn@70b3b4fa=?,com.busy.util.DatabaseColumn@e64f96e=? WHERE UserGroupId=?;");                    
-                preparedStatement.setInt(0, obj.getUserGroupId());
+                prepareStatement("UPDATE user_group SET GroupName=?,SiteId=?,DiscountId=? WHERE UserGroupId=?;");                    
                 preparedStatement.setString(1, obj.getGroupName());
                 preparedStatement.setInt(2, obj.getSiteId());
                 preparedStatement.setInt(3, obj.getDiscountId());
@@ -607,6 +635,56 @@
             user_group.setUserList(new UserDaoImpl().findByColumn("UserGroupId", user_group.getUserGroupId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedSite(UserGroup user_group)
+        {            
+            try
+            {                 
+                getRecordById("Site", user_group.getSiteId().toString());
+                user_group.setSite(Site.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSite error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedDiscount(UserGroup user_group)
+        {            
+            try
+            {                 
+                getRecordById("Discount", user_group.getDiscountId().toString());
+                user_group.setDiscount(Discount.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getDiscount error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedSiteWithInfo(UserGroup user_group)
+        {            
+            user_group.setSite(new SiteDaoImpl().findWithInfo(user_group.getSiteId()));
+        }
+        
+        public void getRelatedDiscountWithInfo(UserGroup user_group)
+        {            
+            user_group.setDiscount(new DiscountDaoImpl().findWithInfo(user_group.getDiscountId()));
+        }
+          
+        
     }
 

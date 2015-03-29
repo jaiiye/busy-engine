@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public Slider find(Integer id)
         {
             return findByColumn("SliderId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Slider findWithInfo(Integer id)
+        {
+            Slider slider = findByColumn("SliderId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("SliderType", slider.getSliderTypeId().toString());
+                    slider.setSliderType(SliderType.process(rs));               
+                
+                    getRecordById("Form", slider.getFormId().toString());
+                    slider.setForm(Form.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object Slider method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return slider;
         }
         
         @Override
@@ -349,8 +379,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO slider(SliderId,SliderName,SliderTypeId,FormId,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getSliderId());
+                prepareStatement("INSERT INTO slider(SliderName,SliderTypeId,FormId) VALUES (?,?,?);");                    
                 preparedStatement.setString(1, obj.getSliderName());
                 preparedStatement.setInt(2, obj.getSliderTypeId());
                 preparedStatement.setInt(3, obj.getFormId());
@@ -394,8 +423,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE slider SET com.busy.util.DatabaseColumn@e261df8=?,com.busy.util.DatabaseColumn@598eb2db=?,com.busy.util.DatabaseColumn@1d40f31a=? WHERE SliderId=?;");                    
-                preparedStatement.setInt(0, obj.getSliderId());
+                prepareStatement("UPDATE slider SET SliderName=?,SliderTypeId=?,FormId=? WHERE SliderId=?;");                    
                 preparedStatement.setString(1, obj.getSliderName());
                 preparedStatement.setInt(2, obj.getSliderTypeId());
                 preparedStatement.setInt(3, obj.getFormId());
@@ -613,6 +641,56 @@ slider.setSliderItemList(new SliderItemDaoImpl().findByColumn("SliderId", slider
             slider.setSliderItemList(new SliderItemDaoImpl().findByColumn("SliderId", slider.getSliderId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedSliderType(Slider slider)
+        {            
+            try
+            {                 
+                getRecordById("SliderType", slider.getSliderTypeId().toString());
+                slider.setSliderType(SliderType.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSliderType error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedForm(Slider slider)
+        {            
+            try
+            {                 
+                getRecordById("Form", slider.getFormId().toString());
+                slider.setForm(Form.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getForm error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedSliderTypeWithInfo(Slider slider)
+        {            
+            slider.setSliderType(new SliderTypeDaoImpl().findWithInfo(slider.getSliderTypeId()));
+        }
+        
+        public void getRelatedFormWithInfo(Slider slider)
+        {            
+            slider.setForm(new FormDaoImpl().findWithInfo(slider.getFormId()));
+        }
+          
+        
     }
 

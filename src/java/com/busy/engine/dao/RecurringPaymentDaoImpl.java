@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public RecurringPayment find(Integer id)
         {
             return findByColumn("RecurringPaymentId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public RecurringPayment findWithInfo(Integer id)
+        {
+            RecurringPayment recurringPayment = findByColumn("RecurringPaymentId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Order", recurringPayment.getOrderId().toString());
+                    recurringPayment.setOrder(Order.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object RecurringPayment method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return recurringPayment;
         }
         
         @Override
@@ -345,8 +372,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO recurring_payment(RecurringPaymentId,CycleLength,CyclePeriod,TotalCycles,StartDate,OrderId,) VALUES (?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getRecurringPaymentId());
+                prepareStatement("INSERT INTO recurring_payment(CycleLength,CyclePeriod,TotalCycles,StartDate,OrderId) VALUES (?,?,?,?,?);");                    
                 preparedStatement.setInt(1, obj.getCycleLength());
                 preparedStatement.setInt(2, obj.getCyclePeriod());
                 preparedStatement.setInt(3, obj.getTotalCycles());
@@ -394,8 +420,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE recurring_payment SET com.busy.util.DatabaseColumn@45af61f=?,com.busy.util.DatabaseColumn@51190865=?,com.busy.util.DatabaseColumn@62642fad=?,com.busy.util.DatabaseColumn@488d83e6=?,com.busy.util.DatabaseColumn@1b346ee6=? WHERE RecurringPaymentId=?;");                    
-                preparedStatement.setInt(0, obj.getRecurringPaymentId());
+                prepareStatement("UPDATE recurring_payment SET CycleLength=?,CyclePeriod=?,TotalCycles=?,StartDate=?,OrderId=? WHERE RecurringPaymentId=?;");                    
                 preparedStatement.setInt(1, obj.getCycleLength());
                 preparedStatement.setInt(2, obj.getCyclePeriod());
                 preparedStatement.setInt(3, obj.getTotalCycles());
@@ -600,6 +625,34 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedOrder(RecurringPayment recurring_payment)
+        {            
+            try
+            {                 
+                getRecordById("Order", recurring_payment.getOrderId().toString());
+                recurring_payment.setOrder(Order.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getOrder error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedOrderWithInfo(RecurringPayment recurring_payment)
+        {            
+            recurring_payment.setOrder(new OrderDaoImpl().findWithInfo(recurring_payment.getOrderId()));
+        }
+          
+        
     }
 

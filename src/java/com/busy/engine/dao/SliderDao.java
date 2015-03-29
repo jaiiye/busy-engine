@@ -39,11 +39,16 @@ import com.busy.engine.entity.Slider;
 
 public interface SliderDao extends IGenericDao<Slider, Integer>
 {
-                    
-      void getRelatedPageList(Slider slider);     
-                  
-      void getRelatedSliderItemList(Slider slider);     
+
+        void getRelatedSliderType(Slider slider);
+        void getRelatedSliderTypeWithInfo(Slider slider);        
         
+        void getRelatedForm(Slider slider);
+        void getRelatedFormWithInfo(Slider slider);        
+         
+
+    void getRelatedPageList(Slider slider);
+    void getRelatedSliderItemList(Slider slider);
+      
 }
     
-

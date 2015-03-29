@@ -28,11 +28,11 @@
                 </a>
                 <ul class="sub-menu">
                     <li <%= subCategory.equals("products") ? "class=\"active\"":"" %>><a href="products.jsp"><i class="fa fa-gift"></i>&nbsp;Products</a></li>
-                    <li <%= subCategory.equals("orders") ? "class=\"active\"":"" %>><a href="OrderUI.jsp"><i class="fa fa-money"></i>&nbsp;Orders</a></li>
+                    <li <%= subCategory.equals("orders") ? "class=\"active\"":"" %>><a href="CustomerOrderUI.jsp"><i class="fa fa-money"></i>&nbsp;Orders</a></li>
                     <li <%= subCategory.equals("brands") ? "class=\"active\"":"" %>><a href="ItemBrandUI.jsp"><i class="fa fa-tag"></i>&nbsp;Brands</a></li>
                     <li <%= subCategory.equals("categories") ? "class=\"active\"":"" %>><a href="CategoryUI.jsp"> <i class="fa fa-archive"></i>&nbsp;Categories</a></li>
                     <li <%= subCategory.equals("options") ? "class=\"active\"":"" %>><a href="ItemOptionUI.jsp"><i class="fa fa-exchange"></i>&nbsp;Options</a></li>
-                    <li <%= subCategory.equals("tax") ? "class=\"active\"":"" %>><a href="TaxUI.jsp"><i class="fa fa-usd"></i>&nbsp;Tax</a></li>
+                    <li <%= subCategory.equals("tax") ? "class=\"active\"":"" %>><a href="TaxRateUI.jsp"><i class="fa fa-usd"></i>&nbsp;Tax</a></li>
                     <li <%= subCategory.equals("shipping") ? "class=\"active\"":"" %>> <a href="ShippingUI.jsp"><i class="fa fa-truck"></i>&nbsp;Shipping</a></li>
                 </ul>
             </li>

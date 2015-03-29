@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public ItemCategory find(Integer id)
         {
             return findByColumn("ItemCategoryId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ItemCategory findWithInfo(Integer id)
+        {
+            ItemCategory itemCategory = findByColumn("ItemCategoryId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Category", itemCategory.getCategoryId().toString());
+                    itemCategory.setCategory(Category.process(rs));               
+                
+                    getRecordById("Item", itemCategory.getItemId().toString());
+                    itemCategory.setItem(Item.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object ItemCategory method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return itemCategory;
         }
         
         @Override
@@ -348,8 +378,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO item_category(ItemCategoryId,CategoryId,ItemId,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getItemCategoryId());
+                prepareStatement("INSERT INTO item_category(CategoryId,ItemId) VALUES (?,?);");                    
                 preparedStatement.setInt(1, obj.getCategoryId());
                 preparedStatement.setInt(2, obj.getItemId());
                 
@@ -391,8 +420,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_category SET com.busy.util.DatabaseColumn@6215f9e4=?,com.busy.util.DatabaseColumn@5657045=? WHERE ItemCategoryId=?;");                    
-                preparedStatement.setInt(0, obj.getItemCategoryId());
+                prepareStatement("UPDATE item_category SET CategoryId=?,ItemId=? WHERE ItemCategoryId=?;");                    
                 preparedStatement.setInt(1, obj.getCategoryId());
                 preparedStatement.setInt(2, obj.getItemId());
                 preparedStatement.setInt(3, obj.getItemCategoryId());
@@ -597,6 +625,56 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedCategory(ItemCategory item_category)
+        {            
+            try
+            {                 
+                getRecordById("Category", item_category.getCategoryId().toString());
+                item_category.setCategory(Category.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getCategory error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedItem(ItemCategory item_category)
+        {            
+            try
+            {                 
+                getRecordById("Item", item_category.getItemId().toString());
+                item_category.setItem(Item.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getItem error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedCategoryWithInfo(ItemCategory item_category)
+        {            
+            item_category.setCategory(new CategoryDaoImpl().findWithInfo(item_category.getCategoryId()));
+        }
+        
+        public void getRelatedItemWithInfo(ItemCategory item_category)
+        {            
+            item_category.setItem(new ItemDaoImpl().findWithInfo(item_category.getItemId()));
+        }
+          
+        
     }
 

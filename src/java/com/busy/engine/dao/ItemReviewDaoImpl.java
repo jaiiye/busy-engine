@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public ItemReview find(Integer id)
         {
             return findByColumn("ItemReviewId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ItemReview findWithInfo(Integer id)
+        {
+            ItemReview itemReview = findByColumn("ItemReviewId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Item", itemReview.getItemId().toString());
+                    itemReview.setItem(Item.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object ItemReview method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return itemReview;
         }
         
         @Override
@@ -344,8 +371,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO item_review(ItemReviewId,ItemId,Rating,HelpfulYes,HelpfulNo,) VALUES (?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getItemReviewId());
+                prepareStatement("INSERT INTO item_review(ItemId,Rating,HelpfulYes,HelpfulNo) VALUES (?,?,?,?);");                    
                 preparedStatement.setInt(1, obj.getItemId());
                 preparedStatement.setInt(2, obj.getRating());
                 preparedStatement.setInt(3, obj.getHelpfulYes());
@@ -391,8 +417,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_review SET com.busy.util.DatabaseColumn@71906391=?,com.busy.util.DatabaseColumn@496edf07=?,com.busy.util.DatabaseColumn@6a66127=?,com.busy.util.DatabaseColumn@4fbc50c5=? WHERE ItemReviewId=?;");                    
-                preparedStatement.setInt(0, obj.getItemReviewId());
+                prepareStatement("UPDATE item_review SET ItemId=?,Rating=?,HelpfulYes=?,HelpfulNo=? WHERE ItemReviewId=?;");                    
                 preparedStatement.setInt(1, obj.getItemId());
                 preparedStatement.setInt(2, obj.getRating());
                 preparedStatement.setInt(3, obj.getHelpfulYes());
@@ -602,6 +627,34 @@
             item_review.setCommentList(new CommentDaoImpl().findByColumn("ItemReviewId", item_review.getItemReviewId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedItem(ItemReview item_review)
+        {            
+            try
+            {                 
+                getRecordById("Item", item_review.getItemId().toString());
+                item_review.setItem(Item.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getItem error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedItemWithInfo(ItemReview item_review)
+        {            
+            item_review.setItem(new ItemDaoImpl().findWithInfo(item_review.getItemId()));
+        }
+          
+        
     }
 

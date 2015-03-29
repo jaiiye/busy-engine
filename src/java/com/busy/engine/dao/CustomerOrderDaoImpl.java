@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,40 @@
         public CustomerOrder find(Integer id)
         {
             return findByColumn("CustomerOrderId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public CustomerOrder findWithInfo(Integer id)
+        {
+            CustomerOrder customerOrder = findByColumn("CustomerOrderId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Customer", customerOrder.getCustomerId().toString());
+                    customerOrder.setCustomer(Customer.process(rs));               
+                
+                    getRecordById("Order", customerOrder.getOrderId().toString());
+                    customerOrder.setOrder(Order.process(rs));               
+                
+                    getRecordById("Discount", customerOrder.getDiscountId().toString());
+                    customerOrder.setDiscount(Discount.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object CustomerOrder method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return customerOrder;
         }
         
         @Override
@@ -356,8 +389,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO customer_order(CustomerOrderId,CustomerId,OrderId,DiscountId,CustomerIp,) VALUES (?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getCustomerOrderId());
+                prepareStatement("INSERT INTO customer_order(CustomerId,OrderId,DiscountId,CustomerIp) VALUES (?,?,?,?);");                    
                 preparedStatement.setInt(1, obj.getCustomerId());
                 preparedStatement.setInt(2, obj.getOrderId());
                 preparedStatement.setInt(3, obj.getDiscountId());
@@ -403,8 +435,7 @@
                 CustomerOrder.checkColumnSize(obj.getCustomerIp(), 100);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE customer_order SET com.busy.util.DatabaseColumn@242b038a=?,com.busy.util.DatabaseColumn@6a817e49=?,com.busy.util.DatabaseColumn@70dd5f8=?,com.busy.util.DatabaseColumn@2f685314=? WHERE CustomerOrderId=?;");                    
-                preparedStatement.setInt(0, obj.getCustomerOrderId());
+                prepareStatement("UPDATE customer_order SET CustomerId=?,OrderId=?,DiscountId=?,CustomerIp=? WHERE CustomerOrderId=?;");                    
                 preparedStatement.setInt(1, obj.getCustomerId());
                 preparedStatement.setInt(2, obj.getOrderId());
                 preparedStatement.setInt(3, obj.getDiscountId());
@@ -620,6 +651,78 @@
             customer_order.setOrderItemList(new OrderItemDaoImpl().findByColumn("CustomerOrderId", customer_order.getCustomerOrderId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedCustomer(CustomerOrder customer_order)
+        {            
+            try
+            {                 
+                getRecordById("Customer", customer_order.getCustomerId().toString());
+                customer_order.setCustomer(Customer.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getCustomer error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedOrder(CustomerOrder customer_order)
+        {            
+            try
+            {                 
+                getRecordById("Order", customer_order.getOrderId().toString());
+                customer_order.setOrder(Order.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getOrder error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedDiscount(CustomerOrder customer_order)
+        {            
+            try
+            {                 
+                getRecordById("Discount", customer_order.getDiscountId().toString());
+                customer_order.setDiscount(Discount.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getDiscount error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedCustomerWithInfo(CustomerOrder customer_order)
+        {            
+            customer_order.setCustomer(new CustomerDaoImpl().findWithInfo(customer_order.getCustomerId()));
+        }
+        
+        public void getRelatedOrderWithInfo(CustomerOrder customer_order)
+        {            
+            customer_order.setOrder(new OrderDaoImpl().findWithInfo(customer_order.getOrderId()));
+        }
+        
+        public void getRelatedDiscountWithInfo(CustomerOrder customer_order)
+        {            
+            customer_order.setDiscount(new DiscountDaoImpl().findWithInfo(customer_order.getDiscountId()));
+        }
+          
+        
     }
 

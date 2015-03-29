@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public FileFolder find(Integer id)
         {
             return findByColumn("FileFolderId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public FileFolder findWithInfo(Integer id)
+        {
+            FileFolder fileFolder = findByColumn("FileFolderId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("SiteFile", fileFolder.getSiteFileId().toString());
+                    fileFolder.setSiteFile(SiteFile.process(rs));               
+                
+                    getRecordById("SiteFolder", fileFolder.getSiteFolderId().toString());
+                    fileFolder.setSiteFolder(SiteFolder.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object FileFolder method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return fileFolder;
         }
         
         @Override
@@ -348,8 +378,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO file_folder(FileFolderId,SiteFileId,SiteFolderId,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getFileFolderId());
+                prepareStatement("INSERT INTO file_folder(SiteFileId,SiteFolderId) VALUES (?,?);");                    
                 preparedStatement.setInt(1, obj.getSiteFileId());
                 preparedStatement.setInt(2, obj.getSiteFolderId());
                 
@@ -391,8 +420,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE file_folder SET com.busy.util.DatabaseColumn@29c8a6b8=?,com.busy.util.DatabaseColumn@1740370c=? WHERE FileFolderId=?;");                    
-                preparedStatement.setInt(0, obj.getFileFolderId());
+                prepareStatement("UPDATE file_folder SET SiteFileId=?,SiteFolderId=? WHERE FileFolderId=?;");                    
                 preparedStatement.setInt(1, obj.getSiteFileId());
                 preparedStatement.setInt(2, obj.getSiteFolderId());
                 preparedStatement.setInt(3, obj.getFileFolderId());
@@ -597,6 +625,56 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedSiteFile(FileFolder file_folder)
+        {            
+            try
+            {                 
+                getRecordById("SiteFile", file_folder.getSiteFileId().toString());
+                file_folder.setSiteFile(SiteFile.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSiteFile error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedSiteFolder(FileFolder file_folder)
+        {            
+            try
+            {                 
+                getRecordById("SiteFolder", file_folder.getSiteFolderId().toString());
+                file_folder.setSiteFolder(SiteFolder.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSiteFolder error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedSiteFileWithInfo(FileFolder file_folder)
+        {            
+            file_folder.setSiteFile(new SiteFileDaoImpl().findWithInfo(file_folder.getSiteFileId()));
+        }
+        
+        public void getRelatedSiteFolderWithInfo(FileFolder file_folder)
+        {            
+            file_folder.setSiteFolder(new SiteFolderDaoImpl().findWithInfo(file_folder.getSiteFolderId()));
+        }
+          
+        
     }
 

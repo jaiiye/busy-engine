@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public Service find(Integer id)
         {
             return findByColumn("ServiceId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Service findWithInfo(Integer id)
+        {
+            Service service = findByColumn("ServiceId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("ServiceCharge", service.getServiceChargeId().toString());
+                    service.setServiceCharge(ServiceCharge.process(rs));               
+                
+                    getRecordById("ServiceType", service.getServiceTypeId().toString());
+                    service.setServiceType(ServiceType.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object Service method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return service;
         }
         
         @Override
@@ -351,8 +381,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO service(ServiceId,ServiceName,Description,ServiceStatus,ServiceChargeId,ServiceTypeId,) VALUES (?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getServiceId());
+                prepareStatement("INSERT INTO service(ServiceName,Description,ServiceStatus,ServiceChargeId,ServiceTypeId) VALUES (?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getServiceName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getServiceStatus());
@@ -400,8 +429,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE service SET com.busy.util.DatabaseColumn@5d6231f3=?,com.busy.util.DatabaseColumn@38b0f2f8=?,com.busy.util.DatabaseColumn@4436b386=?,com.busy.util.DatabaseColumn@4bd9765=?,com.busy.util.DatabaseColumn@481cc3a8=? WHERE ServiceId=?;");                    
-                preparedStatement.setInt(0, obj.getServiceId());
+                prepareStatement("UPDATE service SET ServiceName=?,Description=?,ServiceStatus=?,ServiceChargeId=?,ServiceTypeId=? WHERE ServiceId=?;");                    
                 preparedStatement.setString(1, obj.getServiceName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getServiceStatus());
@@ -615,6 +643,56 @@
             service.setUserServiceList(new UserServiceDaoImpl().findByColumn("ServiceId", service.getServiceId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedServiceCharge(Service service)
+        {            
+            try
+            {                 
+                getRecordById("ServiceCharge", service.getServiceChargeId().toString());
+                service.setServiceCharge(ServiceCharge.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getServiceCharge error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedServiceType(Service service)
+        {            
+            try
+            {                 
+                getRecordById("ServiceType", service.getServiceTypeId().toString());
+                service.setServiceType(ServiceType.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getServiceType error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedServiceChargeWithInfo(Service service)
+        {            
+            service.setServiceCharge(new ServiceChargeDaoImpl().findWithInfo(service.getServiceChargeId()));
+        }
+        
+        public void getRelatedServiceTypeWithInfo(Service service)
+        {            
+            service.setServiceType(new ServiceTypeDaoImpl().findWithInfo(service.getServiceTypeId()));
+        }
+          
+        
     }
 

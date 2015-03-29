@@ -1,571 +1,263 @@
+package com.busy.engine.dao;
 
+import com.busy.engine.data.BasicConnection;
+import com.busy.engine.entity.*;
+import com.busy.engine.util.*;
+import java.util.ArrayList;
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.Map.Entry;
+import java.lang.reflect.InvocationTargetException;
 
+public class CategoryDaoImpl extends BasicConnection implements Serializable, CategoryDao
+{
 
+    private static final long serialVersionUID = 1L;
+    private boolean cachingEnabled;
 
+    public CategoryDaoImpl()
+    {
+        cachingEnabled = false;
+    }
 
+    public CategoryDaoImpl(boolean enableCache)
+    {
+        cachingEnabled = enableCache;
+    }
 
+    private static class CategoryCache
+    {
 
+        public static final ConcurrentLruCache<Integer, Category> categoryCache = buildCache(findAll());
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    package com.busy.engine.dao;
-
-    import com.busy.engine.data.BasicConnection;
-    import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
-    import com.busy.engine.util.*;
-    import java.util.ArrayList;
-    import java.io.Serializable;
-    import java.sql.SQLException;
-    import java.util.Date;
-    import java.util.Map.Entry;
-    import java.lang.reflect.InvocationTargetException;
-    
-    public class CategoryDaoImpl extends BasicConnection implements Serializable, CategoryDao
-    {    
-        private static final long serialVersionUID = 1L;  
-        private boolean cachingEnabled;
-        
-        public CategoryDaoImpl()
+    private void checkCacheState()
+    {
+        if (getCache().size() == 0)
         {
-            cachingEnabled = false;
-        }
-
-        public CategoryDaoImpl(boolean enableCache)
-        {
-            cachingEnabled = enableCache;
-        }
-
-        private static class CategoryCache
-        {
-            public static final ConcurrentLruCache<Integer, Category> categoryCache = buildCache(findAll());
-        }
-
-        private void checkCacheState()
-        {
-            if(getCache().size() == 0)
+            System.out.println("Found the cache empty, rebuilding...");
+            for (Category i : findAll())
             {
-                System.out.println("Found the cache empty, rebuilding...");
-                for (Category i : findAll())
-                {
-                    getCache().put(i.getCategoryId(), i);
-                } 
+                getCache().put(i.getCategoryId(), i);
+            }
+        }
+    }
+
+    public static ConcurrentLruCache<Integer, Category> getCache()
+    {
+        return CategoryCache.categoryCache;
+    }
+
+    protected Object readResolve()
+    {
+        return getCache();
+    }
+
+    public static ConcurrentLruCache<Integer, Category> buildCache(ArrayList<Category> categoryList)
+    {
+        ConcurrentLruCache<Integer, Category> cache = new ConcurrentLruCache<Integer, Category>(categoryList.size() + 1000);
+        for (Category i : categoryList)
+        {
+            cache.put(i.getCategoryId(), i);
+        }
+        return cache;
+    }
+
+    private static ArrayList<Category> findAll()
+    {
+        ArrayList<Category> category = new ArrayList<>();
+        try
+        {
+            getAllRecordsByTableName("category");
+            while (rs.next())
+            {
+                category.add(Category.process(rs));
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("Category object's findAll() method error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+        return category;
+    }
+
+    @Override
+    public Category find(Integer id)
+    {
+        return findByColumn("CategoryId", id.toString(), null, null).get(0);
+    }
+
+    @Override
+    public Category findWithInfo(Integer id)
+    {
+        Category category = findByColumn("CategoryId", id.toString(), null, null).get(0);
+
+        try
+        {
+
+            getRecordById("Discount", category.getDiscountId().toString());
+            category.setDiscount(Discount.process(rs));
+
+            getRecordById("Category", category.getParentCategoryId().toString());
+            category.setParentCategory(Category.process(rs));
+
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("Object Category method findWithInfo(Integer id) error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
+        return category;
+    }
+
+    @Override
+    public ArrayList<Category> findAll(Integer limit, Integer offset)
+    {
+        ArrayList<Category> categoryList = new ArrayList<Category>();
+        boolean cacheNotUsed = false;
+
+        //check cache first
+        if (cachingEnabled)
+        {
+            System.out.println("Find all operation for Category, getting objects from cache...");
+            checkCacheState();
+
+            if (limit == null && offset == null)
+            {
+                categoryList = new ArrayList<Category>(getCache().getValues());
+            }
+            else
+            {
+                cacheNotUsed = true;
             }
         }
 
-        public static ConcurrentLruCache<Integer, Category> getCache()
+        if (!cachingEnabled || cacheNotUsed)
         {
-            return CategoryCache.categoryCache;
-        }
-
-        protected Object readResolve()
-        {
-            return getCache();
-        }
-
-        public static ConcurrentLruCache<Integer, Category> buildCache(ArrayList<Category> categoryList)
-        {        
-            ConcurrentLruCache<Integer, Category> cache = new ConcurrentLruCache<Integer, Category>(categoryList.size() + 1000);
-            for (Category i : categoryList)
-            {
-                cache.put(i.getCategoryId(), i);
-            }
-            return cache;
-        }
-
-        private static ArrayList<Category> findAll()
-        {
-            ArrayList<Category> category = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("category");
+                getRecordsByTableNameWithLimitOrOffset("category", limit, offset);
                 while (rs.next())
                 {
-                    category.add(Category.process(rs));
+                    categoryList.add(Category.process(rs));
                 }
             }
             catch (SQLException ex)
             {
-                System.out.println("Category object's findAll() method error: " + ex.getMessage());
+                System.out.println("Category object's findAll method error: " + ex.getMessage());
             }
             finally
             {
                 closeConnection();
             }
-            return category;
         }
-        
-        @Override
-        public Category find(Integer id)
+        return categoryList;
+
+    }
+
+    @Override
+    public ArrayList<Category> findAllWithInfo(Integer limit, Integer offset)
+    {
+        ArrayList<Category> categoryList = new ArrayList<Category>();
+        boolean cacheNotUsed = false;
+
+        //check cache first
+        if (cachingEnabled)
         {
-            return findByColumn("CategoryId", id.toString(), null, null).get(0);
-        }
-        
-        @Override
-        public ArrayList<Category> findAll(Integer limit, Integer offset)
-        {
-            ArrayList<Category> categoryList = new ArrayList<Category>();
-            boolean cacheNotUsed = false;
+            checkCacheState();
 
-            //check cache first
-            if (cachingEnabled)
-            {            
-                System.out.println("Find all operation for Category, getting objects from cache...");
-                checkCacheState();
+            System.out.println("Find all with info operation for Category, getting objects from cache...");
 
-                if(limit == null && offset == null)
-                {
-                    categoryList = new ArrayList<Category>(getCache().getValues());
-                }
-                else
-                {
-                    cacheNotUsed = true;
-                }
-            }
-
-            if( !cachingEnabled || cacheNotUsed)
+            if (limit == null && offset == null)
             {
-                try
-                {
-                    getRecordsByTableNameWithLimitOrOffset("category", limit, offset);
-                    while (rs.next())
-                    {
-                        categoryList.add(Category.process(rs));
-                    }
-                }
-                catch (SQLException ex)
-                {
-                    System.out.println("Category object's findAll method error: " + ex.getMessage());
-                }
-                finally
-                {
-                    closeConnection();
-                }
-            }
-            return categoryList;
-         
-        }
-        
-        @Override
-        public ArrayList<Category> findAllWithInfo(Integer limit, Integer offset)
-        {
-            ArrayList<Category> categoryList = new ArrayList<Category>();
-            boolean cacheNotUsed = false;
-
-            //check cache first
-            if (cachingEnabled)
-            {            
-                checkCacheState();
-
-                System.out.println("Find all with info operation for Category, getting objects from cache...");
-
-                if (limit == null && offset == null)
-                {
-                    categoryList = new ArrayList<Category>(getCache().getValues());
-                }
-                else
-                {                
-                    cacheNotUsed = true;
-                }
-
-                
-                    try
-                    {
-                        for (Entry e : getCache().getEntries())
-                        {
-                            Category category = (Category) e.getValue();
-
-                            
-                                getRecordById("Discount", category.getDiscountId().toString());
-                                category.setDiscount(Discount.process(rs));               
-                            
-                                getRecordById("Category", category.getParentCategoryId().toString());
-                                category.setParentCategory(Category.process(rs));               
-                                                    
-                        }
-                    }
-                    catch (SQLException ex)
-                    {
-                        System.out.println("Object Category method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
-                    }
-                    finally
-                    {
-                        closeConnection();
-                    }
-                
-            }
-
-            if( !cachingEnabled || cacheNotUsed)
-            {
-                categoryList = new ArrayList<Category>();
-                try
-                {
-                    getRecordsByTableNameWithLimitOrOffset("category", limit, offset);
-                    while (rs.next())
-                    {
-                        categoryList.add(Category.process(rs));
-                    }
-
-                    
-                    
-                        for (Category category : categoryList)
-                        {                        
-                            
-                                getRecordById("Discount", category.getDiscountId().toString());
-                                category.setDiscount(Discount.process(rs));               
-                            
-                                getRecordById("Category", category.getParentCategoryId().toString());
-                                category.setParentCategory(Category.process(rs));               
-                              
-                        }
-                    
-                    
-                }
-                catch (SQLException ex)
-                {
-                    System.out.println("Object Category method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
-                }
-                finally
-                {
-                    closeConnection();
-                }
-            }
-            return categoryList;            
-        }
-        
-        @Override
-        public ArrayList<Category> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
-        {
-            ArrayList<Category> categoryList = new ArrayList<>();
-            boolean cacheNotUsed = false;
-
-            if (cachingEnabled)
-            {
-                if (limit == null && offset == null)
-                {
-
-                    System.out.println("Find by column for Category(" + columnName + "=" + columnValue + "), getting objects from cache...");
-                    for (Entry e : getCache().getEntries())
-                    {
-                        try
-                        {
-                            Category i = (Category) e.getValue();
-                            if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
-                            {
-                                categoryList.add(i);
-                            }
-                        }
-                        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
-                        {
-                            ex.printStackTrace();
-                            categoryList = null;
-                        }
-                    }
-                }
-                else
-                {
-                    cacheNotUsed = true;
-                }
-            }
-
-            if( !cachingEnabled || cacheNotUsed)
-            {
-                try
-                {
-                    getRecordsByColumnWithLimitOrOffset("category", Category.checkColumnName(columnName), columnValue, Category.isColumnNumeric(columnName), limit, offset);
-                    while (rs.next())
-                    {
-                        categoryList.add(Category.process(rs));
-                    }
-                }
-                catch (SQLException ex)
-                {
-                    System.out.println("Category's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
-                }
-                finally
-                {
-                    closeConnection();
-                }
-            }
-            return categoryList;
-        } 
-    
-        @Override
-        public int add(Category obj)
-        {        
-            boolean success = false;
-            int id = 0;
-            try
-            {                
-                
-                Category.checkColumnSize(obj.getCategoryName(), 100);
-                
-                
-                  
-
-                openConnection();
-                prepareStatement("INSERT INTO category(CategoryId,CategoryName,DiscountId,ParentCategoryId,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getCategoryId());
-                preparedStatement.setString(1, obj.getCategoryName());
-                preparedStatement.setInt(2, obj.getDiscountId());
-                preparedStatement.setInt(3, obj.getParentCategoryId());
-                
-                preparedStatement.executeUpdate();
-
-                rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from category;");
-                while (rs.next())
-                {
-                    id = rs.getInt(1);
-                }
-                
-                success = true;
-            }
-            catch (Exception ex)
-            {
-                System.out.println("Category's add method error: " + ex.getMessage());
-            }
-            finally
-            {
-                closeConnection();
-            }
-            
-            if (cachingEnabled && success)
-            {
-                obj.setCategoryId(id);
-                getCache().put(id, obj); //synchronizing between local cache and database
-            }
-                
-            return id;
-        }
-        
-        @Override
-        public Category update(Category obj)
-        {
-           try
-            {   
-                
-                Category.checkColumnSize(obj.getCategoryName(), 100);
-                
-                
-                                  
-                openConnection();                           
-                prepareStatement("UPDATE category SET com.busy.util.DatabaseColumn@340605ff=?,com.busy.util.DatabaseColumn@262b25bc=?,com.busy.util.DatabaseColumn@528a7767=? WHERE CategoryId=?;");                    
-                preparedStatement.setInt(0, obj.getCategoryId());
-                preparedStatement.setString(1, obj.getCategoryName());
-                preparedStatement.setInt(2, obj.getDiscountId());
-                preparedStatement.setInt(3, obj.getParentCategoryId());
-                preparedStatement.setInt(4, obj.getCategoryId());
-                preparedStatement.executeUpdate();
-                
-                if (cachingEnabled)
-                {
-                    getCache().put(obj.getCategoryId(), obj);
-                }            
-            }
-            catch (Exception ex)
-            {
-                System.out.println("Category's update error: " + ex.getMessage());
-            }
-            finally
-            {
-                closeConnection();
-            }  
-            return obj;
-        }
-        
-        @Override
-        public int getAllCount()
-        {        
-            int count = 0;
-            if (cachingEnabled)
-            {
-                count = getCache().size();
+                categoryList = new ArrayList<Category>(getCache().getValues());
             }
             else
             {
-                count = getAllRecordsCountByTableName("category");
+                cacheNotUsed = true;
             }
-            return count;
-        }
-        
-        
-        @Override
-        public void getRelatedInfo(Category category)
-        {
-            
-                try
-                { 
-                    
-                            getRecordById("Discount", category.getDiscountId().toString());
-                            category.setDiscount(Discount.process(rs));                                       
-                    
-                            getRecordById("Category", category.getParentCategoryId().toString());
-                            category.setParentCategory(Category.process(rs));                                       
-                    
-                    }
-                catch (SQLException ex)
+
+            try
+            {
+                for (Entry e : getCache().getEntries())
                 {
-                    System.out.println("getRelatedInfo error: " + ex.getMessage());
+                    Category category = (Category) e.getValue();
+
+                    getRecordById("Discount", category.getDiscountId().toString());
+                    category.setDiscount(Discount.process(rs));
+
+                    getRecordById("Category", category.getParentCategoryId().toString());
+                    category.setParentCategory(Category.process(rs));
+
                 }
-                finally
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Object Category method findAllWithInfo(Integer, Integer) using caching option error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+        }
+
+        if (!cachingEnabled || cacheNotUsed)
+        {
+            categoryList = new ArrayList<Category>();
+            try
+            {
+                getRecordsByTableNameWithLimitOrOffset("category", limit, offset);
+                while (rs.next())
                 {
-                    closeConnection();
-                }                    
-              
-        }
-        
-        @Override
-        public void getRelatedObjects(Category category)
-        {
-            category.setItemCategoryList(new ItemCategoryDaoImpl().findByColumn("CategoryId", category.getCategoryId().toString(),null,null));
- 
-        }
-        
-        @Override
-        public boolean remove(Category obj)
-        {     
-            boolean success = false;
-            try
-            {
-                updateQuery("DELETE FROM category WHERE CategoryId=" + obj.getCategoryId() + ";");            
-                success = true;
-            }
-            catch (Exception ex)
-            {
-                System.out.println("Category's remove error: " + ex.getMessage());
-            }
-            finally
-            {
-                closeConnection();
-            }
-            
-            if(cachingEnabled && success)
-            {
-                getCache().remove(obj.getCategoryId());
-            }
-            
-            return success;            
-        }
-        
-        @Override
-        public boolean removeById(Integer id)
-        {      
-            boolean success = false;      
-            try
-            {
-                updateQuery("DELETE FROM category WHERE CategoryId=" + id + ";");           
-                success = true;           
-            }
-            catch (Exception ex)
-            {
-                System.out.println("removeById error: " + ex.getMessage());
-            }
-            finally
-            {
-                closeConnection();
-            }
-            
-            if(cachingEnabled && success)
-            {
-                getCache().remove(id);
-            }
-        
-            return success;
-        }
+                    categoryList.add(Category.process(rs));
+                }
 
-        @Override
-        public boolean removeAll()
-        {
-            boolean success = false;
-            try
-            {
-                updateQuery("DELETE FROM category;");          
-                success = true;
+                for (Category category : categoryList)
+                {
+
+                    getRecordById("Discount", category.getDiscountId().toString());
+                    category.setDiscount(Discount.process(rs));
+
+                    getRecordById("Category", category.getParentCategoryId().toString());
+                    category.setParentCategory(Category.process(rs));
+
+                }
+
             }
-            catch (Exception ex)
+            catch (SQLException ex)
             {
-                System.out.println("Category's removeAll() method error: " + ex.getMessage());
+                System.out.println("Object Category method findAllWithInfo(Integer, Integer) error: " + ex.getMessage());
             }
             finally
             {
                 closeConnection();
             }
-        
-            if(cachingEnabled && success)
-            {
-                getCache().clear();
-            }
-        
-            return success;
         }
+        return categoryList;
+    }
 
-        @Override
-        public boolean removeByColumn(String columnName, String columnValue)
+    @Override
+    public ArrayList<Category> findByColumn(String columnName, String columnValue, Integer limit, Integer offset)
+    {
+        ArrayList<Category> categoryList = new ArrayList<>();
+        boolean cacheNotUsed = false;
+
+        if (cachingEnabled)
         {
-            boolean success = false;
-            try
-            { 
-                updateQuery("DELETE FROM category WHERE " + Category.checkColumnName(columnName) + "=" + columnValue + ";");           
-                success = true;       
-            }
-            catch (Exception ex)
+            if (limit == null && offset == null)
             {
-                System.out.println("Category's removeByColumn method error: " + ex.getMessage());
-            }
-            finally
-            {
-                closeConnection();
-            }
-            
-            if(cachingEnabled && success)
-            {
-                ArrayList<Integer> keys = new ArrayList<Integer>();
 
+                System.out.println("Find by column for Category(" + columnName + "=" + columnValue + "), getting objects from cache...");
                 for (Entry e : getCache().getEntries())
                 {
                     try
@@ -573,40 +265,349 @@
                         Category i = (Category) e.getValue();
                         if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
                         {
-                            keys.add(i.getCategoryId());
+                            categoryList.add(i);
                         }
                     }
                     catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
                     {
                         ex.printStackTrace();
+                        categoryList = null;
                     }
                 }
+            }
+            else
+            {
+                cacheNotUsed = true;
+            }
+        }
 
-                for(int id : keys)
+        if (!cachingEnabled || cacheNotUsed)
+        {
+            try
+            {
+                getRecordsByColumnWithLimitOrOffset("category", Category.checkColumnName(columnName), columnValue, Category.isColumnNumeric(columnName), limit, offset);
+                while (rs.next())
                 {
-                    getCache().remove(id);
+                    categoryList.add(Category.process(rs));
                 }
             }
-            
-            return success;
+            catch (SQLException ex)
+            {
+                System.out.println("Category's method findByColumn(columnName, columnValue, limit, offset) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
         }
-        
-        public boolean isCachingEnabled()
-        {
-            return cachingEnabled;
-        }
-        
-        public void setCachingEnabled(boolean cachingEnabled)
-        {
-            this.cachingEnabled = cachingEnabled;
-        }
-        
-                    
-        public void getRelatedItemCategoryList(Category category)
-        {           
-            category.setItemCategoryList(new ItemCategoryDaoImpl().findByColumn("CategoryId", category.getCategoryId().toString(),null,null));
-        }        
-        
-                             
+        return categoryList;
     }
 
+    @Override
+    public int add(Category obj)
+    {
+        boolean success = false;
+        int id = 0;
+        try
+        {
+
+            Category.checkColumnSize(obj.getCategoryName(), 100);
+
+            openConnection();
+            prepareStatement("INSERT INTO category(CategoryName,DiscountId,ParentCategoryId) VALUES (?,?,?);");
+            preparedStatement.setString(1, obj.getCategoryName());
+            preparedStatement.setInt(2, obj.getDiscountId());
+            preparedStatement.setInt(3, obj.getParentCategoryId());
+
+            preparedStatement.executeUpdate();
+
+            rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from category;");
+            while (rs.next())
+            {
+                id = rs.getInt(1);
+            }
+
+            success = true;
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Category's add method error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
+        if (cachingEnabled && success)
+        {
+            obj.setCategoryId(id);
+            getCache().put(id, obj); //synchronizing between local cache and database
+        }
+
+        return id;
+    }
+
+    @Override
+    public Category update(Category obj)
+    {
+        try
+        {
+
+            Category.checkColumnSize(obj.getCategoryName(), 100);
+
+            openConnection();
+            prepareStatement("UPDATE category SET CategoryName=?,DiscountId=?,ParentCategoryId=? WHERE CategoryId=?;");
+            preparedStatement.setString(1, obj.getCategoryName());
+            preparedStatement.setInt(2, obj.getDiscountId());
+            preparedStatement.setInt(3, obj.getParentCategoryId());
+            preparedStatement.setInt(4, obj.getCategoryId());
+            preparedStatement.executeUpdate();
+
+            if (cachingEnabled)
+            {
+                getCache().put(obj.getCategoryId(), obj);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Category's update error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+        return obj;
+    }
+
+    @Override
+    public int getAllCount()
+    {
+        int count = 0;
+        if (cachingEnabled)
+        {
+            count = getCache().size();
+        }
+        else
+        {
+            count = getAllRecordsCountByTableName("category");
+        }
+        return count;
+    }
+
+    @Override
+    public void getRelatedInfo(Category category)
+    {
+
+        try
+        {
+
+            getRecordById("Discount", category.getDiscountId().toString());
+            category.setDiscount(Discount.process(rs));
+
+            getRecordById("Category", category.getParentCategoryId().toString());
+            category.setParentCategory(Category.process(rs));
+
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("getRelatedInfo error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
+    }
+
+    @Override
+    public void getRelatedObjects(Category category)
+    {
+        category.setItemCategoryList(new ItemCategoryDaoImpl().findByColumn("CategoryId", category.getCategoryId().toString(), null, null));
+
+    }
+
+    @Override
+    public boolean remove(Category obj)
+    {
+        boolean success = false;
+        try
+        {
+            updateQuery("DELETE FROM category WHERE CategoryId=" + obj.getCategoryId() + ";");
+            success = true;
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Category's remove error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
+        if (cachingEnabled && success)
+        {
+            getCache().remove(obj.getCategoryId());
+        }
+
+        return success;
+    }
+
+    @Override
+    public boolean removeById(Integer id)
+    {
+        boolean success = false;
+        try
+        {
+            updateQuery("DELETE FROM category WHERE CategoryId=" + id + ";");
+            success = true;
+        }
+        catch (Exception ex)
+        {
+            System.out.println("removeById error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
+        if (cachingEnabled && success)
+        {
+            getCache().remove(id);
+        }
+
+        return success;
+    }
+
+    @Override
+    public boolean removeAll()
+    {
+        boolean success = false;
+        try
+        {
+            updateQuery("DELETE FROM category;");
+            success = true;
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Category's removeAll() method error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
+        if (cachingEnabled && success)
+        {
+            getCache().clear();
+        }
+
+        return success;
+    }
+
+    @Override
+    public boolean removeByColumn(String columnName, String columnValue)
+    {
+        boolean success = false;
+        try
+        {
+            updateQuery("DELETE FROM category WHERE " + Category.checkColumnName(columnName) + "=" + columnValue + ";");
+            success = true;
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Category's removeByColumn method error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
+        if (cachingEnabled && success)
+        {
+            ArrayList<Integer> keys = new ArrayList<Integer>();
+
+            for (Entry e : getCache().getEntries())
+            {
+                try
+                {
+                    Category i = (Category) e.getValue();
+                    if (i.getClass().getMethod("get" + columnName).invoke(i).toString().equals(columnValue))
+                    {
+                        keys.add(i.getCategoryId());
+                    }
+                }
+                catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+
+            for (int id : keys)
+            {
+                getCache().remove(id);
+            }
+        }
+
+        return success;
+    }
+
+    public boolean isCachingEnabled()
+    {
+        return cachingEnabled;
+    }
+
+    public void setCachingEnabled(boolean cachingEnabled)
+    {
+        this.cachingEnabled = cachingEnabled;
+    }
+
+    public void getRelatedItemCategoryList(Category category)
+    {
+        category.setItemCategoryList(new ItemCategoryDaoImpl().findByColumn("CategoryId", category.getCategoryId().toString(), null, null));
+    }
+
+    public void getRelatedDiscount(Category category)
+    {
+        try
+        {
+            getRecordById("Discount", category.getDiscountId().toString());
+            category.setDiscount(Discount.process(rs));
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("getDiscount error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+    }
+
+    public void getRelatedParentCategory(Category category)
+    {
+        try
+        {
+            getRecordById("Category", category.getParentCategoryId().toString());
+            category.setParentCategory(Category.process(rs));
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("getParentCategory error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+    }
+
+    public void getRelatedDiscountWithInfo(Category category)
+    {
+        category.setDiscount(new DiscountDaoImpl().findWithInfo(category.getDiscountId()));
+    }
+
+    public void getRelatedParentCategoryWithInfo(Category category)
+    {
+        category.setParentCategory(new CategoryDaoImpl().findWithInfo(category.getParentCategoryId()));
+    }
+
+}

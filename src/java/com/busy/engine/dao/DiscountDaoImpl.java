@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public Discount find(Integer id)
         {
             return findByColumn("DiscountId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Discount findWithInfo(Integer id)
+        {
+            Discount discount = findByColumn("DiscountId", id.toString(), null, null).get(0);
+            
+            
+            
+            return discount;
         }
         
         @Override
@@ -319,8 +328,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO discount(DiscountId,DiscountName,DiscountAmount,DiscountPercent,StartDate,EndDate,CouponCode,DiscountStatus,AskCouponCode,UsePercentage,) VALUES (?,?,?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getDiscountId());
+                prepareStatement("INSERT INTO discount(DiscountName,DiscountAmount,DiscountPercent,StartDate,EndDate,CouponCode,DiscountStatus,AskCouponCode,UsePercentage) VALUES (?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getDiscountName());
                 preparedStatement.setDouble(2, obj.getDiscountAmount());
                 preparedStatement.setDouble(3, obj.getDiscountPercent());
@@ -376,8 +384,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE discount SET com.busy.util.DatabaseColumn@40222029=?,com.busy.util.DatabaseColumn@4229d319=?,com.busy.util.DatabaseColumn@7665db7f=?,com.busy.util.DatabaseColumn@55fa43a1=?,com.busy.util.DatabaseColumn@488125f=?,com.busy.util.DatabaseColumn@835a8cc=?,com.busy.util.DatabaseColumn@50532496=?,com.busy.util.DatabaseColumn@57b38276=?,com.busy.util.DatabaseColumn@136d7835=? WHERE DiscountId=?;");                    
-                preparedStatement.setInt(0, obj.getDiscountId());
+                prepareStatement("UPDATE discount SET DiscountName=?,DiscountAmount=?,DiscountPercent=?,StartDate=?,EndDate=?,CouponCode=?,DiscountStatus=?,AskCouponCode=?,UsePercentage=? WHERE DiscountId=?;");                    
                 preparedStatement.setString(1, obj.getDiscountName());
                 preparedStatement.setDouble(2, obj.getDiscountAmount());
                 preparedStatement.setDouble(3, obj.getDiscountPercent());
@@ -594,6 +601,12 @@ discount.setUserGroupList(new UserGroupDaoImpl().findByColumn("DiscountId", disc
             discount.setUserGroupList(new UserGroupDaoImpl().findByColumn("DiscountId", discount.getDiscountId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

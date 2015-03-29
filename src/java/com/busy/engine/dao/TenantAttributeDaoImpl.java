@@ -146,6 +146,34 @@
         }
         
         @Override
+        public TenantAttribute findWithInfo(Integer id)
+        {
+            TenantAttribute tenantAttribute = findByColumn("TenantAttributeId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Tenant", tenantAttribute.getTenantId().toString());
+                    tenantAttribute.setTenant(Tenant.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object TenantAttribute method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return tenantAttribute;
+        }
+        
+        @Override
         public ArrayList<TenantAttribute> findAll(Integer limit, Integer offset)
         {
             ArrayList<TenantAttribute> tenantAttributeList = new ArrayList<TenantAttribute>();
@@ -342,8 +370,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO tenant_attribute(TenantAttributeId,AttributeKey,AttributeValue,TenantId,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getTenantAttributeId());
+                prepareStatement("INSERT INTO tenant_attribute(AttributeKey,AttributeValue,TenantId) VALUES (?,?,?);");                    
                 preparedStatement.setString(1, obj.getAttributeKey());
                 preparedStatement.setString(2, obj.getAttributeValue());
                 preparedStatement.setInt(3, obj.getTenantId());
@@ -387,8 +414,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE tenant_attribute SET com.busy.util.DatabaseColumn@48d976cf=?,com.busy.util.DatabaseColumn@12b652bc=?,com.busy.util.DatabaseColumn@396a6a2e=? WHERE TenantAttributeId=?;");                    
-                preparedStatement.setInt(0, obj.getTenantAttributeId());
+                prepareStatement("UPDATE tenant_attribute SET AttributeKey=?,AttributeValue=?,TenantId=? WHERE TenantAttributeId=?;");                    
                 preparedStatement.setString(1, obj.getAttributeKey());
                 preparedStatement.setString(2, obj.getAttributeValue());
                 preparedStatement.setInt(3, obj.getTenantId());
@@ -591,6 +617,34 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedTenant(TenantAttribute tenant_attribute)
+        {            
+            try
+            {                 
+                getRecordById("Tenant", tenant_attribute.getTenantId().toString());
+                tenant_attribute.setTenant(Tenant.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getTenant error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedTenantWithInfo(TenantAttribute tenant_attribute)
+        {            
+            tenant_attribute.setTenant(new TenantDaoImpl().findWithInfo(tenant_attribute.getTenantId()));
+        }
+          
+        
     }
 

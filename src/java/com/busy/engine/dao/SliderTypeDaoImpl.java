@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public SliderType find(Integer id)
         {
             return findByColumn("SliderTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public SliderType findWithInfo(Integer id)
+        {
+            SliderType sliderType = findByColumn("SliderTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return sliderType;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO slider_type(SliderTypeId,TypeName,Code,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getSliderTypeId());
+                prepareStatement("INSERT INTO slider_type(TypeName,Code) VALUES (?,?);");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getCode());
                 
@@ -355,8 +363,7 @@
                 SliderType.checkColumnSize(obj.getCode(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE slider_type SET com.busy.util.DatabaseColumn@44d82941=?,com.busy.util.DatabaseColumn@55394892=? WHERE SliderTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getSliderTypeId());
+                prepareStatement("UPDATE slider_type SET TypeName=?,Code=? WHERE SliderTypeId=?;");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getCode());
                 preparedStatement.setInt(3, obj.getSliderTypeId());
@@ -548,6 +555,12 @@
             slider_type.setSliderList(new SliderDaoImpl().findByColumn("SliderTypeId", slider_type.getSliderTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

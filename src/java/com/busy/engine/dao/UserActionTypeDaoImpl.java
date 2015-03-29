@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public UserActionType find(Integer id)
         {
             return findByColumn("UserActionTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public UserActionType findWithInfo(Integer id)
+        {
+            UserActionType userActionType = findByColumn("UserActionTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return userActionType;
         }
         
         @Override
@@ -311,8 +320,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO user_action_type(UserActionTypeId,TypeName,) VALUES (?);");                    
-                preparedStatement.setInt(0, obj.getUserActionTypeId());
+                prepareStatement("INSERT INTO user_action_type(TypeName) VALUES (?);");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 
                 preparedStatement.executeUpdate();
@@ -352,8 +360,7 @@
                 UserActionType.checkColumnSize(obj.getTypeName(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_action_type SET com.busy.util.DatabaseColumn@6511ac88=? WHERE UserActionTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getUserActionTypeId());
+                prepareStatement("UPDATE user_action_type SET TypeName=? WHERE UserActionTypeId=?;");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setInt(2, obj.getUserActionTypeId());
                 preparedStatement.executeUpdate();
@@ -544,6 +551,12 @@
             user_action_type.setUserActionList(new UserActionDaoImpl().findByColumn("UserActionTypeId", user_action_type.getUserActionTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public ResourceUrl find(Integer id)
         {
             return findByColumn("ResourceUrlId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ResourceUrl findWithInfo(Integer id)
+        {
+            ResourceUrl resourceUrl = findByColumn("ResourceUrlId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Template", resourceUrl.getTemplateId().toString());
+                    resourceUrl.setTemplate(Template.process(rs));               
+                
+                    getRecordById("ResourceType", resourceUrl.getResourceTypeId().toString());
+                    resourceUrl.setResourceType(ResourceType.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object ResourceUrl method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return resourceUrl;
         }
         
         @Override
@@ -349,8 +379,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO resource_url(ResourceUrlId,Url,TemplateId,ResourceTypeId,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getResourceUrlId());
+                prepareStatement("INSERT INTO resource_url(Url,TemplateId,ResourceTypeId) VALUES (?,?,?);");                    
                 preparedStatement.setString(1, obj.getUrl());
                 preparedStatement.setInt(2, obj.getTemplateId());
                 preparedStatement.setInt(3, obj.getResourceTypeId());
@@ -394,8 +423,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE resource_url SET com.busy.util.DatabaseColumn@f4138a=?,com.busy.util.DatabaseColumn@b65418c=?,com.busy.util.DatabaseColumn@6adb57c2=? WHERE ResourceUrlId=?;");                    
-                preparedStatement.setInt(0, obj.getResourceUrlId());
+                prepareStatement("UPDATE resource_url SET Url=?,TemplateId=?,ResourceTypeId=? WHERE ResourceUrlId=?;");                    
                 preparedStatement.setString(1, obj.getUrl());
                 preparedStatement.setInt(2, obj.getTemplateId());
                 preparedStatement.setInt(3, obj.getResourceTypeId());
@@ -601,6 +629,56 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedTemplate(ResourceUrl resource_url)
+        {            
+            try
+            {                 
+                getRecordById("Template", resource_url.getTemplateId().toString());
+                resource_url.setTemplate(Template.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getTemplate error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedResourceType(ResourceUrl resource_url)
+        {            
+            try
+            {                 
+                getRecordById("ResourceType", resource_url.getResourceTypeId().toString());
+                resource_url.setResourceType(ResourceType.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getResourceType error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedTemplateWithInfo(ResourceUrl resource_url)
+        {            
+            resource_url.setTemplate(new TemplateDaoImpl().findWithInfo(resource_url.getTemplateId()));
+        }
+        
+        public void getRelatedResourceTypeWithInfo(ResourceUrl resource_url)
+        {            
+            resource_url.setResourceType(new ResourceTypeDaoImpl().findWithInfo(resource_url.getResourceTypeId()));
+        }
+          
+        
     }
 

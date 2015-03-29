@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,40 @@
         public UserService find(Integer id)
         {
             return findByColumn("UserServiceId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public UserService findWithInfo(Integer id)
+        {
+            UserService userService = findByColumn("UserServiceId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Blog", userService.getBlogId().toString());
+                    userService.setBlog(Blog.process(rs));               
+                
+                    getRecordById("User", userService.getUserId().toString());
+                    userService.setUser(User.process(rs));               
+                
+                    getRecordById("Service", userService.getServiceId().toString());
+                    userService.setService(Service.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object UserService method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return userService;
         }
         
         @Override
@@ -362,8 +395,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO user_service(UserServiceId,StartDate,EndDate,Details,ContractUrl,DeliverableUrl,DepositAmount,UserRank,BlogId,UserId,ServiceId,) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getUserServiceId());
+                prepareStatement("INSERT INTO user_service(StartDate,EndDate,Details,ContractUrl,DeliverableUrl,DepositAmount,UserRank,BlogId,UserId,ServiceId) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setDate(1, new java.sql.Date(obj.getStartDate().getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(obj.getEndDate().getTime()));
                 preparedStatement.setString(3, obj.getDetails());
@@ -421,8 +453,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_service SET com.busy.util.DatabaseColumn@5eb87906=?,com.busy.util.DatabaseColumn@c513d6a=?,com.busy.util.DatabaseColumn@7fa03079=?,com.busy.util.DatabaseColumn@3798fb9=?,com.busy.util.DatabaseColumn@1e14a699=?,com.busy.util.DatabaseColumn@1b2b625c=?,com.busy.util.DatabaseColumn@65f6bab8=?,com.busy.util.DatabaseColumn@2abde5f8=?,com.busy.util.DatabaseColumn@11a6be58=?,com.busy.util.DatabaseColumn@51df17b2=? WHERE UserServiceId=?;");                    
-                preparedStatement.setInt(0, obj.getUserServiceId());
+                prepareStatement("UPDATE user_service SET StartDate=?,EndDate=?,Details=?,ContractUrl=?,DeliverableUrl=?,DepositAmount=?,UserRank=?,BlogId=?,UserId=?,ServiceId=? WHERE UserServiceId=?;");                    
                 preparedStatement.setDate(1, new java.sql.Date(obj.getStartDate().getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(obj.getEndDate().getTime()));
                 preparedStatement.setString(3, obj.getDetails());
@@ -644,6 +675,78 @@
             user_service.setServiceChargeList(new ServiceChargeDaoImpl().findByColumn("UserServiceId", user_service.getUserServiceId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedBlog(UserService user_service)
+        {            
+            try
+            {                 
+                getRecordById("Blog", user_service.getBlogId().toString());
+                user_service.setBlog(Blog.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getBlog error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedUser(UserService user_service)
+        {            
+            try
+            {                 
+                getRecordById("User", user_service.getUserId().toString());
+                user_service.setUser(User.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getUser error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedService(UserService user_service)
+        {            
+            try
+            {                 
+                getRecordById("Service", user_service.getServiceId().toString());
+                user_service.setService(Service.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getService error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedBlogWithInfo(UserService user_service)
+        {            
+            user_service.setBlog(new BlogDaoImpl().findWithInfo(user_service.getBlogId()));
+        }
+        
+        public void getRelatedUserWithInfo(UserService user_service)
+        {            
+            user_service.setUser(new UserDaoImpl().findWithInfo(user_service.getUserId()));
+        }
+        
+        public void getRelatedServiceWithInfo(UserService user_service)
+        {            
+            user_service.setService(new ServiceDaoImpl().findWithInfo(user_service.getServiceId()));
+        }
+          
+        
     }
 

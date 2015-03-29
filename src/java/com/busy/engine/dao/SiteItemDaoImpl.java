@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public SiteItem find(Integer id)
         {
             return findByColumn("SiteItemId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public SiteItem findWithInfo(Integer id)
+        {
+            SiteItem siteItem = findByColumn("SiteItemId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Site", siteItem.getSiteId().toString());
+                    siteItem.setSite(Site.process(rs));               
+                
+                    getRecordById("Item", siteItem.getItemId().toString());
+                    siteItem.setItem(Item.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object SiteItem method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return siteItem;
         }
         
         @Override
@@ -348,8 +378,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO site_item(SiteItemId,SiteId,ItemId,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getSiteItemId());
+                prepareStatement("INSERT INTO site_item(SiteId,ItemId) VALUES (?,?);");                    
                 preparedStatement.setInt(1, obj.getSiteId());
                 preparedStatement.setInt(2, obj.getItemId());
                 
@@ -391,8 +420,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_item SET com.busy.util.DatabaseColumn@52d8e95=?,com.busy.util.DatabaseColumn@7c7f55ea=? WHERE SiteItemId=?;");                    
-                preparedStatement.setInt(0, obj.getSiteItemId());
+                prepareStatement("UPDATE site_item SET SiteId=?,ItemId=? WHERE SiteItemId=?;");                    
                 preparedStatement.setInt(1, obj.getSiteId());
                 preparedStatement.setInt(2, obj.getItemId());
                 preparedStatement.setInt(3, obj.getSiteItemId());
@@ -597,6 +625,56 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedSite(SiteItem site_item)
+        {            
+            try
+            {                 
+                getRecordById("Site", site_item.getSiteId().toString());
+                site_item.setSite(Site.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSite error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedItem(SiteItem site_item)
+        {            
+            try
+            {                 
+                getRecordById("Item", site_item.getItemId().toString());
+                site_item.setItem(Item.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getItem error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedSiteWithInfo(SiteItem site_item)
+        {            
+            site_item.setSite(new SiteDaoImpl().findWithInfo(site_item.getSiteId()));
+        }
+        
+        public void getRelatedItemWithInfo(SiteItem site_item)
+        {            
+            site_item.setItem(new ItemDaoImpl().findWithInfo(site_item.getItemId()));
+        }
+          
+        
     }
 

@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public Country find(Integer id)
         {
             return findByColumn("CountryId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Country findWithInfo(Integer id)
+        {
+            Country country = findByColumn("CountryId", id.toString(), null, null).get(0);
+            
+            
+            
+            return country;
         }
         
         @Override
@@ -314,8 +323,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO country(CountryId,Name,IsoCode,IsoNumber,HasVat,) VALUES (?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getCountryId());
+                prepareStatement("INSERT INTO country(Name,IsoCode,IsoNumber,HasVat) VALUES (?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getName());
                 preparedStatement.setString(2, obj.getIsoCode());
                 preparedStatement.setInt(3, obj.getIsoNumber());
@@ -361,8 +369,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE country SET com.busy.util.DatabaseColumn@5524125f=?,com.busy.util.DatabaseColumn@514f61f9=?,com.busy.util.DatabaseColumn@21f6d6c8=?,com.busy.util.DatabaseColumn@31435172=? WHERE CountryId=?;");                    
-                preparedStatement.setInt(0, obj.getCountryId());
+                prepareStatement("UPDATE country SET Name=?,IsoCode=?,IsoNumber=?,HasVat=? WHERE CountryId=?;");                    
                 preparedStatement.setString(1, obj.getName());
                 preparedStatement.setString(2, obj.getIsoCode());
                 preparedStatement.setInt(3, obj.getIsoNumber());
@@ -568,6 +575,12 @@ country.setTaxRateList(new TaxRateDaoImpl().findByColumn("CountryId", country.ge
             country.setTaxRateList(new TaxRateDaoImpl().findByColumn("CountryId", country.getCountryId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

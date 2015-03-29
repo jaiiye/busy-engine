@@ -2,7 +2,6 @@ package com.busy.engine.dao;
 
 import com.busy.engine.data.BasicConnection;
 import com.busy.engine.entity.*;
-import com.busy.engine.dao.*;
 import com.busy.engine.util.*;
 import java.util.ArrayList;
 import java.io.Serializable;
@@ -13,7 +12,6 @@ import java.lang.reflect.InvocationTargetException;
 
 public class UserRoleDaoImpl extends BasicConnection implements Serializable, UserRoleDao
 {
-
     private static final long serialVersionUID = 1L;
     private boolean cachingEnabled;
 
@@ -25,13 +23,6 @@ public class UserRoleDaoImpl extends BasicConnection implements Serializable, Us
     public UserRoleDaoImpl(boolean enableCache)
     {
         cachingEnabled = enableCache;
-    }
-
-    
-    @Override
-    public UserRole find(String id)
-    {
-        return findByColumn("UserRole", id, null, null).get(0);
     }
 
     private static class UserRoleCache
@@ -91,6 +82,20 @@ public class UserRoleDaoImpl extends BasicConnection implements Serializable, Us
         {
             closeConnection();
         }
+        return userRole;
+    }
+
+    @Override
+    public UserRole find(String id)
+    {
+        return findByColumn("UserRole", id.toString(), null, null).get(0);
+    }
+
+    @Override
+    public UserRole findWithInfo(String id)
+    {
+        UserRole userRole = findByColumn("UserRole", id, null, null).get(0);
+
         return userRole;
     }
 
@@ -256,10 +261,11 @@ public class UserRoleDaoImpl extends BasicConnection implements Serializable, Us
 
             openConnection();
             prepareStatement("INSERT INTO user_role(UserName,RoleName) VALUES (?,?);");
-            preparedStatement.setString(0, obj.getUserName());
-            preparedStatement.setString(1, obj.getRoleName());
+            preparedStatement.setString(1, obj.getUserName());
+            preparedStatement.setString(2, obj.getRoleName());
 
             preparedStatement.executeUpdate();
+
         }
         catch (Exception ex)
         {
@@ -269,11 +275,12 @@ public class UserRoleDaoImpl extends BasicConnection implements Serializable, Us
         {
             closeConnection();
         }
-        
+
         if (cachingEnabled && success)
-        {            
-            getCache().put(obj.getId(), obj); //synchronizing between local cache and database
+        {
+            getCache().put(obj.getId(), obj); 
         }
+
         return id;
     }
 
@@ -286,8 +293,7 @@ public class UserRoleDaoImpl extends BasicConnection implements Serializable, Us
             UserRole.checkColumnSize(obj.getRoleName(), 20);
 
             openConnection();
-            prepareStatement("UPDATE user_role SET com.busy.util.DatabaseColumn@24ec155d=? WHERE UserName=?;");
-            preparedStatement.setString(0, obj.getUserName());
+            prepareStatement("UPDATE user_role SET RoleName=? WHERE UserName=?;");
             preparedStatement.setString(1, obj.getRoleName());
             preparedStatement.setString(2, obj.getUserName());
             preparedStatement.executeUpdate();

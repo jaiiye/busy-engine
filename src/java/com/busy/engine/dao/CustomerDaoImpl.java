@@ -2,7 +2,6 @@ package com.busy.engine.dao;
 
 import com.busy.engine.data.BasicConnection;
 import com.busy.engine.entity.*;
-import com.busy.engine.dao.*;
 import com.busy.engine.util.*;
 import java.util.ArrayList;
 import java.io.Serializable;
@@ -91,6 +90,39 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
     public Customer find(Integer id)
     {
         return findByColumn("CustomerId", id.toString(), null, null).get(0);
+    }
+
+    @Override
+    public Customer findWithInfo(Integer id)
+    {
+        Customer customer = findByColumn("CustomerId", id.toString(), null, null).get(0);
+
+        try
+        {
+
+            getRecordById("Contact", customer.getContactId().toString());
+            customer.setContact(Contact.process(rs));
+
+            getRecordById("User", customer.getUserId().toString());
+            customer.setUser(User.process(rs));
+
+            getRecordById("BillingAddress", customer.getBillingAddressId().toString());
+            customer.setBillingAddress(Address.process(rs));
+
+            getRecordById("ShippingAddress", customer.getShippingAddressId().toString());
+            customer.setShippingAddress(Address.process(rs));
+
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("Object Customer method findWithInfo(Integer id) error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
+        return customer;
     }
 
     @Override
@@ -298,8 +330,7 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
         {
 
             openConnection();
-            prepareStatement("INSERT INTO customer(CustomerId,ContactId,UserId,BillingAddressId,ShippingAddressId,CustomerStatus,) VALUES (?,?,?,?,?);");
-            preparedStatement.setInt(0, obj.getCustomerId());
+            prepareStatement("INSERT INTO customer(ContactId,UserId,BillingAddressId,ShippingAddressId,CustomerStatus) VALUES (?,?,?,?,?);");
             preparedStatement.setInt(1, obj.getContactId());
             preparedStatement.setInt(2, obj.getUserId());
             preparedStatement.setInt(3, obj.getBillingAddressId());
@@ -341,8 +372,7 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
         {
 
             openConnection();
-            prepareStatement("UPDATE customer SET com.busy.util.DatabaseColumn@362ea91d=?,com.busy.util.DatabaseColumn@34201002=?,com.busy.util.DatabaseColumn@4babe02d=?,com.busy.util.DatabaseColumn@410282c4=?,com.busy.util.DatabaseColumn@2a7bdb8=? WHERE CustomerId=?;");
-            preparedStatement.setInt(0, obj.getCustomerId());
+            prepareStatement("UPDATE customer SET ContactId=?,UserId=?,BillingAddressId=?,ShippingAddressId=?,CustomerStatus=? WHERE CustomerId=?;");
             preparedStatement.setInt(1, obj.getContactId());
             preparedStatement.setInt(2, obj.getUserId());
             preparedStatement.setInt(3, obj.getBillingAddressId());
@@ -558,6 +588,94 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
     public void getRelatedCustomerOrderList(Customer customer)
     {
         customer.setCustomerOrderList(new CustomerOrderDaoImpl().findByColumn("CustomerId", customer.getCustomerId().toString(), null, null));
+    }
+
+    public void getRelatedContact(Customer customer)
+    {
+        try
+        {
+            getRecordById("Contact", customer.getContactId().toString());
+            customer.setContact(Contact.process(rs));
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("getContact error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+    }
+
+    public void getRelatedUser(Customer customer)
+    {
+        try
+        {
+            getRecordById("User", customer.getUserId().toString());
+            customer.setUser(User.process(rs));
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("getUser error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+    }
+
+    public void getRelatedBillingAddress(Customer customer)
+    {
+        try
+        {
+            getRecordById("BillingAddress", customer.getBillingAddressId().toString());
+            customer.setBillingAddress(Address.process(rs));
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("getBillingAddress error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+    }
+
+    public void getRelatedShippingAddress(Customer customer)
+    {
+        try
+        {
+            getRecordById("ShippingAddress", customer.getShippingAddressId().toString());
+            customer.setShippingAddress(Address.process(rs));
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("getShippingAddress error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+    }
+
+    public void getRelatedContactWithInfo(Customer customer)
+    {
+        customer.setContact(new ContactDaoImpl().findWithInfo(customer.getContactId()));
+    }
+
+    public void getRelatedUserWithInfo(Customer customer)
+    {
+        customer.setUser(new UserDaoImpl().findWithInfo(customer.getUserId()));
+    }
+
+    public void getRelatedBillingAddressWithInfo(Customer customer)
+    {
+        customer.setBillingAddress(new AddressDaoImpl().findWithInfo(customer.getBillingAddressId()));
+    }
+
+    public void getRelatedShippingAddressWithInfo(Customer customer)
+    {
+        customer.setShippingAddress(new AddressDaoImpl().findWithInfo(customer.getShippingAddressId()));
     }
 
 }

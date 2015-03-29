@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public TemplateType find(Integer id)
         {
             return findByColumn("TemplateTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public TemplateType findWithInfo(Integer id)
+        {
+            TemplateType templateType = findByColumn("TemplateTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return templateType;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO template_type(TemplateTypeId,TypeName,TypeValue,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getTemplateTypeId());
+                prepareStatement("INSERT INTO template_type(TypeName,TypeValue) VALUES (?,?);");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getTypeValue());
                 
@@ -355,8 +363,7 @@
                 TemplateType.checkColumnSize(obj.getTypeValue(), 45);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE template_type SET com.busy.util.DatabaseColumn@3243f937=?,com.busy.util.DatabaseColumn@555de8fd=? WHERE TemplateTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getTemplateTypeId());
+                prepareStatement("UPDATE template_type SET TypeName=?,TypeValue=? WHERE TemplateTypeId=?;");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getTypeValue());
                 preparedStatement.setInt(3, obj.getTemplateTypeId());
@@ -548,6 +555,12 @@
             template_type.setTemplateList(new TemplateDaoImpl().findByColumn("TemplateTypeId", template_type.getTemplateTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

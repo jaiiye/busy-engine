@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public SiteAttribute find(Integer id)
         {
             return findByColumn("SiteAttributeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public SiteAttribute findWithInfo(Integer id)
+        {
+            SiteAttribute siteAttribute = findByColumn("SiteAttributeId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Site", siteAttribute.getSiteId().toString());
+                    siteAttribute.setSite(Site.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object SiteAttribute method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return siteAttribute;
         }
         
         @Override
@@ -344,8 +371,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO site_attribute(SiteAttributeId,AttributeKey,AttributeValue,AttributeType,SiteId,) VALUES (?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getSiteAttributeId());
+                prepareStatement("INSERT INTO site_attribute(AttributeKey,AttributeValue,AttributeType,SiteId) VALUES (?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getAttributeKey());
                 preparedStatement.setString(2, obj.getAttributeValue());
                 preparedStatement.setString(3, obj.getAttributeType());
@@ -391,8 +417,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_attribute SET com.busy.util.DatabaseColumn@1ec7d22b=?,com.busy.util.DatabaseColumn@6344cef7=?,com.busy.util.DatabaseColumn@4775f728=?,com.busy.util.DatabaseColumn@1dfcfcb5=? WHERE SiteAttributeId=?;");                    
-                preparedStatement.setInt(0, obj.getSiteAttributeId());
+                prepareStatement("UPDATE site_attribute SET AttributeKey=?,AttributeValue=?,AttributeType=?,SiteId=? WHERE SiteAttributeId=?;");                    
                 preparedStatement.setString(1, obj.getAttributeKey());
                 preparedStatement.setString(2, obj.getAttributeValue());
                 preparedStatement.setString(3, obj.getAttributeType());
@@ -596,6 +621,34 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedSite(SiteAttribute site_attribute)
+        {            
+            try
+            {                 
+                getRecordById("Site", site_attribute.getSiteId().toString());
+                site_attribute.setSite(Site.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSite error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedSiteWithInfo(SiteAttribute site_attribute)
+        {            
+            site_attribute.setSite(new SiteDaoImpl().findWithInfo(site_attribute.getSiteId()));
+        }
+          
+        
     }
 

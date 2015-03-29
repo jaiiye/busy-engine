@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public ReturnRequest find(Integer id)
         {
             return findByColumn("ReturnRequestId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ReturnRequest findWithInfo(Integer id)
+        {
+            ReturnRequest returnRequest = findByColumn("ReturnRequestId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("OrderItem", returnRequest.getOrderItemId().toString());
+                    returnRequest.setOrderItem(OrderItem.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object ReturnRequest method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return returnRequest;
         }
         
         @Override
@@ -347,8 +374,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO return_request(ReturnRequestId,Quantity,RequestDate,ReturnReason,RequestedAction,Notes,RequestStatus,OrderItemId,) VALUES (?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getReturnRequestId());
+                prepareStatement("INSERT INTO return_request(Quantity,RequestDate,ReturnReason,RequestedAction,Notes,RequestStatus,OrderItemId) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setInt(1, obj.getQuantity());
                 preparedStatement.setDate(2, new java.sql.Date(obj.getRequestDate().getTime()));
                 preparedStatement.setString(3, obj.getReturnReason());
@@ -400,8 +426,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE return_request SET com.busy.util.DatabaseColumn@1ceac31=?,com.busy.util.DatabaseColumn@3cbb363f=?,com.busy.util.DatabaseColumn@351a72ea=?,com.busy.util.DatabaseColumn@5984f664=?,com.busy.util.DatabaseColumn@2d5f6641=?,com.busy.util.DatabaseColumn@4830b71b=?,com.busy.util.DatabaseColumn@2e5b01d5=? WHERE ReturnRequestId=?;");                    
-                preparedStatement.setInt(0, obj.getReturnRequestId());
+                prepareStatement("UPDATE return_request SET Quantity=?,RequestDate=?,ReturnReason=?,RequestedAction=?,Notes=?,RequestStatus=?,OrderItemId=? WHERE ReturnRequestId=?;");                    
                 preparedStatement.setInt(1, obj.getQuantity());
                 preparedStatement.setDate(2, new java.sql.Date(obj.getRequestDate().getTime()));
                 preparedStatement.setString(3, obj.getReturnReason());
@@ -608,6 +633,34 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedOrderItem(ReturnRequest return_request)
+        {            
+            try
+            {                 
+                getRecordById("OrderItem", return_request.getOrderItemId().toString());
+                return_request.setOrderItem(OrderItem.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getOrderItem error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedOrderItemWithInfo(ReturnRequest return_request)
+        {            
+            return_request.setOrderItem(new OrderItemDaoImpl().findWithInfo(return_request.getOrderItemId()));
+        }
+          
+        
     }
 

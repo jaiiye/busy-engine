@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public OrderItem find(Integer id)
         {
             return findByColumn("OrderItemId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public OrderItem findWithInfo(Integer id)
+        {
+            OrderItem orderItem = findByColumn("OrderItemId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("CustomerOrder", orderItem.getCustomerOrderId().toString());
+                    orderItem.setCustomerOrder(CustomerOrder.process(rs));               
+                
+                    getRecordById("Item", orderItem.getItemId().toString());
+                    orderItem.setItem(Item.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object OrderItem method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return orderItem;
         }
         
         @Override
@@ -351,8 +381,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO order_item(OrderItemId,CustomerOrderId,ItemId,Quantity,OptionName,UnitPrice,) VALUES (?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getOrderItemId());
+                prepareStatement("INSERT INTO order_item(CustomerOrderId,ItemId,Quantity,OptionName,UnitPrice) VALUES (?,?,?,?,?);");                    
                 preparedStatement.setInt(1, obj.getCustomerOrderId());
                 preparedStatement.setInt(2, obj.getItemId());
                 preparedStatement.setInt(3, obj.getQuantity());
@@ -400,8 +429,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE order_item SET com.busy.util.DatabaseColumn@29c680f5=?,com.busy.util.DatabaseColumn@1cebb53d=?,com.busy.util.DatabaseColumn@1a2313a9=?,com.busy.util.DatabaseColumn@3ebf400c=?,com.busy.util.DatabaseColumn@23e3be06=? WHERE OrderItemId=?;");                    
-                preparedStatement.setInt(0, obj.getOrderItemId());
+                prepareStatement("UPDATE order_item SET CustomerOrderId=?,ItemId=?,Quantity=?,OptionName=?,UnitPrice=? WHERE OrderItemId=?;");                    
                 preparedStatement.setInt(1, obj.getCustomerOrderId());
                 preparedStatement.setInt(2, obj.getItemId());
                 preparedStatement.setInt(3, obj.getQuantity());
@@ -615,6 +643,56 @@
             order_item.setReturnRequestList(new ReturnRequestDaoImpl().findByColumn("OrderItemId", order_item.getOrderItemId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedCustomerOrder(OrderItem order_item)
+        {            
+            try
+            {                 
+                getRecordById("CustomerOrder", order_item.getCustomerOrderId().toString());
+                order_item.setCustomerOrder(CustomerOrder.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getCustomerOrder error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedItem(OrderItem order_item)
+        {            
+            try
+            {                 
+                getRecordById("Item", order_item.getItemId().toString());
+                order_item.setItem(Item.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getItem error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedCustomerOrderWithInfo(OrderItem order_item)
+        {            
+            order_item.setCustomerOrder(new CustomerOrderDaoImpl().findWithInfo(order_item.getCustomerOrderId()));
+        }
+        
+        public void getRelatedItemWithInfo(OrderItem order_item)
+        {            
+            order_item.setItem(new ItemDaoImpl().findWithInfo(order_item.getItemId()));
+        }
+          
+        
     }
 

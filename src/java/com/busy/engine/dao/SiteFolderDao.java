@@ -39,9 +39,12 @@ import com.busy.engine.entity.SiteFolder;
 
 public interface SiteFolderDao extends IGenericDao<SiteFolder, Integer>
 {
-                    
-      void getRelatedFileFolderList(SiteFolder site_folder);     
-        
+
+        void getRelatedSite(SiteFolder site_folder);
+        void getRelatedSiteWithInfo(SiteFolder site_folder);        
+         
+
+    void getRelatedFileFolderList(SiteFolder site_folder);
+      
 }
     
-

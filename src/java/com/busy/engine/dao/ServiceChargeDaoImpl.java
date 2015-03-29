@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public ServiceCharge find(Integer id)
         {
             return findByColumn("ServiceChargeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ServiceCharge findWithInfo(Integer id)
+        {
+            ServiceCharge serviceCharge = findByColumn("ServiceChargeId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("UserService", serviceCharge.getUserServiceId().toString());
+                    serviceCharge.setUserService(UserService.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object ServiceCharge method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return serviceCharge;
         }
         
         @Override
@@ -346,8 +373,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO service_charge(ServiceChargeId,ChargeName,Description,Rate,Units,Date,UserServiceId,) VALUES (?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getServiceChargeId());
+                prepareStatement("INSERT INTO service_charge(ChargeName,Description,Rate,Units,Date,UserServiceId) VALUES (?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getChargeName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getRate());
@@ -397,8 +423,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE service_charge SET com.busy.util.DatabaseColumn@5ad1161d=?,com.busy.util.DatabaseColumn@1ebfecad=?,com.busy.util.DatabaseColumn@3208111d=?,com.busy.util.DatabaseColumn@4039f136=?,com.busy.util.DatabaseColumn@128a76d2=?,com.busy.util.DatabaseColumn@73312aaa=? WHERE ServiceChargeId=?;");                    
-                preparedStatement.setInt(0, obj.getServiceChargeId());
+                prepareStatement("UPDATE service_charge SET ChargeName=?,Description=?,Rate=?,Units=?,Date=?,UserServiceId=? WHERE ServiceChargeId=?;");                    
                 preparedStatement.setString(1, obj.getChargeName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getRate());
@@ -610,6 +635,34 @@
             service_charge.setServiceList(new ServiceDaoImpl().findByColumn("ServiceChargeId", service_charge.getServiceChargeId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedUserService(ServiceCharge service_charge)
+        {            
+            try
+            {                 
+                getRecordById("UserService", service_charge.getUserServiceId().toString());
+                service_charge.setUserService(UserService.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getUserService error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedUserServiceWithInfo(ServiceCharge service_charge)
+        {            
+            service_charge.setUserService(new UserServiceDaoImpl().findWithInfo(service_charge.getUserServiceId()));
+        }
+          
+        
     }
 

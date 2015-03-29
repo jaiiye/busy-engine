@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public SiteImage find(Integer id)
         {
             return findByColumn("SiteImageId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public SiteImage findWithInfo(Integer id)
+        {
+            SiteImage siteImage = findByColumn("SiteImageId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("ImageType", siteImage.getImageTypeId().toString());
+                    siteImage.setImageType(ImageType.process(rs));               
+                
+                    getRecordById("Site", siteImage.getSiteId().toString());
+                    siteImage.setSite(Site.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object SiteImage method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return siteImage;
         }
         
         @Override
@@ -352,8 +382,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO site_image(SiteImageId,FileName,Description,LinkUrl,Rank,ImageTypeId,SiteId,) VALUES (?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getSiteImageId());
+                prepareStatement("INSERT INTO site_image(FileName,Description,LinkUrl,Rank,ImageTypeId,SiteId) VALUES (?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getFileName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getLinkUrl());
@@ -403,8 +432,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_image SET com.busy.util.DatabaseColumn@22a42cfe=?,com.busy.util.DatabaseColumn@4bfd2cb=?,com.busy.util.DatabaseColumn@2e4a0fd4=?,com.busy.util.DatabaseColumn@3c31fb87=?,com.busy.util.DatabaseColumn@3f71e323=?,com.busy.util.DatabaseColumn@45a2578c=? WHERE SiteImageId=?;");                    
-                preparedStatement.setInt(0, obj.getSiteImageId());
+                prepareStatement("UPDATE site_image SET FileName=?,Description=?,LinkUrl=?,Rank=?,ImageTypeId=?,SiteId=? WHERE SiteImageId=?;");                    
                 preparedStatement.setString(1, obj.getFileName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getLinkUrl());
@@ -613,6 +641,56 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedImageType(SiteImage site_image)
+        {            
+            try
+            {                 
+                getRecordById("ImageType", site_image.getImageTypeId().toString());
+                site_image.setImageType(ImageType.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getImageType error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedSite(SiteImage site_image)
+        {            
+            try
+            {                 
+                getRecordById("Site", site_image.getSiteId().toString());
+                site_image.setSite(Site.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSite error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedImageTypeWithInfo(SiteImage site_image)
+        {            
+            site_image.setImageType(new ImageTypeDaoImpl().findWithInfo(site_image.getImageTypeId()));
+        }
+        
+        public void getRelatedSiteWithInfo(SiteImage site_image)
+        {            
+            site_image.setSite(new SiteDaoImpl().findWithInfo(site_image.getSiteId()));
+        }
+          
+        
     }
 

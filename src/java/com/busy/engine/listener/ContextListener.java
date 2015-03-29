@@ -29,12 +29,13 @@ public class ContextListener implements ServletContextListener
         context.setAttribute("userDao", new UserDaoImpl(true));
         context.setAttribute("userRoleDao", new UserRoleDaoImpl(true));
         context.setAttribute("siteDao", new SiteDaoImpl());
+        context.setAttribute("itemCategoryDao", new ItemCategoryDaoImpl());
         
 //        context.setAttribute("itemAttributeDao", new ItemAttributeDaoImpl());
 //        context.setAttribute("itemAttributeTypeDao", new ItemAttributeTypeDaoImpl());
 //        context.setAttribute("itemAvailabilityDao", new ItemAvailabilityDaoImpl());
 //        context.setAttribute("itemBrandDao", new ItemBrandDaoImpl());
-//        context.setAttribute("itemCategoryDao", new ItemCategoryDaoImpl());
+
 //        context.setAttribute("itemDiscountDao", new ItemDiscountDaoImpl());
 //        context.setAttribute("itemFileDao", new ItemFileDaoImpl());
 //        context.setAttribute("itemImageDao", new ItemImageDaoImpl());

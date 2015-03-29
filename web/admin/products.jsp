@@ -606,6 +606,8 @@
                                             <%
                                                 for (ItemCategory c : item.getItemCategoryList())
                                                 {
+                                                    ItemCategoryDaoImpl categoryDao = (ItemCategoryDaoImpl) application.getAttribute("itemCategoryDao");
+                                                    categoryDao.getRelatedInfo(c);
                                             %>
                                             <tr>
                                                 <td align="center">
@@ -619,10 +621,10 @@
                                             </tr>                                        
                                             <% }%>   
 
-                                            <form name="add" action="add.jsp?form=item_categories" onSubmit="return validate();" method="post">
-                                                <input type=hidden name="ItemId" value="<%= item.getItemId()%>"/>
+                                            <form name="add" action="../Operations?form=item_category&action=1" onSubmit="return validate();" method="post">
+                                                <input type=hidden name="itemId" value="<%= item.getItemId()%>"/>
                                                 <tr>
-                                                    <td align="center"><select name="CategoryId" class="form-control input-sm" >
+                                                    <td align="center"><select name="categoryId" class="form-control input-sm" >
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("category", "xx", 2)%>
                                                         </select></td>
                                                     <td align="center"> 

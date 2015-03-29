@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public interface IGenericDao<T, ID>
 {
     T find(ID id);
+    T findWithInfo(ID id);
     ArrayList<T> findAll(Integer limit, Integer offset);
     ArrayList<T> findAllWithInfo(Integer limit, Integer offset);    
     ArrayList<T> findByColumn(String columnName, String columnValue, Integer limit, Integer offset);

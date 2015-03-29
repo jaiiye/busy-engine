@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public Shipment find(Integer id)
         {
             return findByColumn("ShipmentId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Shipment findWithInfo(Integer id)
+        {
+            Shipment shipment = findByColumn("ShipmentId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Order", shipment.getOrderId().toString());
+                    shipment.setOrder(Order.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object Shipment method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return shipment;
         }
         
         @Override
@@ -347,8 +374,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO shipment(ShipmentId,CreatedOn,TrackingNumber,TotalWeight,ShipDate,DeliveryDate,ItemQuantity,OrderId,) VALUES (?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getShipmentId());
+                prepareStatement("INSERT INTO shipment(CreatedOn,TrackingNumber,TotalWeight,ShipDate,DeliveryDate,ItemQuantity,OrderId) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setDate(1, new java.sql.Date(obj.getCreatedOn().getTime()));
                 preparedStatement.setString(2, obj.getTrackingNumber());
                 preparedStatement.setDouble(3, obj.getTotalWeight());
@@ -400,8 +426,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE shipment SET com.busy.util.DatabaseColumn@4ff77724=?,com.busy.util.DatabaseColumn@1708d861=?,com.busy.util.DatabaseColumn@43dd333=?,com.busy.util.DatabaseColumn@1e6d0415=?,com.busy.util.DatabaseColumn@6a571eab=?,com.busy.util.DatabaseColumn@3bcd0850=?,com.busy.util.DatabaseColumn@5183e051=? WHERE ShipmentId=?;");                    
-                preparedStatement.setInt(0, obj.getShipmentId());
+                prepareStatement("UPDATE shipment SET CreatedOn=?,TrackingNumber=?,TotalWeight=?,ShipDate=?,DeliveryDate=?,ItemQuantity=?,OrderId=? WHERE ShipmentId=?;");                    
                 preparedStatement.setDate(1, new java.sql.Date(obj.getCreatedOn().getTime()));
                 preparedStatement.setString(2, obj.getTrackingNumber());
                 preparedStatement.setDouble(3, obj.getTotalWeight());
@@ -608,6 +633,34 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedOrder(Shipment shipment)
+        {            
+            try
+            {                 
+                getRecordById("Order", shipment.getOrderId().toString());
+                shipment.setOrder(Order.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getOrder error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedOrderWithInfo(Shipment shipment)
+        {            
+            shipment.setOrder(new OrderDaoImpl().findWithInfo(shipment.getOrderId()));
+        }
+          
+        
     }
 

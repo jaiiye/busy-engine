@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public RelatedItem find(Integer id)
         {
             return findByColumn("RelatedItemId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public RelatedItem findWithInfo(Integer id)
+        {
+            RelatedItem relatedItem = findByColumn("RelatedItemId", id.toString(), null, null).get(0);
+            
+            
+            
+            return relatedItem;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO related_item(RelatedItemId,Item1,Item2,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getRelatedItemId());
+                prepareStatement("INSERT INTO related_item(Item1,Item2) VALUES (?,?);");                    
                 preparedStatement.setInt(1, obj.getItem1());
                 preparedStatement.setInt(2, obj.getItem2());
                 
@@ -355,8 +363,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE related_item SET com.busy.util.DatabaseColumn@18774561=?,com.busy.util.DatabaseColumn@1824f787=? WHERE RelatedItemId=?;");                    
-                preparedStatement.setInt(0, obj.getRelatedItemId());
+                prepareStatement("UPDATE related_item SET Item1=?,Item2=? WHERE RelatedItemId=?;");                    
                 preparedStatement.setInt(1, obj.getItem1());
                 preparedStatement.setInt(2, obj.getItem2());
                 preparedStatement.setInt(3, obj.getRelatedItemId());
@@ -542,6 +549,12 @@
         }
         
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

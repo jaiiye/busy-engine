@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public SiteLanguage find(Integer id)
         {
             return findByColumn("SiteLanguageId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public SiteLanguage findWithInfo(Integer id)
+        {
+            SiteLanguage siteLanguage = findByColumn("SiteLanguageId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Site", siteLanguage.getSiteId().toString());
+                    siteLanguage.setSite(Site.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object SiteLanguage method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return siteLanguage;
         }
         
         @Override
@@ -345,8 +372,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO site_language(SiteLanguageId,LanguageName,Locale,Rtl,FlagFileName,SiteId,) VALUES (?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getSiteLanguageId());
+                prepareStatement("INSERT INTO site_language(LanguageName,Locale,Rtl,FlagFileName,SiteId) VALUES (?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getLanguageName());
                 preparedStatement.setString(2, obj.getLocale());
                 preparedStatement.setInt(3, obj.getRtl());
@@ -394,8 +420,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_language SET com.busy.util.DatabaseColumn@33d013af=?,com.busy.util.DatabaseColumn@278744be=?,com.busy.util.DatabaseColumn@1f0aad7a=?,com.busy.util.DatabaseColumn@2a9c349b=?,com.busy.util.DatabaseColumn@1962070c=? WHERE SiteLanguageId=?;");                    
-                preparedStatement.setInt(0, obj.getSiteLanguageId());
+                prepareStatement("UPDATE site_language SET LanguageName=?,Locale=?,Rtl=?,FlagFileName=?,SiteId=? WHERE SiteLanguageId=?;");                    
                 preparedStatement.setString(1, obj.getLanguageName());
                 preparedStatement.setString(2, obj.getLocale());
                 preparedStatement.setInt(3, obj.getRtl());
@@ -600,6 +625,34 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedSite(SiteLanguage site_language)
+        {            
+            try
+            {                 
+                getRecordById("Site", site_language.getSiteId().toString());
+                site_language.setSite(Site.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSite error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedSiteWithInfo(SiteLanguage site_language)
+        {            
+            site_language.setSite(new SiteDaoImpl().findWithInfo(site_language.getSiteId()));
+        }
+          
+        
     }
 

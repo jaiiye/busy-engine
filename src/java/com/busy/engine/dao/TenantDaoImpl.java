@@ -146,6 +146,34 @@
         }
         
         @Override
+        public Tenant findWithInfo(Integer id)
+        {
+            Tenant tenant = findByColumn("TenantId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Dashboard", tenant.getDashboardId().toString());
+                    tenant.setDashboard(Dashboard.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object Tenant method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return tenant;
+        }
+        
+        @Override
         public ArrayList<Tenant> findAll(Integer limit, Integer offset)
         {
             ArrayList<Tenant> tenantList = new ArrayList<Tenant>();
@@ -342,8 +370,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO tenant(TenantId,Name,Logo,DashboardId,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getTenantId());
+                prepareStatement("INSERT INTO tenant(Name,Logo,DashboardId) VALUES (?,?,?);");                    
                 preparedStatement.setString(1, obj.getName());
                 preparedStatement.setString(2, obj.getLogo());
                 preparedStatement.setInt(3, obj.getDashboardId());
@@ -387,8 +414,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE tenant SET com.busy.util.DatabaseColumn@6afaef23=?,com.busy.util.DatabaseColumn@78897063=?,com.busy.util.DatabaseColumn@486ee00c=? WHERE TenantId=?;");                    
-                preparedStatement.setInt(0, obj.getTenantId());
+                prepareStatement("UPDATE tenant SET Name=?,Logo=?,DashboardId=? WHERE TenantId=?;");                    
                 preparedStatement.setString(1, obj.getName());
                 preparedStatement.setString(2, obj.getLogo());
                 preparedStatement.setInt(3, obj.getDashboardId());
@@ -603,6 +629,34 @@ tenant.setTenantAttributeList(new TenantAttributeDaoImpl().findByColumn("TenantI
             tenant.setTenantAttributeList(new TenantAttributeDaoImpl().findByColumn("TenantId", tenant.getTenantId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedDashboard(Tenant tenant)
+        {            
+            try
+            {                 
+                getRecordById("Dashboard", tenant.getDashboardId().toString());
+                tenant.setDashboard(Dashboard.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getDashboard error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedDashboardWithInfo(Tenant tenant)
+        {            
+            tenant.setDashboard(new DashboardDaoImpl().findWithInfo(tenant.getDashboardId()));
+        }
+          
+        
     }
 

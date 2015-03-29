@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public ImageType find(Integer id)
         {
             return findByColumn("ImageTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ImageType findWithInfo(Integer id)
+        {
+            ImageType imageType = findByColumn("ImageTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return imageType;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO image_type(ImageTypeId,TypeName,Description,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getImageTypeId());
+                prepareStatement("INSERT INTO image_type(TypeName,Description) VALUES (?,?);");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDescription());
                 
@@ -355,8 +363,7 @@
                 ImageType.checkColumnSize(obj.getDescription(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE image_type SET com.busy.util.DatabaseColumn@69a9ef90=?,com.busy.util.DatabaseColumn@2c158c74=? WHERE ImageTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getImageTypeId());
+                prepareStatement("UPDATE image_type SET TypeName=?,Description=? WHERE ImageTypeId=?;");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getImageTypeId());
@@ -548,6 +555,12 @@
             image_type.setSiteImageList(new SiteImageDaoImpl().findByColumn("ImageTypeId", image_type.getImageTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public SliderItem find(Integer id)
         {
             return findByColumn("SliderItemId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public SliderItem findWithInfo(Integer id)
+        {
+            SliderItem sliderItem = findByColumn("SliderItemId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Slider", sliderItem.getSliderId().toString());
+                    sliderItem.setSlider(Slider.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object SliderItem method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return sliderItem;
         }
         
         @Override
@@ -347,8 +374,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO slider_item(SliderItemId,Title,Description,Url,ImageName,AlternateText,Rank,SliderId,) VALUES (?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getSliderItemId());
+                prepareStatement("INSERT INTO slider_item(Title,Description,Url,ImageName,AlternateText,Rank,SliderId) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getUrl());
@@ -400,8 +426,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE slider_item SET com.busy.util.DatabaseColumn@69106c13=?,com.busy.util.DatabaseColumn@5a72e6c4=?,com.busy.util.DatabaseColumn@3307c670=?,com.busy.util.DatabaseColumn@682fe8de=?,com.busy.util.DatabaseColumn@235613c=?,com.busy.util.DatabaseColumn@4f3ce378=?,com.busy.util.DatabaseColumn@428598a9=? WHERE SliderItemId=?;");                    
-                preparedStatement.setInt(0, obj.getSliderItemId());
+                prepareStatement("UPDATE slider_item SET Title=?,Description=?,Url=?,ImageName=?,AlternateText=?,Rank=?,SliderId=? WHERE SliderItemId=?;");                    
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getUrl());
@@ -608,6 +633,34 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedSlider(SliderItem slider_item)
+        {            
+            try
+            {                 
+                getRecordById("Slider", slider_item.getSliderId().toString());
+                slider_item.setSlider(Slider.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSlider error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedSliderWithInfo(SliderItem slider_item)
+        {            
+            slider_item.setSlider(new SliderDaoImpl().findWithInfo(slider_item.getSliderId()));
+        }
+          
+        
     }
 

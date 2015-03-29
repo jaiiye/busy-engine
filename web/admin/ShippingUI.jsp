@@ -1,64 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-                                           
-                                           
-                                           
-                                           
-  
-            
-  
-  
- 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       
-
-
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.busy.engine.dao.*"%>
@@ -320,7 +259,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div  class="col-md-10">
                                                         <input type="text" name="countryId" class="form-control" value="${shipping.countryId}" />
                                                         <select name="countryId" class="form-control">
-                                                            <%Shipping x = (Shipping) pageContext.getAttribute("shipping"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("country", x.getCountryId().toString(), 2)%>
                                                         </select>
                                                     </div>

@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public SiteFolder find(Integer id)
         {
             return findByColumn("SiteFolderId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public SiteFolder findWithInfo(Integer id)
+        {
+            SiteFolder siteFolder = findByColumn("SiteFolderId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Site", siteFolder.getSiteId().toString());
+                    siteFolder.setSite(Site.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object SiteFolder method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return siteFolder;
         }
         
         @Override
@@ -344,8 +371,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO site_folder(SiteFolderId,FolderName,Description,Rank,SiteId,) VALUES (?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getSiteFolderId());
+                prepareStatement("INSERT INTO site_folder(FolderName,Description,Rank,SiteId) VALUES (?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getFolderName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getRank());
@@ -391,8 +417,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_folder SET com.busy.util.DatabaseColumn@e11809a=?,com.busy.util.DatabaseColumn@3ce9d4f5=?,com.busy.util.DatabaseColumn@14189351=?,com.busy.util.DatabaseColumn@34663879=? WHERE SiteFolderId=?;");                    
-                preparedStatement.setInt(0, obj.getSiteFolderId());
+                prepareStatement("UPDATE site_folder SET FolderName=?,Description=?,Rank=?,SiteId=? WHERE SiteFolderId=?;");                    
                 preparedStatement.setString(1, obj.getFolderName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getRank());
@@ -602,6 +627,34 @@
             site_folder.setFileFolderList(new FileFolderDaoImpl().findByColumn("SiteFolderId", site_folder.getSiteFolderId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedSite(SiteFolder site_folder)
+        {            
+            try
+            {                 
+                getRecordById("Site", site_folder.getSiteId().toString());
+                site_folder.setSite(Site.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSite error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedSiteWithInfo(SiteFolder site_folder)
+        {            
+            site_folder.setSite(new SiteDaoImpl().findWithInfo(site_folder.getSiteId()));
+        }
+          
+        
     }
 

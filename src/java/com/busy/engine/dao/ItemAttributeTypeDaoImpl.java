@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public ItemAttributeType find(Integer id)
         {
             return findByColumn("ItemAttributeTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ItemAttributeType findWithInfo(Integer id)
+        {
+            ItemAttributeType itemAttributeType = findByColumn("ItemAttributeTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return itemAttributeType;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO item_attribute_type(ItemAttributeTypeId,AttributeName,Description,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getItemAttributeTypeId());
+                prepareStatement("INSERT INTO item_attribute_type(AttributeName,Description) VALUES (?,?);");                    
                 preparedStatement.setString(1, obj.getAttributeName());
                 preparedStatement.setString(2, obj.getDescription());
                 
@@ -355,8 +363,7 @@
                 ItemAttributeType.checkColumnSize(obj.getDescription(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_attribute_type SET com.busy.util.DatabaseColumn@3eacdba3=?,com.busy.util.DatabaseColumn@5744bc8f=? WHERE ItemAttributeTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getItemAttributeTypeId());
+                prepareStatement("UPDATE item_attribute_type SET AttributeName=?,Description=? WHERE ItemAttributeTypeId=?;");                    
                 preparedStatement.setString(1, obj.getAttributeName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getItemAttributeTypeId());
@@ -548,6 +555,12 @@
             item_attribute_type.setItemAttributeList(new ItemAttributeDaoImpl().findByColumn("ItemAttributeTypeId", item_attribute_type.getItemAttributeTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

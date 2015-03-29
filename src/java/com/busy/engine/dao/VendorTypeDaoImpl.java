@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public VendorType find(Integer id)
         {
             return findByColumn("VendorTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public VendorType findWithInfo(Integer id)
+        {
+            VendorType vendorType = findByColumn("VendorTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return vendorType;
         }
         
         @Override
@@ -311,8 +320,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO vendor_type(VendorTypeId,TypeName,) VALUES (?);");                    
-                preparedStatement.setInt(0, obj.getVendorTypeId());
+                prepareStatement("INSERT INTO vendor_type(TypeName) VALUES (?);");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 
                 preparedStatement.executeUpdate();
@@ -352,8 +360,7 @@
                 VendorType.checkColumnSize(obj.getTypeName(), 100);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE vendor_type SET com.busy.util.DatabaseColumn@3d84888c=? WHERE VendorTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getVendorTypeId());
+                prepareStatement("UPDATE vendor_type SET TypeName=? WHERE VendorTypeId=?;");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setInt(2, obj.getVendorTypeId());
                 preparedStatement.executeUpdate();
@@ -544,6 +551,12 @@
             vendor_type.setVendorList(new VendorDaoImpl().findByColumn("VendorTypeId", vendor_type.getVendorTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

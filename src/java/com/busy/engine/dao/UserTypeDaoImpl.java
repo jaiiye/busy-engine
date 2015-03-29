@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public UserType find(Integer id)
         {
             return findByColumn("UserTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public UserType findWithInfo(Integer id)
+        {
+            UserType userType = findByColumn("UserTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return userType;
         }
         
         @Override
@@ -313,8 +322,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO user_type(UserTypeId,TypeName,Description,RedirectUrl,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getUserTypeId());
+                prepareStatement("INSERT INTO user_type(TypeName,Description,RedirectUrl) VALUES (?,?,?);");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getRedirectUrl());
@@ -358,8 +366,7 @@
                 UserType.checkColumnSize(obj.getRedirectUrl(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE user_type SET com.busy.util.DatabaseColumn@79bfbebc=?,com.busy.util.DatabaseColumn@6346c8=?,com.busy.util.DatabaseColumn@37a33282=? WHERE UserTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getUserTypeId());
+                prepareStatement("UPDATE user_type SET TypeName=?,Description=?,RedirectUrl=? WHERE UserTypeId=?;");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getRedirectUrl());
@@ -552,6 +559,12 @@
             user_type.setUserList(new UserDaoImpl().findByColumn("UserTypeId", user_type.getUserTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

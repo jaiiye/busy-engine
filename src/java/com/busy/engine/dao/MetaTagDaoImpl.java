@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public MetaTag find(Integer id)
         {
             return findByColumn("MetaTagId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public MetaTag findWithInfo(Integer id)
+        {
+            MetaTag metaTag = findByColumn("MetaTagId", id.toString(), null, null).get(0);
+            
+            
+            
+            return metaTag;
         }
         
         @Override
@@ -313,8 +322,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO meta_tag(MetaTagId,Title,Description,Keywords,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getMetaTagId());
+                prepareStatement("INSERT INTO meta_tag(Title,Description,Keywords) VALUES (?,?,?);");                    
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getKeywords());
@@ -358,8 +366,7 @@
                 MetaTag.checkColumnSize(obj.getKeywords(), 255);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE meta_tag SET com.busy.util.DatabaseColumn@66243b11=?,com.busy.util.DatabaseColumn@220f46c0=?,com.busy.util.DatabaseColumn@22a9cc20=? WHERE MetaTagId=?;");                    
-                preparedStatement.setInt(0, obj.getMetaTagId());
+                prepareStatement("UPDATE meta_tag SET Title=?,Description=?,Keywords=? WHERE MetaTagId=?;");                    
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getKeywords());
@@ -570,6 +577,12 @@ meta_tag.setVendorList(new VendorDaoImpl().findByColumn("MetaTagId", meta_tag.ge
             meta_tag.setVendorList(new VendorDaoImpl().findByColumn("MetaTagId", meta_tag.getMetaTagId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

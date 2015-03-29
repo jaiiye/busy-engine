@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,40 @@
         public Vendor find(Integer id)
         {
             return findByColumn("VendorId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Vendor findWithInfo(Integer id)
+        {
+            Vendor vendor = findByColumn("VendorId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("MetaTag", vendor.getMetaTagId().toString());
+                    vendor.setMetaTag(MetaTag.process(rs));               
+                
+                    getRecordById("Template", vendor.getTemplateId().toString());
+                    vendor.setTemplate(Template.process(rs));               
+                
+                    getRecordById("VendorType", vendor.getVendorTypeId().toString());
+                    vendor.setVendorType(VendorType.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object Vendor method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return vendor;
         }
         
         @Override
@@ -359,8 +392,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO vendor(VendorId,VendorName,Description,Rank,VendorStatus,MetaTagId,TemplateId,VendorTypeId,) VALUES (?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getVendorId());
+                prepareStatement("INSERT INTO vendor(VendorName,Description,Rank,VendorStatus,MetaTagId,TemplateId,VendorTypeId) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getVendorName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getRank());
@@ -412,8 +444,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE vendor SET com.busy.util.DatabaseColumn@47a4f766=?,com.busy.util.DatabaseColumn@4507368=?,com.busy.util.DatabaseColumn@346aa265=?,com.busy.util.DatabaseColumn@521ee1c2=?,com.busy.util.DatabaseColumn@32e12320=?,com.busy.util.DatabaseColumn@35addd27=?,com.busy.util.DatabaseColumn@54b5387d=? WHERE VendorId=?;");                    
-                preparedStatement.setInt(0, obj.getVendorId());
+                prepareStatement("UPDATE vendor SET VendorName=?,Description=?,Rank=?,VendorStatus=?,MetaTagId=?,TemplateId=?,VendorTypeId=? WHERE VendorId=?;");                    
                 preparedStatement.setString(1, obj.getVendorName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getRank());
@@ -632,6 +663,78 @@
             vendor.setItemList(new ItemDaoImpl().findByColumn("VendorId", vendor.getVendorId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedMetaTag(Vendor vendor)
+        {            
+            try
+            {                 
+                getRecordById("MetaTag", vendor.getMetaTagId().toString());
+                vendor.setMetaTag(MetaTag.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getMetaTag error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedTemplate(Vendor vendor)
+        {            
+            try
+            {                 
+                getRecordById("Template", vendor.getTemplateId().toString());
+                vendor.setTemplate(Template.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getTemplate error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedVendorType(Vendor vendor)
+        {            
+            try
+            {                 
+                getRecordById("VendorType", vendor.getVendorTypeId().toString());
+                vendor.setVendorType(VendorType.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getVendorType error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedMetaTagWithInfo(Vendor vendor)
+        {            
+            vendor.setMetaTag(new MetaTagDaoImpl().findWithInfo(vendor.getMetaTagId()));
+        }
+        
+        public void getRelatedTemplateWithInfo(Vendor vendor)
+        {            
+            vendor.setTemplate(new TemplateDaoImpl().findWithInfo(vendor.getTemplateId()));
+        }
+        
+        public void getRelatedVendorTypeWithInfo(Vendor vendor)
+        {            
+            vendor.setVendorType(new VendorTypeDaoImpl().findWithInfo(vendor.getVendorTypeId()));
+        }
+          
+        
     }
 

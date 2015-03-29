@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public TextString find(Integer id)
         {
             return findByColumn("TextStringId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public TextString findWithInfo(Integer id)
+        {
+            TextString textString = findByColumn("TextStringId", id.toString(), null, null).get(0);
+            
+            
+            
+            return textString;
         }
         
         @Override
@@ -311,8 +320,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO text_string(TextStringId,Key,) VALUES (?);");                    
-                preparedStatement.setInt(0, obj.getTextStringId());
+                prepareStatement("INSERT INTO text_string(Key) VALUES (?);");                    
                 preparedStatement.setString(1, obj.getKey());
                 
                 preparedStatement.executeUpdate();
@@ -352,8 +360,7 @@
                 TextString.checkColumnSize(obj.getKey(), 200);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE text_string SET com.busy.util.DatabaseColumn@59d7eefb=? WHERE TextStringId=?;");                    
-                preparedStatement.setInt(0, obj.getTextStringId());
+                prepareStatement("UPDATE text_string SET Key=? WHERE TextStringId=?;");                    
                 preparedStatement.setString(1, obj.getKey());
                 preparedStatement.setInt(2, obj.getTextStringId());
                 preparedStatement.executeUpdate();
@@ -544,6 +551,12 @@
             text_string.setLocalizedStringList(new LocalizedStringDaoImpl().findByColumn("TextStringId", text_string.getTextStringId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

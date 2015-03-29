@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public Locale find(Integer id)
         {
             return findByColumn("LocaleId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Locale findWithInfo(Integer id)
+        {
+            Locale locale = findByColumn("LocaleId", id.toString(), null, null).get(0);
+            
+            
+            
+            return locale;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO locale(LocaleId,LocaleString,LocaleCharacterSet,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getLocaleId());
+                prepareStatement("INSERT INTO locale(LocaleString,LocaleCharacterSet) VALUES (?,?);");                    
                 preparedStatement.setString(1, obj.getLocaleString());
                 preparedStatement.setString(2, obj.getLocaleCharacterSet());
                 
@@ -355,8 +363,7 @@
                 Locale.checkColumnSize(obj.getLocaleCharacterSet(), 25);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE locale SET com.busy.util.DatabaseColumn@59f00ed2=?,com.busy.util.DatabaseColumn@6f43d3b=? WHERE LocaleId=?;");                    
-                preparedStatement.setInt(0, obj.getLocaleId());
+                prepareStatement("UPDATE locale SET LocaleString=?,LocaleCharacterSet=? WHERE LocaleId=?;");                    
                 preparedStatement.setString(1, obj.getLocaleString());
                 preparedStatement.setString(2, obj.getLocaleCharacterSet());
                 preparedStatement.setInt(3, obj.getLocaleId());
@@ -542,6 +549,12 @@
         }
         
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

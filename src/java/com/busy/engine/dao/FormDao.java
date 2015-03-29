@@ -39,13 +39,11 @@ import com.busy.engine.entity.Form;
 
 public interface FormDao extends IGenericDao<Form, Integer>
 {
-                    
-      void getRelatedFormFieldList(Form form);     
-                  
-      void getRelatedPageList(Form form);     
-                  
-      void getRelatedSliderList(Form form);     
-        
+ 
+
+    void getRelatedFormFieldList(Form form);
+    void getRelatedPageList(Form form);
+    void getRelatedSliderList(Form form);
+      
 }
     
-

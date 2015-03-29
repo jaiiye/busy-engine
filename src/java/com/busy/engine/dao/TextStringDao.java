@@ -39,9 +39,9 @@ import com.busy.engine.entity.TextString;
 
 public interface TextStringDao extends IGenericDao<TextString, Integer>
 {
-                    
-      void getRelatedLocalizedStringList(TextString text_string);     
-        
+ 
+
+    void getRelatedLocalizedStringList(TextString text_string);
+      
 }
     
-

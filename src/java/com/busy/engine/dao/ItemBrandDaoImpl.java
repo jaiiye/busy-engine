@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public ItemBrand find(Integer id)
         {
             return findByColumn("ItemBrandId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ItemBrand findWithInfo(Integer id)
+        {
+            ItemBrand itemBrand = findByColumn("ItemBrandId", id.toString(), null, null).get(0);
+            
+            
+            
+            return itemBrand;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO item_brand(ItemBrandId,BrandName,Description,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getItemBrandId());
+                prepareStatement("INSERT INTO item_brand(BrandName,Description) VALUES (?,?);");                    
                 preparedStatement.setString(1, obj.getBrandName());
                 preparedStatement.setString(2, obj.getDescription());
                 
@@ -355,8 +363,7 @@
                 ItemBrand.checkColumnSize(obj.getDescription(), 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_brand SET com.busy.util.DatabaseColumn@38ffe5b1=?,com.busy.util.DatabaseColumn@5b451a38=? WHERE ItemBrandId=?;");                    
-                preparedStatement.setInt(0, obj.getItemBrandId());
+                prepareStatement("UPDATE item_brand SET BrandName=?,Description=? WHERE ItemBrandId=?;");                    
                 preparedStatement.setString(1, obj.getBrandName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getItemBrandId());
@@ -554,6 +561,12 @@ item_brand.setUserList(new UserDaoImpl().findByColumn("ItemBrandId", item_brand.
             item_brand.setUserList(new UserDaoImpl().findByColumn("ItemBrandId", item_brand.getItemBrandId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public ItemDiscount find(Integer id)
         {
             return findByColumn("ItemDiscountId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ItemDiscount findWithInfo(Integer id)
+        {
+            ItemDiscount itemDiscount = findByColumn("ItemDiscountId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Item", itemDiscount.getItemId().toString());
+                    itemDiscount.setItem(Item.process(rs));               
+                
+                    getRecordById("Discount", itemDiscount.getDiscountId().toString());
+                    itemDiscount.setDiscount(Discount.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object ItemDiscount method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return itemDiscount;
         }
         
         @Override
@@ -349,8 +379,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO item_discount(ItemDiscountId,ItemId,DiscountId,ApplyToOptions,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getItemDiscountId());
+                prepareStatement("INSERT INTO item_discount(ItemId,DiscountId,ApplyToOptions) VALUES (?,?,?);");                    
                 preparedStatement.setInt(1, obj.getItemId());
                 preparedStatement.setInt(2, obj.getDiscountId());
                 preparedStatement.setInt(3, obj.getApplyToOptions());
@@ -394,8 +423,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_discount SET com.busy.util.DatabaseColumn@4fc5c95e=?,com.busy.util.DatabaseColumn@3d5b82a7=?,com.busy.util.DatabaseColumn@1149b8f4=? WHERE ItemDiscountId=?;");                    
-                preparedStatement.setInt(0, obj.getItemDiscountId());
+                prepareStatement("UPDATE item_discount SET ItemId=?,DiscountId=?,ApplyToOptions=? WHERE ItemDiscountId=?;");                    
                 preparedStatement.setInt(1, obj.getItemId());
                 preparedStatement.setInt(2, obj.getDiscountId());
                 preparedStatement.setInt(3, obj.getApplyToOptions());
@@ -601,6 +629,56 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedItem(ItemDiscount item_discount)
+        {            
+            try
+            {                 
+                getRecordById("Item", item_discount.getItemId().toString());
+                item_discount.setItem(Item.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getItem error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedDiscount(ItemDiscount item_discount)
+        {            
+            try
+            {                 
+                getRecordById("Discount", item_discount.getDiscountId().toString());
+                item_discount.setDiscount(Discount.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getDiscount error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedItemWithInfo(ItemDiscount item_discount)
+        {            
+            item_discount.setItem(new ItemDaoImpl().findWithInfo(item_discount.getItemId()));
+        }
+        
+        public void getRelatedDiscountWithInfo(ItemDiscount item_discount)
+        {            
+            item_discount.setDiscount(new DiscountDaoImpl().findWithInfo(item_discount.getDiscountId()));
+        }
+          
+        
     }
 

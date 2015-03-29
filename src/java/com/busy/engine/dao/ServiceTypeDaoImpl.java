@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public ServiceType find(Integer id)
         {
             return findByColumn("ServiceTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ServiceType findWithInfo(Integer id)
+        {
+            ServiceType serviceType = findByColumn("ServiceTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return serviceType;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO service_type(ServiceTypeId,TypeName,Desciption,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getServiceTypeId());
+                prepareStatement("INSERT INTO service_type(TypeName,Desciption) VALUES (?,?);");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDesciption());
                 
@@ -355,8 +363,7 @@
                 ServiceType.checkColumnSize(obj.getDesciption(), 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE service_type SET com.busy.util.DatabaseColumn@68d22fb7=?,com.busy.util.DatabaseColumn@c0bf6d1=? WHERE ServiceTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getServiceTypeId());
+                prepareStatement("UPDATE service_type SET TypeName=?,Desciption=? WHERE ServiceTypeId=?;");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getDesciption());
                 preparedStatement.setInt(3, obj.getServiceTypeId());
@@ -548,6 +555,12 @@
             service_type.setServiceList(new ServiceDaoImpl().findByColumn("ServiceTypeId", service_type.getServiceTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

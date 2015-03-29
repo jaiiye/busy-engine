@@ -39,9 +39,9 @@ import com.busy.engine.entity.ItemAttributeType;
 
 public interface ItemAttributeTypeDao extends IGenericDao<ItemAttributeType, Integer>
 {
-                    
-      void getRelatedItemAttributeList(ItemAttributeType item_attribute_type);     
-        
+ 
+
+    void getRelatedItemAttributeList(ItemAttributeType item_attribute_type);
+      
 }
     
-

@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public Form find(Integer id)
         {
             return findByColumn("FormId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Form findWithInfo(Integer id)
+        {
+            Form form = findByColumn("FormId", id.toString(), null, null).get(0);
+            
+            
+            
+            return form;
         }
         
         @Override
@@ -317,8 +326,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO form(FormId,FormName,Description,SubmissionEmail,SubmissionMethod,Action,Resettable,FileUpload,) VALUES (?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getFormId());
+                prepareStatement("INSERT INTO form(FormName,Description,SubmissionEmail,SubmissionMethod,Action,Resettable,FileUpload) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getFormName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getSubmissionEmail());
@@ -370,8 +378,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE form SET com.busy.util.DatabaseColumn@696fa525=?,com.busy.util.DatabaseColumn@52757ab4=?,com.busy.util.DatabaseColumn@43d0556d=?,com.busy.util.DatabaseColumn@10e70f93=?,com.busy.util.DatabaseColumn@435c627=?,com.busy.util.DatabaseColumn@7decaccf=?,com.busy.util.DatabaseColumn@3c56f522=? WHERE FormId=?;");                    
-                preparedStatement.setInt(0, obj.getFormId());
+                prepareStatement("UPDATE form SET FormName=?,Description=?,SubmissionEmail=?,SubmissionMethod=?,Action=?,Resettable=?,FileUpload=? WHERE FormId=?;");                    
                 preparedStatement.setString(1, obj.getFormName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setString(3, obj.getSubmissionEmail());
@@ -580,6 +587,12 @@ form.setSliderList(new SliderDaoImpl().findByColumn("FormId", form.getFormId().t
             form.setSliderList(new SliderDaoImpl().findByColumn("FormId", form.getFormId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

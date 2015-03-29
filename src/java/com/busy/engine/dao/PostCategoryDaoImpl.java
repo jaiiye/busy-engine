@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public PostCategory find(Integer id)
         {
             return findByColumn("PostCategoryId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public PostCategory findWithInfo(Integer id)
+        {
+            PostCategory postCategory = findByColumn("PostCategoryId", id.toString(), null, null).get(0);
+            
+            
+            
+            return postCategory;
         }
         
         @Override
@@ -311,8 +320,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO post_category(PostCategoryId,CategoryName,) VALUES (?);");                    
-                preparedStatement.setInt(0, obj.getPostCategoryId());
+                prepareStatement("INSERT INTO post_category(CategoryName) VALUES (?);");                    
                 preparedStatement.setString(1, obj.getCategoryName());
                 
                 preparedStatement.executeUpdate();
@@ -352,8 +360,7 @@
                 PostCategory.checkColumnSize(obj.getCategoryName(), 100);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE post_category SET com.busy.util.DatabaseColumn@52c6339b=? WHERE PostCategoryId=?;");                    
-                preparedStatement.setInt(0, obj.getPostCategoryId());
+                prepareStatement("UPDATE post_category SET CategoryName=? WHERE PostCategoryId=?;");                    
                 preparedStatement.setString(1, obj.getCategoryName());
                 preparedStatement.setInt(2, obj.getPostCategoryId());
                 preparedStatement.executeUpdate();
@@ -544,6 +551,12 @@
             post_category.setBlogPostCategoryList(new BlogPostCategoryDaoImpl().findByColumn("PostCategoryId", post_category.getPostCategoryId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

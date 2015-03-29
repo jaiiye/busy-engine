@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public TaxRate find(Integer id)
         {
             return findByColumn("TaxRateId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public TaxRate findWithInfo(Integer id)
+        {
+            TaxRate taxRate = findByColumn("TaxRateId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("StateProvince", taxRate.getStateProvinceId().toString());
+                    taxRate.setStateProvince(StateProvince.process(rs));               
+                
+                    getRecordById("Country", taxRate.getCountryId().toString());
+                    taxRate.setCountry(Country.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object TaxRate method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return taxRate;
         }
         
         @Override
@@ -351,8 +381,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO tax_rate(TaxRateId,TaxCategory,Percentage,ZipPostalCode,StateProvinceId,CountryId,) VALUES (?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getTaxRateId());
+                prepareStatement("INSERT INTO tax_rate(TaxCategory,Percentage,ZipPostalCode,StateProvinceId,CountryId) VALUES (?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getTaxCategory());
                 preparedStatement.setDouble(2, obj.getPercentage());
                 preparedStatement.setString(3, obj.getZipPostalCode());
@@ -400,8 +429,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE tax_rate SET com.busy.util.DatabaseColumn@463f7efb=?,com.busy.util.DatabaseColumn@d8339da=?,com.busy.util.DatabaseColumn@4c9803b9=?,com.busy.util.DatabaseColumn@47e2cfd2=?,com.busy.util.DatabaseColumn@7a17a973=? WHERE TaxRateId=?;");                    
-                preparedStatement.setInt(0, obj.getTaxRateId());
+                prepareStatement("UPDATE tax_rate SET TaxCategory=?,Percentage=?,ZipPostalCode=?,StateProvinceId=?,CountryId=? WHERE TaxRateId=?;");                    
                 preparedStatement.setString(1, obj.getTaxCategory());
                 preparedStatement.setDouble(2, obj.getPercentage());
                 preparedStatement.setString(3, obj.getZipPostalCode());
@@ -609,6 +637,56 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedStateProvince(TaxRate tax_rate)
+        {            
+            try
+            {                 
+                getRecordById("StateProvince", tax_rate.getStateProvinceId().toString());
+                tax_rate.setStateProvince(StateProvince.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getStateProvince error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedCountry(TaxRate tax_rate)
+        {            
+            try
+            {                 
+                getRecordById("Country", tax_rate.getCountryId().toString());
+                tax_rate.setCountry(Country.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getCountry error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedStateProvinceWithInfo(TaxRate tax_rate)
+        {            
+            tax_rate.setStateProvince(new StateProvinceDaoImpl().findWithInfo(tax_rate.getStateProvinceId()));
+        }
+        
+        public void getRelatedCountryWithInfo(TaxRate tax_rate)
+        {            
+            tax_rate.setCountry(new CountryDaoImpl().findWithInfo(tax_rate.getCountryId()));
+        }
+          
+        
     }
 

@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public Contact find(Integer id)
         {
             return findByColumn("ContactId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Contact findWithInfo(Integer id)
+        {
+            Contact contact = findByColumn("ContactId", id.toString(), null, null).get(0);
+            
+            
+            
+            return contact;
         }
         
         @Override
@@ -320,8 +329,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO contact(ContactId,Title,FirstName,LastName,Position,Phone,Fax,Email,ContactStatus,WebUrl,Info,) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getContactId());
+                prepareStatement("INSERT INTO contact(Title,FirstName,LastName,Position,Phone,Fax,Email,ContactStatus,WebUrl,Info) VALUES (?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getFirstName());
                 preparedStatement.setString(3, obj.getLastName());
@@ -379,8 +387,7 @@
                 Contact.checkColumnSize(obj.getInfo(), 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE contact SET com.busy.util.DatabaseColumn@729546fa=?,com.busy.util.DatabaseColumn@688e1543=?,com.busy.util.DatabaseColumn@704f0028=?,com.busy.util.DatabaseColumn@77ade8f9=?,com.busy.util.DatabaseColumn@2fd7d260=?,com.busy.util.DatabaseColumn@376beed4=?,com.busy.util.DatabaseColumn@3f2de651=?,com.busy.util.DatabaseColumn@27df2b6d=?,com.busy.util.DatabaseColumn@368ab924=?,com.busy.util.DatabaseColumn@5effec6f=? WHERE ContactId=?;");                    
-                preparedStatement.setInt(0, obj.getContactId());
+                prepareStatement("UPDATE contact SET Title=?,FirstName=?,LastName=?,Position=?,Phone=?,Fax=?,Email=?,ContactStatus=?,WebUrl=?,Info=? WHERE ContactId=?;");                    
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getFirstName());
                 preparedStatement.setString(3, obj.getLastName());
@@ -598,6 +605,12 @@ contact.setUserList(new UserDaoImpl().findByColumn("ContactId", contact.getConta
             contact.setUserList(new UserDaoImpl().findByColumn("ContactId", contact.getContactId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

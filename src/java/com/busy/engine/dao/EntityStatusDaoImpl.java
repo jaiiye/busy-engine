@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public EntityStatus find(Integer id)
         {
             return findByColumn("EntityStatusId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public EntityStatus findWithInfo(Integer id)
+        {
+            EntityStatus entityStatus = findByColumn("EntityStatusId", id.toString(), null, null).get(0);
+            
+            
+            
+            return entityStatus;
         }
         
         @Override
@@ -313,8 +322,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO entity_status(EntityStatusId,StatusCode,StatusName,AppliesTo,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getEntityStatusId());
+                prepareStatement("INSERT INTO entity_status(StatusCode,StatusName,AppliesTo) VALUES (?,?,?);");                    
                 preparedStatement.setInt(1, obj.getStatusCode());
                 preparedStatement.setString(2, obj.getStatusName());
                 preparedStatement.setString(3, obj.getAppliesTo());
@@ -358,8 +366,7 @@
                 EntityStatus.checkColumnSize(obj.getAppliesTo(), 100);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE entity_status SET com.busy.util.DatabaseColumn@37873be0=?,com.busy.util.DatabaseColumn@67b5005b=?,com.busy.util.DatabaseColumn@28e3e2f4=? WHERE EntityStatusId=?;");                    
-                preparedStatement.setInt(0, obj.getEntityStatusId());
+                prepareStatement("UPDATE entity_status SET StatusCode=?,StatusName=?,AppliesTo=? WHERE EntityStatusId=?;");                    
                 preparedStatement.setInt(1, obj.getStatusCode());
                 preparedStatement.setString(2, obj.getStatusName());
                 preparedStatement.setString(3, obj.getAppliesTo());
@@ -546,6 +553,12 @@
         }
         
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

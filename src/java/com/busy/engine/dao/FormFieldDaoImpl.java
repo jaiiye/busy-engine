@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public FormField find(Integer id)
         {
             return findByColumn("FormFieldId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public FormField findWithInfo(Integer id)
+        {
+            FormField formField = findByColumn("FormFieldId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("FormFieldType", formField.getFormFieldTypeId().toString());
+                    formField.setFormFieldType(FormFieldType.process(rs));               
+                
+                    getRecordById("Form", formField.getFormId().toString());
+                    formField.setForm(Form.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object FormField method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return formField;
         }
         
         @Override
@@ -357,8 +387,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO form_field(FormFieldId,FieldName,Label,ErrorText,ValidationRegex,Rank,DefaultValue,Options,GroupName,Optional,FormFieldTypeId,FormId,) VALUES (?,?,?,?,?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getFormFieldId());
+                prepareStatement("INSERT INTO form_field(FieldName,Label,ErrorText,ValidationRegex,Rank,DefaultValue,Options,GroupName,Optional,FormFieldTypeId,FormId) VALUES (?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getFieldName());
                 preparedStatement.setString(2, obj.getLabel());
                 preparedStatement.setString(3, obj.getErrorText());
@@ -418,8 +447,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE form_field SET com.busy.util.DatabaseColumn@1406351e=?,com.busy.util.DatabaseColumn@119480b4=?,com.busy.util.DatabaseColumn@404f056=?,com.busy.util.DatabaseColumn@134ffcba=?,com.busy.util.DatabaseColumn@36449508=?,com.busy.util.DatabaseColumn@3e03254=?,com.busy.util.DatabaseColumn@20c5e43e=?,com.busy.util.DatabaseColumn@4c0366b0=?,com.busy.util.DatabaseColumn@5e7d56ed=?,com.busy.util.DatabaseColumn@5c8dade4=?,com.busy.util.DatabaseColumn@5366565f=? WHERE FormFieldId=?;");                    
-                preparedStatement.setInt(0, obj.getFormFieldId());
+                prepareStatement("UPDATE form_field SET FieldName=?,Label=?,ErrorText=?,ValidationRegex=?,Rank=?,DefaultValue=?,Options=?,GroupName=?,Optional=?,FormFieldTypeId=?,FormId=? WHERE FormFieldId=?;");                    
                 preparedStatement.setString(1, obj.getFieldName());
                 preparedStatement.setString(2, obj.getLabel());
                 preparedStatement.setString(3, obj.getErrorText());
@@ -633,6 +661,56 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedFormFieldType(FormField form_field)
+        {            
+            try
+            {                 
+                getRecordById("FormFieldType", form_field.getFormFieldTypeId().toString());
+                form_field.setFormFieldType(FormFieldType.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getFormFieldType error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedForm(FormField form_field)
+        {            
+            try
+            {                 
+                getRecordById("Form", form_field.getFormId().toString());
+                form_field.setForm(Form.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getForm error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedFormFieldTypeWithInfo(FormField form_field)
+        {            
+            form_field.setFormFieldType(new FormFieldTypeDaoImpl().findWithInfo(form_field.getFormFieldTypeId()));
+        }
+        
+        public void getRelatedFormWithInfo(FormField form_field)
+        {            
+            form_field.setForm(new FormDaoImpl().findWithInfo(form_field.getFormId()));
+        }
+          
+        
     }
 

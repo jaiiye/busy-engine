@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public SitePage find(Integer id)
         {
             return findByColumn("SitePageId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public SitePage findWithInfo(Integer id)
+        {
+            SitePage sitePage = findByColumn("SitePageId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Site", sitePage.getSiteId().toString());
+                    sitePage.setSite(Site.process(rs));               
+                
+                    getRecordById("Page", sitePage.getPageId().toString());
+                    sitePage.setPage(Page.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object SitePage method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return sitePage;
         }
         
         @Override
@@ -348,8 +378,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO site_page(SitePageId,SiteId,PageId,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getSitePageId());
+                prepareStatement("INSERT INTO site_page(SiteId,PageId) VALUES (?,?);");                    
                 preparedStatement.setInt(1, obj.getSiteId());
                 preparedStatement.setInt(2, obj.getPageId());
                 
@@ -391,8 +420,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_page SET com.busy.util.DatabaseColumn@5367a452=?,com.busy.util.DatabaseColumn@4329c8f8=? WHERE SitePageId=?;");                    
-                preparedStatement.setInt(0, obj.getSitePageId());
+                prepareStatement("UPDATE site_page SET SiteId=?,PageId=? WHERE SitePageId=?;");                    
                 preparedStatement.setInt(1, obj.getSiteId());
                 preparedStatement.setInt(2, obj.getPageId());
                 preparedStatement.setInt(3, obj.getSitePageId());
@@ -597,6 +625,56 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedSite(SitePage site_page)
+        {            
+            try
+            {                 
+                getRecordById("Site", site_page.getSiteId().toString());
+                site_page.setSite(Site.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSite error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedPage(SitePage site_page)
+        {            
+            try
+            {                 
+                getRecordById("Page", site_page.getPageId().toString());
+                site_page.setPage(Page.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getPage error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedSiteWithInfo(SitePage site_page)
+        {            
+            site_page.setSite(new SiteDaoImpl().findWithInfo(site_page.getSiteId()));
+        }
+        
+        public void getRelatedPageWithInfo(SitePage site_page)
+        {            
+            site_page.setPage(new PageDaoImpl().findWithInfo(site_page.getPageId()));
+        }
+          
+        
     }
 

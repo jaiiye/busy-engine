@@ -39,9 +39,9 @@ import com.busy.engine.entity.UserType;
 
 public interface UserTypeDao extends IGenericDao<UserType, Integer>
 {
-                    
-      void getRelatedUserList(UserType user_type);     
-        
+ 
+
+    void getRelatedUserList(UserType user_type);
+      
 }
     
-

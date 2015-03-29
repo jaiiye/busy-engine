@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public ResourceType find(Integer id)
         {
             return findByColumn("ResourceTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ResourceType findWithInfo(Integer id)
+        {
+            ResourceType resourceType = findByColumn("ResourceTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return resourceType;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO resource_type(ResourceTypeId,TypeName,TypeValue,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getResourceTypeId());
+                prepareStatement("INSERT INTO resource_type(TypeName,TypeValue) VALUES (?,?);");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getTypeValue());
                 
@@ -355,8 +363,7 @@
                 ResourceType.checkColumnSize(obj.getTypeValue(), 150);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE resource_type SET com.busy.util.DatabaseColumn@2ccd0a88=?,com.busy.util.DatabaseColumn@53c382a1=? WHERE ResourceTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getResourceTypeId());
+                prepareStatement("UPDATE resource_type SET TypeName=?,TypeValue=? WHERE ResourceTypeId=?;");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getTypeValue());
                 preparedStatement.setInt(3, obj.getResourceTypeId());
@@ -548,6 +555,12 @@
             resource_type.setResourceUrlList(new ResourceUrlDaoImpl().findByColumn("ResourceTypeId", resource_type.getResourceTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

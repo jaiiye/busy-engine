@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public ItemOption find(Integer id)
         {
             return findByColumn("ItemOptionId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ItemOption findWithInfo(Integer id)
+        {
+            ItemOption itemOption = findByColumn("ItemOptionId", id.toString(), null, null).get(0);
+            
+            
+            
+            return itemOption;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO item_option(ItemOptionId,OptionName,Description,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getItemOptionId());
+                prepareStatement("INSERT INTO item_option(OptionName,Description) VALUES (?,?);");                    
                 preparedStatement.setString(1, obj.getOptionName());
                 preparedStatement.setString(2, obj.getDescription());
                 
@@ -355,8 +363,7 @@
                 ItemOption.checkColumnSize(obj.getDescription(), 65535);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_option SET com.busy.util.DatabaseColumn@57687cfc=?,com.busy.util.DatabaseColumn@7ed2fb07=? WHERE ItemOptionId=?;");                    
-                preparedStatement.setInt(0, obj.getItemOptionId());
+                prepareStatement("UPDATE item_option SET OptionName=?,Description=? WHERE ItemOptionId=?;");                    
                 preparedStatement.setString(1, obj.getOptionName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setInt(3, obj.getItemOptionId());
@@ -548,6 +555,12 @@
             item_option.setOptionAvailabilityList(new OptionAvailabilityDaoImpl().findByColumn("ItemOptionId", item_option.getItemOptionId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

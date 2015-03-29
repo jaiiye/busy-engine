@@ -2,7 +2,6 @@ package com.busy.engine.dao;
 
 import com.busy.engine.data.BasicConnection;
 import com.busy.engine.entity.*;
-import com.busy.engine.dao.*;
 import com.busy.engine.util.*;
 import java.util.ArrayList;
 import java.io.Serializable;
@@ -91,6 +90,36 @@ public class AffiliateDaoImpl extends BasicConnection implements Serializable, A
     public Affiliate find(Integer id)
     {
         return findByColumn("AffiliateId", id.toString(), null, null).get(0);
+    }
+
+    @Override
+    public Affiliate findWithInfo(Integer id)
+    {
+        Affiliate affiliate = findByColumn("AffiliateId", id.toString(), null, null).get(0);
+
+        try
+        {
+
+            getRecordById("User", affiliate.getUserId().toString());
+            affiliate.setUser(User.process(rs));
+
+            getRecordById("Contact", affiliate.getContactId().toString());
+            affiliate.setContact(Contact.process(rs));
+
+            getRecordById("Address", affiliate.getAddressId().toString());
+            affiliate.setAddress(Address.process(rs));
+
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("Object Affiliate method findWithInfo(Integer id) error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
+        return affiliate;
     }
 
     @Override
@@ -299,8 +328,7 @@ public class AffiliateDaoImpl extends BasicConnection implements Serializable, A
             Affiliate.checkColumnSize(obj.getDetails(), 65535);
 
             openConnection();
-            prepareStatement("INSERT INTO affiliate(AffiliateId,CompanyName,Email,Phone,Fax,WebUrl,Details,ServiceHours,AffiliateStatus,UserId,ContactId,AddressId,) VALUES (?,?,?,?,?,?,?,?,?,?,?);");
-            preparedStatement.setInt(0, obj.getAffiliateId());
+            prepareStatement("INSERT INTO affiliate(CompanyName,Email,Phone,Fax,WebUrl,Details,ServiceHours,AffiliateStatus,UserId,ContactId,AddressId) VALUES (?,?,?,?,?,?,?,?,?,?,?);");
             preparedStatement.setString(1, obj.getCompanyName());
             preparedStatement.setString(2, obj.getEmail());
             preparedStatement.setString(3, obj.getPhone());
@@ -355,8 +383,7 @@ public class AffiliateDaoImpl extends BasicConnection implements Serializable, A
             Affiliate.checkColumnSize(obj.getDetails(), 65535);
 
             openConnection();
-            prepareStatement("UPDATE affiliate SET com.busy.util.DatabaseColumn@5655bd71=?,com.busy.util.DatabaseColumn@5c24c3d6=?,com.busy.util.DatabaseColumn@5b45c838=?,com.busy.util.DatabaseColumn@70a689b3=?,com.busy.util.DatabaseColumn@b630ce3=?,com.busy.util.DatabaseColumn@7123442a=?,com.busy.util.DatabaseColumn@452463e=?,com.busy.util.DatabaseColumn@40fdbc16=?,com.busy.util.DatabaseColumn@53eaa4fe=?,com.busy.util.DatabaseColumn@3883b8bd=?,com.busy.util.DatabaseColumn@2e766a25=? WHERE AffiliateId=?;");
-            preparedStatement.setInt(0, obj.getAffiliateId());
+            prepareStatement("UPDATE affiliate SET CompanyName=?,Email=?,Phone=?,Fax=?,WebUrl=?,Details=?,ServiceHours=?,AffiliateStatus=?,UserId=?,ContactId=?,AddressId=? WHERE AffiliateId=?;");
             preparedStatement.setString(1, obj.getCompanyName());
             preparedStatement.setString(2, obj.getEmail());
             preparedStatement.setString(3, obj.getPhone());
@@ -575,6 +602,72 @@ public class AffiliateDaoImpl extends BasicConnection implements Serializable, A
     public void getRelatedOrderList(Affiliate affiliate)
     {
         affiliate.setOrderList(new OrderDaoImpl().findByColumn("AffiliateId", affiliate.getAffiliateId().toString(), null, null));
+    }
+
+    public void getRelatedUser(Affiliate affiliate)
+    {
+        try
+        {
+            getRecordById("User", affiliate.getUserId().toString());
+            affiliate.setUser(User.process(rs));
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("getUser error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+    }
+
+    public void getRelatedContact(Affiliate affiliate)
+    {
+        try
+        {
+            getRecordById("Contact", affiliate.getContactId().toString());
+            affiliate.setContact(Contact.process(rs));
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("getContact error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+    }
+
+    public void getRelatedAddress(Affiliate affiliate)
+    {
+        try
+        {
+            getRecordById("Address", affiliate.getAddressId().toString());
+            affiliate.setAddress(Address.process(rs));
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("getAddress error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+    }
+
+    public void getRelatedUserWithInfo(Affiliate affiliate)
+    {
+        affiliate.setUser(new UserDaoImpl().findWithInfo(affiliate.getUserId()));
+    }
+
+    public void getRelatedContactWithInfo(Affiliate affiliate)
+    {
+        affiliate.setContact(new ContactDaoImpl().findWithInfo(affiliate.getContactId()));
+    }
+
+    public void getRelatedAddressWithInfo(Affiliate affiliate)
+    {
+        affiliate.setAddress(new AddressDaoImpl().findWithInfo(affiliate.getAddressId()));
     }
 
 }

@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public SiteEmail find(Integer id)
         {
             return findByColumn("SiteEmailId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public SiteEmail findWithInfo(Integer id)
+        {
+            SiteEmail siteEmail = findByColumn("SiteEmailId", id.toString(), null, null).get(0);
+            
+            
+            
+            return siteEmail;
         }
         
         @Override
@@ -314,8 +323,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO site_email(SiteEmailId,Host,Port,Username,Password,) VALUES (?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getSiteEmailId());
+                prepareStatement("INSERT INTO site_email(Host,Port,Username,Password) VALUES (?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getHost());
                 preparedStatement.setInt(2, obj.getPort());
                 preparedStatement.setString(3, obj.getUsername());
@@ -361,8 +369,7 @@
                 SiteEmail.checkColumnSize(obj.getPassword(), 45);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site_email SET com.busy.util.DatabaseColumn@52ab9c0b=?,com.busy.util.DatabaseColumn@24376601=?,com.busy.util.DatabaseColumn@17b41617=?,com.busy.util.DatabaseColumn@acac53e=? WHERE SiteEmailId=?;");                    
-                preparedStatement.setInt(0, obj.getSiteEmailId());
+                prepareStatement("UPDATE site_email SET Host=?,Port=?,Username=?,Password=? WHERE SiteEmailId=?;");                    
                 preparedStatement.setString(1, obj.getHost());
                 preparedStatement.setInt(2, obj.getPort());
                 preparedStatement.setString(3, obj.getUsername());
@@ -556,6 +563,12 @@
             site_email.setSiteList(new SiteDaoImpl().findByColumn("SiteEmailId", site_email.getSiteEmailId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

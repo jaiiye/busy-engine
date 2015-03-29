@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,37 @@
         public BlogPostCategory find(Integer id)
         {
             return findByColumn("BlogPostCategoryId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public BlogPostCategory findWithInfo(Integer id)
+        {
+            BlogPostCategory blogPostCategory = findByColumn("BlogPostCategoryId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("BlogPost", blogPostCategory.getBlogPostId().toString());
+                    blogPostCategory.setBlogPost(BlogPost.process(rs));               
+                
+                    getRecordById("PostCategory", blogPostCategory.getPostCategoryId().toString());
+                    blogPostCategory.setPostCategory(PostCategory.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object BlogPostCategory method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return blogPostCategory;
         }
         
         @Override
@@ -348,8 +378,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO blog_post_category(BlogPostCategoryId,BlogPostId,PostCategoryId,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getBlogPostCategoryId());
+                prepareStatement("INSERT INTO blog_post_category(BlogPostId,PostCategoryId) VALUES (?,?);");                    
                 preparedStatement.setInt(1, obj.getBlogPostId());
                 preparedStatement.setInt(2, obj.getPostCategoryId());
                 
@@ -391,8 +420,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE blog_post_category SET com.busy.util.DatabaseColumn@30b55ecf=?,com.busy.util.DatabaseColumn@3e607f77=? WHERE BlogPostCategoryId=?;");                    
-                preparedStatement.setInt(0, obj.getBlogPostCategoryId());
+                prepareStatement("UPDATE blog_post_category SET BlogPostId=?,PostCategoryId=? WHERE BlogPostCategoryId=?;");                    
                 preparedStatement.setInt(1, obj.getBlogPostId());
                 preparedStatement.setInt(2, obj.getPostCategoryId());
                 preparedStatement.setInt(3, obj.getBlogPostCategoryId());
@@ -597,6 +625,56 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedBlogPost(BlogPostCategory blog_post_category)
+        {            
+            try
+            {                 
+                getRecordById("BlogPost", blog_post_category.getBlogPostId().toString());
+                blog_post_category.setBlogPost(BlogPost.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getBlogPost error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedPostCategory(BlogPostCategory blog_post_category)
+        {            
+            try
+            {                 
+                getRecordById("PostCategory", blog_post_category.getPostCategoryId().toString());
+                blog_post_category.setPostCategory(PostCategory.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getPostCategory error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedBlogPostWithInfo(BlogPostCategory blog_post_category)
+        {            
+            blog_post_category.setBlogPost(new BlogPostDaoImpl().findWithInfo(blog_post_category.getBlogPostId()));
+        }
+        
+        public void getRelatedPostCategoryWithInfo(BlogPostCategory blog_post_category)
+        {            
+            blog_post_category.setPostCategory(new PostCategoryDaoImpl().findWithInfo(blog_post_category.getPostCategoryId()));
+        }
+          
+        
     }
 

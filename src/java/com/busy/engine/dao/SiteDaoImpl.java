@@ -146,6 +146,43 @@
         }
         
         @Override
+        public Site findWithInfo(Integer id)
+        {
+            Site site = findByColumn("SiteId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Template", site.getTemplateId().toString());
+                    site.setTemplate(Template.process(rs));               
+                
+                    getRecordById("SiteEmail", site.getSiteEmailId().toString());
+                    site.setSiteEmail(SiteEmail.process(rs));               
+                
+                    getRecordById("Dashboard", site.getDashboardId().toString());
+                    site.setDashboard(Dashboard.process(rs));               
+                
+                    getRecordById("Tenant", site.getTenantId().toString());
+                    site.setTenant(Tenant.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object Site method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return site;
+        }
+        
+        @Override
         public ArrayList<Site> findAll(Integer limit, Integer offset)
         {
             ArrayList<Site> siteList = new ArrayList<Site>();
@@ -370,8 +407,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO site(SiteId,SiteName,Domain,Mode,Url,LogoTitle,LogoImageUrl,UseAsStore,SiteStatus,Locale,TemplateId,SiteEmailId,DashboardId,TenantId,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getSiteId());
+                prepareStatement("INSERT INTO site(SiteName,Domain,Mode,Url,LogoTitle,LogoImageUrl,UseAsStore,SiteStatus,Locale,TemplateId,SiteEmailId,DashboardId,TenantId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getSiteName());
                 preparedStatement.setString(2, obj.getDomain());
                 preparedStatement.setInt(3, obj.getMode());
@@ -435,8 +471,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE site SET com.busy.util.DatabaseColumn@413c67c9=?,com.busy.util.DatabaseColumn@38f28135=?,com.busy.util.DatabaseColumn@2d90b817=?,com.busy.util.DatabaseColumn@797ec322=?,com.busy.util.DatabaseColumn@5b5ee1eb=?,com.busy.util.DatabaseColumn@7789389c=?,com.busy.util.DatabaseColumn@5ff1667a=?,com.busy.util.DatabaseColumn@5019d975=?,com.busy.util.DatabaseColumn@7ce42b24=?,com.busy.util.DatabaseColumn@4297b1fc=?,com.busy.util.DatabaseColumn@1681cd62=?,com.busy.util.DatabaseColumn@84d7cb6=?,com.busy.util.DatabaseColumn@55addb90=? WHERE SiteId=?;");                    
-                preparedStatement.setInt(0, obj.getSiteId());
+                prepareStatement("UPDATE site SET SiteName=?,Domain=?,Mode=?,Url=?,LogoTitle=?,LogoImageUrl=?,UseAsStore=?,SiteStatus=?,Locale=?,TemplateId=?,SiteEmailId=?,DashboardId=?,TenantId=? WHERE SiteId=?;");                    
                 preparedStatement.setString(1, obj.getSiteName());
                 preparedStatement.setString(2, obj.getDomain());
                 preparedStatement.setInt(3, obj.getMode());
@@ -700,6 +735,100 @@ site.setUserGroupList(new UserGroupDaoImpl().findByColumn("SiteId", site.getSite
             site.setUserGroupList(new UserGroupDaoImpl().findByColumn("SiteId", site.getSiteId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedTemplate(Site site)
+        {            
+            try
+            {                 
+                getRecordById("Template", site.getTemplateId().toString());
+                site.setTemplate(Template.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getTemplate error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedSiteEmail(Site site)
+        {            
+            try
+            {                 
+                getRecordById("SiteEmail", site.getSiteEmailId().toString());
+                site.setSiteEmail(SiteEmail.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getSiteEmail error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedDashboard(Site site)
+        {            
+            try
+            {                 
+                getRecordById("Dashboard", site.getDashboardId().toString());
+                site.setDashboard(Dashboard.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getDashboard error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedTenant(Site site)
+        {            
+            try
+            {                 
+                getRecordById("Tenant", site.getTenantId().toString());
+                site.setTenant(Tenant.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getTenant error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedTemplateWithInfo(Site site)
+        {            
+            site.setTemplate(new TemplateDaoImpl().findWithInfo(site.getTemplateId()));
+        }
+        
+        public void getRelatedSiteEmailWithInfo(Site site)
+        {            
+            site.setSiteEmail(new SiteEmailDaoImpl().findWithInfo(site.getSiteEmailId()));
+        }
+        
+        public void getRelatedDashboardWithInfo(Site site)
+        {            
+            site.setDashboard(new DashboardDaoImpl().findWithInfo(site.getDashboardId()));
+        }
+        
+        public void getRelatedTenantWithInfo(Site site)
+        {            
+            site.setTenant(new TenantDaoImpl().findWithInfo(site.getTenantId()));
+        }
+          
+        
     }
 

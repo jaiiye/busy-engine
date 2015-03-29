@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public StateProvince find(Integer id)
         {
             return findByColumn("StateProvinceId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public StateProvince findWithInfo(Integer id)
+        {
+            StateProvince stateProvince = findByColumn("StateProvinceId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Country", stateProvince.getCountryId().toString());
+                    stateProvince.setCountry(Country.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object StateProvince method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return stateProvince;
         }
         
         @Override
@@ -343,8 +370,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO state_province(StateProvinceId,Name,Abbreviation,CountryId,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getStateProvinceId());
+                prepareStatement("INSERT INTO state_province(Name,Abbreviation,CountryId) VALUES (?,?,?);");                    
                 preparedStatement.setString(1, obj.getName());
                 preparedStatement.setString(2, obj.getAbbreviation());
                 preparedStatement.setInt(3, obj.getCountryId());
@@ -388,8 +414,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE state_province SET com.busy.util.DatabaseColumn@24858c69=?,com.busy.util.DatabaseColumn@2964d7ab=?,com.busy.util.DatabaseColumn@21ed3f1f=? WHERE StateProvinceId=?;");                    
-                preparedStatement.setInt(0, obj.getStateProvinceId());
+                prepareStatement("UPDATE state_province SET Name=?,Abbreviation=?,CountryId=? WHERE StateProvinceId=?;");                    
                 preparedStatement.setString(1, obj.getName());
                 preparedStatement.setString(2, obj.getAbbreviation());
                 preparedStatement.setInt(3, obj.getCountryId());
@@ -604,6 +629,34 @@ state_province.setTaxRateList(new TaxRateDaoImpl().findByColumn("StateProvinceId
             state_province.setTaxRateList(new TaxRateDaoImpl().findByColumn("StateProvinceId", state_province.getStateProvinceId().toString(),null,null));
         }        
         
-                             
+            
+        
+        
+        public void getRelatedCountry(StateProvince state_province)
+        {            
+            try
+            {                 
+                getRecordById("Country", state_province.getCountryId().toString());
+                state_province.setCountry(Country.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getCountry error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedCountryWithInfo(StateProvince state_province)
+        {            
+            state_province.setCountry(new CountryDaoImpl().findWithInfo(state_province.getCountryId()));
+        }
+          
+        
     }
 

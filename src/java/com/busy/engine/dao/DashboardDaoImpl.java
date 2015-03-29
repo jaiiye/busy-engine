@@ -146,6 +146,16 @@
         }
         
         @Override
+        public Dashboard findWithInfo(Integer id)
+        {
+            Dashboard dashboard = findByColumn("DashboardId", id.toString(), null, null).get(0);
+            
+            
+            
+            return dashboard;
+        }
+        
+        @Override
         public ArrayList<Dashboard> findAll(Integer limit, Integer offset)
         {
             ArrayList<Dashboard> dashboardList = new ArrayList<Dashboard>();
@@ -326,8 +336,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO dashboard(DashboardId,UserCount,BlogPostCount,ItemCount,OrderCount,SiteFileCount,ImageCount,BlogCount,CommentCount,PageCount,FormCount,SliderCount,ItemBrandCount,CategoryCount,ItemOptionCount,FileCount,FolderCount,EmailCount,) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getDashboardId());
+                prepareStatement("INSERT INTO dashboard(UserCount,BlogPostCount,ItemCount,OrderCount,SiteFileCount,ImageCount,BlogCount,CommentCount,PageCount,FormCount,SliderCount,ItemBrandCount,CategoryCount,ItemOptionCount,FileCount,FolderCount,EmailCount) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setInt(1, obj.getUserCount());
                 preparedStatement.setInt(2, obj.getBlogPostCount());
                 preparedStatement.setInt(3, obj.getItemCount());
@@ -399,8 +408,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE dashboard SET com.busy.util.DatabaseColumn@1a0a1f0b=?,com.busy.util.DatabaseColumn@5f87f97c=?,com.busy.util.DatabaseColumn@15ac6969=?,com.busy.util.DatabaseColumn@4039ab31=?,com.busy.util.DatabaseColumn@a01067a=?,com.busy.util.DatabaseColumn@6aad525f=?,com.busy.util.DatabaseColumn@1c3c8942=?,com.busy.util.DatabaseColumn@1151d9d7=?,com.busy.util.DatabaseColumn@13612f51=?,com.busy.util.DatabaseColumn@13dea8c8=?,com.busy.util.DatabaseColumn@6bd04568=?,com.busy.util.DatabaseColumn@7450b6a4=?,com.busy.util.DatabaseColumn@6ed104d8=?,com.busy.util.DatabaseColumn@8af6922=?,com.busy.util.DatabaseColumn@61bd965a=?,com.busy.util.DatabaseColumn@10a9f95f=?,com.busy.util.DatabaseColumn@7638c856=? WHERE DashboardId=?;");                    
-                preparedStatement.setInt(0, obj.getDashboardId());
+                prepareStatement("UPDATE dashboard SET UserCount=?,BlogPostCount=?,ItemCount=?,OrderCount=?,SiteFileCount=?,ImageCount=?,BlogCount=?,CommentCount=?,PageCount=?,FormCount=?,SliderCount=?,ItemBrandCount=?,CategoryCount=?,ItemOptionCount=?,FileCount=?,FolderCount=?,EmailCount=? WHERE DashboardId=?;");                    
                 preparedStatement.setInt(1, obj.getUserCount());
                 preparedStatement.setInt(2, obj.getBlogPostCount());
                 preparedStatement.setInt(3, obj.getItemCount());
@@ -613,6 +621,12 @@ dashboard.setTenantList(new TenantDaoImpl().findByColumn("DashboardId", dashboar
             dashboard.setTenantList(new TenantDaoImpl().findByColumn("DashboardId", dashboard.getDashboardId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

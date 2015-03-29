@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public FormFieldType find(Integer id)
         {
             return findByColumn("FormFieldTypeId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public FormFieldType findWithInfo(Integer id)
+        {
+            FormFieldType formFieldType = findByColumn("FormFieldTypeId", id.toString(), null, null).get(0);
+            
+            
+            
+            return formFieldType;
         }
         
         @Override
@@ -312,8 +321,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO form_field_type(FormFieldTypeId,TypeName,InputType,) VALUES (?,?);");                    
-                preparedStatement.setInt(0, obj.getFormFieldTypeId());
+                prepareStatement("INSERT INTO form_field_type(TypeName,InputType) VALUES (?,?);");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getInputType());
                 
@@ -355,8 +363,7 @@
                 FormFieldType.checkColumnSize(obj.getInputType(), 45);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE form_field_type SET com.busy.util.DatabaseColumn@5b338dbc=?,com.busy.util.DatabaseColumn@7b408f30=? WHERE FormFieldTypeId=?;");                    
-                preparedStatement.setInt(0, obj.getFormFieldTypeId());
+                prepareStatement("UPDATE form_field_type SET TypeName=?,InputType=? WHERE FormFieldTypeId=?;");                    
                 preparedStatement.setString(1, obj.getTypeName());
                 preparedStatement.setString(2, obj.getInputType());
                 preparedStatement.setInt(3, obj.getFormFieldTypeId());
@@ -548,6 +555,12 @@
             form_field_type.setFormFieldList(new FormFieldDaoImpl().findByColumn("FormFieldTypeId", form_field_type.getFormFieldTypeId().toString(),null,null));
         }        
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 

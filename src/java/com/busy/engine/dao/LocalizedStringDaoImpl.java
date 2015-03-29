@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public LocalizedString find(Integer id)
         {
             return findByColumn("LocalizedStringId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public LocalizedString findWithInfo(Integer id)
+        {
+            LocalizedString localizedString = findByColumn("LocalizedStringId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("TextString", localizedString.getTextStringId().toString());
+                    localizedString.setTextString(TextString.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object LocalizedString method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return localizedString;
         }
         
         @Override
@@ -343,8 +370,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO localized_string(LocalizedStringId,Locale,StringValue,TextStringId,) VALUES (?,?,?);");                    
-                preparedStatement.setInt(0, obj.getLocalizedStringId());
+                prepareStatement("INSERT INTO localized_string(Locale,StringValue,TextStringId) VALUES (?,?,?);");                    
                 preparedStatement.setInt(1, obj.getLocale());
                 preparedStatement.setString(2, obj.getStringValue());
                 preparedStatement.setInt(3, obj.getTextStringId());
@@ -388,8 +414,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE localized_string SET com.busy.util.DatabaseColumn@7d6ade4e=?,com.busy.util.DatabaseColumn@37dc0238=?,com.busy.util.DatabaseColumn@194579f3=? WHERE LocalizedStringId=?;");                    
-                preparedStatement.setInt(0, obj.getLocalizedStringId());
+                prepareStatement("UPDATE localized_string SET Locale=?,StringValue=?,TextStringId=? WHERE LocalizedStringId=?;");                    
                 preparedStatement.setInt(1, obj.getLocale());
                 preparedStatement.setString(2, obj.getStringValue());
                 preparedStatement.setInt(3, obj.getTextStringId());
@@ -592,6 +617,34 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedTextString(LocalizedString localized_string)
+        {            
+            try
+            {                 
+                getRecordById("TextString", localized_string.getTextStringId().toString());
+                localized_string.setTextString(TextString.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getTextString error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedTextStringWithInfo(LocalizedString localized_string)
+        {            
+            localized_string.setTextString(new TextStringDaoImpl().findWithInfo(localized_string.getTextStringId()));
+        }
+          
+        
     }
 

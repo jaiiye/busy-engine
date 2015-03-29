@@ -1,64 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-                                           
-                                           
-                                           
-                                           
-  
-            
-  
-  
- 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       
-
-
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.busy.engine.dao.*"%>
@@ -282,7 +221,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div  class="col-md-10">
                                                         <input type="text" name="orderId" class="form-control" value="${customer_order.orderId}" />
                                                         <select name="orderId" class="form-control">
-                                                            <%CustomerOrder x = (CustomerOrder) pageContext.getAttribute("customer_order"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("order", x.getOrderId().toString(), 2)%>
                                                         </select>
                                                     </div>
@@ -293,7 +231,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div  class="col-md-10">
                                                         <input type="text" name="discountId" class="form-control" value="${customer_order.discountId}" />
                                                         <select name="discountId" class="form-control">
-                                                            <%CustomerOrder x = (CustomerOrder) pageContext.getAttribute("customer_order"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("discount", x.getDiscountId().toString(), 2)%>
                                                         </select>
                                                     </div>

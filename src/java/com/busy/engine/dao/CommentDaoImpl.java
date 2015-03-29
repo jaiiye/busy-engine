@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,40 @@
         public Comment find(Integer id)
         {
             return findByColumn("CommentId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Comment findWithInfo(Integer id)
+        {
+            Comment comment = findByColumn("CommentId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("User", comment.getUserId().toString());
+                    comment.setUser(User.process(rs));               
+                
+                    getRecordById("BlogPost", comment.getBlogPostId().toString());
+                    comment.setBlogPost(BlogPost.process(rs));               
+                
+                    getRecordById("ItemReview", comment.getItemReviewId().toString());
+                    comment.setItemReview(ItemReview.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object Comment method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return comment;
         }
         
         @Override
@@ -359,8 +392,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO comment(CommentId,Title,Content,Date,CommentStatus,UserId,BlogPostId,ItemReviewId,) VALUES (?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getCommentId());
+                prepareStatement("INSERT INTO comment(Title,Content,Date,CommentStatus,UserId,BlogPostId,ItemReviewId) VALUES (?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getContent());
                 preparedStatement.setDate(3, new java.sql.Date(obj.getDate().getTime()));
@@ -412,8 +444,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE comment SET com.busy.util.DatabaseColumn@21f4875a=?,com.busy.util.DatabaseColumn@37c6d1a7=?,com.busy.util.DatabaseColumn@4192b1fc=?,com.busy.util.DatabaseColumn@7600bc55=?,com.busy.util.DatabaseColumn@73cb3b98=?,com.busy.util.DatabaseColumn@720187af=?,com.busy.util.DatabaseColumn@26c8c542=? WHERE CommentId=?;");                    
-                preparedStatement.setInt(0, obj.getCommentId());
+                prepareStatement("UPDATE comment SET Title=?,Content=?,Date=?,CommentStatus=?,UserId=?,BlogPostId=?,ItemReviewId=? WHERE CommentId=?;");                    
                 preparedStatement.setString(1, obj.getTitle());
                 preparedStatement.setString(2, obj.getContent());
                 preparedStatement.setDate(3, new java.sql.Date(obj.getDate().getTime()));
@@ -626,6 +657,78 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedUser(Comment comment)
+        {            
+            try
+            {                 
+                getRecordById("User", comment.getUserId().toString());
+                comment.setUser(User.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getUser error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedBlogPost(Comment comment)
+        {            
+            try
+            {                 
+                getRecordById("BlogPost", comment.getBlogPostId().toString());
+                comment.setBlogPost(BlogPost.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getBlogPost error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+        
+        public void getRelatedItemReview(Comment comment)
+        {            
+            try
+            {                 
+                getRecordById("ItemReview", comment.getItemReviewId().toString());
+                comment.setItemReview(ItemReview.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getItemReview error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedUserWithInfo(Comment comment)
+        {            
+            comment.setUser(new UserDaoImpl().findWithInfo(comment.getUserId()));
+        }
+        
+        public void getRelatedBlogPostWithInfo(Comment comment)
+        {            
+            comment.setBlogPost(new BlogPostDaoImpl().findWithInfo(comment.getBlogPostId()));
+        }
+        
+        public void getRelatedItemReviewWithInfo(Comment comment)
+        {            
+            comment.setItemReview(new ItemReviewDaoImpl().findWithInfo(comment.getItemReviewId()));
+        }
+          
+        
     }
 

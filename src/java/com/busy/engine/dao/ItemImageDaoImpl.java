@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,34 @@
         public ItemImage find(Integer id)
         {
             return findByColumn("ItemImageId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public ItemImage findWithInfo(Integer id)
+        {
+            ItemImage itemImage = findByColumn("ItemImageId", id.toString(), null, null).get(0);
+            
+            
+                try
+                {
+
+                
+                    getRecordById("Item", itemImage.getItemId().toString());
+                    itemImage.setItem(Item.process(rs));               
+                  
+
+                }
+                catch (SQLException ex)
+                {
+                        System.out.println("Object ItemImage method findWithInfo(Integer id) error: " + ex.getMessage());
+                }
+                finally
+                {
+                    closeConnection();
+                }
+            
+            
+            return itemImage;
         }
         
         @Override
@@ -345,8 +372,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO item_image(ItemImageId,ImageName,ThumbnailName,AlternateText,Rank,ItemId,) VALUES (?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getItemImageId());
+                prepareStatement("INSERT INTO item_image(ImageName,ThumbnailName,AlternateText,Rank,ItemId) VALUES (?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getImageName());
                 preparedStatement.setString(2, obj.getThumbnailName());
                 preparedStatement.setString(3, obj.getAlternateText());
@@ -394,8 +420,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE item_image SET com.busy.util.DatabaseColumn@705dc3b3=?,com.busy.util.DatabaseColumn@5cd6142b=?,com.busy.util.DatabaseColumn@62f4c062=?,com.busy.util.DatabaseColumn@52d0a858=?,com.busy.util.DatabaseColumn@4c8ea9ea=? WHERE ItemImageId=?;");                    
-                preparedStatement.setInt(0, obj.getItemImageId());
+                prepareStatement("UPDATE item_image SET ImageName=?,ThumbnailName=?,AlternateText=?,Rank=?,ItemId=? WHERE ItemImageId=?;");                    
                 preparedStatement.setString(1, obj.getImageName());
                 preparedStatement.setString(2, obj.getThumbnailName());
                 preparedStatement.setString(3, obj.getAlternateText());
@@ -600,6 +625,34 @@
         }
         
         
-                             
+            
+        
+        
+        public void getRelatedItem(ItemImage item_image)
+        {            
+            try
+            {                 
+                getRecordById("Item", item_image.getItemId().toString());
+                item_image.setItem(Item.process(rs));                                                       
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("getItem error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }                            
+        }
+          
+        
+                
+        
+        public void getRelatedItemWithInfo(ItemImage item_image)
+        {            
+            item_image.setItem(new ItemDaoImpl().findWithInfo(item_image.getItemId()));
+        }
+          
+        
     }
 

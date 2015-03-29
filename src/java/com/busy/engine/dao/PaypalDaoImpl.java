@@ -57,7 +57,6 @@
 
     import com.busy.engine.data.BasicConnection;
     import com.busy.engine.entity.*;
-    import com.busy.engine.dao.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
     import java.io.Serializable;
@@ -144,6 +143,16 @@
         public Paypal find(Integer id)
         {
             return findByColumn("PaypalId", id.toString(), null, null).get(0);
+        }
+        
+        @Override
+        public Paypal findWithInfo(Integer id)
+        {
+            Paypal paypal = findByColumn("PaypalId", id.toString(), null, null).get(0);
+            
+            
+            
+            return paypal;
         }
         
         @Override
@@ -321,8 +330,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO paypal(PaypalId,PayPalUrl,CurrencyCode,ApiUsername,ApiPassword,ApiSignature,ApiEndpoint,ActiveProfile,ReturnUrl,CancelUrl,PaymentType,Environment,) VALUES (?,?,?,?,?,?,?,?,?,?,?);");                    
-                preparedStatement.setInt(0, obj.getPaypalId());
+                prepareStatement("INSERT INTO paypal(PayPalUrl,CurrencyCode,ApiUsername,ApiPassword,ApiSignature,ApiEndpoint,ActiveProfile,ReturnUrl,CancelUrl,PaymentType,Environment) VALUES (?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getPayPalUrl());
                 preparedStatement.setString(2, obj.getCurrencyCode());
                 preparedStatement.setString(3, obj.getApiUsername());
@@ -382,8 +390,7 @@
                 Paypal.checkColumnSize(obj.getEnvironment(), 15);
                                   
                 openConnection();                           
-                prepareStatement("UPDATE paypal SET com.busy.util.DatabaseColumn@729edb46=?,com.busy.util.DatabaseColumn@41d5b23a=?,com.busy.util.DatabaseColumn@1e80f954=?,com.busy.util.DatabaseColumn@4be8bc2d=?,com.busy.util.DatabaseColumn@4f281afd=?,com.busy.util.DatabaseColumn@23802540=?,com.busy.util.DatabaseColumn@3a53323d=?,com.busy.util.DatabaseColumn@3454f88e=?,com.busy.util.DatabaseColumn@3b24e30b=?,com.busy.util.DatabaseColumn@19ac6b0a=?,com.busy.util.DatabaseColumn@3a4d70d8=? WHERE PaypalId=?;");                    
-                preparedStatement.setInt(0, obj.getPaypalId());
+                prepareStatement("UPDATE paypal SET PayPalUrl=?,CurrencyCode=?,ApiUsername=?,ApiPassword=?,ApiSignature=?,ApiEndpoint=?,ActiveProfile=?,ReturnUrl=?,CancelUrl=?,PaymentType=?,Environment=? WHERE PaypalId=?;");                    
                 preparedStatement.setString(1, obj.getPayPalUrl());
                 preparedStatement.setString(2, obj.getCurrencyCode());
                 preparedStatement.setString(3, obj.getApiUsername());
@@ -578,6 +585,12 @@
         }
         
         
-                             
+            
+        
+          
+        
+                
+          
+        
     }
 
