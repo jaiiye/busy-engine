@@ -1,8 +1,10 @@
-<%@page import="com.busy.engine.domain.MetaTag"%>
-<%@page import="com.busy.engine.domain.Page"%>
+<%@page import="com.busy.engine.entity.*"%>
 <%
-    Page p = (Page) request.getAttribute("pageInfo");    
-    MetaTag mt = p.getMetaTag();
+    Page pageInfo = (Page) request.getAttribute("pageInfo");    
+    MetaTag mt = pageInfo.getMetaTag();
+    if(mt == null){
+        mt = new MetaTag(1, "Title not defined", "Description not defined","keywords, not defined");
+    }
 %>
 
 <title><%= mt.getTitle() %></title>	    
