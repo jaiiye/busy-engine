@@ -16,8 +16,7 @@ java.util.Dictionary,
 java.util.Hashtable,
 java.io.IOException"%>
 
-<%@ page import="com.transitionsoft.*" %>
-<%@ page import="com.transitionsoft.dao.*" %>
+<%@ page import="com.busy.engine.util.*" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 

@@ -1,8 +1,9 @@
 package com.busy.engine.listener;
 
 import com.busy.engine.dao.*;
+import com.busy.engine.data.*;
+import java.util.AbstractMap;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletContextAttributeEvent;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -30,6 +31,16 @@ public class ContextListener implements ServletContextListener
         context.setAttribute("userRoleDao", new UserRoleDaoImpl(true));
         context.setAttribute("siteDao", new SiteDaoImpl());
         context.setAttribute("itemCategoryDao", new ItemCategoryDaoImpl());
+        context.setAttribute("textStringDao", new TextStringDaoImpl());
+        context.setAttribute("localizedStringDao", new LocalizedStringDaoImpl());
+        
+        
+        System.out.println("Initializing Localizations...");
+//        for (AbstractMap.SimpleEntry e : Database.getLanguageStrings())
+//        {
+//            application.setAttribute((String) e.getKey(), e.getValue());
+//            System.out.println("setting Application attribute: (" + e.getKey() + ":" + e.getValue() + ")");
+//        }
         
 //        context.setAttribute("itemAttributeDao", new ItemAttributeDaoImpl());
 //        context.setAttribute("itemAttributeTypeDao", new ItemAttributeTypeDaoImpl());

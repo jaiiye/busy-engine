@@ -1,38 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.service;
 
 import com.busy.engine.dao.LocalizedStringDao;
@@ -50,23 +15,24 @@ import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Date;
 
-public class LocalizedStringServiceImpl extends AbstractService implements LocalizedStringService 
+public class LocalizedStringServiceImpl extends AbstractService implements LocalizedStringService
 {
-    protected LocalizedStringDao localizedStringDao;    
+
+    protected LocalizedStringDao localizedStringDao;
     protected UserDao userDao;
     protected UserRoleDao userRoleDao;
-    
-    public LocalizedStringServiceImpl() 
+
+    public LocalizedStringServiceImpl()
     {
-        super();        
+        super();
         localizedStringDao = new LocalizedStringDaoImpl();
         userDao = new UserDaoImpl();
         userRoleDao = new UserRoleDaoImpl();
     }
-    
-    public LocalizedStringServiceImpl(ServletContext context) 
+
+    public LocalizedStringServiceImpl(ServletContext context)
     {
-        super();        
+        super();
         localizedStringDao = (LocalizedStringDao) context.getAttribute("localizedStringDao");
         userDao = (UserDao) context.getAttribute("userDao");
         userRoleDao = (UserRoleDao) context.getAttribute("userRoleDao");
@@ -77,64 +43,64 @@ public class LocalizedStringServiceImpl extends AbstractService implements Local
     {
         try
         {
-            if (isValidUser(userName, userDao)) 
+            if (isValidUser(userName, userDao))
             {
                 return ResultFactory.getSuccessResult(localizedStringDao.find(id));
             }
-            else 
-            {            
+            else
+            {
                 return ResultFactory.getFailResult(USER_INVALID);
             }
         }
         catch (Exception ex)
-        {            
-            return ResultFactory.getFailResult(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public Result<List<LocalizedString>> findAll(String userName) 
-    {
-        try
         {
-            if (isValidUser(userName, userDao)) 
-            {
-                List<LocalizedString> localizedStringList =  localizedStringDao.findAll(null, null);
-                return ResultFactory.getSuccessResult(localizedStringList);
-            } 
-            else 
-            {
-                return ResultFactory.getFailResult(USER_INVALID);
-            }
-        }
-        catch (Exception ex)
-        {            
             return ResultFactory.getFailResult(ex.getMessage());
         }
     }
 
     @Override
-    public Result<LocalizedString> store(String userName, Integer id, Integer locale, String stringValue, Integer textStringId)
-    {        
+    public Result<List<LocalizedString>> findAll(String userName)
+    {
+        try
+        {
+            if (isValidUser(userName, userDao))
+            {
+                List<LocalizedString> localizedStringList = localizedStringDao.findAll(null, null);
+                return ResultFactory.getSuccessResult(localizedStringList);
+            }
+            else
+            {
+                return ResultFactory.getFailResult(USER_INVALID);
+            }
+        }
+        catch (Exception ex)
+        {
+            return ResultFactory.getFailResult(ex.getMessage());
+        }
+    }
+
+    @Override
+    public Result<LocalizedString> store(String userName, Integer id, String locale, String stringValue, Integer textStringId)
+    {
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
-                        
-        if (! checkUserRoles(roles)) 
+
+        if (!checkUserRoles(roles))
         {
             return ResultFactory.getFailResult(ROLE_INVALID);
         }
 
         LocalizedString localizedString;
 
-        if (id == null) 
+        if (id == null)
         {
             localizedString = new LocalizedString();
-        } 
-        else 
+        }
+        else
         {
             localizedString = localizedStringDao.find(id);
 
-            if (localizedString == null) 
+            if (localizedString == null)
             {
                 return ResultFactory.getFailResult("Unable to find LocalizedString instance with Id=" + id);
             }
@@ -143,13 +109,12 @@ public class LocalizedStringServiceImpl extends AbstractService implements Local
         localizedString.setLocale(locale);
         localizedString.setStringValue(stringValue);
         localizedString.setTextStringId(textStringId);
-        
-        
-        if (localizedString.getId() == null) 
+
+        if (localizedString.getId() == null)
         {
             localizedStringDao.add(localizedString);
-        } 
-        else 
+        }
+        else
         {
             localizedString = localizedStringDao.update(localizedString);
         }
@@ -157,50 +122,48 @@ public class LocalizedStringServiceImpl extends AbstractService implements Local
         return ResultFactory.getSuccessResult(localizedString);
 
     }
-  
+
     @Override
     public Result<LocalizedString> remove(String userName, Integer id)
     {
         User actionUser = userDao.findByColumn(User.PROP_USERNAME, userName, null, null).get(0);
         List<UserRole> roles = userRoleDao.findByColumn(UserRole.PROP_USER_NAME, actionUser.getUsername(), null, null);
-                        
-        if (! checkUserRoles(roles)) 
+
+        if (!checkUserRoles(roles))
         {
             return ResultFactory.getFailResult(ROLE_INVALID);
         }
 
-        if (id == null) 
+        if (id == null)
         {
             return ResultFactory.getFailResult("Unable to remove LocalizedString [null id]");
-        } 
+        }
 
         LocalizedString localizedString = localizedStringDao.find(id);
 
-        if (localizedString == null) 
+        if (localizedString == null)
         {
             return ResultFactory.getFailResult("Unable to load LocalizedString for removal with id=" + id);
-        } 
-        else 
+        }
+        else
         {
             //if all related objects are empty for the given object then we can erase this object
             localizedStringDao.getRelatedObjects(localizedString);
-            
+
             String relatedObjectNames = "";
             boolean canBeDeleted = true;
-            
-                          
-            
-            if(canBeDeleted)
-            {                
+
+            if (canBeDeleted)
+            {
                 localizedStringDao.remove(localizedString);
-                
+
                 String msg = "LocalizedString with Id: " + localizedString.getId() + " was deleted by " + userName;
-                return ResultFactory.getSuccessResultMsg(msg);                
+                return ResultFactory.getSuccessResultMsg(msg);
             }
-            else 
+            else
             {
                 return ResultFactory.getFailResult("LocalizedString is used with to [" + relatedObjectNames + "] and could not be deleted");
-            }            
+            }
         }
     }
 }

@@ -1,44 +1,8 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package com.busy.engine.web;
 
 import com.busy.engine.entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import javax.json.JsonObject;
 import javax.servlet.ServletException;
 import com.busy.engine.util.PathProcessor;
@@ -49,10 +13,10 @@ import com.busy.engine.service.LocalizedStringServiceImpl;
 import static com.busy.engine.web.AbstractHandler.getJsonErrorMsg;
 import static com.busy.engine.web.SecurityHelper.getSessionUser;
 
-
 @WebServlet("/rest/LocalizedString/*")
 public class LocalizedStringHandler extends AbstractHandler
 {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
@@ -88,7 +52,6 @@ public class LocalizedStringHandler extends AbstractHandler
         }
     }
 
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
@@ -109,7 +72,7 @@ public class LocalizedStringHandler extends AbstractHandler
                 switch (new PathProcessor(request.getPathInfo()).getOperation())
                 {
                     case "store":
-                        generateStoreServiceResult(new LocalizedStringServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("localizedStringId")), getIntegerValue(obj.get("locale")), obj.getString("stringValue"), getIntegerValue(obj.get("textStringId"))), out);
+                        generateStoreServiceResult(new LocalizedStringServiceImpl(request.getSession().getServletContext()).store(sessionUser.getUsername(), getIntegerValue(obj.get("localizedStringId")), obj.getString("locale"), obj.getString("stringValue"), getIntegerValue(obj.get("textStringId"))), out);
                         break;
                     case "remove":
                         generateRemoveServiceResult(new LocalizedStringServiceImpl(request.getSession().getServletContext()).remove(sessionUser.getUsername(), getIntegerValue(obj.get("localizedStringId"))), out);
@@ -124,7 +87,7 @@ public class LocalizedStringHandler extends AbstractHandler
                 out.print(getJsonErrorMsg(ex.getMessage()));
             }
         }
-    }    
+    }
 
     @Override
     public String getServletInfo()
@@ -132,4 +95,3 @@ public class LocalizedStringHandler extends AbstractHandler
         return "Handles the requests for LocalizedString resource with the following format: rest/LocalizedString/{Id:optional}";
     }
 }
-

@@ -1,18 +1,18 @@
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
-<%@page import="com.busy.dao.*"%>
-<%@page import="com.transitionsoft.*"%>
+<%@page import="com.busy.engine.dao.*"%>
+<%@page import="com.busy.engine.entity.*"%>
 <%@page contentType="text/html; charset=utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
-ArrayList<Image> imageList = new ArrayList<Image>();
+ArrayList<SiteImage> imageList = new ArrayList<SiteImage>();
 if (request.getParameter("column") != null && request.getParameter("columnValue") != null)
 {
-    imageList = Image.getAllImageByColumn(request.getParameter("column"), request.getParameter("columnValue"));
+    imageList = new SiteImageDaoImpl().findByColumn(request.getParameter("column"), request.getParameter("columnValue"), null,null);
 }
 else
 {
-    imageList = Image.getAllImage();
+    imageList = new SiteImageDaoImpl().findAll(null,null);
 }
 request.setAttribute("imageList", imageList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -244,8 +244,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label class="col-md-2 control-label" for="typeId">Type:</label>
                                                     <div  class="col-md-9">
                                                         <select name="typeId" class="form-control" >
-                                                           <% Image img = (Image) pageContext.getAttribute("image"); %>
-                                                           <%= Database.generateSelectOptionsFromTableAndColumn("image_type", img.getTypeId().toString(), 2)%>
+                                                           <% SiteImage img = (SiteImage) pageContext.getAttribute("image"); %>
+                                                           <%= Database.generateSelectOptionsFromTableAndColumn("image_type", img.getImageTypeId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>

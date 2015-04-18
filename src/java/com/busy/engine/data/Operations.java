@@ -2211,7 +2211,7 @@ public class Operations extends HttpServlet
                 switch (Integer.parseInt(request.getParameter("action")))
                 {
                     case 1: //create                        
-                        int id = localizedStringDao.add(new LocalizedString(null, Integer.parseInt(request.getParameter("locale")), request.getParameter("stringValue"), Integer.parseInt(request.getParameter("textStringId"))));
+                        int id = localizedStringDao.add(new LocalizedString(null, request.getParameter("locale"), request.getParameter("stringValue"), Integer.parseInt(request.getParameter("textStringId"))));
                         if (id != 0)
                         {
                             Database.RecordUserObjectCreationAction(user.getUserId().toString(), user.getUsername(), currentTime, "LocalizedString", id);
@@ -2220,7 +2220,7 @@ public class Operations extends HttpServlet
                         response.sendRedirect("admin/LocalizedStringUI.jsp?SuccessMsg=Added LocalizedString Successfully!");
                         break;
                     case 2: //update            
-                        localizedStringDao.update(new LocalizedString(Integer.parseInt(request.getParameter("localizedStringId")), Integer.parseInt(request.getParameter("locale")), request.getParameter("stringValue"), Integer.parseInt(request.getParameter("textStringId"))));
+                        localizedStringDao.update(new LocalizedString(Integer.parseInt(request.getParameter("localizedStringId")), request.getParameter("locale"), request.getParameter("stringValue"), Integer.parseInt(request.getParameter("textStringId"))));
                         Database.RecordUserObjectUpdateAction(user.getUserId().toString(), user.getUsername(), currentTime, "LocalizedString", Integer.parseInt(request.getParameter("localizedStringId")));
                         response.sendRedirect("admin/LocalizedStringUI.jsp?id=" + request.getParameter("localizedStringId") + "&SuccessMsg=Updated LocalizedString Successfully!");
                         break;
