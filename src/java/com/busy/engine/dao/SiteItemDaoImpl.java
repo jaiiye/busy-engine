@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("Site", siteItem.getSiteId().toString());
+                    getRecordById("site", siteItem.getSiteId().toString());
                     siteItem.setSite(Site.process(rs));               
                 
-                    getRecordById("Item", siteItem.getItemId().toString());
+                    getRecordById("item", siteItem.getItemId().toString());
                     siteItem.setItem(Item.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             SiteItem siteItem = (SiteItem) e.getValue();
 
                             
-                                getRecordById("Site", siteItem.getSiteId().toString());
+                                getRecordById("site", siteItem.getSiteId().toString());
                                 siteItem.setSite(Site.process(rs));               
                             
-                                getRecordById("Item", siteItem.getItemId().toString());
+                                getRecordById("item", siteItem.getItemId().toString());
                                 siteItem.setItem(Item.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (SiteItem siteItem : siteItemList)
                         {                        
                             
-                                getRecordById("Site", siteItem.getSiteId().toString());
+                                getRecordById("site", siteItem.getSiteId().toString());
                                 siteItem.setSite(Site.process(rs));               
                             
-                                getRecordById("Item", siteItem.getItemId().toString());
+                                getRecordById("item", siteItem.getItemId().toString());
                                 siteItem.setItem(Item.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return siteItemList;
         } 
+        
+        @Override
+        public ArrayList<SiteItem> findByColumns(Column... columns)
+        {
+            ArrayList<SiteItem> siteItemList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(SiteItem.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("site_item", columns);
+                while (rs.next())
+                {
+                    siteItemList.add(SiteItem.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("SiteItem's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return siteItemList;
+        }
     
         @Override
         public int add(SiteItem obj)
@@ -465,10 +499,10 @@
                 try
                 { 
                     
-                            getRecordById("Site", site_item.getSiteId().toString());
+                            getRecordById("site", site_item.getSiteId().toString());
                             site_item.setSite(Site.process(rs));                                       
                     
-                            getRecordById("Item", site_item.getItemId().toString());
+                            getRecordById("item", site_item.getItemId().toString());
                             site_item.setItem(Item.process(rs));                                       
                     
                     }

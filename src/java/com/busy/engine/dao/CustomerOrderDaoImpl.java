@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,13 +158,13 @@
                 {
 
                 
-                    getRecordById("Customer", customerOrder.getCustomerId().toString());
+                    getRecordById("customer", customerOrder.getCustomerId().toString());
                     customerOrder.setCustomer(Customer.process(rs));               
                 
-                    getRecordById("Order", customerOrder.getOrderId().toString());
+                    getRecordById("order", customerOrder.getOrderId().toString());
                     customerOrder.setOrder(Order.process(rs));               
                 
-                    getRecordById("Discount", customerOrder.getDiscountId().toString());
+                    getRecordById("discount", customerOrder.getDiscountId().toString());
                     customerOrder.setDiscount(Discount.process(rs));               
                   
 
@@ -254,13 +257,13 @@
                             CustomerOrder customerOrder = (CustomerOrder) e.getValue();
 
                             
-                                getRecordById("Customer", customerOrder.getCustomerId().toString());
+                                getRecordById("customer", customerOrder.getCustomerId().toString());
                                 customerOrder.setCustomer(Customer.process(rs));               
                             
-                                getRecordById("Order", customerOrder.getOrderId().toString());
+                                getRecordById("order", customerOrder.getOrderId().toString());
                                 customerOrder.setOrder(Order.process(rs));               
                             
-                                getRecordById("Discount", customerOrder.getDiscountId().toString());
+                                getRecordById("discount", customerOrder.getDiscountId().toString());
                                 customerOrder.setDiscount(Discount.process(rs));               
                                                     
                         }
@@ -292,13 +295,13 @@
                         for (CustomerOrder customerOrder : customerOrderList)
                         {                        
                             
-                                getRecordById("Customer", customerOrder.getCustomerId().toString());
+                                getRecordById("customer", customerOrder.getCustomerId().toString());
                                 customerOrder.setCustomer(Customer.process(rs));               
                             
-                                getRecordById("Order", customerOrder.getOrderId().toString());
+                                getRecordById("order", customerOrder.getOrderId().toString());
                                 customerOrder.setOrder(Order.process(rs));               
                             
-                                getRecordById("Discount", customerOrder.getDiscountId().toString());
+                                getRecordById("discount", customerOrder.getDiscountId().toString());
                                 customerOrder.setDiscount(Discount.process(rs));               
                               
                         }
@@ -373,6 +376,37 @@
             }
             return customerOrderList;
         } 
+        
+        @Override
+        public ArrayList<CustomerOrder> findByColumns(Column... columns)
+        {
+            ArrayList<CustomerOrder> customerOrderList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(CustomerOrder.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("customer_order", columns);
+                while (rs.next())
+                {
+                    customerOrderList.add(CustomerOrder.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("CustomerOrder's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return customerOrderList;
+        }
     
         @Override
         public int add(CustomerOrder obj)
@@ -482,13 +516,13 @@
                 try
                 { 
                     
-                            getRecordById("Customer", customer_order.getCustomerId().toString());
+                            getRecordById("customer", customer_order.getCustomerId().toString());
                             customer_order.setCustomer(Customer.process(rs));                                       
                     
-                            getRecordById("Order", customer_order.getOrderId().toString());
+                            getRecordById("order", customer_order.getOrderId().toString());
                             customer_order.setOrder(Order.process(rs));                                       
                     
-                            getRecordById("Discount", customer_order.getDiscountId().toString());
+                            getRecordById("discount", customer_order.getDiscountId().toString());
                             customer_order.setDiscount(Discount.process(rs));                                       
                     
                     }

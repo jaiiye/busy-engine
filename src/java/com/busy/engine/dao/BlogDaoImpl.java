@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("BlogType", blog.getBlogTypeId().toString());
+                    getRecordById("blog_type", blog.getBlogTypeId().toString());
                     blog.setBlogType(BlogType.process(rs));               
                 
-                    getRecordById("KnowledgeBase", blog.getKnowledgeBaseId().toString());
+                    getRecordById("knowledge_base", blog.getKnowledgeBaseId().toString());
                     blog.setKnowledgeBase(KnowledgeBase.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             Blog blog = (Blog) e.getValue();
 
                             
-                                getRecordById("BlogType", blog.getBlogTypeId().toString());
+                                getRecordById("blog_type", blog.getBlogTypeId().toString());
                                 blog.setBlogType(BlogType.process(rs));               
                             
-                                getRecordById("KnowledgeBase", blog.getKnowledgeBaseId().toString());
+                                getRecordById("knowledge_base", blog.getKnowledgeBaseId().toString());
                                 blog.setKnowledgeBase(KnowledgeBase.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (Blog blog : blogList)
                         {                        
                             
-                                getRecordById("BlogType", blog.getBlogTypeId().toString());
+                                getRecordById("blog_type", blog.getBlogTypeId().toString());
                                 blog.setBlogType(BlogType.process(rs));               
                             
-                                getRecordById("KnowledgeBase", blog.getKnowledgeBaseId().toString());
+                                getRecordById("knowledge_base", blog.getKnowledgeBaseId().toString());
                                 blog.setKnowledgeBase(KnowledgeBase.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return blogList;
         } 
+        
+        @Override
+        public ArrayList<Blog> findByColumns(Column... columns)
+        {
+            ArrayList<Blog> blogList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Blog.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("blog", columns);
+                while (rs.next())
+                {
+                    blogList.add(Blog.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Blog's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return blogList;
+        }
     
         @Override
         public int add(Blog obj)
@@ -469,10 +503,10 @@
                 try
                 { 
                     
-                            getRecordById("BlogType", blog.getBlogTypeId().toString());
+                            getRecordById("blog_type", blog.getBlogTypeId().toString());
                             blog.setBlogType(BlogType.process(rs));                                       
                     
-                            getRecordById("KnowledgeBase", blog.getKnowledgeBaseId().toString());
+                            getRecordById("knowledge_base", blog.getKnowledgeBaseId().toString());
                             blog.setKnowledgeBase(KnowledgeBase.process(rs));                                       
                     
                     }

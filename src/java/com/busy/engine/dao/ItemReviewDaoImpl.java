@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Item", itemReview.getItemId().toString());
+                    getRecordById("item", itemReview.getItemId().toString());
                     itemReview.setItem(Item.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             ItemReview itemReview = (ItemReview) e.getValue();
 
                             
-                                getRecordById("Item", itemReview.getItemId().toString());
+                                getRecordById("item", itemReview.getItemId().toString());
                                 itemReview.setItem(Item.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (ItemReview itemReview : itemReviewList)
                         {                        
                             
-                                getRecordById("Item", itemReview.getItemId().toString());
+                                getRecordById("item", itemReview.getItemId().toString());
                                 itemReview.setItem(Item.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return itemReviewList;
         } 
+        
+        @Override
+        public ArrayList<ItemReview> findByColumns(Column... columns)
+        {
+            ArrayList<ItemReview> itemReviewList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ItemReview.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("item_review", columns);
+                while (rs.next())
+                {
+                    itemReviewList.add(ItemReview.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ItemReview's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return itemReviewList;
+        }
     
         @Override
         public int add(ItemReview obj)
@@ -464,7 +498,7 @@
                 try
                 { 
                     
-                            getRecordById("Item", item_review.getItemId().toString());
+                            getRecordById("item", item_review.getItemId().toString());
                             item_review.setItem(Item.process(rs));                                       
                     
                     }

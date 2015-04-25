@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("StateProvince", shipping.getStateProvinceId().toString());
+                    getRecordById("state_province", shipping.getStateProvinceId().toString());
                     shipping.setStateProvince(StateProvince.process(rs));               
                 
-                    getRecordById("Country", shipping.getCountryId().toString());
+                    getRecordById("country", shipping.getCountryId().toString());
                     shipping.setCountry(Country.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             Shipping shipping = (Shipping) e.getValue();
 
                             
-                                getRecordById("StateProvince", shipping.getStateProvinceId().toString());
+                                getRecordById("state_province", shipping.getStateProvinceId().toString());
                                 shipping.setStateProvince(StateProvince.process(rs));               
                             
-                                getRecordById("Country", shipping.getCountryId().toString());
+                                getRecordById("country", shipping.getCountryId().toString());
                                 shipping.setCountry(Country.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (Shipping shipping : shippingList)
                         {                        
                             
-                                getRecordById("StateProvince", shipping.getStateProvinceId().toString());
+                                getRecordById("state_province", shipping.getStateProvinceId().toString());
                                 shipping.setStateProvince(StateProvince.process(rs));               
                             
-                                getRecordById("Country", shipping.getCountryId().toString());
+                                getRecordById("country", shipping.getCountryId().toString());
                                 shipping.setCountry(Country.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return shippingList;
         } 
+        
+        @Override
+        public ArrayList<Shipping> findByColumns(Column... columns)
+        {
+            ArrayList<Shipping> shippingList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Shipping.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("shipping", columns);
+                while (rs.next())
+                {
+                    shippingList.add(Shipping.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Shipping's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return shippingList;
+        }
     
         @Override
         public int add(Shipping obj)
@@ -485,10 +519,10 @@
                 try
                 { 
                     
-                            getRecordById("StateProvince", shipping.getStateProvinceId().toString());
+                            getRecordById("state_province", shipping.getStateProvinceId().toString());
                             shipping.setStateProvince(StateProvince.process(rs));                                       
                     
-                            getRecordById("Country", shipping.getCountryId().toString());
+                            getRecordById("country", shipping.getCountryId().toString());
                             shipping.setCountry(Country.process(rs));                                       
                     
                     }

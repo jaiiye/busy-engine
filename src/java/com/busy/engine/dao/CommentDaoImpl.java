@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,13 +158,13 @@
                 {
 
                 
-                    getRecordById("User", comment.getUserId().toString());
+                    getRecordById("user", comment.getUserId().toString());
                     comment.setUser(User.process(rs));               
                 
-                    getRecordById("BlogPost", comment.getBlogPostId().toString());
+                    getRecordById("blog_post", comment.getBlogPostId().toString());
                     comment.setBlogPost(BlogPost.process(rs));               
                 
-                    getRecordById("ItemReview", comment.getItemReviewId().toString());
+                    getRecordById("item_review", comment.getItemReviewId().toString());
                     comment.setItemReview(ItemReview.process(rs));               
                   
 
@@ -254,13 +257,13 @@
                             Comment comment = (Comment) e.getValue();
 
                             
-                                getRecordById("User", comment.getUserId().toString());
+                                getRecordById("user", comment.getUserId().toString());
                                 comment.setUser(User.process(rs));               
                             
-                                getRecordById("BlogPost", comment.getBlogPostId().toString());
+                                getRecordById("blog_post", comment.getBlogPostId().toString());
                                 comment.setBlogPost(BlogPost.process(rs));               
                             
-                                getRecordById("ItemReview", comment.getItemReviewId().toString());
+                                getRecordById("item_review", comment.getItemReviewId().toString());
                                 comment.setItemReview(ItemReview.process(rs));               
                                                     
                         }
@@ -292,13 +295,13 @@
                         for (Comment comment : commentList)
                         {                        
                             
-                                getRecordById("User", comment.getUserId().toString());
+                                getRecordById("user", comment.getUserId().toString());
                                 comment.setUser(User.process(rs));               
                             
-                                getRecordById("BlogPost", comment.getBlogPostId().toString());
+                                getRecordById("blog_post", comment.getBlogPostId().toString());
                                 comment.setBlogPost(BlogPost.process(rs));               
                             
-                                getRecordById("ItemReview", comment.getItemReviewId().toString());
+                                getRecordById("item_review", comment.getItemReviewId().toString());
                                 comment.setItemReview(ItemReview.process(rs));               
                               
                         }
@@ -373,6 +376,37 @@
             }
             return commentList;
         } 
+        
+        @Override
+        public ArrayList<Comment> findByColumns(Column... columns)
+        {
+            ArrayList<Comment> commentList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Comment.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("comment", columns);
+                while (rs.next())
+                {
+                    commentList.add(Comment.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Comment's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return commentList;
+        }
     
         @Override
         public int add(Comment obj)
@@ -494,13 +528,13 @@
                 try
                 { 
                     
-                            getRecordById("User", comment.getUserId().toString());
+                            getRecordById("user", comment.getUserId().toString());
                             comment.setUser(User.process(rs));                                       
                     
-                            getRecordById("BlogPost", comment.getBlogPostId().toString());
+                            getRecordById("blog_post", comment.getBlogPostId().toString());
                             comment.setBlogPost(BlogPost.process(rs));                                       
                     
-                            getRecordById("ItemReview", comment.getItemReviewId().toString());
+                            getRecordById("item_review", comment.getItemReviewId().toString());
                             comment.setItemReview(ItemReview.process(rs));                                       
                     
                     }

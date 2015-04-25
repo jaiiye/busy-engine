@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Site", siteAttribute.getSiteId().toString());
+                    getRecordById("site", siteAttribute.getSiteId().toString());
                     siteAttribute.setSite(Site.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             SiteAttribute siteAttribute = (SiteAttribute) e.getValue();
 
                             
-                                getRecordById("Site", siteAttribute.getSiteId().toString());
+                                getRecordById("site", siteAttribute.getSiteId().toString());
                                 siteAttribute.setSite(Site.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (SiteAttribute siteAttribute : siteAttributeList)
                         {                        
                             
-                                getRecordById("Site", siteAttribute.getSiteId().toString());
+                                getRecordById("site", siteAttribute.getSiteId().toString());
                                 siteAttribute.setSite(Site.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return siteAttributeList;
         } 
+        
+        @Override
+        public ArrayList<SiteAttribute> findByColumns(Column... columns)
+        {
+            ArrayList<SiteAttribute> siteAttributeList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(SiteAttribute.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("site_attribute", columns);
+                while (rs.next())
+                {
+                    siteAttributeList.add(SiteAttribute.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("SiteAttribute's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return siteAttributeList;
+        }
     
         @Override
         public int add(SiteAttribute obj)
@@ -464,7 +498,7 @@
                 try
                 { 
                     
-                            getRecordById("Site", site_attribute.getSiteId().toString());
+                            getRecordById("site", site_attribute.getSiteId().toString());
                             site_attribute.setSite(Site.process(rs));                                       
                     
                     }

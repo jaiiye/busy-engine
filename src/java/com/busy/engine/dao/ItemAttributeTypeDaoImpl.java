@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -307,6 +310,37 @@
             }
             return itemAttributeTypeList;
         } 
+        
+        @Override
+        public ArrayList<ItemAttributeType> findByColumns(Column... columns)
+        {
+            ArrayList<ItemAttributeType> itemAttributeTypeList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ItemAttributeType.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("item_attribute_type", columns);
+                while (rs.next())
+                {
+                    itemAttributeTypeList.add(ItemAttributeType.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ItemAttributeType's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return itemAttributeTypeList;
+        }
     
         @Override
         public int add(ItemAttributeType obj)

@@ -1,6 +1,7 @@
 package com.busy.engine.dao;
 
 import com.busy.engine.data.BasicConnection;
+import com.busy.engine.data.Column;
 import com.busy.engine.entity.*;
 import com.busy.engine.util.*;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class UserRoleDaoImpl extends BasicConnection implements Serializable, UserRoleDao
 {
+
     private static final long serialVersionUID = 1L;
     private boolean cachingEnabled;
 
@@ -250,6 +252,37 @@ public class UserRoleDaoImpl extends BasicConnection implements Serializable, Us
     }
 
     @Override
+    public ArrayList<UserRole> findByColumns(Column... columns)
+    {
+        ArrayList<UserRole> userRoleList = new ArrayList<>();
+
+        try
+        {
+            //make sure the correct isNumeric values are set for columns
+            for (Column c : columns)
+            {
+                c.setNumeric(UserRole.isColumnNumeric(c.getColumnName()));
+            }
+
+            getAllRecordsByColumns("user_role", columns);
+            while (rs.next())
+            {
+                userRoleList.add(UserRole.process(rs));
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("UserRole's method findByColumns(Column... columns) error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
+        return userRoleList;
+    }
+
+    @Override
     public int add(UserRole obj)
     {
         boolean success = false;
@@ -266,6 +299,13 @@ public class UserRoleDaoImpl extends BasicConnection implements Serializable, Us
 
             preparedStatement.executeUpdate();
 
+            rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from user_role;");
+            while (rs.next())
+            {
+                id = rs.getInt(1);
+            }
+
+            success = true;
         }
         catch (Exception ex)
         {

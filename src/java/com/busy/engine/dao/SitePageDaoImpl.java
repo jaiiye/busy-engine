@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("Site", sitePage.getSiteId().toString());
+                    getRecordById("site", sitePage.getSiteId().toString());
                     sitePage.setSite(Site.process(rs));               
                 
-                    getRecordById("Page", sitePage.getPageId().toString());
+                    getRecordById("page", sitePage.getPageId().toString());
                     sitePage.setPage(Page.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             SitePage sitePage = (SitePage) e.getValue();
 
                             
-                                getRecordById("Site", sitePage.getSiteId().toString());
+                                getRecordById("site", sitePage.getSiteId().toString());
                                 sitePage.setSite(Site.process(rs));               
                             
-                                getRecordById("Page", sitePage.getPageId().toString());
+                                getRecordById("page", sitePage.getPageId().toString());
                                 sitePage.setPage(Page.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (SitePage sitePage : sitePageList)
                         {                        
                             
-                                getRecordById("Site", sitePage.getSiteId().toString());
+                                getRecordById("site", sitePage.getSiteId().toString());
                                 sitePage.setSite(Site.process(rs));               
                             
-                                getRecordById("Page", sitePage.getPageId().toString());
+                                getRecordById("page", sitePage.getPageId().toString());
                                 sitePage.setPage(Page.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return sitePageList;
         } 
+        
+        @Override
+        public ArrayList<SitePage> findByColumns(Column... columns)
+        {
+            ArrayList<SitePage> sitePageList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(SitePage.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("site_page", columns);
+                while (rs.next())
+                {
+                    sitePageList.add(SitePage.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("SitePage's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return sitePageList;
+        }
     
         @Override
         public int add(SitePage obj)
@@ -465,10 +499,10 @@
                 try
                 { 
                     
-                            getRecordById("Site", site_page.getSiteId().toString());
+                            getRecordById("site", site_page.getSiteId().toString());
                             site_page.setSite(Site.process(rs));                                       
                     
-                            getRecordById("Page", site_page.getPageId().toString());
+                            getRecordById("page", site_page.getPageId().toString());
                             site_page.setPage(Page.process(rs));                                       
                     
                     }

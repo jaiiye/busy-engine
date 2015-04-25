@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -307,6 +310,37 @@
             }
             return sliderTypeList;
         } 
+        
+        @Override
+        public ArrayList<SliderType> findByColumns(Column... columns)
+        {
+            ArrayList<SliderType> sliderTypeList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(SliderType.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("slider_type", columns);
+                while (rs.next())
+                {
+                    sliderTypeList.add(SliderType.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("SliderType's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return sliderTypeList;
+        }
     
         @Override
         public int add(SliderType obj)

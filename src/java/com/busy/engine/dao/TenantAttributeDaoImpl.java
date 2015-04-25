@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Tenant", tenantAttribute.getTenantId().toString());
+                    getRecordById("tenant", tenantAttribute.getTenantId().toString());
                     tenantAttribute.setTenant(Tenant.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             TenantAttribute tenantAttribute = (TenantAttribute) e.getValue();
 
                             
-                                getRecordById("Tenant", tenantAttribute.getTenantId().toString());
+                                getRecordById("tenant", tenantAttribute.getTenantId().toString());
                                 tenantAttribute.setTenant(Tenant.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (TenantAttribute tenantAttribute : tenantAttributeList)
                         {                        
                             
-                                getRecordById("Tenant", tenantAttribute.getTenantId().toString());
+                                getRecordById("tenant", tenantAttribute.getTenantId().toString());
                                 tenantAttribute.setTenant(Tenant.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return tenantAttributeList;
         } 
+        
+        @Override
+        public ArrayList<TenantAttribute> findByColumns(Column... columns)
+        {
+            ArrayList<TenantAttribute> tenantAttributeList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(TenantAttribute.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("tenant_attribute", columns);
+                while (rs.next())
+                {
+                    tenantAttributeList.add(TenantAttribute.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("TenantAttribute's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return tenantAttributeList;
+        }
     
         @Override
         public int add(TenantAttribute obj)
@@ -460,7 +494,7 @@
                 try
                 { 
                     
-                            getRecordById("Tenant", tenant_attribute.getTenantId().toString());
+                            getRecordById("tenant", tenant_attribute.getTenantId().toString());
                             tenant_attribute.setTenant(Tenant.process(rs));                                       
                     
                     }

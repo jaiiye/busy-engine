@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Country", stateProvince.getCountryId().toString());
+                    getRecordById("country", stateProvince.getCountryId().toString());
                     stateProvince.setCountry(Country.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             StateProvince stateProvince = (StateProvince) e.getValue();
 
                             
-                                getRecordById("Country", stateProvince.getCountryId().toString());
+                                getRecordById("country", stateProvince.getCountryId().toString());
                                 stateProvince.setCountry(Country.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (StateProvince stateProvince : stateProvinceList)
                         {                        
                             
-                                getRecordById("Country", stateProvince.getCountryId().toString());
+                                getRecordById("country", stateProvince.getCountryId().toString());
                                 stateProvince.setCountry(Country.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return stateProvinceList;
         } 
+        
+        @Override
+        public ArrayList<StateProvince> findByColumns(Column... columns)
+        {
+            ArrayList<StateProvince> stateProvinceList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(StateProvince.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("state_province", columns);
+                while (rs.next())
+                {
+                    stateProvinceList.add(StateProvince.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("StateProvince's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return stateProvinceList;
+        }
     
         @Override
         public int add(StateProvince obj)
@@ -460,7 +494,7 @@
                 try
                 { 
                     
-                            getRecordById("Country", state_province.getCountryId().toString());
+                            getRecordById("country", state_province.getCountryId().toString());
                             state_province.setCountry(Country.process(rs));                                       
                     
                     }

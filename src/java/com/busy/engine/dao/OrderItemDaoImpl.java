@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("CustomerOrder", orderItem.getCustomerOrderId().toString());
+                    getRecordById("customer_order", orderItem.getCustomerOrderId().toString());
                     orderItem.setCustomerOrder(CustomerOrder.process(rs));               
                 
-                    getRecordById("Item", orderItem.getItemId().toString());
+                    getRecordById("item", orderItem.getItemId().toString());
                     orderItem.setItem(Item.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             OrderItem orderItem = (OrderItem) e.getValue();
 
                             
-                                getRecordById("CustomerOrder", orderItem.getCustomerOrderId().toString());
+                                getRecordById("customer_order", orderItem.getCustomerOrderId().toString());
                                 orderItem.setCustomerOrder(CustomerOrder.process(rs));               
                             
-                                getRecordById("Item", orderItem.getItemId().toString());
+                                getRecordById("item", orderItem.getItemId().toString());
                                 orderItem.setItem(Item.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (OrderItem orderItem : orderItemList)
                         {                        
                             
-                                getRecordById("CustomerOrder", orderItem.getCustomerOrderId().toString());
+                                getRecordById("customer_order", orderItem.getCustomerOrderId().toString());
                                 orderItem.setCustomerOrder(CustomerOrder.process(rs));               
                             
-                                getRecordById("Item", orderItem.getItemId().toString());
+                                getRecordById("item", orderItem.getItemId().toString());
                                 orderItem.setItem(Item.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return orderItemList;
         } 
+        
+        @Override
+        public ArrayList<OrderItem> findByColumns(Column... columns)
+        {
+            ArrayList<OrderItem> orderItemList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(OrderItem.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("order_item", columns);
+                while (rs.next())
+                {
+                    orderItemList.add(OrderItem.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("OrderItem's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return orderItemList;
+        }
     
         @Override
         public int add(OrderItem obj)
@@ -477,10 +511,10 @@
                 try
                 { 
                     
-                            getRecordById("CustomerOrder", order_item.getCustomerOrderId().toString());
+                            getRecordById("customer_order", order_item.getCustomerOrderId().toString());
                             order_item.setCustomerOrder(CustomerOrder.process(rs));                                       
                     
-                            getRecordById("Item", order_item.getItemId().toString());
+                            getRecordById("item", order_item.getItemId().toString());
                             order_item.setItem(Item.process(rs));                                       
                     
                     }

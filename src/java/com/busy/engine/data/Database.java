@@ -995,48 +995,6 @@ public class Database extends BasicConnection
         return siteStructure;
     }
     
-    public static ArrayList<AbstractMap.SimpleEntry> getLanguageStrings(String siteId)
-    {
-        ArrayList<AbstractMap.SimpleEntry> attributes = new ArrayList<>();
-        ResultSet rs7;
-
-        try
-        {
-            openConnection();
-            
-            String query = "SELECT Locale FROM site WHERE siteId= " + siteId;
-            rs7 = statement.executeQuery(query);
-            String locale = "";
-
-            while(rs7.next())
-            {
-                locale = rs7.getString(1);
-            }
-            
-            query = "SELECT ls.StringId, ls.LocaleId, TextStringKey, StringValue, LocaleString  FROM locale l, text_string s, localized_string ls WHERE ls.LocaleId = l.LocaleId AND ls.StringId = s.TextStringId AND ls.LocaleId = " + locale + ";";
-            System.out.println(query);
-            rs7 = statement.executeQuery(query);
-
-            while(rs7.next())
-            {
-                String key = rs7.getString(3); 
-                String val = rs7.getString(4); 
-                attributes.add(new AbstractMap.SimpleEntry<String,String>(key,val));
-            }
-        }
-        catch (Exception ex)
-        {
-            System.out.println("geLanguageStrings error: " + ex.getMessage());
-        }
-        finally
-        {
-            closeConnection();
-        }
-        
-        return attributes;
-    }
-    
-    
     public static ArrayList<Item> getAllItemsWithInfoByType(int type, String id, String category)
     {
         ArrayList<Item> items = new ItemDaoImpl().findByColumn(Item.PROP_ITEM_TYPE_ID, type + "", null, null);        
@@ -1050,6 +1008,34 @@ public class Database extends BasicConnection
             i.setMetaTag(new MetaTagDaoImpl().find(i.getMetaTagId()));
         }                     
         return items;
+    }
+    
+    public static ArrayList<AbstractMap.SimpleEntry> getLanguageStrings(String siteId)
+    {
+        ArrayList<AbstractMap.SimpleEntry> attributes = new ArrayList<>();
+        
+        Site site =  new SiteDaoImpl().find(Integer.valueOf(siteId));
+        new SiteDaoImpl().getRelatedSiteLanguageList(site);
+        
+        //make sure the locale exists for the chosen language
+        for(SiteLanguage sl : site.getSiteLanguageList())
+        {
+            if(sl.getLocale().equals(site.getLocale()))
+            {
+                ArrayList<TextString> textStrings = new TextStringDaoImpl().findAll(null,null);
+                for(TextString ts : textStrings) 
+                {                                       
+                    Column textStringIdColumn = new Column(LocalizedString.PROP_TEXT_STRING_ID, ts.getId().toString());
+                    Column localeColumn = new Column(LocalizedString.PROP_LOCALE, site.getLocale());                    
+                    for(LocalizedString ls : new LocalizedStringDaoImpl().findByColumns(textStringIdColumn, localeColumn))
+                    {
+                        attributes.add(new AbstractMap.SimpleEntry<String,String>(ts.getKey(), ls.getStringValue()));    
+                    }                    
+                } 
+            }
+        }
+        
+        return attributes;
     }
     
     /*

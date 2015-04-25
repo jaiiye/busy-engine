@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Dashboard", tenant.getDashboardId().toString());
+                    getRecordById("dashboard", tenant.getDashboardId().toString());
                     tenant.setDashboard(Dashboard.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             Tenant tenant = (Tenant) e.getValue();
 
                             
-                                getRecordById("Dashboard", tenant.getDashboardId().toString());
+                                getRecordById("dashboard", tenant.getDashboardId().toString());
                                 tenant.setDashboard(Dashboard.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (Tenant tenant : tenantList)
                         {                        
                             
-                                getRecordById("Dashboard", tenant.getDashboardId().toString());
+                                getRecordById("dashboard", tenant.getDashboardId().toString());
                                 tenant.setDashboard(Dashboard.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return tenantList;
         } 
+        
+        @Override
+        public ArrayList<Tenant> findByColumns(Column... columns)
+        {
+            ArrayList<Tenant> tenantList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Tenant.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("tenant", columns);
+                while (rs.next())
+                {
+                    tenantList.add(Tenant.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Tenant's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return tenantList;
+        }
     
         @Override
         public int add(Tenant obj)
@@ -460,7 +494,7 @@
                 try
                 { 
                     
-                            getRecordById("Dashboard", tenant.getDashboardId().toString());
+                            getRecordById("dashboard", tenant.getDashboardId().toString());
                             tenant.setDashboard(Dashboard.process(rs));                                       
                     
                     }

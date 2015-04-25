@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Site", siteFolder.getSiteId().toString());
+                    getRecordById("site", siteFolder.getSiteId().toString());
                     siteFolder.setSite(Site.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             SiteFolder siteFolder = (SiteFolder) e.getValue();
 
                             
-                                getRecordById("Site", siteFolder.getSiteId().toString());
+                                getRecordById("site", siteFolder.getSiteId().toString());
                                 siteFolder.setSite(Site.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (SiteFolder siteFolder : siteFolderList)
                         {                        
                             
-                                getRecordById("Site", siteFolder.getSiteId().toString());
+                                getRecordById("site", siteFolder.getSiteId().toString());
                                 siteFolder.setSite(Site.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return siteFolderList;
         } 
+        
+        @Override
+        public ArrayList<SiteFolder> findByColumns(Column... columns)
+        {
+            ArrayList<SiteFolder> siteFolderList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(SiteFolder.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("site_folder", columns);
+                while (rs.next())
+                {
+                    siteFolderList.add(SiteFolder.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("SiteFolder's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return siteFolderList;
+        }
     
         @Override
         public int add(SiteFolder obj)
@@ -464,7 +498,7 @@
                 try
                 { 
                     
-                            getRecordById("Site", site_folder.getSiteId().toString());
+                            getRecordById("site", site_folder.getSiteId().toString());
                             site_folder.setSite(Site.process(rs));                                       
                     
                     }

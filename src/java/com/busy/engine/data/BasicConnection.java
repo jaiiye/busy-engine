@@ -252,6 +252,30 @@ public class BasicConnection
         }   
     }
     
+    public static void getAllRecordsByColumns(String tableName, Column... columns)
+    {
+        try
+        {       
+            openConnection();
+            String query = "SELECT * FROM " + tableName + " WHERE ";
+                    
+            int count = 0;
+            for(Column c : columns) 
+            {
+                if(count++ != 0) query += " AND ";
+                 query += c.getColumnName() + "="  + (c.isNumeric()?"":"'") + c.getColumnValue() + (c.isNumeric()?"":"'");
+            }        
+                   
+            query += ";";
+            
+            System.out.println("Query: " + query);
+            rs = statement.executeQuery(query);
+        }
+        catch (Exception ex) 
+        {
+            System.out.println("getAllRecordsByColumn error: " + ex.getMessage());
+        }   
+    }
        
     public static void getDistinctColumnValues(String tableName, String columnName)
     {

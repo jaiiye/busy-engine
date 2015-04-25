@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -307,6 +310,37 @@
             }
             return itemBrandList;
         } 
+        
+        @Override
+        public ArrayList<ItemBrand> findByColumns(Column... columns)
+        {
+            ArrayList<ItemBrand> itemBrandList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ItemBrand.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("item_brand", columns);
+                while (rs.next())
+                {
+                    itemBrandList.add(ItemBrand.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ItemBrand's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return itemBrandList;
+        }
     
         @Override
         public int add(ItemBrand obj)

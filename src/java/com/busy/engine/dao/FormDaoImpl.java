@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -307,6 +310,37 @@
             }
             return formList;
         } 
+        
+        @Override
+        public ArrayList<Form> findByColumns(Column... columns)
+        {
+            ArrayList<Form> formList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Form.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("form", columns);
+                while (rs.next())
+                {
+                    formList.add(Form.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Form's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return formList;
+        }
     
         @Override
         public int add(Form obj)

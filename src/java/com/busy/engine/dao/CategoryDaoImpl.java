@@ -1,6 +1,7 @@
 package com.busy.engine.dao;
 
 import com.busy.engine.data.BasicConnection;
+import com.busy.engine.data.Column;
 import com.busy.engine.entity.*;
 import com.busy.engine.util.*;
 import java.util.ArrayList;
@@ -100,10 +101,10 @@ public class CategoryDaoImpl extends BasicConnection implements Serializable, Ca
         try
         {
 
-            getRecordById("Discount", category.getDiscountId().toString());
+            getRecordById("discount", category.getDiscountId().toString());
             category.setDiscount(Discount.process(rs));
 
-            getRecordById("Category", category.getParentCategoryId().toString());
+            getRecordById("category", category.getParentCategoryId().toString());
             category.setParentCategory(Category.process(rs));
 
         }
@@ -192,10 +193,10 @@ public class CategoryDaoImpl extends BasicConnection implements Serializable, Ca
                 {
                     Category category = (Category) e.getValue();
 
-                    getRecordById("Discount", category.getDiscountId().toString());
+                    getRecordById("discount", category.getDiscountId().toString());
                     category.setDiscount(Discount.process(rs));
 
-                    getRecordById("Category", category.getParentCategoryId().toString());
+                    getRecordById("category", category.getParentCategoryId().toString());
                     category.setParentCategory(Category.process(rs));
 
                 }
@@ -225,10 +226,10 @@ public class CategoryDaoImpl extends BasicConnection implements Serializable, Ca
                 for (Category category : categoryList)
                 {
 
-                    getRecordById("Discount", category.getDiscountId().toString());
+                    getRecordById("discount", category.getDiscountId().toString());
                     category.setDiscount(Discount.process(rs));
 
-                    getRecordById("Category", category.getParentCategoryId().toString());
+                    getRecordById("category", category.getParentCategoryId().toString());
                     category.setParentCategory(Category.process(rs));
 
                 }
@@ -300,6 +301,37 @@ public class CategoryDaoImpl extends BasicConnection implements Serializable, Ca
                 closeConnection();
             }
         }
+        return categoryList;
+    }
+
+    @Override
+    public ArrayList<Category> findByColumns(Column... columns)
+    {
+        ArrayList<Category> categoryList = new ArrayList<>();
+
+        try
+        {
+            //make sure the correct isNumeric values are set for columns
+            for (Column c : columns)
+            {
+                c.setNumeric(Category.isColumnNumeric(c.getColumnName()));
+            }
+
+            getAllRecordsByColumns("category", columns);
+            while (rs.next())
+            {
+                categoryList.add(Category.process(rs));
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("Category's method findByColumns(Column... columns) error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
         return categoryList;
     }
 
@@ -401,10 +433,10 @@ public class CategoryDaoImpl extends BasicConnection implements Serializable, Ca
         try
         {
 
-            getRecordById("Discount", category.getDiscountId().toString());
+            getRecordById("discount", category.getDiscountId().toString());
             category.setDiscount(Discount.process(rs));
 
-            getRecordById("Category", category.getParentCategoryId().toString());
+            getRecordById("category", category.getParentCategoryId().toString());
             category.setParentCategory(Category.process(rs));
 
         }

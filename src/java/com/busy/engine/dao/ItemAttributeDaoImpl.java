@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("ItemAttributeType", itemAttribute.getItemAttributeTypeId().toString());
+                    getRecordById("item_attribute_type", itemAttribute.getItemAttributeTypeId().toString());
                     itemAttribute.setItemAttributeType(ItemAttributeType.process(rs));               
                 
-                    getRecordById("Item", itemAttribute.getItemId().toString());
+                    getRecordById("item", itemAttribute.getItemId().toString());
                     itemAttribute.setItem(Item.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             ItemAttribute itemAttribute = (ItemAttribute) e.getValue();
 
                             
-                                getRecordById("ItemAttributeType", itemAttribute.getItemAttributeTypeId().toString());
+                                getRecordById("item_attribute_type", itemAttribute.getItemAttributeTypeId().toString());
                                 itemAttribute.setItemAttributeType(ItemAttributeType.process(rs));               
                             
-                                getRecordById("Item", itemAttribute.getItemId().toString());
+                                getRecordById("item", itemAttribute.getItemId().toString());
                                 itemAttribute.setItem(Item.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (ItemAttribute itemAttribute : itemAttributeList)
                         {                        
                             
-                                getRecordById("ItemAttributeType", itemAttribute.getItemAttributeTypeId().toString());
+                                getRecordById("item_attribute_type", itemAttribute.getItemAttributeTypeId().toString());
                                 itemAttribute.setItemAttributeType(ItemAttributeType.process(rs));               
                             
-                                getRecordById("Item", itemAttribute.getItemId().toString());
+                                getRecordById("item", itemAttribute.getItemId().toString());
                                 itemAttribute.setItem(Item.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return itemAttributeList;
         } 
+        
+        @Override
+        public ArrayList<ItemAttribute> findByColumns(Column... columns)
+        {
+            ArrayList<ItemAttribute> itemAttributeList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ItemAttribute.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("item_attribute", columns);
+                while (rs.next())
+                {
+                    itemAttributeList.add(ItemAttribute.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ItemAttribute's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return itemAttributeList;
+        }
     
         @Override
         public int add(ItemAttribute obj)
@@ -477,10 +511,10 @@
                 try
                 { 
                     
-                            getRecordById("ItemAttributeType", item_attribute.getItemAttributeTypeId().toString());
+                            getRecordById("item_attribute_type", item_attribute.getItemAttributeTypeId().toString());
                             item_attribute.setItemAttributeType(ItemAttributeType.process(rs));                                       
                     
-                            getRecordById("Item", item_attribute.getItemId().toString());
+                            getRecordById("item", item_attribute.getItemId().toString());
                             item_attribute.setItem(Item.process(rs));                                       
                     
                     }

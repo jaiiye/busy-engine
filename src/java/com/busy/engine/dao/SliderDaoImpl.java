@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("SliderType", slider.getSliderTypeId().toString());
+                    getRecordById("slider_type", slider.getSliderTypeId().toString());
                     slider.setSliderType(SliderType.process(rs));               
                 
-                    getRecordById("Form", slider.getFormId().toString());
+                    getRecordById("form", slider.getFormId().toString());
                     slider.setForm(Form.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             Slider slider = (Slider) e.getValue();
 
                             
-                                getRecordById("SliderType", slider.getSliderTypeId().toString());
+                                getRecordById("slider_type", slider.getSliderTypeId().toString());
                                 slider.setSliderType(SliderType.process(rs));               
                             
-                                getRecordById("Form", slider.getFormId().toString());
+                                getRecordById("form", slider.getFormId().toString());
                                 slider.setForm(Form.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (Slider slider : sliderList)
                         {                        
                             
-                                getRecordById("SliderType", slider.getSliderTypeId().toString());
+                                getRecordById("slider_type", slider.getSliderTypeId().toString());
                                 slider.setSliderType(SliderType.process(rs));               
                             
-                                getRecordById("Form", slider.getFormId().toString());
+                                getRecordById("form", slider.getFormId().toString());
                                 slider.setForm(Form.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return sliderList;
         } 
+        
+        @Override
+        public ArrayList<Slider> findByColumns(Column... columns)
+        {
+            ArrayList<Slider> sliderList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Slider.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("slider", columns);
+                while (rs.next())
+                {
+                    sliderList.add(Slider.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Slider's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return sliderList;
+        }
     
         @Override
         public int add(Slider obj)
@@ -469,10 +503,10 @@
                 try
                 { 
                     
-                            getRecordById("SliderType", slider.getSliderTypeId().toString());
+                            getRecordById("slider_type", slider.getSliderTypeId().toString());
                             slider.setSliderType(SliderType.process(rs));                                       
                     
-                            getRecordById("Form", slider.getFormId().toString());
+                            getRecordById("form", slider.getFormId().toString());
                             slider.setForm(Form.process(rs));                                       
                     
                     }

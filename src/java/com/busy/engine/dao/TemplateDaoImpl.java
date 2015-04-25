@@ -1,6 +1,7 @@
 package com.busy.engine.dao;
 
 import com.busy.engine.data.BasicConnection;
+import com.busy.engine.data.Column;
 import com.busy.engine.entity.*;
 import com.busy.engine.util.*;
 import java.util.ArrayList;
@@ -100,10 +101,10 @@ public class TemplateDaoImpl extends BasicConnection implements Serializable, Te
         try
         {
 
-            getRecordById("TemplateType", template.getTemplateTypeId().toString());
+            getRecordById("template_type", template.getTemplateTypeId().toString());
             template.setTemplateType(TemplateType.process(rs));
 
-            getRecordById("Template", template.getParentTemplateId().toString());
+            getRecordById("template", template.getParentTemplateId().toString());
             template.setParentTemplate(Template.process(rs));
 
         }
@@ -192,10 +193,10 @@ public class TemplateDaoImpl extends BasicConnection implements Serializable, Te
                 {
                     Template template = (Template) e.getValue();
 
-                    getRecordById("TemplateType", template.getTemplateTypeId().toString());
+                    getRecordById("template_type", template.getTemplateTypeId().toString());
                     template.setTemplateType(TemplateType.process(rs));
 
-                    getRecordById("Template", template.getParentTemplateId().toString());
+                    getRecordById("template", template.getParentTemplateId().toString());
                     template.setParentTemplate(Template.process(rs));
 
                 }
@@ -225,10 +226,10 @@ public class TemplateDaoImpl extends BasicConnection implements Serializable, Te
                 for (Template template : templateList)
                 {
 
-                    getRecordById("TemplateType", template.getTemplateTypeId().toString());
+                    getRecordById("template_type", template.getTemplateTypeId().toString());
                     template.setTemplateType(TemplateType.process(rs));
 
-                    getRecordById("Template", template.getParentTemplateId().toString());
+                    getRecordById("template", template.getParentTemplateId().toString());
                     template.setParentTemplate(Template.process(rs));
 
                 }
@@ -300,6 +301,37 @@ public class TemplateDaoImpl extends BasicConnection implements Serializable, Te
                 closeConnection();
             }
         }
+        return templateList;
+    }
+
+    @Override
+    public ArrayList<Template> findByColumns(Column... columns)
+    {
+        ArrayList<Template> templateList = new ArrayList<>();
+
+        try
+        {
+            //make sure the correct isNumeric values are set for columns
+            for (Column c : columns)
+            {
+                c.setNumeric(Template.isColumnNumeric(c.getColumnName()));
+            }
+
+            getAllRecordsByColumns("template", columns);
+            while (rs.next())
+            {
+                templateList.add(Template.process(rs));
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("Template's method findByColumns(Column... columns) error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
         return templateList;
     }
 
@@ -407,10 +439,10 @@ public class TemplateDaoImpl extends BasicConnection implements Serializable, Te
         try
         {
 
-            getRecordById("TemplateType", template.getTemplateTypeId().toString());
+            getRecordById("template_type", template.getTemplateTypeId().toString());
             template.setTemplateType(TemplateType.process(rs));
 
-            getRecordById("Template", template.getParentTemplateId().toString());
+            getRecordById("template", template.getParentTemplateId().toString());
             template.setParentTemplate(Template.process(rs));
 
         }

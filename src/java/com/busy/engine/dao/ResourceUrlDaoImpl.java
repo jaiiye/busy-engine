@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("Template", resourceUrl.getTemplateId().toString());
+                    getRecordById("template", resourceUrl.getTemplateId().toString());
                     resourceUrl.setTemplate(Template.process(rs));               
                 
-                    getRecordById("ResourceType", resourceUrl.getResourceTypeId().toString());
+                    getRecordById("resource_type", resourceUrl.getResourceTypeId().toString());
                     resourceUrl.setResourceType(ResourceType.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             ResourceUrl resourceUrl = (ResourceUrl) e.getValue();
 
                             
-                                getRecordById("Template", resourceUrl.getTemplateId().toString());
+                                getRecordById("template", resourceUrl.getTemplateId().toString());
                                 resourceUrl.setTemplate(Template.process(rs));               
                             
-                                getRecordById("ResourceType", resourceUrl.getResourceTypeId().toString());
+                                getRecordById("resource_type", resourceUrl.getResourceTypeId().toString());
                                 resourceUrl.setResourceType(ResourceType.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (ResourceUrl resourceUrl : resourceUrlList)
                         {                        
                             
-                                getRecordById("Template", resourceUrl.getTemplateId().toString());
+                                getRecordById("template", resourceUrl.getTemplateId().toString());
                                 resourceUrl.setTemplate(Template.process(rs));               
                             
-                                getRecordById("ResourceType", resourceUrl.getResourceTypeId().toString());
+                                getRecordById("resource_type", resourceUrl.getResourceTypeId().toString());
                                 resourceUrl.setResourceType(ResourceType.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return resourceUrlList;
         } 
+        
+        @Override
+        public ArrayList<ResourceUrl> findByColumns(Column... columns)
+        {
+            ArrayList<ResourceUrl> resourceUrlList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ResourceUrl.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("resource_url", columns);
+                while (rs.next())
+                {
+                    resourceUrlList.add(ResourceUrl.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ResourceUrl's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return resourceUrlList;
+        }
     
         @Override
         public int add(ResourceUrl obj)
@@ -469,10 +503,10 @@
                 try
                 { 
                     
-                            getRecordById("Template", resource_url.getTemplateId().toString());
+                            getRecordById("template", resource_url.getTemplateId().toString());
                             resource_url.setTemplate(Template.process(rs));                                       
                     
-                            getRecordById("ResourceType", resource_url.getResourceTypeId().toString());
+                            getRecordById("resource_type", resource_url.getResourceTypeId().toString());
                             resource_url.setResourceType(ResourceType.process(rs));                                       
                     
                     }

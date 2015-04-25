@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("Item", itemDiscount.getItemId().toString());
+                    getRecordById("item", itemDiscount.getItemId().toString());
                     itemDiscount.setItem(Item.process(rs));               
                 
-                    getRecordById("Discount", itemDiscount.getDiscountId().toString());
+                    getRecordById("discount", itemDiscount.getDiscountId().toString());
                     itemDiscount.setDiscount(Discount.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             ItemDiscount itemDiscount = (ItemDiscount) e.getValue();
 
                             
-                                getRecordById("Item", itemDiscount.getItemId().toString());
+                                getRecordById("item", itemDiscount.getItemId().toString());
                                 itemDiscount.setItem(Item.process(rs));               
                             
-                                getRecordById("Discount", itemDiscount.getDiscountId().toString());
+                                getRecordById("discount", itemDiscount.getDiscountId().toString());
                                 itemDiscount.setDiscount(Discount.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (ItemDiscount itemDiscount : itemDiscountList)
                         {                        
                             
-                                getRecordById("Item", itemDiscount.getItemId().toString());
+                                getRecordById("item", itemDiscount.getItemId().toString());
                                 itemDiscount.setItem(Item.process(rs));               
                             
-                                getRecordById("Discount", itemDiscount.getDiscountId().toString());
+                                getRecordById("discount", itemDiscount.getDiscountId().toString());
                                 itemDiscount.setDiscount(Discount.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return itemDiscountList;
         } 
+        
+        @Override
+        public ArrayList<ItemDiscount> findByColumns(Column... columns)
+        {
+            ArrayList<ItemDiscount> itemDiscountList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ItemDiscount.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("item_discount", columns);
+                while (rs.next())
+                {
+                    itemDiscountList.add(ItemDiscount.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ItemDiscount's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return itemDiscountList;
+        }
     
         @Override
         public int add(ItemDiscount obj)
@@ -469,10 +503,10 @@
                 try
                 { 
                     
-                            getRecordById("Item", item_discount.getItemId().toString());
+                            getRecordById("item", item_discount.getItemId().toString());
                             item_discount.setItem(Item.process(rs));                                       
                     
-                            getRecordById("Discount", item_discount.getDiscountId().toString());
+                            getRecordById("discount", item_discount.getDiscountId().toString());
                             item_discount.setDiscount(Discount.process(rs));                                       
                     
                     }

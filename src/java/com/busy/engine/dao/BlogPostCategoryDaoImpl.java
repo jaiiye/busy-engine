@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("BlogPost", blogPostCategory.getBlogPostId().toString());
+                    getRecordById("blog_post", blogPostCategory.getBlogPostId().toString());
                     blogPostCategory.setBlogPost(BlogPost.process(rs));               
                 
-                    getRecordById("PostCategory", blogPostCategory.getPostCategoryId().toString());
+                    getRecordById("post_category", blogPostCategory.getPostCategoryId().toString());
                     blogPostCategory.setPostCategory(PostCategory.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             BlogPostCategory blogPostCategory = (BlogPostCategory) e.getValue();
 
                             
-                                getRecordById("BlogPost", blogPostCategory.getBlogPostId().toString());
+                                getRecordById("blog_post", blogPostCategory.getBlogPostId().toString());
                                 blogPostCategory.setBlogPost(BlogPost.process(rs));               
                             
-                                getRecordById("PostCategory", blogPostCategory.getPostCategoryId().toString());
+                                getRecordById("post_category", blogPostCategory.getPostCategoryId().toString());
                                 blogPostCategory.setPostCategory(PostCategory.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (BlogPostCategory blogPostCategory : blogPostCategoryList)
                         {                        
                             
-                                getRecordById("BlogPost", blogPostCategory.getBlogPostId().toString());
+                                getRecordById("blog_post", blogPostCategory.getBlogPostId().toString());
                                 blogPostCategory.setBlogPost(BlogPost.process(rs));               
                             
-                                getRecordById("PostCategory", blogPostCategory.getPostCategoryId().toString());
+                                getRecordById("post_category", blogPostCategory.getPostCategoryId().toString());
                                 blogPostCategory.setPostCategory(PostCategory.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return blogPostCategoryList;
         } 
+        
+        @Override
+        public ArrayList<BlogPostCategory> findByColumns(Column... columns)
+        {
+            ArrayList<BlogPostCategory> blogPostCategoryList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(BlogPostCategory.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("blog_post_category", columns);
+                while (rs.next())
+                {
+                    blogPostCategoryList.add(BlogPostCategory.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("BlogPostCategory's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return blogPostCategoryList;
+        }
     
         @Override
         public int add(BlogPostCategory obj)
@@ -465,10 +499,10 @@
                 try
                 { 
                     
-                            getRecordById("BlogPost", blog_post_category.getBlogPostId().toString());
+                            getRecordById("blog_post", blog_post_category.getBlogPostId().toString());
                             blog_post_category.setBlogPost(BlogPost.process(rs));                                       
                     
-                            getRecordById("PostCategory", blog_post_category.getPostCategoryId().toString());
+                            getRecordById("post_category", blog_post_category.getPostCategoryId().toString());
                             blog_post_category.setPostCategory(PostCategory.process(rs));                                       
                     
                     }

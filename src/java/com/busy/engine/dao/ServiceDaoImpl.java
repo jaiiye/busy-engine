@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("ServiceCharge", service.getServiceChargeId().toString());
+                    getRecordById("service_charge", service.getServiceChargeId().toString());
                     service.setServiceCharge(ServiceCharge.process(rs));               
                 
-                    getRecordById("ServiceType", service.getServiceTypeId().toString());
+                    getRecordById("service_type", service.getServiceTypeId().toString());
                     service.setServiceType(ServiceType.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             Service service = (Service) e.getValue();
 
                             
-                                getRecordById("ServiceCharge", service.getServiceChargeId().toString());
+                                getRecordById("service_charge", service.getServiceChargeId().toString());
                                 service.setServiceCharge(ServiceCharge.process(rs));               
                             
-                                getRecordById("ServiceType", service.getServiceTypeId().toString());
+                                getRecordById("service_type", service.getServiceTypeId().toString());
                                 service.setServiceType(ServiceType.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (Service service : serviceList)
                         {                        
                             
-                                getRecordById("ServiceCharge", service.getServiceChargeId().toString());
+                                getRecordById("service_charge", service.getServiceChargeId().toString());
                                 service.setServiceCharge(ServiceCharge.process(rs));               
                             
-                                getRecordById("ServiceType", service.getServiceTypeId().toString());
+                                getRecordById("service_type", service.getServiceTypeId().toString());
                                 service.setServiceType(ServiceType.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return serviceList;
         } 
+        
+        @Override
+        public ArrayList<Service> findByColumns(Column... columns)
+        {
+            ArrayList<Service> serviceList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Service.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("service", columns);
+                while (rs.next())
+                {
+                    serviceList.add(Service.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Service's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return serviceList;
+        }
     
         @Override
         public int add(Service obj)
@@ -477,10 +511,10 @@
                 try
                 { 
                     
-                            getRecordById("ServiceCharge", service.getServiceChargeId().toString());
+                            getRecordById("service_charge", service.getServiceChargeId().toString());
                             service.setServiceCharge(ServiceCharge.process(rs));                                       
                     
-                            getRecordById("ServiceType", service.getServiceTypeId().toString());
+                            getRecordById("service_type", service.getServiceTypeId().toString());
                             service.setServiceType(ServiceType.process(rs));                                       
                     
                     }

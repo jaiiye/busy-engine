@@ -2140,68 +2140,6 @@ public class Operations extends HttpServlet
             }
         }
 
-        if (request.getParameter("form").equals("locale"))
-        {
-            try
-            {
-                LocaleDao localeDao = (LocaleDao) this.getServletContext().getAttribute("localeDao");
-
-                switch (Integer.parseInt(request.getParameter("action")))
-                {
-                    case 1: //create                        
-                        int id = localeDao.add(new Locale(null, request.getParameter("localeString"), request.getParameter("localeCharacterSet")));
-                        if (id != 0)
-                        {
-                            Database.RecordUserObjectCreationAction(user.getUserId().toString(), user.getUsername(), currentTime, "Locale", id);
-                        }
-
-                        response.sendRedirect("admin/LocaleUI.jsp?SuccessMsg=Added Locale Successfully!");
-                        break;
-                    case 2: //update            
-                        localeDao.update(new Locale(Integer.parseInt(request.getParameter("localeId")), request.getParameter("localeString"), request.getParameter("localeCharacterSet")));
-                        Database.RecordUserObjectUpdateAction(user.getUserId().toString(), user.getUsername(), currentTime, "Locale", Integer.parseInt(request.getParameter("localeId")));
-                        response.sendRedirect("admin/LocaleUI.jsp?id=" + request.getParameter("localeId") + "&SuccessMsg=Updated Locale Successfully!");
-                        break;
-                    case 3:  //delete
-                        localeDao.removeById(Integer.parseInt(request.getParameter("id")));
-                        Database.RecordUserObjectDeletionAction(user.getUserId().toString(), user.getUsername(), currentTime, "Locale", request.getParameter("id"));
-
-                        response.sendRedirect("admin/LocaleUI.jsp?SuccessMsg=Deleted Locale Successfully!");
-                        break;
-                    case 4:  //remove all records
-                        localeDao.removeAll();
-                        Database.RecordUserObjectClearAction(user.getUserId().toString(), user.getUsername(), currentTime, "Locale");
-                        response.sendRedirect("admin/LocaleUI.jsp?SuccessMsg=Removed All Records Successfully!");
-                        break;
-                    default:
-                        response.sendRedirect("admin/LocaleUI.jsp?ErrorMsg=Error editing Locale, Invalid Action.");
-                        break;
-                }
-            }
-            catch (Exception e)
-            {
-                System.out.println("Error:" + e.getMessage());
-                switch (Integer.parseInt(request.getParameter("action")))
-                {
-                    case 1:
-                        response.sendRedirect("admin/LocaleUI.jsp?ErrorMsg=Error adding Locale.");
-                        break; //create
-                    case 2:
-                        response.sendRedirect("admin/LocaleUI.jsp?ErrorMsg=Error editing Locale.");
-                        break; //update                                                    
-                    case 3:
-                        response.sendRedirect("admin/LocaleUI.jsp?ErrorMsg=Error deleting Locale.");
-                        break; //delete                                                    
-                    case 4:
-                        response.sendRedirect("admin/LocaleUI.jsp?ErrorMsg=Error clearing Locale.");
-                        break; //clear                          
-                    default:
-                        response.sendRedirect("admin/LocaleUI.jsp?ErrorMsg=Unknown Error Locale, possibly an invalid action.");
-                        break;
-                }
-            }
-        }
-
         if (request.getParameter("form").equals("localized_string"))
         {
             try

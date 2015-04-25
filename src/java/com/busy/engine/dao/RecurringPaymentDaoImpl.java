@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Order", recurringPayment.getOrderId().toString());
+                    getRecordById("order", recurringPayment.getOrderId().toString());
                     recurringPayment.setOrder(Order.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             RecurringPayment recurringPayment = (RecurringPayment) e.getValue();
 
                             
-                                getRecordById("Order", recurringPayment.getOrderId().toString());
+                                getRecordById("order", recurringPayment.getOrderId().toString());
                                 recurringPayment.setOrder(Order.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (RecurringPayment recurringPayment : recurringPaymentList)
                         {                        
                             
-                                getRecordById("Order", recurringPayment.getOrderId().toString());
+                                getRecordById("order", recurringPayment.getOrderId().toString());
                                 recurringPayment.setOrder(Order.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return recurringPaymentList;
         } 
+        
+        @Override
+        public ArrayList<RecurringPayment> findByColumns(Column... columns)
+        {
+            ArrayList<RecurringPayment> recurringPaymentList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(RecurringPayment.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("recurring_payment", columns);
+                while (rs.next())
+                {
+                    recurringPaymentList.add(RecurringPayment.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("RecurringPayment's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return recurringPaymentList;
+        }
     
         @Override
         public int add(RecurringPayment obj)
@@ -468,7 +502,7 @@
                 try
                 { 
                     
-                            getRecordById("Order", recurring_payment.getOrderId().toString());
+                            getRecordById("order", recurring_payment.getOrderId().toString());
                             recurring_payment.setOrder(Order.process(rs));                                       
                     
                     }

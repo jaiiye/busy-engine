@@ -36,11 +36,11 @@ public class ContextListener implements ServletContextListener
         
         
         System.out.println("Initializing Localizations...");
-//        for (AbstractMap.SimpleEntry e : Database.getLanguageStrings())
-//        {
-//            application.setAttribute((String) e.getKey(), e.getValue());
-//            System.out.println("setting Application attribute: (" + e.getKey() + ":" + e.getValue() + ")");
-//        }
+        for (AbstractMap.SimpleEntry e : Database.getLanguageStrings("1"))
+        {
+            context.setAttribute((String) e.getKey(), e.getValue());
+            System.out.println("setting Application attribute: (" + e.getKey() + ":" + e.getValue() + ")");
+        }
         
 //        context.setAttribute("itemAttributeDao", new ItemAttributeDaoImpl());
 //        context.setAttribute("itemAttributeTypeDao", new ItemAttributeTypeDaoImpl());

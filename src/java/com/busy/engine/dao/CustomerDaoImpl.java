@@ -1,6 +1,7 @@
 package com.busy.engine.dao;
 
 import com.busy.engine.data.BasicConnection;
+import com.busy.engine.data.Column;
 import com.busy.engine.entity.*;
 import com.busy.engine.util.*;
 import java.util.ArrayList;
@@ -100,16 +101,16 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
         try
         {
 
-            getRecordById("Contact", customer.getContactId().toString());
+            getRecordById("contact", customer.getContactId().toString());
             customer.setContact(Contact.process(rs));
 
-            getRecordById("User", customer.getUserId().toString());
+            getRecordById("user", customer.getUserId().toString());
             customer.setUser(User.process(rs));
 
-            getRecordById("BillingAddress", customer.getBillingAddressId().toString());
+            getRecordById("address", customer.getBillingAddressId().toString());
             customer.setBillingAddress(Address.process(rs));
 
-            getRecordById("ShippingAddress", customer.getShippingAddressId().toString());
+            getRecordById("address", customer.getShippingAddressId().toString());
             customer.setShippingAddress(Address.process(rs));
 
         }
@@ -198,16 +199,16 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
                 {
                     Customer customer = (Customer) e.getValue();
 
-                    getRecordById("Contact", customer.getContactId().toString());
+                    getRecordById("contact", customer.getContactId().toString());
                     customer.setContact(Contact.process(rs));
 
-                    getRecordById("User", customer.getUserId().toString());
+                    getRecordById("user", customer.getUserId().toString());
                     customer.setUser(User.process(rs));
 
-                    getRecordById("BillingAddress", customer.getBillingAddressId().toString());
+                    getRecordById("address", customer.getBillingAddressId().toString());
                     customer.setBillingAddress(Address.process(rs));
 
-                    getRecordById("ShippingAddress", customer.getShippingAddressId().toString());
+                    getRecordById("address", customer.getShippingAddressId().toString());
                     customer.setShippingAddress(Address.process(rs));
 
                 }
@@ -237,16 +238,16 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
                 for (Customer customer : customerList)
                 {
 
-                    getRecordById("Contact", customer.getContactId().toString());
+                    getRecordById("contact", customer.getContactId().toString());
                     customer.setContact(Contact.process(rs));
 
-                    getRecordById("User", customer.getUserId().toString());
+                    getRecordById("user", customer.getUserId().toString());
                     customer.setUser(User.process(rs));
 
-                    getRecordById("BillingAddress", customer.getBillingAddressId().toString());
+                    getRecordById("address", customer.getBillingAddressId().toString());
                     customer.setBillingAddress(Address.process(rs));
 
-                    getRecordById("ShippingAddress", customer.getShippingAddressId().toString());
+                    getRecordById("address", customer.getShippingAddressId().toString());
                     customer.setShippingAddress(Address.process(rs));
 
                 }
@@ -318,6 +319,37 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
                 closeConnection();
             }
         }
+        return customerList;
+    }
+
+    @Override
+    public ArrayList<Customer> findByColumns(Column... columns)
+    {
+        ArrayList<Customer> customerList = new ArrayList<>();
+
+        try
+        {
+            //make sure the correct isNumeric values are set for columns
+            for (Column c : columns)
+            {
+                c.setNumeric(Customer.isColumnNumeric(c.getColumnName()));
+            }
+
+            getAllRecordsByColumns("customer", columns);
+            while (rs.next())
+            {
+                customerList.add(Customer.process(rs));
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("Customer's method findByColumns(Column... columns) error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+
         return customerList;
     }
 
@@ -419,16 +451,16 @@ public class CustomerDaoImpl extends BasicConnection implements Serializable, Cu
         try
         {
 
-            getRecordById("Contact", customer.getContactId().toString());
+            getRecordById("contact", customer.getContactId().toString());
             customer.setContact(Contact.process(rs));
 
-            getRecordById("User", customer.getUserId().toString());
+            getRecordById("user", customer.getUserId().toString());
             customer.setUser(User.process(rs));
 
-            getRecordById("BillingAddress", customer.getBillingAddressId().toString());
+            getRecordById("address", customer.getBillingAddressId().toString());
             customer.setBillingAddress(Address.process(rs));
 
-            getRecordById("ShippingAddress", customer.getShippingAddressId().toString());
+            getRecordById("address", customer.getShippingAddressId().toString());
             customer.setShippingAddress(Address.process(rs));
 
         }

@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,13 +158,13 @@
                 {
 
                 
-                    getRecordById("User", blogPost.getUserId().toString());
+                    getRecordById("user", blogPost.getUserId().toString());
                     blogPost.setUser(User.process(rs));               
                 
-                    getRecordById("Blog", blogPost.getBlogId().toString());
+                    getRecordById("blog", blogPost.getBlogId().toString());
                     blogPost.setBlog(Blog.process(rs));               
                 
-                    getRecordById("MetaTag", blogPost.getMetaTagId().toString());
+                    getRecordById("meta_tag", blogPost.getMetaTagId().toString());
                     blogPost.setMetaTag(MetaTag.process(rs));               
                   
 
@@ -254,13 +257,13 @@
                             BlogPost blogPost = (BlogPost) e.getValue();
 
                             
-                                getRecordById("User", blogPost.getUserId().toString());
+                                getRecordById("user", blogPost.getUserId().toString());
                                 blogPost.setUser(User.process(rs));               
                             
-                                getRecordById("Blog", blogPost.getBlogId().toString());
+                                getRecordById("blog", blogPost.getBlogId().toString());
                                 blogPost.setBlog(Blog.process(rs));               
                             
-                                getRecordById("MetaTag", blogPost.getMetaTagId().toString());
+                                getRecordById("meta_tag", blogPost.getMetaTagId().toString());
                                 blogPost.setMetaTag(MetaTag.process(rs));               
                                                     
                         }
@@ -292,13 +295,13 @@
                         for (BlogPost blogPost : blogPostList)
                         {                        
                             
-                                getRecordById("User", blogPost.getUserId().toString());
+                                getRecordById("user", blogPost.getUserId().toString());
                                 blogPost.setUser(User.process(rs));               
                             
-                                getRecordById("Blog", blogPost.getBlogId().toString());
+                                getRecordById("blog", blogPost.getBlogId().toString());
                                 blogPost.setBlog(Blog.process(rs));               
                             
-                                getRecordById("MetaTag", blogPost.getMetaTagId().toString());
+                                getRecordById("meta_tag", blogPost.getMetaTagId().toString());
                                 blogPost.setMetaTag(MetaTag.process(rs));               
                               
                         }
@@ -373,6 +376,37 @@
             }
             return blogPostList;
         } 
+        
+        @Override
+        public ArrayList<BlogPost> findByColumns(Column... columns)
+        {
+            ArrayList<BlogPost> blogPostList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(BlogPost.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("blog_post", columns);
+                while (rs.next())
+                {
+                    blogPostList.add(BlogPost.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("BlogPost's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return blogPostList;
+        }
     
         @Override
         public int add(BlogPost obj)
@@ -526,13 +560,13 @@
                 try
                 { 
                     
-                            getRecordById("User", blog_post.getUserId().toString());
+                            getRecordById("user", blog_post.getUserId().toString());
                             blog_post.setUser(User.process(rs));                                       
                     
-                            getRecordById("Blog", blog_post.getBlogId().toString());
+                            getRecordById("blog", blog_post.getBlogId().toString());
                             blog_post.setBlog(Blog.process(rs));                                       
                     
-                            getRecordById("MetaTag", blog_post.getMetaTagId().toString());
+                            getRecordById("meta_tag", blog_post.getMetaTagId().toString());
                             blog_post.setMetaTag(MetaTag.process(rs));                                       
                     
                     }

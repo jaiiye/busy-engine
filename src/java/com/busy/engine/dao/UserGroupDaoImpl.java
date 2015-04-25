@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("Site", userGroup.getSiteId().toString());
+                    getRecordById("site", userGroup.getSiteId().toString());
                     userGroup.setSite(Site.process(rs));               
                 
-                    getRecordById("Discount", userGroup.getDiscountId().toString());
+                    getRecordById("discount", userGroup.getDiscountId().toString());
                     userGroup.setDiscount(Discount.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             UserGroup userGroup = (UserGroup) e.getValue();
 
                             
-                                getRecordById("Site", userGroup.getSiteId().toString());
+                                getRecordById("site", userGroup.getSiteId().toString());
                                 userGroup.setSite(Site.process(rs));               
                             
-                                getRecordById("Discount", userGroup.getDiscountId().toString());
+                                getRecordById("discount", userGroup.getDiscountId().toString());
                                 userGroup.setDiscount(Discount.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (UserGroup userGroup : userGroupList)
                         {                        
                             
-                                getRecordById("Site", userGroup.getSiteId().toString());
+                                getRecordById("site", userGroup.getSiteId().toString());
                                 userGroup.setSite(Site.process(rs));               
                             
-                                getRecordById("Discount", userGroup.getDiscountId().toString());
+                                getRecordById("discount", userGroup.getDiscountId().toString());
                                 userGroup.setDiscount(Discount.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return userGroupList;
         } 
+        
+        @Override
+        public ArrayList<UserGroup> findByColumns(Column... columns)
+        {
+            ArrayList<UserGroup> userGroupList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(UserGroup.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("user_group", columns);
+                while (rs.next())
+                {
+                    userGroupList.add(UserGroup.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("UserGroup's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return userGroupList;
+        }
     
         @Override
         public int add(UserGroup obj)
@@ -469,10 +503,10 @@
                 try
                 { 
                     
-                            getRecordById("Site", user_group.getSiteId().toString());
+                            getRecordById("site", user_group.getSiteId().toString());
                             user_group.setSite(Site.process(rs));                                       
                     
-                            getRecordById("Discount", user_group.getDiscountId().toString());
+                            getRecordById("discount", user_group.getDiscountId().toString());
                             user_group.setDiscount(Discount.process(rs));                                       
                     
                     }

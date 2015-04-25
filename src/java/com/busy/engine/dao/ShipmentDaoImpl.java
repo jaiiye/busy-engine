@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Order", shipment.getOrderId().toString());
+                    getRecordById("order", shipment.getOrderId().toString());
                     shipment.setOrder(Order.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             Shipment shipment = (Shipment) e.getValue();
 
                             
-                                getRecordById("Order", shipment.getOrderId().toString());
+                                getRecordById("order", shipment.getOrderId().toString());
                                 shipment.setOrder(Order.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (Shipment shipment : shipmentList)
                         {                        
                             
-                                getRecordById("Order", shipment.getOrderId().toString());
+                                getRecordById("order", shipment.getOrderId().toString());
                                 shipment.setOrder(Order.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return shipmentList;
         } 
+        
+        @Override
+        public ArrayList<Shipment> findByColumns(Column... columns)
+        {
+            ArrayList<Shipment> shipmentList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Shipment.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("shipment", columns);
+                while (rs.next())
+                {
+                    shipmentList.add(Shipment.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Shipment's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return shipmentList;
+        }
     
         @Override
         public int add(Shipment obj)
@@ -476,7 +510,7 @@
                 try
                 { 
                     
-                            getRecordById("Order", shipment.getOrderId().toString());
+                            getRecordById("order", shipment.getOrderId().toString());
                             shipment.setOrder(Order.process(rs));                                       
                     
                     }

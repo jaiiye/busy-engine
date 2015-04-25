@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -307,6 +310,37 @@
             }
             return resourceTypeList;
         } 
+        
+        @Override
+        public ArrayList<ResourceType> findByColumns(Column... columns)
+        {
+            ArrayList<ResourceType> resourceTypeList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ResourceType.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("resource_type", columns);
+                while (rs.next())
+                {
+                    resourceTypeList.add(ResourceType.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ResourceType's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return resourceTypeList;
+        }
     
         @Override
         public int add(ResourceType obj)

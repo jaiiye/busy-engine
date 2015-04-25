@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Slider", sliderItem.getSliderId().toString());
+                    getRecordById("slider", sliderItem.getSliderId().toString());
                     sliderItem.setSlider(Slider.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             SliderItem sliderItem = (SliderItem) e.getValue();
 
                             
-                                getRecordById("Slider", sliderItem.getSliderId().toString());
+                                getRecordById("slider", sliderItem.getSliderId().toString());
                                 sliderItem.setSlider(Slider.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (SliderItem sliderItem : sliderItemList)
                         {                        
                             
-                                getRecordById("Slider", sliderItem.getSliderId().toString());
+                                getRecordById("slider", sliderItem.getSliderId().toString());
                                 sliderItem.setSlider(Slider.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return sliderItemList;
         } 
+        
+        @Override
+        public ArrayList<SliderItem> findByColumns(Column... columns)
+        {
+            ArrayList<SliderItem> sliderItemList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(SliderItem.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("slider_item", columns);
+                while (rs.next())
+                {
+                    sliderItemList.add(SliderItem.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("SliderItem's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return sliderItemList;
+        }
     
         @Override
         public int add(SliderItem obj)
@@ -476,7 +510,7 @@
                 try
                 { 
                     
-                            getRecordById("Slider", slider_item.getSliderId().toString());
+                            getRecordById("slider", slider_item.getSliderId().toString());
                             slider_item.setSlider(Slider.process(rs));                                       
                     
                     }

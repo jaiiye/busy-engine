@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("SiteFile", fileFolder.getSiteFileId().toString());
+                    getRecordById("site_file", fileFolder.getSiteFileId().toString());
                     fileFolder.setSiteFile(SiteFile.process(rs));               
                 
-                    getRecordById("SiteFolder", fileFolder.getSiteFolderId().toString());
+                    getRecordById("site_folder", fileFolder.getSiteFolderId().toString());
                     fileFolder.setSiteFolder(SiteFolder.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             FileFolder fileFolder = (FileFolder) e.getValue();
 
                             
-                                getRecordById("SiteFile", fileFolder.getSiteFileId().toString());
+                                getRecordById("site_file", fileFolder.getSiteFileId().toString());
                                 fileFolder.setSiteFile(SiteFile.process(rs));               
                             
-                                getRecordById("SiteFolder", fileFolder.getSiteFolderId().toString());
+                                getRecordById("site_folder", fileFolder.getSiteFolderId().toString());
                                 fileFolder.setSiteFolder(SiteFolder.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (FileFolder fileFolder : fileFolderList)
                         {                        
                             
-                                getRecordById("SiteFile", fileFolder.getSiteFileId().toString());
+                                getRecordById("site_file", fileFolder.getSiteFileId().toString());
                                 fileFolder.setSiteFile(SiteFile.process(rs));               
                             
-                                getRecordById("SiteFolder", fileFolder.getSiteFolderId().toString());
+                                getRecordById("site_folder", fileFolder.getSiteFolderId().toString());
                                 fileFolder.setSiteFolder(SiteFolder.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return fileFolderList;
         } 
+        
+        @Override
+        public ArrayList<FileFolder> findByColumns(Column... columns)
+        {
+            ArrayList<FileFolder> fileFolderList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(FileFolder.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("file_folder", columns);
+                while (rs.next())
+                {
+                    fileFolderList.add(FileFolder.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("FileFolder's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return fileFolderList;
+        }
     
         @Override
         public int add(FileFolder obj)
@@ -465,10 +499,10 @@
                 try
                 { 
                     
-                            getRecordById("SiteFile", file_folder.getSiteFileId().toString());
+                            getRecordById("site_file", file_folder.getSiteFileId().toString());
                             file_folder.setSiteFile(SiteFile.process(rs));                                       
                     
-                            getRecordById("SiteFolder", file_folder.getSiteFolderId().toString());
+                            getRecordById("site_folder", file_folder.getSiteFolderId().toString());
                             file_folder.setSiteFolder(SiteFolder.process(rs));                                       
                     
                     }

@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -307,6 +310,37 @@
             }
             return metaTagList;
         } 
+        
+        @Override
+        public ArrayList<MetaTag> findByColumns(Column... columns)
+        {
+            ArrayList<MetaTag> metaTagList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(MetaTag.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("meta_tag", columns);
+                while (rs.next())
+                {
+                    metaTagList.add(MetaTag.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("MetaTag's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return metaTagList;
+        }
     
         @Override
         public int add(MetaTag obj)

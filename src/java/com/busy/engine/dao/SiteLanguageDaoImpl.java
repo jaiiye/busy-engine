@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Site", siteLanguage.getSiteId().toString());
+                    getRecordById("site", siteLanguage.getSiteId().toString());
                     siteLanguage.setSite(Site.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             SiteLanguage siteLanguage = (SiteLanguage) e.getValue();
 
                             
-                                getRecordById("Site", siteLanguage.getSiteId().toString());
+                                getRecordById("site", siteLanguage.getSiteId().toString());
                                 siteLanguage.setSite(Site.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (SiteLanguage siteLanguage : siteLanguageList)
                         {                        
                             
-                                getRecordById("Site", siteLanguage.getSiteId().toString());
+                                getRecordById("site", siteLanguage.getSiteId().toString());
                                 siteLanguage.setSite(Site.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return siteLanguageList;
         } 
+        
+        @Override
+        public ArrayList<SiteLanguage> findByColumns(Column... columns)
+        {
+            ArrayList<SiteLanguage> siteLanguageList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(SiteLanguage.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("site_language", columns);
+                while (rs.next())
+                {
+                    siteLanguageList.add(SiteLanguage.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("SiteLanguage's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return siteLanguageList;
+        }
     
         @Override
         public int add(SiteLanguage obj)
@@ -468,7 +502,7 @@
                 try
                 { 
                     
-                            getRecordById("Site", site_language.getSiteId().toString());
+                            getRecordById("site", site_language.getSiteId().toString());
                             site_language.setSite(Site.process(rs));                                       
                     
                     }

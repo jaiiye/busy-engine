@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,19 +158,19 @@
                 {
 
                 
-                    getRecordById("ItemType", item.getItemTypeId().toString());
+                    getRecordById("item_type", item.getItemTypeId().toString());
                     item.setItemType(ItemType.process(rs));               
                 
-                    getRecordById("ItemBrand", item.getItemBrandId().toString());
+                    getRecordById("item_brand", item.getItemBrandId().toString());
                     item.setItemBrand(ItemBrand.process(rs));               
                 
-                    getRecordById("MetaTag", item.getMetaTagId().toString());
+                    getRecordById("meta_tag", item.getMetaTagId().toString());
                     item.setMetaTag(MetaTag.process(rs));               
                 
-                    getRecordById("Template", item.getTemplateId().toString());
+                    getRecordById("template", item.getTemplateId().toString());
                     item.setTemplate(Template.process(rs));               
                 
-                    getRecordById("Vendor", item.getVendorId().toString());
+                    getRecordById("vendor", item.getVendorId().toString());
                     item.setVendor(Vendor.process(rs));               
                   
 
@@ -260,19 +263,19 @@
                             Item item = (Item) e.getValue();
 
                             
-                                getRecordById("ItemType", item.getItemTypeId().toString());
+                                getRecordById("item_type", item.getItemTypeId().toString());
                                 item.setItemType(ItemType.process(rs));               
                             
-                                getRecordById("ItemBrand", item.getItemBrandId().toString());
+                                getRecordById("item_brand", item.getItemBrandId().toString());
                                 item.setItemBrand(ItemBrand.process(rs));               
                             
-                                getRecordById("MetaTag", item.getMetaTagId().toString());
+                                getRecordById("meta_tag", item.getMetaTagId().toString());
                                 item.setMetaTag(MetaTag.process(rs));               
                             
-                                getRecordById("Template", item.getTemplateId().toString());
+                                getRecordById("template", item.getTemplateId().toString());
                                 item.setTemplate(Template.process(rs));               
                             
-                                getRecordById("Vendor", item.getVendorId().toString());
+                                getRecordById("vendor", item.getVendorId().toString());
                                 item.setVendor(Vendor.process(rs));               
                                                     
                         }
@@ -304,19 +307,19 @@
                         for (Item item : itemList)
                         {                        
                             
-                                getRecordById("ItemType", item.getItemTypeId().toString());
+                                getRecordById("item_type", item.getItemTypeId().toString());
                                 item.setItemType(ItemType.process(rs));               
                             
-                                getRecordById("ItemBrand", item.getItemBrandId().toString());
+                                getRecordById("item_brand", item.getItemBrandId().toString());
                                 item.setItemBrand(ItemBrand.process(rs));               
                             
-                                getRecordById("MetaTag", item.getMetaTagId().toString());
+                                getRecordById("meta_tag", item.getMetaTagId().toString());
                                 item.setMetaTag(MetaTag.process(rs));               
                             
-                                getRecordById("Template", item.getTemplateId().toString());
+                                getRecordById("template", item.getTemplateId().toString());
                                 item.setTemplate(Template.process(rs));               
                             
-                                getRecordById("Vendor", item.getVendorId().toString());
+                                getRecordById("vendor", item.getVendorId().toString());
                                 item.setVendor(Vendor.process(rs));               
                               
                         }
@@ -391,6 +394,37 @@
             }
             return itemList;
         } 
+        
+        @Override
+        public ArrayList<Item> findByColumns(Column... columns)
+        {
+            ArrayList<Item> itemList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Item.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("item", columns);
+                while (rs.next())
+                {
+                    itemList.add(Item.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Item's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return itemList;
+        }
     
         @Override
         public int add(Item obj)
@@ -552,19 +586,19 @@
                 try
                 { 
                     
-                            getRecordById("ItemType", item.getItemTypeId().toString());
+                            getRecordById("item_type", item.getItemTypeId().toString());
                             item.setItemType(ItemType.process(rs));                                       
                     
-                            getRecordById("ItemBrand", item.getItemBrandId().toString());
+                            getRecordById("item_brand", item.getItemBrandId().toString());
                             item.setItemBrand(ItemBrand.process(rs));                                       
                     
-                            getRecordById("MetaTag", item.getMetaTagId().toString());
+                            getRecordById("meta_tag", item.getMetaTagId().toString());
                             item.setMetaTag(MetaTag.process(rs));                                       
                     
-                            getRecordById("Template", item.getTemplateId().toString());
+                            getRecordById("template", item.getTemplateId().toString());
                             item.setTemplate(Template.process(rs));                                       
                     
-                            getRecordById("Vendor", item.getVendorId().toString());
+                            getRecordById("vendor", item.getVendorId().toString());
                             item.setVendor(Vendor.process(rs));                                       
                     
                     }

@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -307,6 +310,37 @@
             }
             return templateTypeList;
         } 
+        
+        @Override
+        public ArrayList<TemplateType> findByColumns(Column... columns)
+        {
+            ArrayList<TemplateType> templateTypeList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(TemplateType.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("template_type", columns);
+                while (rs.next())
+                {
+                    templateTypeList.add(TemplateType.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("TemplateType's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return templateTypeList;
+        }
     
         @Override
         public int add(TemplateType obj)

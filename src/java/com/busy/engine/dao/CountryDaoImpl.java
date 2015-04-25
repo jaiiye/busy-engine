@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -307,6 +310,37 @@
             }
             return countryList;
         } 
+        
+        @Override
+        public ArrayList<Country> findByColumns(Column... columns)
+        {
+            ArrayList<Country> countryList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Country.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("country", columns);
+                while (rs.next())
+                {
+                    countryList.add(Country.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Country's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return countryList;
+        }
     
         @Override
         public int add(Country obj)

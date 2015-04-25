@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Item", itemFile.getItemId().toString());
+                    getRecordById("item", itemFile.getItemId().toString());
                     itemFile.setItem(Item.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             ItemFile itemFile = (ItemFile) e.getValue();
 
                             
-                                getRecordById("Item", itemFile.getItemId().toString());
+                                getRecordById("item", itemFile.getItemId().toString());
                                 itemFile.setItem(Item.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (ItemFile itemFile : itemFileList)
                         {                        
                             
-                                getRecordById("Item", itemFile.getItemId().toString());
+                                getRecordById("item", itemFile.getItemId().toString());
                                 itemFile.setItem(Item.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return itemFileList;
         } 
+        
+        @Override
+        public ArrayList<ItemFile> findByColumns(Column... columns)
+        {
+            ArrayList<ItemFile> itemFileList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ItemFile.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("item_file", columns);
+                while (rs.next())
+                {
+                    itemFileList.add(ItemFile.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ItemFile's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return itemFileList;
+        }
     
         @Override
         public int add(ItemFile obj)
@@ -468,7 +502,7 @@
                 try
                 { 
                     
-                            getRecordById("Item", item_file.getItemId().toString());
+                            getRecordById("item", item_file.getItemId().toString());
                             item_file.setItem(Item.process(rs));                                       
                     
                     }

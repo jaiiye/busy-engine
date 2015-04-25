@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("UserService", serviceCharge.getUserServiceId().toString());
+                    getRecordById("user_service", serviceCharge.getUserServiceId().toString());
                     serviceCharge.setUserService(UserService.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             ServiceCharge serviceCharge = (ServiceCharge) e.getValue();
 
                             
-                                getRecordById("UserService", serviceCharge.getUserServiceId().toString());
+                                getRecordById("user_service", serviceCharge.getUserServiceId().toString());
                                 serviceCharge.setUserService(UserService.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (ServiceCharge serviceCharge : serviceChargeList)
                         {                        
                             
-                                getRecordById("UserService", serviceCharge.getUserServiceId().toString());
+                                getRecordById("user_service", serviceCharge.getUserServiceId().toString());
                                 serviceCharge.setUserService(UserService.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return serviceChargeList;
         } 
+        
+        @Override
+        public ArrayList<ServiceCharge> findByColumns(Column... columns)
+        {
+            ArrayList<ServiceCharge> serviceChargeList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ServiceCharge.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("service_charge", columns);
+                while (rs.next())
+                {
+                    serviceChargeList.add(ServiceCharge.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ServiceCharge's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return serviceChargeList;
+        }
     
         @Override
         public int add(ServiceCharge obj)
@@ -472,7 +506,7 @@
                 try
                 { 
                     
-                            getRecordById("UserService", service_charge.getUserServiceId().toString());
+                            getRecordById("user_service", service_charge.getUserServiceId().toString());
                             service_charge.setUserService(UserService.process(rs));                                       
                     
                     }

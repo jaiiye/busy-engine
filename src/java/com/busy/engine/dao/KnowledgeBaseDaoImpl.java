@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -307,6 +310,37 @@
             }
             return knowledgeBaseList;
         } 
+        
+        @Override
+        public ArrayList<KnowledgeBase> findByColumns(Column... columns)
+        {
+            ArrayList<KnowledgeBase> knowledgeBaseList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(KnowledgeBase.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("knowledge_base", columns);
+                while (rs.next())
+                {
+                    knowledgeBaseList.add(KnowledgeBase.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("KnowledgeBase's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return knowledgeBaseList;
+        }
     
         @Override
         public int add(KnowledgeBase obj)

@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("Category", itemCategory.getCategoryId().toString());
+                    getRecordById("category", itemCategory.getCategoryId().toString());
                     itemCategory.setCategory(Category.process(rs));               
                 
-                    getRecordById("Item", itemCategory.getItemId().toString());
+                    getRecordById("item", itemCategory.getItemId().toString());
                     itemCategory.setItem(Item.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             ItemCategory itemCategory = (ItemCategory) e.getValue();
 
                             
-                                getRecordById("Category", itemCategory.getCategoryId().toString());
+                                getRecordById("category", itemCategory.getCategoryId().toString());
                                 itemCategory.setCategory(Category.process(rs));               
                             
-                                getRecordById("Item", itemCategory.getItemId().toString());
+                                getRecordById("item", itemCategory.getItemId().toString());
                                 itemCategory.setItem(Item.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (ItemCategory itemCategory : itemCategoryList)
                         {                        
                             
-                                getRecordById("Category", itemCategory.getCategoryId().toString());
+                                getRecordById("category", itemCategory.getCategoryId().toString());
                                 itemCategory.setCategory(Category.process(rs));               
                             
-                                getRecordById("Item", itemCategory.getItemId().toString());
+                                getRecordById("item", itemCategory.getItemId().toString());
                                 itemCategory.setItem(Item.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return itemCategoryList;
         } 
+        
+        @Override
+        public ArrayList<ItemCategory> findByColumns(Column... columns)
+        {
+            ArrayList<ItemCategory> itemCategoryList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ItemCategory.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("item_category", columns);
+                while (rs.next())
+                {
+                    itemCategoryList.add(ItemCategory.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ItemCategory's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return itemCategoryList;
+        }
     
         @Override
         public int add(ItemCategory obj)
@@ -465,10 +499,10 @@
                 try
                 { 
                     
-                            getRecordById("Category", item_category.getCategoryId().toString());
+                            getRecordById("category", item_category.getCategoryId().toString());
                             item_category.setCategory(Category.process(rs));                                       
                     
-                            getRecordById("Item", item_category.getItemId().toString());
+                            getRecordById("item", item_category.getItemId().toString());
                             item_category.setItem(Item.process(rs));                                       
                     
                     }

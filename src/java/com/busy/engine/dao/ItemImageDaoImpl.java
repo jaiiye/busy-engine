@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("Item", itemImage.getItemId().toString());
+                    getRecordById("item", itemImage.getItemId().toString());
                     itemImage.setItem(Item.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             ItemImage itemImage = (ItemImage) e.getValue();
 
                             
-                                getRecordById("Item", itemImage.getItemId().toString());
+                                getRecordById("item", itemImage.getItemId().toString());
                                 itemImage.setItem(Item.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (ItemImage itemImage : itemImageList)
                         {                        
                             
-                                getRecordById("Item", itemImage.getItemId().toString());
+                                getRecordById("item", itemImage.getItemId().toString());
                                 itemImage.setItem(Item.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return itemImageList;
         } 
+        
+        @Override
+        public ArrayList<ItemImage> findByColumns(Column... columns)
+        {
+            ArrayList<ItemImage> itemImageList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ItemImage.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("item_image", columns);
+                while (rs.next())
+                {
+                    itemImageList.add(ItemImage.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ItemImage's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return itemImageList;
+        }
     
         @Override
         public int add(ItemImage obj)
@@ -468,7 +502,7 @@
                 try
                 { 
                     
-                            getRecordById("Item", item_image.getItemId().toString());
+                            getRecordById("item", item_image.getItemId().toString());
                             item_image.setItem(Item.process(rs));                                       
                     
                     }

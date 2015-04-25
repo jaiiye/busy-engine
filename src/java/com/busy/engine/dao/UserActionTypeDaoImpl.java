@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -307,6 +310,37 @@
             }
             return userActionTypeList;
         } 
+        
+        @Override
+        public ArrayList<UserActionType> findByColumns(Column... columns)
+        {
+            ArrayList<UserActionType> userActionTypeList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(UserActionType.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("user_action_type", columns);
+                while (rs.next())
+                {
+                    userActionTypeList.add(UserActionType.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("UserActionType's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return userActionTypeList;
+        }
     
         @Override
         public int add(UserActionType obj)

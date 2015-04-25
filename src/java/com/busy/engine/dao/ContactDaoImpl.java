@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -307,6 +310,37 @@
             }
             return contactList;
         } 
+        
+        @Override
+        public ArrayList<Contact> findByColumns(Column... columns)
+        {
+            ArrayList<Contact> contactList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Contact.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("contact", columns);
+                while (rs.next())
+                {
+                    contactList.add(Contact.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Contact's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return contactList;
+        }
     
         @Override
         public int add(Contact obj)

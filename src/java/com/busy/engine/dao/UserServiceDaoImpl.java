@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,13 +158,13 @@
                 {
 
                 
-                    getRecordById("Blog", userService.getBlogId().toString());
+                    getRecordById("blog", userService.getBlogId().toString());
                     userService.setBlog(Blog.process(rs));               
                 
-                    getRecordById("User", userService.getUserId().toString());
+                    getRecordById("user", userService.getUserId().toString());
                     userService.setUser(User.process(rs));               
                 
-                    getRecordById("Service", userService.getServiceId().toString());
+                    getRecordById("service", userService.getServiceId().toString());
                     userService.setService(Service.process(rs));               
                   
 
@@ -254,13 +257,13 @@
                             UserService userService = (UserService) e.getValue();
 
                             
-                                getRecordById("Blog", userService.getBlogId().toString());
+                                getRecordById("blog", userService.getBlogId().toString());
                                 userService.setBlog(Blog.process(rs));               
                             
-                                getRecordById("User", userService.getUserId().toString());
+                                getRecordById("user", userService.getUserId().toString());
                                 userService.setUser(User.process(rs));               
                             
-                                getRecordById("Service", userService.getServiceId().toString());
+                                getRecordById("service", userService.getServiceId().toString());
                                 userService.setService(Service.process(rs));               
                                                     
                         }
@@ -292,13 +295,13 @@
                         for (UserService userService : userServiceList)
                         {                        
                             
-                                getRecordById("Blog", userService.getBlogId().toString());
+                                getRecordById("blog", userService.getBlogId().toString());
                                 userService.setBlog(Blog.process(rs));               
                             
-                                getRecordById("User", userService.getUserId().toString());
+                                getRecordById("user", userService.getUserId().toString());
                                 userService.setUser(User.process(rs));               
                             
-                                getRecordById("Service", userService.getServiceId().toString());
+                                getRecordById("service", userService.getServiceId().toString());
                                 userService.setService(Service.process(rs));               
                               
                         }
@@ -373,6 +376,37 @@
             }
             return userServiceList;
         } 
+        
+        @Override
+        public ArrayList<UserService> findByColumns(Column... columns)
+        {
+            ArrayList<UserService> userServiceList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(UserService.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("user_service", columns);
+                while (rs.next())
+                {
+                    userServiceList.add(UserService.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("UserService's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return userServiceList;
+        }
     
         @Override
         public int add(UserService obj)
@@ -506,13 +540,13 @@
                 try
                 { 
                     
-                            getRecordById("Blog", user_service.getBlogId().toString());
+                            getRecordById("blog", user_service.getBlogId().toString());
                             user_service.setBlog(Blog.process(rs));                                       
                     
-                            getRecordById("User", user_service.getUserId().toString());
+                            getRecordById("user", user_service.getUserId().toString());
                             user_service.setUser(User.process(rs));                                       
                     
-                            getRecordById("Service", user_service.getServiceId().toString());
+                            getRecordById("service", user_service.getServiceId().toString());
                             user_service.setService(Service.process(rs));                                       
                     
                     }

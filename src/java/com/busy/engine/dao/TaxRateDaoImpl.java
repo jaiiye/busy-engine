@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("StateProvince", taxRate.getStateProvinceId().toString());
+                    getRecordById("state_province", taxRate.getStateProvinceId().toString());
                     taxRate.setStateProvince(StateProvince.process(rs));               
                 
-                    getRecordById("Country", taxRate.getCountryId().toString());
+                    getRecordById("country", taxRate.getCountryId().toString());
                     taxRate.setCountry(Country.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             TaxRate taxRate = (TaxRate) e.getValue();
 
                             
-                                getRecordById("StateProvince", taxRate.getStateProvinceId().toString());
+                                getRecordById("state_province", taxRate.getStateProvinceId().toString());
                                 taxRate.setStateProvince(StateProvince.process(rs));               
                             
-                                getRecordById("Country", taxRate.getCountryId().toString());
+                                getRecordById("country", taxRate.getCountryId().toString());
                                 taxRate.setCountry(Country.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (TaxRate taxRate : taxRateList)
                         {                        
                             
-                                getRecordById("StateProvince", taxRate.getStateProvinceId().toString());
+                                getRecordById("state_province", taxRate.getStateProvinceId().toString());
                                 taxRate.setStateProvince(StateProvince.process(rs));               
                             
-                                getRecordById("Country", taxRate.getCountryId().toString());
+                                getRecordById("country", taxRate.getCountryId().toString());
                                 taxRate.setCountry(Country.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return taxRateList;
         } 
+        
+        @Override
+        public ArrayList<TaxRate> findByColumns(Column... columns)
+        {
+            ArrayList<TaxRate> taxRateList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(TaxRate.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("tax_rate", columns);
+                while (rs.next())
+                {
+                    taxRateList.add(TaxRate.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("TaxRate's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return taxRateList;
+        }
     
         @Override
         public int add(TaxRate obj)
@@ -477,10 +511,10 @@
                 try
                 { 
                     
-                            getRecordById("StateProvince", tax_rate.getStateProvinceId().toString());
+                            getRecordById("state_province", tax_rate.getStateProvinceId().toString());
                             tax_rate.setStateProvince(StateProvince.process(rs));                                       
                     
-                            getRecordById("Country", tax_rate.getCountryId().toString());
+                            getRecordById("country", tax_rate.getCountryId().toString());
                             tax_rate.setCountry(Country.process(rs));                                       
                     
                     }

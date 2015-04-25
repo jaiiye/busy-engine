@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,7 +158,7 @@
                 {
 
                 
-                    getRecordById("OrderItem", returnRequest.getOrderItemId().toString());
+                    getRecordById("order_item", returnRequest.getOrderItemId().toString());
                     returnRequest.setOrderItem(OrderItem.process(rs));               
                   
 
@@ -248,7 +251,7 @@
                             ReturnRequest returnRequest = (ReturnRequest) e.getValue();
 
                             
-                                getRecordById("OrderItem", returnRequest.getOrderItemId().toString());
+                                getRecordById("order_item", returnRequest.getOrderItemId().toString());
                                 returnRequest.setOrderItem(OrderItem.process(rs));               
                                                     
                         }
@@ -280,7 +283,7 @@
                         for (ReturnRequest returnRequest : returnRequestList)
                         {                        
                             
-                                getRecordById("OrderItem", returnRequest.getOrderItemId().toString());
+                                getRecordById("order_item", returnRequest.getOrderItemId().toString());
                                 returnRequest.setOrderItem(OrderItem.process(rs));               
                               
                         }
@@ -355,6 +358,37 @@
             }
             return returnRequestList;
         } 
+        
+        @Override
+        public ArrayList<ReturnRequest> findByColumns(Column... columns)
+        {
+            ArrayList<ReturnRequest> returnRequestList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ReturnRequest.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("return_request", columns);
+                while (rs.next())
+                {
+                    returnRequestList.add(ReturnRequest.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ReturnRequest's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return returnRequestList;
+        }
     
         @Override
         public int add(ReturnRequest obj)
@@ -476,7 +510,7 @@
                 try
                 { 
                     
-                            getRecordById("OrderItem", return_request.getOrderItemId().toString());
+                            getRecordById("order_item", return_request.getOrderItemId().toString());
                             return_request.setOrderItem(OrderItem.process(rs));                                       
                     
                     }

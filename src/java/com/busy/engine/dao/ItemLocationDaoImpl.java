@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,13 +158,13 @@
                 {
 
                 
-                    getRecordById("Item", itemLocation.getItemId().toString());
+                    getRecordById("item", itemLocation.getItemId().toString());
                     itemLocation.setItem(Item.process(rs));               
                 
-                    getRecordById("Address", itemLocation.getAddressId().toString());
+                    getRecordById("address", itemLocation.getAddressId().toString());
                     itemLocation.setAddress(Address.process(rs));               
                 
-                    getRecordById("Contact", itemLocation.getContactId().toString());
+                    getRecordById("contact", itemLocation.getContactId().toString());
                     itemLocation.setContact(Contact.process(rs));               
                   
 
@@ -254,13 +257,13 @@
                             ItemLocation itemLocation = (ItemLocation) e.getValue();
 
                             
-                                getRecordById("Item", itemLocation.getItemId().toString());
+                                getRecordById("item", itemLocation.getItemId().toString());
                                 itemLocation.setItem(Item.process(rs));               
                             
-                                getRecordById("Address", itemLocation.getAddressId().toString());
+                                getRecordById("address", itemLocation.getAddressId().toString());
                                 itemLocation.setAddress(Address.process(rs));               
                             
-                                getRecordById("Contact", itemLocation.getContactId().toString());
+                                getRecordById("contact", itemLocation.getContactId().toString());
                                 itemLocation.setContact(Contact.process(rs));               
                                                     
                         }
@@ -292,13 +295,13 @@
                         for (ItemLocation itemLocation : itemLocationList)
                         {                        
                             
-                                getRecordById("Item", itemLocation.getItemId().toString());
+                                getRecordById("item", itemLocation.getItemId().toString());
                                 itemLocation.setItem(Item.process(rs));               
                             
-                                getRecordById("Address", itemLocation.getAddressId().toString());
+                                getRecordById("address", itemLocation.getAddressId().toString());
                                 itemLocation.setAddress(Address.process(rs));               
                             
-                                getRecordById("Contact", itemLocation.getContactId().toString());
+                                getRecordById("contact", itemLocation.getContactId().toString());
                                 itemLocation.setContact(Contact.process(rs));               
                               
                         }
@@ -373,6 +376,37 @@
             }
             return itemLocationList;
         } 
+        
+        @Override
+        public ArrayList<ItemLocation> findByColumns(Column... columns)
+        {
+            ArrayList<ItemLocation> itemLocationList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(ItemLocation.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("item_location", columns);
+                while (rs.next())
+                {
+                    itemLocationList.add(ItemLocation.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("ItemLocation's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return itemLocationList;
+        }
     
         @Override
         public int add(ItemLocation obj)
@@ -486,13 +520,13 @@
                 try
                 { 
                     
-                            getRecordById("Item", item_location.getItemId().toString());
+                            getRecordById("item", item_location.getItemId().toString());
                             item_location.setItem(Item.process(rs));                                       
                     
-                            getRecordById("Address", item_location.getAddressId().toString());
+                            getRecordById("address", item_location.getAddressId().toString());
                             item_location.setAddress(Address.process(rs));                                       
                     
-                            getRecordById("Contact", item_location.getContactId().toString());
+                            getRecordById("contact", item_location.getContactId().toString());
                             item_location.setContact(Contact.process(rs));                                       
                     
                     }

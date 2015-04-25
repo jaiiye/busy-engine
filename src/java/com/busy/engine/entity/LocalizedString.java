@@ -73,7 +73,7 @@ public class LocalizedString extends AbstractEntity implements EntityItem<Intege
 
     public static boolean isColumnNumeric(String column)
     {
-        if (column.equals(LocalizedString.PROP_LOCALIZED_STRING_ID) || column.equals(LocalizedString.PROP_LOCALE) || column.equals(LocalizedString.PROP_TEXT_STRING_ID))
+        if (column.equals(LocalizedString.PROP_LOCALIZED_STRING_ID) || column.equals(LocalizedString.PROP_TEXT_STRING_ID))
         {
             return true;
         }

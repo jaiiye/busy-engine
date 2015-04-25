@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("FormFieldType", formField.getFormFieldTypeId().toString());
+                    getRecordById("form_field_type", formField.getFormFieldTypeId().toString());
                     formField.setFormFieldType(FormFieldType.process(rs));               
                 
-                    getRecordById("Form", formField.getFormId().toString());
+                    getRecordById("form", formField.getFormId().toString());
                     formField.setForm(Form.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             FormField formField = (FormField) e.getValue();
 
                             
-                                getRecordById("FormFieldType", formField.getFormFieldTypeId().toString());
+                                getRecordById("form_field_type", formField.getFormFieldTypeId().toString());
                                 formField.setFormFieldType(FormFieldType.process(rs));               
                             
-                                getRecordById("Form", formField.getFormId().toString());
+                                getRecordById("form", formField.getFormId().toString());
                                 formField.setForm(Form.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (FormField formField : formFieldList)
                         {                        
                             
-                                getRecordById("FormFieldType", formField.getFormFieldTypeId().toString());
+                                getRecordById("form_field_type", formField.getFormFieldTypeId().toString());
                                 formField.setFormFieldType(FormFieldType.process(rs));               
                             
-                                getRecordById("Form", formField.getFormId().toString());
+                                getRecordById("form", formField.getFormId().toString());
                                 formField.setForm(Form.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return formFieldList;
         } 
+        
+        @Override
+        public ArrayList<FormField> findByColumns(Column... columns)
+        {
+            ArrayList<FormField> formFieldList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(FormField.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("form_field", columns);
+                while (rs.next())
+                {
+                    formFieldList.add(FormField.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("FormField's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return formFieldList;
+        }
     
         @Override
         public int add(FormField obj)
@@ -501,10 +535,10 @@
                 try
                 { 
                     
-                            getRecordById("FormFieldType", form_field.getFormFieldTypeId().toString());
+                            getRecordById("form_field_type", form_field.getFormFieldTypeId().toString());
                             form_field.setFormFieldType(FormFieldType.process(rs));                                       
                     
-                            getRecordById("Form", form_field.getFormId().toString());
+                            getRecordById("form", form_field.getFormId().toString());
                             form_field.setForm(Form.process(rs));                                       
                     
                     }

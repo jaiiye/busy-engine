@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,10 +158,10 @@
                 {
 
                 
-                    getRecordById("UserActionType", userAction.getUserActionTypeId().toString());
+                    getRecordById("user_action_type", userAction.getUserActionTypeId().toString());
                     userAction.setUserActionType(UserActionType.process(rs));               
                 
-                    getRecordById("User", userAction.getUserId().toString());
+                    getRecordById("user", userAction.getUserId().toString());
                     userAction.setUser(User.process(rs));               
                   
 
@@ -251,10 +254,10 @@
                             UserAction userAction = (UserAction) e.getValue();
 
                             
-                                getRecordById("UserActionType", userAction.getUserActionTypeId().toString());
+                                getRecordById("user_action_type", userAction.getUserActionTypeId().toString());
                                 userAction.setUserActionType(UserActionType.process(rs));               
                             
-                                getRecordById("User", userAction.getUserId().toString());
+                                getRecordById("user", userAction.getUserId().toString());
                                 userAction.setUser(User.process(rs));               
                                                     
                         }
@@ -286,10 +289,10 @@
                         for (UserAction userAction : userActionList)
                         {                        
                             
-                                getRecordById("UserActionType", userAction.getUserActionTypeId().toString());
+                                getRecordById("user_action_type", userAction.getUserActionTypeId().toString());
                                 userAction.setUserActionType(UserActionType.process(rs));               
                             
-                                getRecordById("User", userAction.getUserId().toString());
+                                getRecordById("user", userAction.getUserId().toString());
                                 userAction.setUser(User.process(rs));               
                               
                         }
@@ -364,6 +367,37 @@
             }
             return userActionList;
         } 
+        
+        @Override
+        public ArrayList<UserAction> findByColumns(Column... columns)
+        {
+            ArrayList<UserAction> userActionList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(UserAction.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("user_action", columns);
+                while (rs.next())
+                {
+                    userActionList.add(UserAction.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("UserAction's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return userActionList;
+        }
     
         @Override
         public int add(UserAction obj)
@@ -473,10 +507,10 @@
                 try
                 { 
                     
-                            getRecordById("UserActionType", user_action.getUserActionTypeId().toString());
+                            getRecordById("user_action_type", user_action.getUserActionTypeId().toString());
                             user_action.setUserActionType(UserActionType.process(rs));                                       
                     
-                            getRecordById("User", user_action.getUserId().toString());
+                            getRecordById("user", user_action.getUserId().toString());
                             user_action.setUser(User.process(rs));                                       
                     
                     }

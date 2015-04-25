@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,13 +158,13 @@
                 {
 
                 
-                    getRecordById("MetaTag", vendor.getMetaTagId().toString());
+                    getRecordById("meta_tag", vendor.getMetaTagId().toString());
                     vendor.setMetaTag(MetaTag.process(rs));               
                 
-                    getRecordById("Template", vendor.getTemplateId().toString());
+                    getRecordById("template", vendor.getTemplateId().toString());
                     vendor.setTemplate(Template.process(rs));               
                 
-                    getRecordById("VendorType", vendor.getVendorTypeId().toString());
+                    getRecordById("vendor_type", vendor.getVendorTypeId().toString());
                     vendor.setVendorType(VendorType.process(rs));               
                   
 
@@ -254,13 +257,13 @@
                             Vendor vendor = (Vendor) e.getValue();
 
                             
-                                getRecordById("MetaTag", vendor.getMetaTagId().toString());
+                                getRecordById("meta_tag", vendor.getMetaTagId().toString());
                                 vendor.setMetaTag(MetaTag.process(rs));               
                             
-                                getRecordById("Template", vendor.getTemplateId().toString());
+                                getRecordById("template", vendor.getTemplateId().toString());
                                 vendor.setTemplate(Template.process(rs));               
                             
-                                getRecordById("VendorType", vendor.getVendorTypeId().toString());
+                                getRecordById("vendor_type", vendor.getVendorTypeId().toString());
                                 vendor.setVendorType(VendorType.process(rs));               
                                                     
                         }
@@ -292,13 +295,13 @@
                         for (Vendor vendor : vendorList)
                         {                        
                             
-                                getRecordById("MetaTag", vendor.getMetaTagId().toString());
+                                getRecordById("meta_tag", vendor.getMetaTagId().toString());
                                 vendor.setMetaTag(MetaTag.process(rs));               
                             
-                                getRecordById("Template", vendor.getTemplateId().toString());
+                                getRecordById("template", vendor.getTemplateId().toString());
                                 vendor.setTemplate(Template.process(rs));               
                             
-                                getRecordById("VendorType", vendor.getVendorTypeId().toString());
+                                getRecordById("vendor_type", vendor.getVendorTypeId().toString());
                                 vendor.setVendorType(VendorType.process(rs));               
                               
                         }
@@ -373,6 +376,37 @@
             }
             return vendorList;
         } 
+        
+        @Override
+        public ArrayList<Vendor> findByColumns(Column... columns)
+        {
+            ArrayList<Vendor> vendorList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(Vendor.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("vendor", columns);
+                while (rs.next())
+                {
+                    vendorList.add(Vendor.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Vendor's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return vendorList;
+        }
     
         @Override
         public int add(Vendor obj)
@@ -494,13 +528,13 @@
                 try
                 { 
                     
-                            getRecordById("MetaTag", vendor.getMetaTagId().toString());
+                            getRecordById("meta_tag", vendor.getMetaTagId().toString());
                             vendor.setMetaTag(MetaTag.process(rs));                                       
                     
-                            getRecordById("Template", vendor.getTemplateId().toString());
+                            getRecordById("template", vendor.getTemplateId().toString());
                             vendor.setTemplate(Template.process(rs));                                       
                     
-                            getRecordById("VendorType", vendor.getVendorTypeId().toString());
+                            getRecordById("vendor_type", vendor.getVendorTypeId().toString());
                             vendor.setVendorType(VendorType.process(rs));                                       
                     
                     }

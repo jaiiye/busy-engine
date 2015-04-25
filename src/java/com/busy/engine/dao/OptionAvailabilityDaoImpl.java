@@ -53,9 +53,12 @@
 
 
 
+
+
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
+    import com.busy.engine.data.Column;
     import com.busy.engine.entity.*;
     import com.busy.engine.util.*;
     import java.util.ArrayList;
@@ -155,13 +158,13 @@
                 {
 
                 
-                    getRecordById("Item", optionAvailability.getItemId().toString());
+                    getRecordById("item", optionAvailability.getItemId().toString());
                     optionAvailability.setItem(Item.process(rs));               
                 
-                    getRecordById("ItemOption", optionAvailability.getItemOptionId().toString());
+                    getRecordById("item_option", optionAvailability.getItemOptionId().toString());
                     optionAvailability.setItemOption(ItemOption.process(rs));               
                 
-                    getRecordById("ItemAvailability", optionAvailability.getItemAvailabilityId().toString());
+                    getRecordById("item_availability", optionAvailability.getItemAvailabilityId().toString());
                     optionAvailability.setItemAvailability(ItemAvailability.process(rs));               
                   
 
@@ -254,13 +257,13 @@
                             OptionAvailability optionAvailability = (OptionAvailability) e.getValue();
 
                             
-                                getRecordById("Item", optionAvailability.getItemId().toString());
+                                getRecordById("item", optionAvailability.getItemId().toString());
                                 optionAvailability.setItem(Item.process(rs));               
                             
-                                getRecordById("ItemOption", optionAvailability.getItemOptionId().toString());
+                                getRecordById("item_option", optionAvailability.getItemOptionId().toString());
                                 optionAvailability.setItemOption(ItemOption.process(rs));               
                             
-                                getRecordById("ItemAvailability", optionAvailability.getItemAvailabilityId().toString());
+                                getRecordById("item_availability", optionAvailability.getItemAvailabilityId().toString());
                                 optionAvailability.setItemAvailability(ItemAvailability.process(rs));               
                                                     
                         }
@@ -292,13 +295,13 @@
                         for (OptionAvailability optionAvailability : optionAvailabilityList)
                         {                        
                             
-                                getRecordById("Item", optionAvailability.getItemId().toString());
+                                getRecordById("item", optionAvailability.getItemId().toString());
                                 optionAvailability.setItem(Item.process(rs));               
                             
-                                getRecordById("ItemOption", optionAvailability.getItemOptionId().toString());
+                                getRecordById("item_option", optionAvailability.getItemOptionId().toString());
                                 optionAvailability.setItemOption(ItemOption.process(rs));               
                             
-                                getRecordById("ItemAvailability", optionAvailability.getItemAvailabilityId().toString());
+                                getRecordById("item_availability", optionAvailability.getItemAvailabilityId().toString());
                                 optionAvailability.setItemAvailability(ItemAvailability.process(rs));               
                               
                         }
@@ -373,6 +376,37 @@
             }
             return optionAvailabilityList;
         } 
+        
+        @Override
+        public ArrayList<OptionAvailability> findByColumns(Column... columns)
+        {
+            ArrayList<OptionAvailability> optionAvailabilityList = new ArrayList<>();
+
+            try
+            {
+                //make sure the correct isNumeric values are set for columns
+                for(Column c : columns) 
+                {
+                    c.setNumeric(OptionAvailability.isColumnNumeric(c.getColumnName()));                
+                }
+
+                getAllRecordsByColumns("option_availability", columns);
+                while (rs.next())
+                {
+                    optionAvailabilityList.add(OptionAvailability.process(rs));
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("OptionAvailability's method findByColumns(Column... columns) error: " + ex.getMessage());
+            }
+            finally
+            {
+                closeConnection();
+            }
+
+            return optionAvailabilityList;
+        }
     
         @Override
         public int add(OptionAvailability obj)
@@ -498,13 +532,13 @@
                 try
                 { 
                     
-                            getRecordById("Item", option_availability.getItemId().toString());
+                            getRecordById("item", option_availability.getItemId().toString());
                             option_availability.setItem(Item.process(rs));                                       
                     
-                            getRecordById("ItemOption", option_availability.getItemOptionId().toString());
+                            getRecordById("item_option", option_availability.getItemOptionId().toString());
                             option_availability.setItemOption(ItemOption.process(rs));                                       
                     
-                            getRecordById("ItemAvailability", option_availability.getItemAvailabilityId().toString());
+                            getRecordById("item_availability", option_availability.getItemAvailabilityId().toString());
                             option_availability.setItemAvailability(ItemAvailability.process(rs));                                       
                     
                     }
