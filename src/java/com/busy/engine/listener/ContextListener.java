@@ -2,7 +2,9 @@ package com.busy.engine.listener;
 
 import com.busy.engine.dao.*;
 import com.busy.engine.data.*;
+import com.busy.engine.entity.Site;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -34,13 +36,17 @@ public class ContextListener implements ServletContextListener
         context.setAttribute("textStringDao", new TextStringDaoImpl());
         context.setAttribute("localizedStringDao", new LocalizedStringDaoImpl());
         
-        
         System.out.println("Initializing Localizations...");
-        for (AbstractMap.SimpleEntry e : Database.getLanguageStrings("1"))
-        {
-            context.setAttribute((String) e.getKey(), e.getValue());
-            System.out.println("setting Application attribute: (" + e.getKey() + ":" + e.getValue() + ")");
+        SiteDaoImpl siteDao = (SiteDaoImpl) context.getAttribute("siteDao");
+        ArrayList<Site> activeSites = siteDao.findByColumn(Site.PROP_MODE, "2", null, null);
+        for(Site s : activeSites) {
+            for (AbstractMap.SimpleEntry e : Database.getLanguageStrings(s.getId().toString()))
+            {
+                context.setAttribute((String) e.getKey(), e.getValue());
+                System.out.println("setting Application attribute: (" + e.getKey() + ":" + e.getValue() + ")");
+            }   
         }
+        
         
 //        context.setAttribute("itemAttributeDao", new ItemAttributeDaoImpl());
 //        context.setAttribute("itemAttributeTypeDao", new ItemAttributeTypeDaoImpl());

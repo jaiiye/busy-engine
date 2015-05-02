@@ -386,6 +386,8 @@
                                                 <script type="text/javascript">
                                                     $('#image_upload<%= item.getItemId()%>').uploadify({
                                                         'buttonText': 'Add Images...',	
+                                                        'buttonClass' : 'btn btn-default btn-sm float-right',
+                                                        'style' : '',
                                                         'formData': {'id': '<%= item.getItemId()%>'},
                                                         'fileTypeExts': '*.gif; *.jpg; *.png',
                                                         'swf': 'uploadify.swf',
@@ -394,7 +396,7 @@
                                                         'uploadLimit': 15,
                                                         'fileTypeDesc': 'Image Files...',
                                                         'method': 'post',
-                                                        'width': 90,
+                                                        'height': 25,
                                                         'onQueueComplete': function(file, data, response) {
                                                             window.location = "products.jsp?id=<%= item.getItemId()%>";
                                                             //alert('The file ' + file.name + ' was successfully uploaded with a response of ' + response + ':' + data);
