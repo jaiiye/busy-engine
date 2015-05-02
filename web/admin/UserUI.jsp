@@ -1,64 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-                                           
-                                           
-                                           
-                                           
-  
-            
-  
-  
- 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       
-
-
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.busy.engine.dao.*"%>
@@ -315,7 +254,14 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="registerDate">RegisterDate:</label>
                                                     <div  class="col-md-10">
-                                                        <div class="input-group date form_datetime" data-date="2012-12-21T15:25:00Z">        <input type="text" name="registerDate" value="${user.registerDate}" class="form-control">        <span class="input-group-btn">                <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>        </span>        <span class="input-group-btn">                <button class="btn default date-set" type="button"><i class="fa fa-calendar"></i></button>        </span></div>
+                                                        <div class="input-group date form_datetime" data-date="2012-12-21T15:25:00Z">        
+                                                            <input type="text" name="registerDate" value="${user.registerDate}" class="form-control">        
+                                                            <span class="input-group-btn">                
+                                                                <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>        
+                                                            </span>        <span class="input-group-btn">                
+                                                                <button class="btn default date-set" type="button"><i class="fa fa-calendar"></i></button>        
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 
@@ -350,7 +296,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="itemBrandId">ItemBrand:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="itemBrandId" class="form-control" value="${user.itemBrandId}" />
                                                         <select name="itemBrandId" class="form-control">
                                                             <%User x = (User) pageContext.getAttribute("user"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", x.getItemBrandId().toString(), 2)%>
@@ -361,9 +306,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="userTypeId">UserType:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="userTypeId" class="form-control" value="${user.userTypeId}" />
                                                         <select name="userTypeId" class="form-control">
-                                                            <%User x = (User) pageContext.getAttribute("user"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("user_type", x.getUserTypeId().toString(), 2)%>
                                                         </select>
                                                     </div>
@@ -372,9 +315,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="addressId">Address:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="addressId" class="form-control" value="${user.addressId}" />
                                                         <select name="addressId" class="form-control">
-                                                            <%User x = (User) pageContext.getAttribute("user"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("address", x.getAddressId().toString(), 2)%>
                                                         </select>
                                                     </div>
@@ -383,9 +324,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="contactId">Contact:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="contactId" class="form-control" value="${user.contactId}" />
                                                         <select name="contactId" class="form-control">
-                                                            <%User x = (User) pageContext.getAttribute("user"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("contact", x.getContactId().toString(), 2)%>
                                                         </select>
                                                     </div>
@@ -394,9 +333,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="userGroupId">UserGroup:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="userGroupId" class="form-control" value="${user.userGroupId}" />
                                                         <select name="userGroupId" class="form-control">
-                                                            <%User x = (User) pageContext.getAttribute("user"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("user_group", x.getUserGroupId().toString(), 2)%>
                                                         </select>
                                                     </div>

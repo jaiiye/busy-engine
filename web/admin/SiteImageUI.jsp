@@ -1,64 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-                                           
-                                           
-                                           
-                                           
-  
-            
-  
-  
- 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       
-
-
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.busy.engine.dao.*"%>
@@ -128,8 +67,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "Uncategorized"); %>
-        <% request.setAttribute("subCategory", "SiteImage"); %>
+        <% request.setAttribute("category", "content"); %>
+        <% request.setAttribute("subCategory", "images"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -142,18 +81,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- BEGIN PAGE TITLE & BREADCRUMB-->
-                                <h3 class="page-title"> SiteImage </h3>
+                                <h3 class="page-title"> Site Image </h3>
                                 <ul class="page-breadcrumb breadcrumb">                                
                                     <li>
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
-                                        <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
                                         <a href="#"> E-Commerce </a>
-                                        <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#">SiteImage</a>
+                                        <a href="#">Site Image</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
@@ -224,9 +161,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                             <div class="col-md-6">
                                 <!-- BEGIN OPERATIONS PORTLET-->
                                 <div class="portlet">
-                                    <div class="portlet-title">
+     <div class="portlet-title">
                                         <div class="caption">
-                                            <i class="fa fa-cog"></i>Operations
+                                            <i class="fa fa-cog"></i>Upload Images for                                                                
+                                                <select name="siteId">
+                                                    <%= Database.generateSelectOptionsFromTableAndColumn("site", "xx", 2)%>
+                                                </select>
                                         </div>
                                         <div class="tools">
                                             <a href="javascript:;" class="collapse"></a>
@@ -234,8 +174,28 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         </div>
                                     </div>
                                     <div class="portlet-body">
-                                        
-                                        
+                                        <div style="float:right"><input type="file" name="file_upload" id="file_upload"></div>  
+                                        <script type="text/javascript">
+                                            $(function() {
+                                                $('#file_upload').uploadify({
+                                                    'swf'      : 'uploadify.swf',
+                                                    'uploader' : 'upload-image.jsp',
+                                                    'fileSizeLimit' : '5MB',
+                                                    'uploadLimit' : 20,
+                                                    'fileTypeDesc' : 'Image Files...',
+                                                    'method'   : 'post',
+                                                    'onQueueComplete' : function(file, data, response) {
+                                                                    window.location = "SiteImageUI.jsp";
+                                                    }
+                                                });
+                                            });
+                                        </script>
+                                        <ul>
+                                            <li>Can upload up to 20 files at a time.</li>
+                                            <li>The maximum file size for each upload is <strong>5 MB</strong>.</li>
+                                            <li>Image types (<strong>JPG, GIF, PNG</strong>) are allowed.</li>
+                                            <li>Uploaded files will remain on the server until deleted.</li>
+                                        </ul> 
                                     </div>
                                 </div>
                                 <!-- END OPERATIONS PORTLET-->
@@ -310,9 +270,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="siteId">Site:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="siteId" class="form-control" value="${site_image.siteId}" />
                                                         <select name="siteId" class="form-control">
-                                                            <%SiteImage x = (SiteImage) pageContext.getAttribute("site_image"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("site", x.getSiteId().toString(), 2)%>
                                                         </select>
                                                     </div>

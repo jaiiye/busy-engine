@@ -45,10 +45,10 @@
                 </a>
                 <ul class="sub-menu">
                     <li <%= subCategory.equals("blogs") ? "class=\"active\"":"" %>><a href="BlogUI.jsp"><i class="fa fa-comments-o"></i><span class="title">&nbsp;Blogs</span></a></li>
-                    <li <%= subCategory.equals("pages") ? "class=\"active\"":"" %>><a href="InfoUI.jsp"><i class="fa fa-file-text-o"></i><span class="title">&nbsp;Pages</span></a></li>
+                    <li <%= subCategory.equals("pages") ? "class=\"active\"":"" %>><a href="PageUI.jsp"><i class="fa fa-file-text-o"></i><span class="title">&nbsp;Pages</span></a></li>
                     <li <%= subCategory.equals("sliders") ? "class=\"active\"":"" %>><a href="SliderUI.jsp"><i class="fa fa-chain"></i><span class="title">&nbsp;Sliders</span></a> </li>
                     <li <%= subCategory.equals("forms") ? "class=\"active\"":"" %>><a href="FormUI.jsp"><i class="fa fa-italic"></i><span class="title">&nbsp;Forms</span></a></li>
-                    <li <%= subCategory.equals("images") ? "class=\"active\"":"" %>><a href="ImageUI.jsp"><i class="fa fa-picture-o"></i><span class="title">&nbsp;Images</span></a></li>
+                    <li <%= subCategory.equals("images") ? "class=\"active\"":"" %>><a href="SiteImageUI.jsp"><i class="fa fa-picture-o"></i><span class="title">&nbsp;Images</span></a></li>
                     <li <%= subCategory.equals("files") ? "class=\"active\"":"" %>><a href="SiteFileUI.jsp"><i class="fa fa-file-o"></i><span class="title">&nbsp;Files</span></a></li>
                     <li <%= subCategory.equals("folders") ? "class=\"active\"":"" %>><a href="SiteFolderUI.jsp"><i class="fa fa-folder-o"></i><span class="title">&nbsp;Folders</span></a></li>
                     <li <%= subCategory.equals("mailinglist") ? "class=\"active\"":"" %>> <a href="MailinglistUI.jsp"><i class="fa fa-bookmark"></i><span class="title">&nbsp;Newsletter</span></a></li>

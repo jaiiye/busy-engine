@@ -1,64 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-                                           
-                                           
-                                           
-                                           
-  
-            
-  
-  
- 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       
-
-
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.busy.engine.dao.*"%>
@@ -129,7 +68,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <div class="page-container">
 
         <% request.setAttribute("category", "E-Commerce"); %>
-        <% request.setAttribute("subCategory", "Order"); %>
+        <% request.setAttribute("subCategory", "orders"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -440,7 +379,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div  class="col-md-10">
                                                         <input type="text" name="affiliateId" class="form-control" value="${order.affiliateId}" />
                                                         <select name="affiliateId" class="form-control">
-                                                            <%Order x = (Order) pageContext.getAttribute("order"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("affiliate", x.getAffiliateId().toString(), 2)%>
                                                         </select>
                                                     </div>

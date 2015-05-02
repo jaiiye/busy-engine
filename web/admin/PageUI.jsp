@@ -1,64 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-                                           
-                                           
-                                           
-                                           
-  
-            
-  
-  
- 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       
-
-
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.busy.engine.dao.*"%>
@@ -128,8 +67,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "Content"); %>
-        <% request.setAttribute("subCategory", "Page"); %>
+        <% request.setAttribute("category", "content"); %>
+        <% request.setAttribute("subCategory", "pages"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -293,7 +232,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="formId">Form:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="formId" class="form-control" value="${page.formId}" />
                                                         <select name="formId" class="form-control">
                                                             <%Page x = (Page) pageContext.getAttribute("page"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("form", x.getFormId().toString(), 2)%>
@@ -304,9 +242,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="sliderId">Slider:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="sliderId" class="form-control" value="${page.sliderId}" />
                                                         <select name="sliderId" class="form-control">
-                                                            <%Page x = (Page) pageContext.getAttribute("page"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("slider", x.getSliderId().toString(), 2)%>
                                                         </select>
                                                     </div>
@@ -315,9 +251,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="metaTagId">MetaTag:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="metaTagId" class="form-control" value="${page.metaTagId}" />
                                                         <select name="metaTagId" class="form-control">
-                                                            <%Page x = (Page) pageContext.getAttribute("page"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("meta_tag", x.getMetaTagId().toString(), 2)%>
                                                         </select>
                                                     </div>
@@ -326,9 +260,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="templateId">Template:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="templateId" class="form-control" value="${page.templateId}" />
                                                         <select name="templateId" class="form-control">
-                                                            <%Page x = (Page) pageContext.getAttribute("page"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("template", x.getTemplateId().toString(), 2)%>
                                                         </select>
                                                     </div>

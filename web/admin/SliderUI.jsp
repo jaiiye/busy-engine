@@ -1,64 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-                                           
-                                           
-                                           
-                                           
-  
-            
-  
-  
- 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       
-
-
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.busy.engine.dao.*"%>
@@ -128,8 +67,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "Content"); %>
-        <% request.setAttribute("subCategory", "Slider"); %>
+        <% request.setAttribute("category", "content"); %>
+        <% request.setAttribute("subCategory", "sliders"); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -288,7 +227,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div  class="col-md-10">
                                                         <input type="text" name="formId" class="form-control" value="${slider.formId}" />
                                                         <select name="formId" class="form-control">
-                                                            <%Slider x = (Slider) pageContext.getAttribute("slider"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("form", x.getFormId().toString(), 2)%>
                                                         </select>
                                                     </div>

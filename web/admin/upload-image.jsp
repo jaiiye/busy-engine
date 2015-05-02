@@ -34,7 +34,7 @@ java.io.IOException"%>
 int maxFileSize = 30 * 1024 * 1024; // 30MB max
 MultipartParser parserFormData = new MultipartParser(request, maxFileSize);
 
-Upload.UploadActivity(parserFormData, "site", "image", getServletContext().getRealPath("/images-site/") );
+Upload.UploadActivity(parserFormData, "site", "image", getServletContext().getRealPath("/images-site/"), 1 );
 //response.sendRedirect("images.jsp"); 
 %>
 

@@ -183,10 +183,10 @@ $.extend($.fn.dataTableExt.oPagination, {
 
             $(nPaging).append(
                 '<ul class="pagination">' +
-                '<li class="prev disabled"><a href="#" title="' + oLang.sFirst + '"><i class="fa fa-angle-double-left"></i></a></li>' +
-                '<li class="prev disabled"><a href="#" title="' + oLang.sPrevious + '"><i class="fa fa-angle-left"></i></a></li>' +
-                '<li class="next disabled"><a href="#" title="' + oLang.sNext + '"><i class="fa fa-angle-right"></i></a></li>' +
-                '<li class="next disabled"><a href="#" title="' + oLang.sLast + '"><i class="fa fa-angle-double-right"></i></a></li>' +
+                '<li class="prev disabled"><a href="#"><i class="fa fa-angle-double-left"></i></a></li>' +
+                '<li class="prev disabled"><a href="#"><i class="fa fa-angle-left"></i></a></li>' +
+                '<li class="next disabled"><a href="#"><i class="fa fa-angle-right"></i></a></li>' +
+                '<li class="next disabled"><a href="#"><i class="fa fa-angle-double-right"></i></a></li>' +
                 '</ul>'
             );
             var els = $('a', nPaging);
