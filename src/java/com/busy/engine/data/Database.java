@@ -1037,7 +1037,29 @@ public class Database extends BasicConnection
         
         return attributes;
     }
-    
+        
+    public static ArrayList<UserAction> getMostRecentActivities(int limit)
+    {
+        ArrayList<UserAction> actions = new ArrayList<>();
+        try 
+        {
+            getRecordsByTableNameAndAdditionalCriteria("user_action", "ORDER BY Date DESC", limit);
+            while (rs.next()) 
+            {
+                actions.add(UserAction.process(rs));
+            }
+        } 
+        catch (Exception ex) 
+        {
+            System.out.println("getMostRecentActivities error: " + ex.getMessage());
+        } 
+        finally 
+        {
+            closeConnection();
+        }
+
+        return actions;
+    }
     /*
     public static ArrayList<SiteFile> getSiteFiles(String folderId)
     {
