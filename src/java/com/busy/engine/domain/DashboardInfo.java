@@ -2,6 +2,7 @@ package com.busy.engine.domain;
 
 import com.busy.engine.dao.DashboardDaoImpl;
 import com.busy.engine.dao.UserActionDaoImpl;
+import com.busy.engine.data.Database;
 import com.busy.engine.entity.Dashboard;
 import com.busy.engine.entity.UserAction;
 import java.util.ArrayList;
@@ -34,10 +35,9 @@ public class DashboardInfo extends Dashboard
     
     public static DashboardInfo getInfo(){
         ArrayList<Dashboard> d = new DashboardDaoImpl().findByColumn(Dashboard.PROP_DASHBOARD_ID, "1", null, null);
-        ArrayList<UserAction> a = new UserActionDaoImpl().findAll(50, 0);
         Dashboard db = d.get(0);        
         DashboardInfo di = new DashboardInfo(db.getDashboardId(), db.getUserCount(), db.getBlogPostCount(), db.getItemCount(), db.getOrderCount(), db.getSiteFileCount(), db.getImageCount(), db.getBlogCount(), db.getCommentCount(), db.getPageCount(), db.getFormCount(), db.getSliderCount(), db.getItemBrandCount(), db.getCategoryCount(), db.getItemOptionCount());
-        di.setActivities(a);
+        di.setActivities(Database.getMostRecentActivities(50));
         return di;
     }
     

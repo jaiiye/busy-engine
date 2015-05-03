@@ -179,6 +179,23 @@ public class BasicConnection
             System.out.println("getRecordsByTableNameWithLimitOrOffset error: " + ex.getMessage());
         }   
     }
+    
+            
+    public static void getRecordsByTableNameAndAdditionalCriteria(String tableName, String criteria, int limit)
+    {
+        try
+        {       
+            openConnection();
+            String query = "SELECT * FROM " + tableName + " " +  criteria   + " " + "LIMIT ?;";
+            prepareStatement(query);
+            preparedStatement.setInt(1, limit);
+            rs = preparedStatement.executeQuery();
+        }
+        catch (Exception ex) 
+        {
+            System.out.println("getRecordsByTableNameAndAdditionalCriteria error: " + ex.getMessage());
+        }   
+    }
         
     public static int getAllRecordsCountByTableName(String tableName)
     {
@@ -204,7 +221,8 @@ public class BasicConnection
         }
         return count;
     }
-            
+      
+    
     public static void getRecordById(String tableName, String id)
     {
         try
