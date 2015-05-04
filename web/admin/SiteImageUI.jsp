@@ -87,7 +87,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
                                     </li>
                                     <li>
-                                        <a href="#"> E-Commerce </a>
+                                        <a href="#"> Content </a>
                                     </li>
                                     <li>
                                         <a href="#">Site Image</a>

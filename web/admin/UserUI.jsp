@@ -85,14 +85,12 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                 <ul class="page-breadcrumb breadcrumb">                                
                                     <li>
                                         <i class="fa fa-home"></i><a href="index.jsp">Home</a>
-                                        <i class="fa fa-angle-right"></i>
                                     </li>
                                     <li>
-                                        <a href="#"> E-Commerce </a>
-                                        <i class="fa fa-angle-right"></i>
+                                        <a href="#"> Users </a>
                                     </li>
                                     <li>
-                                        <a href="#">User</a>
+                                        <a href="#">User Manager</a>
                                     </li>
                                 </ul>
                                 <!-- END PAGE TITLE & BREADCRUMB-->
