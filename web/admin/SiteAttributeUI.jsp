@@ -128,8 +128,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "Configuration"); %>
-        <% request.setAttribute("subCategory", "SiteAttribute"); %>
+        <% request.setAttribute("category", "configuration"); %>
+        <% request.setAttribute("subCategory", "attributes"); %>
+        
         <%@include file="index_sidebar.jsp"%>
 
 

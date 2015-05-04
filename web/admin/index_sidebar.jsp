@@ -75,7 +75,7 @@
                     <span class="arrow <%= category.equals("users") ?  "open" : ""  %>"></span>
                 </a>
                 <ul class="sub-menu">
-                    <li <%= subCategory.equals("users") ? "class=\"active\"":"" %>><a href="UserUI.jsp"><i class="fa fa-user"></i><span class="badge badge-roundless badge-warning">new</span><span class="title">&nbsp;User Manager</span></a></li>
+                    <li <%= subCategory.equals("userManager") ? "class=\"active\"":"" %>><a href="UserUI.jsp"><i class="fa fa-user"></i><span class="badge badge-roundless badge-warning">new</span><span class="title">&nbsp;User Manager</span></a></li>
                 </ul>
             </li>
             <li <%= category.equals("configuration") ?  "class=\"start active\"" : ""  %>>
