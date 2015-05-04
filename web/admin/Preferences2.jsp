@@ -88,11 +88,9 @@
                         <ul class="page-breadcrumb breadcrumb">                                
                             <li>
                                 <i class="fa fa-home"></i><a href="index.jsp">Home</a>
-                                <i class="fa fa-angle-right"></i>
                             </li>
                             <li>
                                 <a href="#">Configuration</a>
-                                <i class="fa fa-angle-right"></i>
                             </li>
                             <li>
                                 <a href="#">Preferences</a>
