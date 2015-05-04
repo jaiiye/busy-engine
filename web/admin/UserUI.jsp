@@ -67,8 +67,9 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "Users"); %>
-        <% request.setAttribute("subCategory", "User"); %>
+        <% request.setAttribute("category", "users"); %>
+        <% request.setAttribute("subCategory", "userManager"); %>
+        
         <%@include file="index_sidebar.jsp"%>
 
 

@@ -69,6 +69,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
         <% request.setAttribute("category", "configuration"); %>
         <% request.setAttribute("subCategory", "languages"); %>
+        
         <%@include file="index_sidebar.jsp"%>
 
 

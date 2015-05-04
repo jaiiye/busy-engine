@@ -68,7 +68,8 @@
         <div class="page-container">
 
             <% request.setAttribute("category", "E-Commerce"); %>
-            <% request.setAttribute("subCategory", "Category");%>
+            <% request.setAttribute("subCategory", "categories");%>
+            
             <%@include file="index_sidebar.jsp"%>
 
 

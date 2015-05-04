@@ -129,7 +129,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <div class="page-container">
 
         <% request.setAttribute("category", "E-Commerce"); %>
-        <% request.setAttribute("subCategory", "ItemOption"); %>
+        <% request.setAttribute("subCategory", "options"); %>
+        
         <%@include file="index_sidebar.jsp"%>
 
 
