@@ -1060,6 +1060,29 @@ public class Database extends BasicConnection
 
         return actions;
     }
+    
+        
+    public static ArrayList<ArrayList<AbstractMap.SimpleEntry>> getSiteLanguageStrings()
+    {
+        ArrayList<ArrayList<AbstractMap.SimpleEntry>> results = new ArrayList<>();
+        
+        SiteDaoImpl siteDao = new SiteDaoImpl();
+        
+        for(Site s : siteDao.findByColumn(Site.PROP_MODE, "2", null, null)) 
+        {
+            results.add(Database.getLanguageStrings(s.getId().toString()));
+        }
+        
+        for(Site s : siteDao.findByColumn(Site.PROP_MODE, "4", null, null)) 
+        {
+            results.add(Database.getLanguageStrings(s.getId().toString()));
+        }
+        
+        return results;
+    }
+        
+        
+        
     /*
     public static ArrayList<SiteFile> getSiteFiles(String folderId)
     {

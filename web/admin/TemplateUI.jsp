@@ -1,64 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-                                           
-                                           
-                                           
-                                           
-  
-            
-  
-  
- 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       
-
-
 <%@page import="java.text.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.busy.engine.dao.*"%>
@@ -78,6 +17,30 @@ else
 }
 request.setAttribute("templateList", templateList);
 NumberFormat formatter = NumberFormat.getCurrencyInstance();
+String subCateogry = "";
+
+switch(request.getParameter("columnValue")){
+    case "1":
+        subCateogry = "siteTemplates"; 
+        break;
+    case "2":
+        subCateogry = "pageTemplates"; 
+        break;
+    case "3":
+        subCateogry = "vendorTemplates"; 
+        break;
+    case "4":
+        subCateogry = "itemTemplates"; 
+        break;
+    case "5":
+        subCateogry = "emailTemplates"; 
+        break;
+    default:
+        subCateogry = "unknown"; 
+        break;
+        
+       
+}
 %>
 
 
@@ -128,8 +91,8 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
         <!-- BEGIN CONTAINER -->
         <div class="page-container">
 
-        <% request.setAttribute("category", "Templates"); %>
-        <% request.setAttribute("subCategory", "Template"); %>
+        <% request.setAttribute("category", "templates"); %>        
+        <% request.setAttribute("subCategory", subCateogry); %>
         <%@include file="index_sidebar.jsp"%>
 
 
@@ -304,7 +267,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <div  class="col-md-10">
                                                         <input type="text" name="parentTemplateId" class="form-control" value="${template.parentTemplateId}" />
                                                         <select name="parentTemplateId" class="form-control">
-                                                            <%Template x = (Template) pageContext.getAttribute("template"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("parent_template", x.getParentTemplateId().toString(), 2)%>
                                                         </select>
                                                     </div>

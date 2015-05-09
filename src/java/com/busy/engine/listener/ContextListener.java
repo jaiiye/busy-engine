@@ -37,10 +37,8 @@ public class ContextListener implements ServletContextListener
         context.setAttribute("localizedStringDao", new LocalizedStringDaoImpl());
         
         System.out.println("Initializing Localizations...");
-        SiteDaoImpl siteDao = (SiteDaoImpl) context.getAttribute("siteDao");
-        ArrayList<Site> activeSites = siteDao.findByColumn(Site.PROP_MODE, "2", null, null);
-        for(Site s : activeSites) {
-            for (AbstractMap.SimpleEntry e : Database.getLanguageStrings(s.getId().toString()))
+        for(ArrayList<AbstractMap.SimpleEntry> entries : Database.getSiteLanguageStrings()) {             
+            for (AbstractMap.SimpleEntry e : entries)
             {
                 context.setAttribute((String) e.getKey(), e.getValue());
                 System.out.println("setting Application attribute: (" + e.getKey() + ":" + e.getValue() + ")");

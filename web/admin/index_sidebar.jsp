@@ -62,9 +62,11 @@
                     <span class="arrow <%= category.equals("templates") ?  "open" : ""  %>"></span>
                 </a>
                 <ul class="sub-menu">
-                    <li <%= subCategory.equals("pageTemplates") ? "class=\"active\"":"" %>><a href="PageTemplateUI.jsp"><i class="fa fa-file"></i><span class="title">&nbsp;Page Templates</span></a></li>
-                    <li <%= subCategory.equals("emailTemplates") ? "class=\"active\"":"" %>><a href="TemplateUI.jsp"><i class="fa fa-envelope"></i><span class="title">&nbsp;Email Templates</span></a></li>
-                    <li <%= subCategory.equals("siteTemplates") ? "class=\"active\"":"" %>><a href="SiteTemplateUI.jsp"><i class="fa fa-sitemap"></i><span class="title">&nbsp;Site Templates</span></a></li>
+                    <li <%= subCategory.equals("pageTemplates") ? "class=\"active\"":"" %>><a href="TemplateUI.jsp?column=TemplateTypeId&columnValue=2"><i class="fa fa-file"></i><span class="title">&nbsp;Page Templates</span></a></li>
+                    <li <%= subCategory.equals("emailTemplates") ? "class=\"active\"":"" %>><a href="TemplateUI.jsp?column=TemplateTypeId&columnValue=5"><i class="fa fa-envelope"></i><span class="title">&nbsp;Email Templates</span></a></li>
+                    <li <%= subCategory.equals("siteTemplates") ? "class=\"active\"":"" %>><a href="TemplateUI.jsp?column=TemplateTypeId&columnValue=1"><i class="fa fa-sitemap"></i><span class="title">&nbsp;Site Templates</span></a></li>
+                    <li <%= subCategory.equals("itemTemplates") ? "class=\"active\"":"" %>><a href="TemplateUI.jsp?column=TemplateTypeId&columnValue=4"><i class="fa fa-tags"></i><span class="title">&nbsp;Item Templates</span></a></li>
+                    <li <%= subCategory.equals("vendorTemplates") ? "class=\"active\"":"" %>><a href="TemplateUI.jsp?column=TemplateTypeId&columnValue=3"><i class="fa fa-truck"></i><span class="title">&nbsp;Vendor Templates</span></a></li>
                 </ul>
             </li>
             <li <%= category.equals("users") ?  "class=\"start active\"" : ""  %>>
