@@ -185,11 +185,27 @@
                                                     <label for="name" class="col-md-2 control-label">Name</label>
                                                     <div class="col-md-8">
                                                         <input type="text" name="name" id="name" class="form-control maxlength-handler" maxlength="45" placeholder="Enter Text" />
-                                                        <span class="help-block">max 45 chars</span>
-                                                        
+                                                        <span class="help-block">max 45 chars</span>    
                                                     </div>
-                                                    
-                                                    <div class="col-md-2">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">Discount</label>
+                                                    <div class="col-md-8">
+                                                        <select name="discountId" class="form-control">
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("discount", "", 2)%>
+                                                        </select>
+                                                    </div>
+                                            	</div>
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">Parent Category</label>
+                                                    <div class="col-md-8">
+                                                        <select name="parentCategoryId" class="form-control">
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("category", "", 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-10">
 	                                                    <button type="submit" class="btn green" style="float:right">Create</button>
                                                     </div>
                                                 </div>
@@ -310,7 +326,7 @@
                                                             <label>SEO Title</label>
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="seotitle" class="form-control maxlength-handler" maxlength="245">
+                                                                <input type="text" name="seotitle" class="form-control maxlength-handler" maxlength="150">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -321,7 +337,7 @@
                                                             <label>SEO Description</label>
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="seodesc" class="form-control maxlength-handler" maxlength="245">
+                                                                <input type="text" name="seodesc" class="form-control maxlength-handler" maxlength="255">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -330,7 +346,7 @@
                                                             <label>SEO Keywords</label>
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="seokeywords" class="form-control maxlength-handler" maxlength="245">
+                                                                <input type="text" name="seokeywords" class="form-control maxlength-handler" maxlength="255">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -975,6 +991,8 @@
                     alwaysShow: true,
                     threshold: 5
             });
+			
+			
 
             // Modal FORM VALIdATION SCRIPT
             // http://docs.jquery.com/Plugins/Validation
@@ -996,9 +1014,9 @@
                             listPrice:  { required: true, number: true },
                             price:      { required: true, number: true },
                             adjust:     { required: true, digits: true },
-                            seotitle:    { required: true, minlength: 3, maxlength: 245 },
-                            seodesc:     { required: true, minlength: 3, maxlength: 245 },
-                            seokeywords: { required: true, minlength: 3, maxlength: 245 }
+                            seotitle:    { required: true, minlength: 3, maxlength: 150 },
+                            seodesc:     { required: true, minlength: 3, maxlength: 255 },
+                            seokeywords: { required: true, minlength: 3, maxlength: 255 }
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              
                             success2.hide();
