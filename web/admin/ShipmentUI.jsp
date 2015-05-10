@@ -317,7 +317,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <input type="text" name="orderId" class="form-control" value="${shipment.orderId}" />
                                                         <select name="orderId" class="form-control">
                                                             <%Shipment x = (Shipment) pageContext.getAttribute("shipment"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("order", x.getOrderId().toString(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("`order`", x.getOrderId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -453,7 +453,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <select name="orderId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("order", "", 2)%>
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("`order`", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>

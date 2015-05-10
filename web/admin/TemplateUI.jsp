@@ -267,7 +267,7 @@ switch(request.getParameter("columnValue")){
                                                     <div  class="col-md-10">
                                                         <input type="text" name="parentTemplateId" class="form-control" value="${template.parentTemplateId}" />
                                                         <select name="parentTemplateId" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("parent_template", x.getParentTemplateId().toString(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("template", x.getParentTemplateId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -381,7 +381,7 @@ switch(request.getParameter("columnValue")){
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <select name="parentTemplateId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("parent_template", "", 2)%>
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("template", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>

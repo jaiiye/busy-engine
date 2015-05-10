@@ -429,7 +429,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <select name="orderId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("order", "", 2)%>
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("`order`", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>

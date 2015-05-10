@@ -356,7 +356,7 @@ public class Database extends BasicConnection
                            + "'," + paypalFeeCharged  +",'" + paypalCurrencyCode + "','" + paypalPayerId + "'," + orderTaxAmount + "," + orderShippingAmount + ",'" + orderAdditionalData + "');";
 
             updateQuery(query);
-            rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from order;");
+            rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from `order`;");
             while(rs.next())
             {
                 id =  rs.getString(1);

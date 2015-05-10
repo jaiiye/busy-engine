@@ -158,7 +158,7 @@
                 {
 
                 
-                    getRecordById("order", recurringPayment.getOrderId().toString());
+                    getRecordById("`order`", recurringPayment.getOrderId().toString());
                     recurringPayment.setOrder(Order.process(rs));               
                   
 
@@ -251,7 +251,7 @@
                             RecurringPayment recurringPayment = (RecurringPayment) e.getValue();
 
                             
-                                getRecordById("order", recurringPayment.getOrderId().toString());
+                                getRecordById("`order`", recurringPayment.getOrderId().toString());
                                 recurringPayment.setOrder(Order.process(rs));               
                                                     
                         }
@@ -283,7 +283,7 @@
                         for (RecurringPayment recurringPayment : recurringPaymentList)
                         {                        
                             
-                                getRecordById("order", recurringPayment.getOrderId().toString());
+                                getRecordById("`order`", recurringPayment.getOrderId().toString());
                                 recurringPayment.setOrder(Order.process(rs));               
                               
                         }
@@ -502,7 +502,7 @@
                 try
                 { 
                     
-                            getRecordById("order", recurring_payment.getOrderId().toString());
+                            getRecordById("`order`", recurring_payment.getOrderId().toString());
                             recurring_payment.setOrder(Order.process(rs));                                       
                     
                     }
@@ -666,7 +666,7 @@
         {            
             try
             {                 
-                getRecordById("Order", recurring_payment.getOrderId().toString());
+                getRecordById("`order`", recurring_payment.getOrderId().toString());
                 recurring_payment.setOrder(Order.process(rs));                                                       
             }
             catch (SQLException ex)

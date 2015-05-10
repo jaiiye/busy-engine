@@ -299,7 +299,7 @@
                                                         <div class="input-icon right">
                                                             <i class="fa"></i>
                                                             <select name="parentCategoryId" class="form-control">
-                                                                <%= Database.generateSelectOptionsFromTableAndColumn("parent_category", "", 2)%>
+                                                                <%= Database.generateSelectOptionsFromTableAndColumn("category", "", 2)%>
                                                             </select>                                                            
                                                         </div>
                                                     </div>

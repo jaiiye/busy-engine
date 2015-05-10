@@ -158,7 +158,7 @@
                 {
 
                 
-                    getRecordById("order", shipment.getOrderId().toString());
+                    getRecordById("`order`", shipment.getOrderId().toString());
                     shipment.setOrder(Order.process(rs));               
                   
 
@@ -251,7 +251,7 @@
                             Shipment shipment = (Shipment) e.getValue();
 
                             
-                                getRecordById("order", shipment.getOrderId().toString());
+                                getRecordById("`order`", shipment.getOrderId().toString());
                                 shipment.setOrder(Order.process(rs));               
                                                     
                         }
@@ -283,7 +283,7 @@
                         for (Shipment shipment : shipmentList)
                         {                        
                             
-                                getRecordById("order", shipment.getOrderId().toString());
+                                getRecordById("`order`", shipment.getOrderId().toString());
                                 shipment.setOrder(Order.process(rs));               
                               
                         }
@@ -510,7 +510,7 @@
                 try
                 { 
                     
-                            getRecordById("order", shipment.getOrderId().toString());
+                            getRecordById("`order`", shipment.getOrderId().toString());
                             shipment.setOrder(Order.process(rs));                                       
                     
                     }
@@ -674,7 +674,7 @@
         {            
             try
             {                 
-                getRecordById("Order", shipment.getOrderId().toString());
+                getRecordById("`order`", shipment.getOrderId().toString());
                 shipment.setOrder(Order.process(rs));                                                       
             }
             catch (SQLException ex)

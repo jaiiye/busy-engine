@@ -102,7 +102,7 @@ public class BasicConnection
         }
         catch (Exception ex) 
         {
-            System.out.println("gtAllRecordsByTableName error: " + ex.getMessage());
+            System.out.println("getAllRecordsByTableName error: " + ex.getMessage());
         }   
     }
        
