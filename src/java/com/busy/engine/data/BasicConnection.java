@@ -379,6 +379,51 @@ public class BasicConnection
         return output;
     }
     
+    public static String generateHtmlSelectOptionsFromTableAndColumnWithDefaultNumber(String tableName, int columnToShow)
+    {
+        String output = "";
+        getAllRecordsByTableName(tableName);
+        try
+        {
+            output = "<option value=\"0\" selected>None</option>\n";
+            while(rs.next())
+            {     
+                output += "<option value=\"" + rs.getString(1) + "\" >" + rs.getString(columnToShow) + "</option>\n";
+            }   
+        }
+        catch(Exception ex)
+        {
+            System.out.println("generateHtmlSelectOptionsFromTableAndColumn error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+        return output;
+    }
+        
+    public static String generateHtmlSelectOptionsFromTableAndColumnWithDefaultString(String tableName, int columnToShow)
+    {
+        String output = "";
+        getAllRecordsByTableName(tableName);
+        try
+        {
+            output = "<option value=\"null\" selected>None</option>\n";
+            while(rs.next())
+            {     
+                output += "<option value=\"" + rs.getString(1) + "\" >" + rs.getString(columnToShow) + "</option>\n";
+            }   
+        }
+        catch(Exception ex)
+        {
+            System.out.println("generateHtmlSelectOptionsFromTableAndColumn error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+        return output;
+    }
     
     public static String getSelectedColumnValueFromTableAndId(String tableName, String id, int columnValueToReturn)
     {

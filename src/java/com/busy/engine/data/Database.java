@@ -143,6 +143,29 @@ public class Database extends BasicConnection
         return generateHtmlSelectOptionsFromTableAndColumn(tableName, selectedOptionValue, columnToShow);
     }
     
+    
+    public static String generateSelectFromStatusForTable(String tableName, String selectedOptionValue)
+    {
+        String output = "";        
+        runQuery("SELECT StatusCode, StatusName FROM entity_status e WHERE AppliesTo='" + tableName + "';");        
+        try
+        {
+            while(rs.next())
+            {     
+                output += "<option value=\"" + rs.getString(1) + "\" " + (rs.getString(1).equals(selectedOptionValue) ? "selected" : "") + ">" + rs.getString(2) + "</option>\n";
+            }   
+        }
+        catch(Exception ex)
+        {
+            System.out.println("generateSelectFromStatusForTable error: " + ex.getMessage());
+        }
+        finally
+        {
+            closeConnection();
+        }
+        return output;
+    }
+    
     public static String generateImageSelect(String selectedImageName, int columnToShow)
     {        
         String output = "";
@@ -1061,7 +1084,6 @@ public class Database extends BasicConnection
         return actions;
     }
     
-        
     public static ArrayList<ArrayList<AbstractMap.SimpleEntry>> getSiteLanguageStrings()
     {
         ArrayList<ArrayList<AbstractMap.SimpleEntry>> results = new ArrayList<>();
@@ -1080,8 +1102,6 @@ public class Database extends BasicConnection
         
         return results;
     }
-        
-        
         
     /*
     public static ArrayList<SiteFile> getSiteFiles(String folderId)

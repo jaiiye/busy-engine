@@ -389,21 +389,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <button class="close" data-close="alert"></button>
                                                     Your form validation is successful!
                                                 </div>
-
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ItemId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="itemId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("item", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 
                                                 <div class="row">
                                                     <div class="form-group">

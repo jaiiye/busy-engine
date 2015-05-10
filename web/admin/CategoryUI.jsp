@@ -285,7 +285,7 @@
                                                         <div class="input-icon right">
                                                             <i class="fa"></i>
                                                             <select name="discountId" class="form-control">
-                                                                <%= Database.generateSelectOptionsFromTableAndColumn("discount", "", 2)%>
+                                                                <%= Database.generateHtmlSelectOptionsFromTableAndColumnWithDefaultNumber("discount", 2)%>
                                                             </select>                                                            
                                                         </div>
                                                     </div>
@@ -299,7 +299,7 @@
                                                         <div class="input-icon right">
                                                             <i class="fa"></i>
                                                             <select name="parentCategoryId" class="form-control">
-                                                                <%= Database.generateSelectOptionsFromTableAndColumn("category", "", 2)%>
+                                                                <%= Database.generateHtmlSelectOptionsFromTableAndColumnWithDefaultNumber("category", 2)%>
                                                             </select>                                                            
                                                         </div>
                                                     </div>
