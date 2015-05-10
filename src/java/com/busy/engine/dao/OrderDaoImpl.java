@@ -125,7 +125,7 @@
             ArrayList<Order> order = new ArrayList<>();
             try
             {
-                getAllRecordsByTableName("order");
+                getAllRecordsByTableName("`order`");
                 while (rs.next())
                 {
                     order.add(Order.process(rs));
@@ -205,7 +205,7 @@
             {
                 try
                 {
-                    getRecordsByTableNameWithLimitOrOffset("order", limit, offset);
+                    getRecordsByTableNameWithLimitOrOffset("`order`", limit, offset);
                     while (rs.next())
                     {
                         orderList.add(Order.process(rs));
@@ -278,7 +278,7 @@
                 orderList = new ArrayList<Order>();
                 try
                 {
-                    getRecordsByTableNameWithLimitOrOffset("order", limit, offset);
+                    getRecordsByTableNameWithLimitOrOffset("`order`", limit, offset);
                     while (rs.next())
                     {
                         orderList.add(Order.process(rs));
@@ -350,7 +350,7 @@
             {
                 try
                 {
-                    getRecordsByColumnWithLimitOrOffset("order", Order.checkColumnName(columnName), columnValue, Order.isColumnNumeric(columnName), limit, offset);
+                    getRecordsByColumnWithLimitOrOffset("`order`", Order.checkColumnName(columnName), columnValue, Order.isColumnNumeric(columnName), limit, offset);
                     while (rs.next())
                     {
                         orderList.add(Order.process(rs));
@@ -381,7 +381,7 @@
                     c.setNumeric(Order.isColumnNumeric(c.getColumnName()));                
                 }
 
-                getAllRecordsByColumns("order", columns);
+                getAllRecordsByColumns("`order`", columns);
                 while (rs.next())
                 {
                     orderList.add(Order.process(rs));
@@ -432,7 +432,7 @@
                   
 
                 openConnection();
-                prepareStatement("INSERT INTO order(OrderDate,ShipDate,PaymentMethod,PurchaseOrder,TransactionId,AmountBilled,PaymentStatus,PendingReason,PaymentType,TransactionFee,CurrencyCode,PayerId,SubtotalAmount,DiscountAmount,TaxAmount,ShippingAmount,TotalAmount,RefundAmount,Notes,OrderStatus,ShippingId,AffiliateId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO `order`(OrderDate,ShipDate,PaymentMethod,PurchaseOrder,TransactionId,AmountBilled,PaymentStatus,PendingReason,PaymentType,TransactionFee,CurrencyCode,PayerId,SubtotalAmount,DiscountAmount,TaxAmount,ShippingAmount,TotalAmount,RefundAmount,Notes,OrderStatus,ShippingId,AffiliateId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setDate(1, new java.sql.Date(obj.getOrderDate().getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(obj.getShipDate().getTime()));
                 preparedStatement.setString(3, obj.getPaymentMethod());
@@ -458,7 +458,7 @@
                 
                 preparedStatement.executeUpdate();
 
-                rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from order;");
+                rs = statement.executeQuery("SELECT DISTINCT LAST_INSERT_Id() from `order`;");
                 while (rs.next())
                 {
                     id = rs.getInt(1);
@@ -514,7 +514,7 @@
                 
                                   
                 openConnection();                           
-                prepareStatement("UPDATE order SET OrderDate=?,ShipDate=?,PaymentMethod=?,PurchaseOrder=?,TransactionId=?,AmountBilled=?,PaymentStatus=?,PendingReason=?,PaymentType=?,TransactionFee=?,CurrencyCode=?,PayerId=?,SubtotalAmount=?,DiscountAmount=?,TaxAmount=?,ShippingAmount=?,TotalAmount=?,RefundAmount=?,Notes=?,OrderStatus=?,ShippingId=?,AffiliateId=? WHERE OrderId=?;");                    
+                prepareStatement("UPDATE `order` SET OrderDate=?,ShipDate=?,PaymentMethod=?,PurchaseOrder=?,TransactionId=?,AmountBilled=?,PaymentStatus=?,PendingReason=?,PaymentType=?,TransactionFee=?,CurrencyCode=?,PayerId=?,SubtotalAmount=?,DiscountAmount=?,TaxAmount=?,ShippingAmount=?,TotalAmount=?,RefundAmount=?,Notes=?,OrderStatus=?,ShippingId=?,AffiliateId=? WHERE OrderId=?;");                    
                 preparedStatement.setDate(1, new java.sql.Date(obj.getOrderDate().getTime()));
                 preparedStatement.setDate(2, new java.sql.Date(obj.getShipDate().getTime()));
                 preparedStatement.setString(3, obj.getPaymentMethod());
@@ -566,7 +566,7 @@
             }
             else
             {
-                count = getAllRecordsCountByTableName("order");
+                count = getAllRecordsCountByTableName("`order`");
             }
             return count;
         }
@@ -612,7 +612,7 @@ order.setShipmentList(new ShipmentDaoImpl().findByColumn("OrderId", order.getOrd
             boolean success = false;
             try
             {
-                updateQuery("DELETE FROM order WHERE OrderId=" + obj.getOrderId() + ";");            
+                updateQuery("DELETE FROM `order` WHERE OrderId=" + obj.getOrderId() + ";");            
                 success = true;
             }
             catch (Exception ex)
@@ -638,7 +638,7 @@ order.setShipmentList(new ShipmentDaoImpl().findByColumn("OrderId", order.getOrd
             boolean success = false;      
             try
             {
-                updateQuery("DELETE FROM order WHERE OrderId=" + id + ";");           
+                updateQuery("DELETE FROM `order` WHERE OrderId=" + id + ";");           
                 success = true;           
             }
             catch (Exception ex)
@@ -664,7 +664,7 @@ order.setShipmentList(new ShipmentDaoImpl().findByColumn("OrderId", order.getOrd
             boolean success = false;
             try
             {
-                updateQuery("DELETE FROM order;");          
+                updateQuery("DELETE FROM `order`;");          
                 success = true;
             }
             catch (Exception ex)
@@ -690,7 +690,7 @@ order.setShipmentList(new ShipmentDaoImpl().findByColumn("OrderId", order.getOrd
             boolean success = false;
             try
             { 
-                updateQuery("DELETE FROM order WHERE " + Order.checkColumnName(columnName) + "=" + columnValue + ";");           
+                updateQuery("DELETE FROM `order` WHERE " + Order.checkColumnName(columnName) + "=" + columnValue + ";");           
                 success = true;       
             }
             catch (Exception ex)

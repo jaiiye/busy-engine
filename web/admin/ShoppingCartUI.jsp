@@ -211,7 +211,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <label class="col-md-2 control-label" for="orderId">OrderId:</label>
                                                     <div  class="col-md-10">
                                                         <select name="orderId" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("order", x.getOrderId().toString(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("`order`", x.getOrderId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>

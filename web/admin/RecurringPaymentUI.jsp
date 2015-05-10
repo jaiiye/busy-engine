@@ -301,7 +301,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <input type="text" name="orderId" class="form-control" value="${recurring_payment.orderId}" />
                                                         <select name="orderId" class="form-control">
                                                             <%RecurringPayment x = (RecurringPayment) pageContext.getAttribute("recurring_payment"); %>
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("order", x.getOrderId().toString(), 2)%>
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("`order`", x.getOrderId().toString(), 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -413,7 +413,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
                                                                 <select name="orderId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("order", "", 2)%>
+                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("`order`", "", 2)%>
                                                                </select>                                                            
                                                             </div>
                                                         </div>
