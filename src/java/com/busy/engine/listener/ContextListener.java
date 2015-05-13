@@ -55,7 +55,9 @@ public class ContextListener implements ServletContextListener
 //        context.setAttribute("itemFileDao", new ItemFileDaoImpl());
 //        context.setAttribute("itemImageDao", new ItemImageDaoImpl());
 //        context.setAttribute("itemLocationDao", new ItemLocationDaoImpl());
-//        context.setAttribute("itemOptionDao", new ItemOptionDaoImpl());
+        context.setAttribute("itemOptionDao", new ItemOptionDaoImpl());
+        context.setAttribute("taxRateDao", new TaxRateDaoImpl());
+        context.setAttribute("shippingDao", new ShippingDaoImpl());
 //        context.setAttribute("itemReviewDao", new ItemReviewDaoImpl());
 //        context.setAttribute("itemTypeDao", new ItemTypeDaoImpl());
         
@@ -70,7 +72,7 @@ public class ContextListener implements ServletContextListener
 //
 //        context.setAttribute("addressDao", new AddressDaoImpl());
 //        context.setAttribute("affiliateDao", new AffiliateDaoImpl());
-//        context.setAttribute("categoryDao", new CategoryDaoImpl());
+        context.setAttribute("categoryDao", new CategoryDaoImpl());
 //        context.setAttribute("commentDao", new CommentDaoImpl());
 //        context.setAttribute("contactDao", new ContactDaoImpl());
 //        context.setAttribute("countryDao", new CountryDaoImpl());
