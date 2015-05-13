@@ -49,7 +49,7 @@ public class ContextListener implements ServletContextListener
 //        context.setAttribute("itemAttributeDao", new ItemAttributeDaoImpl());
 //        context.setAttribute("itemAttributeTypeDao", new ItemAttributeTypeDaoImpl());
 //        context.setAttribute("itemAvailabilityDao", new ItemAvailabilityDaoImpl());
-//        context.setAttribute("itemBrandDao", new ItemBrandDaoImpl());
+        context.setAttribute("itemBrandDao", new ItemBrandDaoImpl());
 
 //        context.setAttribute("itemDiscountDao", new ItemDiscountDaoImpl());
 //        context.setAttribute("itemFileDao", new ItemFileDaoImpl());
