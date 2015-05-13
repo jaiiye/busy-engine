@@ -250,10 +250,13 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label class="control-label">Name</label>
+                                                            <label class="control-label">Name<span class="required">*</span></label>
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="itemName" class="form-control maxlength-handler" maxlength="255" placeholder="Enter Text">
+                                                                    <input type="text" name="itemName" class="form-control maxlength-handler" maxlength="255" placeholder="Enter Text">
+                                                                <span class="help-block">
+                                                                     max 255 char
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -262,6 +265,34 @@
                                                             <label class="control-label">Brand</label>
                                                             <select name="itemBrandId"class="form-control">
                                                                 <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", "xx", 2)%>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Type</label>
+                                                            <select name="itemTypeId"class="form-control">
+                                                                <%= Database.generateSelectOptionsFromTableAndColumn("item_type", "xx", 2)%>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Template</label>
+                                                            <select name="templateId"class="form-control">
+                                                                <%= Database.generateSelectOptionsFromTableAndColumn("template", "xx", 2)%>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Vendor</label>
+                                                            <select name="vendorId"class="form-control">
+                                                                <%= Database.generateSelectOptionsFromTableAndColumn("vendor", "xx", 2)%>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -720,7 +751,7 @@
                                 </div>
                                 <div class="modal-body form">
                                     <!-- BEGIN FORM-->
-                                    <form method="post" action="add.jsp?form=item" id="form_sample_2" class="horizontal-form">
+                                    <form method="post" action="../Operations?form=item&action=1" id="form_sample_2" class="horizontal-form">
                                         <div class="form-body">
                                             <div class="alert alert-danger display-hide">
                                                 <button class="close" data-close="alert"></button>
@@ -736,7 +767,7 @@
                                                         <label class="control-label">Name<span class="required">*</span></label>
                                                         <div class="input-icon right">
                                                             <i class="fa"></i>
-                                                        	<input type="text" name="name" class="form-control" placeholder="Enter Text">
+                                                        	<input type="text" name="itemName" class="form-control" placeholder="Enter Text">
                                                             <span class="help-block">
                                                                  max 255 char
                                                             </span>
@@ -744,13 +775,41 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Brand</label>
+                                                            <select name="itemBrandId"class="form-control">
+                                                                <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", "xx", 2)%>
+                                                            </select>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label class="control-label">Brand</label>
-                                                        <select name="brandId" class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item_brand", "xx", 2)%>
+                                                        <label class="control-label">Type</label>
+                                                        <select name="itemTypeId"class="form-control">
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("item_type", "xx", 2)%>
                                                         </select>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Template</label>
+                                                        <select name="templateId"class="form-control">
+                                                            <%= Database.generateSelectOptionsFromTableAndColumn("template", "xx", 2)%>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Vendor</label>
+                                                            <select name="vendorId"class="form-control">
+                                                                <%= Database.generateSelectOptionsFromTableAndColumn("vendor", "xx", 2)%>
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
@@ -758,7 +817,7 @@
                                                         <label class="control-label">Description</label>
                                                         <div class="input-icon right">
                                                             <i class="fa"></i>
-                                                        	<textarea name="desc" id="desc" class="form-control" rows="3" ></textarea>
+                                                        	<textarea name="description" id="desc" class="form-control" rows="3" ></textarea>
                                                             <span class="help-block">
                                                                  max 50,000 char
                                                             </span>
@@ -772,7 +831,7 @@
                                                         <label class="control-label">Short Description</label>
                                                         <div class="input-icon right">
                                                             <i class="fa"></i>
-                                                        	<input type="text"  name="shortDesc" class="form-control" >
+                                                        	<input type="text"  name="shortDescription" class="form-control" >
                                                         </div>
                                                         <span class="help-block">
                                                              max 255 char
@@ -802,15 +861,37 @@
                                             </div>
                                             <!--/row-->
                                             <div class="row">
-                                                <div class="col-md-12">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label class="control-label">Adjustment</label>	
                                                         <div class="input-icon right">
                                                             <i class="fa"></i>														
-	                                                        <input type="text" name="adjust" class="form-control" placeholder="Enter Text">
+	                                                        <input type="text" name="adjustment" class="form-control" placeholder="Enter Text">
                                                         </div>
                                                     </div>
-                                                </div>													
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">SKU</label>	
+                                                        <div class="input-icon right">
+                                                            <i class="fa"></i>														
+                                                            <input type="text" name="sku" class="form-control  maxlength-handler" maxlength="30">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 ">
+                                                    <div class="form-group">
+                                                        <label>Status</label>
+                                                        <div class="input-icon right">
+                                                            <i class="fa"></i>
+                                                            <select name="itemStatus" class="form-control">
+                                                                <%= Database.generateSelectFromStatusForTable("Item", "1")%>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12 ">
@@ -1029,18 +1110,21 @@
                     focusInvalid: false, // do not focus the last invalid input
                     ignore: "",
                     rules: {
-                        itemBrandId:        { required: true },
                         itemName:           { required: true, minlength: 3, maxlength: 255 },
+						itemBrandId:        { required: true },
+						itemTypeId:         { required: true },
+						templateId:         { required: true },
+						vendorId:           { required: true },
                         description:        { required: true, minlength: 1, maxlength: 50000  },
-                        shortDescription:   {  minlength: 1, maxlength: 255 },
+                        shortDescription:   { minlength: 1, maxlength: 255 },
                         listPrice:          { required: true, number: true },
                         price:              { required: true, number: true },
-                        adjustment:         {  digits: true },                            
-                        sku:            { minlength: 1, maxlength: 30 },
-                        seotitle:       { required: true, minlength: 3, maxlength: 150 },
-                        seodesc:        { required: true, minlength: 3, maxlength: 255 },
-                        seokeywords:    { required: true, minlength: 3, maxlength: 255 },                            
-                        itemStatus:     { required: true, number: true }
+                        adjustment:         { digits: true },                            
+                        sku:                { minlength: 1, maxlength: 30 },
+						itemStatus:         { required: true, number: true },
+                        seotitle:           { required: true, minlength: 3, maxlength: 150 },
+                        seodesc:            { required: true, minlength: 3, maxlength: 255 },
+                        seokeywords:        { required: true, minlength: 3, maxlength: 255 }
                     },
                     invalidHandler: function (event, validator) { //display error alert on form submit              
                             success2.hide();
