@@ -1281,32 +1281,32 @@ public class Operations extends HttpServlet
                 switch (Integer.parseInt(request.getParameter("action")))
                 {
                     case 1: //create                        
-                        int id = itemDao.add(new Item(null, request.getParameter("itemName"), request.getParameter("description"), Double.parseDouble(request.getParameter("listPrice")), Double.parseDouble(request.getParameter("price")), request.getParameter("shortDescription"), Integer.parseInt(request.getParameter("adjustment")), request.getParameter("sku"), 0, 0, 0, Integer.parseInt(request.getParameter("itemStatus")), "en-us", Integer.parseInt(request.getParameter("itemTypeId")), Integer.parseInt(request.getParameter("itemBrandId")), Integer.parseInt(request.getParameter("metaTagId")), Integer.parseInt(request.getParameter("templateId")), Integer.parseInt(request.getParameter("vendorId"))));
+                        int id = itemDao.add(new Item(null, request.getParameter("itemName"), request.getParameter("description"), Double.parseDouble(request.getParameter("listPrice")), Double.parseDouble(request.getParameter("price")), request.getParameter("shortDescription"), Integer.parseInt(request.getParameter("adjustment")), request.getParameter("sku"), 0, 0, 0, Integer.parseInt(request.getParameter("itemStatus")), "en-us", Integer.parseInt(request.getParameter("itemTypeId")), Integer.parseInt(request.getParameter("itemBrandId")), 1, Integer.parseInt(request.getParameter("templateId")), Integer.parseInt(request.getParameter("vendorId"))));
                         if (id != 0)
                         {
                             Database.RecordUserObjectCreationAction(user.getUserId().toString(), user.getUsername(), currentTime, "Item", id);
                         }
                         Database.updateCount("Item", 1);
-                        response.sendRedirect("admin/ItemUI.jsp?SuccessMsg=Added Item Successfully!");
+                        response.sendRedirect("admin/products.jsp?SuccessMsg=Added Item Successfully!");
                         break;
                     case 2: //update            
                         itemDao.update(new Item(Integer.parseInt(request.getParameter("itemId")), request.getParameter("itemName"), request.getParameter("description"), Double.parseDouble(request.getParameter("listPrice")), Double.parseDouble(request.getParameter("price")), request.getParameter("shortDescription"), Integer.parseInt(request.getParameter("adjustment")), request.getParameter("sku"), Integer.parseInt(request.getParameter("ratingSum")), Integer.parseInt(request.getParameter("voteCount")), Integer.parseInt(request.getParameter("rank")), Integer.parseInt(request.getParameter("itemStatus")), request.getParameter("locale"), Integer.parseInt(request.getParameter("itemTypeId")), Integer.parseInt(request.getParameter("itemBrandId")), Integer.parseInt(request.getParameter("metaTagId")), Integer.parseInt(request.getParameter("templateId")), Integer.parseInt(request.getParameter("vendorId"))));
                         Database.RecordUserObjectUpdateAction(user.getUserId().toString(), user.getUsername(), currentTime, "Item", Integer.parseInt(request.getParameter("itemId")));
-                        response.sendRedirect("admin/ItemUI.jsp?id=" + request.getParameter("itemId") + "&SuccessMsg=Updated Item Successfully!");
+                        response.sendRedirect("admin/products.jsp?id=" + request.getParameter("itemId") + "&SuccessMsg=Updated Item Successfully!");
                         break;
                     case 3:  //delete
                         itemDao.removeById(Integer.parseInt(request.getParameter("id")));
                         Database.RecordUserObjectDeletionAction(user.getUserId().toString(), user.getUsername(), currentTime, "Item", request.getParameter("id"));
                         Database.updateCount("Item", -1);
-                        response.sendRedirect("admin/ItemUI.jsp?SuccessMsg=Deleted Item Successfully!");
+                        response.sendRedirect("admin/products.jsp?SuccessMsg=Deleted Item Successfully!");
                         break;
                     case 4:  //remove all records
                         itemDao.removeAll();
                         Database.RecordUserObjectClearAction(user.getUserId().toString(), user.getUsername(), currentTime, "Item");
-                        response.sendRedirect("admin/ItemUI.jsp?SuccessMsg=Removed All Records Successfully!");
+                        response.sendRedirect("admin/products.jsp?SuccessMsg=Removed All Records Successfully!");
                         break;
                     default:
-                        response.sendRedirect("admin/ItemUI.jsp?ErrorMsg=Error editing Item, Invalid Action.");
+                        response.sendRedirect("admin/products.jsp?ErrorMsg=Error editing Item, Invalid Action.");
                         break;
                 }
             }
@@ -1316,19 +1316,19 @@ public class Operations extends HttpServlet
                 switch (Integer.parseInt(request.getParameter("action")))
                 {
                     case 1:
-                        response.sendRedirect("admin/ItemUI.jsp?ErrorMsg=Error adding Item.");
+                        response.sendRedirect("admin/products.jsp?ErrorMsg=Error adding Item.");
                         break; //create
                     case 2:
-                        response.sendRedirect("admin/ItemUI.jsp?ErrorMsg=Error editing Item.");
+                        response.sendRedirect("admin/products.jsp?ErrorMsg=Error editing Item.");
                         break; //update                                                    
                     case 3:
-                        response.sendRedirect("admin/ItemUI.jsp?ErrorMsg=Error deleting Item.");
+                        response.sendRedirect("admin/products.jsp?ErrorMsg=Error deleting Item.");
                         break; //delete                                                    
                     case 4:
-                        response.sendRedirect("admin/ItemUI.jsp?ErrorMsg=Error clearing Item.");
+                        response.sendRedirect("admin/products.jsp?ErrorMsg=Error clearing Item.");
                         break; //clear                          
                     default:
-                        response.sendRedirect("admin/ItemUI.jsp?ErrorMsg=Unknown Error Item, possibly an invalid action.");
+                        response.sendRedirect("admin/products.jsp?ErrorMsg=Unknown Error Item, possibly an invalid action.");
                         break;
                 }
             }
