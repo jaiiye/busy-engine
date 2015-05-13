@@ -245,7 +245,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="stateProvinceId">StateProvince:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="stateProvinceId" class="form-control" value="${shipping.stateProvinceId}" />
                                                         <select name="stateProvinceId" class="form-control">
                                                             <%Shipping x = (Shipping) pageContext.getAttribute("shipping"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("state_province", x.getStateProvinceId().toString(), 2)%>
@@ -256,7 +255,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="countryId">Country:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="countryId" class="form-control" value="${shipping.countryId}" />
                                                         <select name="countryId" class="form-control">
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("country", x.getCountryId().toString(), 2)%>
                                                         </select>
@@ -299,82 +297,58 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <button class="close" data-close="alert"></button>
                                                     Your form validation is successful!
                                                 </div>
-
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">ShippingId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="shippingId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("shipping", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">MethodName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="methodName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
-                                                            </div>
+                                                                <input type="text" name="methodName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">Quantity</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="quantity" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                                <input type="text" name="quantity" class="form-control" placeholder="Enter Number(ex: 2.50)" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">UnitOfMeasure</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="unitOfMeasure" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
-                                                            </div>
+                                                                <input type="text" name="unitOfMeasure" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">RatePerUnitCost</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="ratePerUnitCost" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
-                                                            </div>
+                                                                <input type="text" name="ratePerUnitCost" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">AdditionalCost</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="additionalCost" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                                <input type="text" name="additionalCost" class="form-control" placeholder="Enter Number(ex: 2.50)" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">StateProvinceId</label>
@@ -388,7 +362,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">CountryId</label>
@@ -402,10 +375,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
-
                                             </div>
-
                                             <div class="form-actions right">
                                                 <button type="button" class="btn red"  data-dismiss="modal"><i class="fa fa-minus"></i>&nbsp;Cancel</button>
                                                 <button type="submit" class="btn green"><i class="fa fa-plus"></i>&nbsp;Create</button>
