@@ -229,7 +229,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="stateProvinceId">StateProvince:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="stateProvinceId" class="form-control" value="${tax_rate.stateProvinceId}" />
                                                         <select name="stateProvinceId" class="form-control">
                                                             <%TaxRate x = (TaxRate) pageContext.getAttribute("tax_rate"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("state_province", x.getStateProvinceId().toString(), 2)%>
@@ -240,7 +239,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="countryId">Country:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="countryId" class="form-control" value="${tax_rate.countryId}" />
                                                         <select name="countryId" class="form-control">
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("country", x.getCountryId().toString(), 2)%>
                                                         </select>
@@ -283,58 +281,37 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <button class="close" data-close="alert"></button>
                                                     Your form validation is successful!
                                                 </div>
-
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">TaxRateId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="taxRateId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("tax_rate", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">TaxCategory</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="taxCategory" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
-                                                            </div>
+                                                                <input type="text" name="taxCategory" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">Percentage</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="percentage" class="form-control" placeholder="Enter Number(ex: 2.50)" />                                                            
+                                                                <input type="text" name="percentage" class="form-control" placeholder="Enter Number(ex: 2.50)" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">ZipPostalCode</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="zipPostalCode" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="15" />                                                            
-                                                            </div>
+                                                                <input type="text" name="zipPostalCode" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="15" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">StateProvinceId</label>
@@ -348,7 +325,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">CountryId</label>
