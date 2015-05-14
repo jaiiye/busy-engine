@@ -259,7 +259,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="imageTypeId">ImageType:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="imageTypeId" class="form-control" value="${site_image.imageTypeId}" />
                                                         <select name="imageTypeId" class="form-control">
                                                             <%SiteImage x = (SiteImage) pageContext.getAttribute("site_image"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("image_type", x.getImageTypeId().toString(), 2)%>
@@ -312,70 +311,49 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <button class="close" data-close="alert"></button>
                                                     Your form validation is successful!
                                                 </div>
-
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">SiteImageId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="siteImageId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("site_image", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">FileName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fileName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
-                                                            </div>
+                                                                <input type="text" name="fileName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">Description</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">LinkUrl</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="linkUrl" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="linkUrl" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">Rank</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="rank" class="form-control" placeholder="Enter Integer" />                                                            
+                                                                <input type="text" name="rank" class="form-control" placeholder="Enter Integer" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">ImageTypeId</label>
@@ -389,7 +367,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">SiteId</label>
@@ -403,10 +380,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
-
                                             </div>
-
                                             <div class="form-actions right">
                                                 <button type="button" class="btn red"  data-dismiss="modal"><i class="fa fa-minus"></i>&nbsp;Cancel</button>
                                                 <button type="submit" class="btn green"><i class="fa fa-plus"></i>&nbsp;Create</button>

@@ -61,12 +61,15 @@ public class ContextListener implements ServletContextListener
 //        context.setAttribute("itemReviewDao", new ItemReviewDaoImpl());
 //        context.setAttribute("itemTypeDao", new ItemTypeDaoImpl());
         
-//        context.setAttribute("blogDao", new BlogDaoImpl());
+        context.setAttribute("blogDao", new BlogDaoImpl());
 //        context.setAttribute("blogPostDao", new BlogPostDaoImpl());
 //        context.setAttribute("blogPostCategoryDao", new BlogPostCategoryDaoImpl());
 //        context.setAttribute("blogTypeDao", new BlogTypeDaoImpl());
 //
-//        context.setAttribute("formDao", new FormDaoImpl());
+        context.setAttribute("formDao", new FormDaoImpl());
+        context.setAttribute("siteImageDao", new SiteImageDaoImpl());
+        context.setAttribute("siteFileDao", new SiteFileDaoImpl());
+        context.setAttribute("siteFolderDao", new SiteFolderDaoImpl());
 //        context.setAttribute("formFieldDao", new FormFieldDaoImpl());
 //        context.setAttribute("formFieldTypeDao", new FormFieldTypeDaoImpl());
 //
@@ -86,12 +89,13 @@ public class ContextListener implements ServletContextListener
 //        context.setAttribute("knowledgeBaseDao", new KnowledgeBaseDaoImpl());
 //        context.setAttribute("localeDao", new LocaleDaoImpl());
 //        context.setAttribute("localizedStringDao", new LocalizedStringDaoImpl());
-//        context.setAttribute("mailinglistDao", new MailinglistDaoImpl());
+        context.setAttribute("mailinglistDao", new MailinglistDaoImpl());
 //        context.setAttribute("metaTagDao", new MetaTagDaoImpl());
 //        context.setAttribute("optionAvailabilityDao", new OptionAvailabilityDaoImpl());
 //        context.setAttribute("orderDao", new OrderDaoImpl());
 //        context.setAttribute("orderItemDao", new OrderItemDaoImpl());
-//        context.setAttribute("pageDao", new PageDaoImpl());
+        context.setAttribute("pageDao", new PageDaoImpl());
+        context.setAttribute("sliderDao", new SliderDaoImpl());
 //        context.setAttribute("pageTemplateDao", new PageTemplateDaoImpl());
 //        context.setAttribute("paypalDao", new PaypalDaoImpl());
         

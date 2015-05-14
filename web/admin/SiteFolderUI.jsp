@@ -227,7 +227,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="siteId">Site:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="siteId" class="form-control" value="${site_folder.siteId}" />
                                                         <select name="siteId" class="form-control">
                                                             <%SiteFolder x = (SiteFolder) pageContext.getAttribute("site_folder"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("site", x.getSiteId().toString(), 2)%>
@@ -271,58 +270,39 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <button class="close" data-close="alert"></button>
                                                     Your form validation is successful!
                                                 </div>
-
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">SiteFolderId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="siteFolderId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("site_folder", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">FolderName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="folderName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                                <input type="text" name="folderName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">Description</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
+                                                                <input type="text" name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">Rank</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="rank" class="form-control" placeholder="Enter Integer" />                                                            
+                                                                <input type="text" name="rank" class="form-control" placeholder="Enter Integer" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">SiteId</label>
@@ -336,10 +316,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
-
                                             </div>
-
                                             <div class="form-actions right">
                                                 <button type="button" class="btn red"  data-dismiss="modal"><i class="fa fa-minus"></i>&nbsp;Cancel</button>
                                                 <button type="submit" class="btn green"><i class="fa fa-plus"></i>&nbsp;Create</button>

@@ -300,22 +300,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <button class="close" data-close="alert"></button>
                                                     Your form validation is successful!
                                                 </div>
-
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">PageId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="pageId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("page", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">PageName</label>
@@ -327,31 +311,26 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">Content</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <textarea name="content" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            
-                                                            </div>
+                                                                <textarea name="content" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="65535" rows="3"></textarea>                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">PageStatus</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="pageStatus" class="form-control" placeholder="Enter Integer" />                                                            
-                                                            </div>
+                                                                <input type="text" name="pageStatus" class="form-control" placeholder="Enter Integer" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">FormId</label>
@@ -365,7 +344,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">SliderId</label>
@@ -379,7 +357,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">MetaTagId</label>
@@ -393,7 +370,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">TemplateId</label>
@@ -407,10 +383,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
-
                                             </div>
-
                                             <div class="form-actions right">
                                                 <button type="button" class="btn red"  data-dismiss="modal"><i class="fa fa-minus"></i>&nbsp;Cancel</button>
                                                 <button type="submit" class="btn green"><i class="fa fa-plus"></i>&nbsp;Create</button>

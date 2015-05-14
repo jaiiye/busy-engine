@@ -291,54 +291,34 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <button class="close" data-close="alert"></button>
                                                     Your form validation is successful!
                                                 </div>
-
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">FormId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="formId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("form", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">FormName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="formName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
+                                                                <input type="text" name="formName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">Description</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
-                                                            </div>
+                                                                <input type="text" name="description" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">SubmissionEmail</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="submissionEmail" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
-                                                            </div>
+                                                                <input type="text" name="submissionEmail" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -349,51 +329,43 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="submissionMethod" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="5" />                                                            
-                                                            </div>
+                                                                <input type="text" name="submissionMethod" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="5" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">Action</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="action" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            
-                                                            </div>
+                                                                <input type="text" name="action" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="255" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">Resettable</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="resettable" class="form-control" placeholder="Enter Integer" />                                                            
+                                                                <input type="text" name="resettable" class="form-control" placeholder="Enter Integer" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">FileUpload</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="fileUpload" class="form-control" placeholder="Enter Integer" />                                                            
+                                                                <input type="text" name="fileUpload" class="form-control" placeholder="Enter Integer" />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
-
                                             </div>
-
                                             <div class="form-actions right">
                                                 <button type="button" class="btn red"  data-dismiss="modal"><i class="fa fa-minus"></i>&nbsp;Cancel</button>
                                                 <button type="submit" class="btn green"><i class="fa fa-plus"></i>&nbsp;Create</button>
