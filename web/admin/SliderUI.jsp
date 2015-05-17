@@ -212,7 +212,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="sliderTypeId">SliderType:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="sliderTypeId" class="form-control" value="${slider.sliderTypeId}" />
                                                         <select name="sliderTypeId" class="form-control">
                                                             <%Slider x = (Slider) pageContext.getAttribute("slider"); %>
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("slider_type", x.getSliderTypeId().toString(), 2)%>
@@ -223,7 +222,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="formId">Form:</label>
                                                     <div  class="col-md-10">
-                                                        <input type="text" name="formId" class="form-control" value="${slider.formId}" />
                                                         <select name="formId" class="form-control">
                                                             <%= Database.generateSelectOptionsFromTableAndColumn("form", x.getFormId().toString(), 2)%>
                                                         </select>
@@ -266,34 +264,16 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                     <button class="close" data-close="alert"></button>
                                                     Your form validation is successful!
                                                 </div>
-
-                                                
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label">SliderId</label>
-                                                        <div class="col-md-10" style="margin-bottom:25px;">
-                                                            <div class="input-icon right">
-                                                                <i class="fa"></i>
-                                                                <select name="sliderId" class="form-control">
-                                                                    <%= Database.generateSelectOptionsFromTableAndColumn("slider", "", 2)%>
-                                                               </select>                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">SliderName</label>
                                                         <div class="col-md-10" style="margin-bottom:25px;">
                                                             <div class="input-icon right">
                                                                 <i class="fa"></i>
-                                                                <input type="text" name="sliderName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            
-                                                            </div>
+                                                                <input type="text" name="sliderName" class="form-control maxlength-handler" placeholder="Enter Text" maxlength="100" />                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">SliderTypeId</label>
@@ -307,7 +287,6 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-2 control-label">FormId</label>
@@ -321,10 +300,7 @@ NumberFormat formatter = NumberFormat.getCurrencyInstance();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
-
                                             </div>
-
                                             <div class="form-actions right">
                                                 <button type="button" class="btn red"  data-dismiss="modal"><i class="fa fa-minus"></i>&nbsp;Cancel</button>
                                                 <button type="submit" class="btn green"><i class="fa fa-plus"></i>&nbsp;Create</button>

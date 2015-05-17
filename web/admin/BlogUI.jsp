@@ -264,22 +264,6 @@
                                                 <button class="close" data-close="alert"></button>
                                                 Your form validation is successful!
                                             </div>
-
-
-                                            <div class="row">
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label">Blog</label>
-                                                    <div class="col-md-10" style="margin-bottom:25px;">
-                                                        <div class="input-icon right">
-                                                            <i class="fa"></i>
-                                                            <select name="blogId" class="form-control">
-                                                                <%= Database.generateSelectOptionsFromTableAndColumn("blog", "", 2)%>
-                                                            </select>                                                            
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
                                             <div class="row">
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label">Topic</label>
@@ -291,7 +275,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="row">
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label">Blog Type</label>
@@ -305,7 +288,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="row">
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label">KnowledgeBaseId</label>
@@ -319,10 +301,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
                                         </div>
-
                                         <div class="form-actions right">
                                             <button type="button" class="btn red"  data-dismiss="modal"><i class="fa fa-minus"></i>&nbsp;Cancel</button>
                                             <button type="submit" class="btn green"><i class="fa fa-plus"></i>&nbsp;Create</button>
