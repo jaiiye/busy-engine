@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import static com.busy.engine.web.SecurityHelper.setSessionUser;
+import java.util.ArrayList;
 
 public class Operations extends HttpServlet
 {
@@ -1281,7 +1282,7 @@ public class Operations extends HttpServlet
                 switch (Integer.parseInt(request.getParameter("action")))
                 {
                     case 1: //create                        
-                        int id = itemDao.add(new Item(null, request.getParameter("itemName"), request.getParameter("description"), Double.parseDouble(request.getParameter("listPrice")), Double.parseDouble(request.getParameter("price")), request.getParameter("shortDescription"), Integer.parseInt(request.getParameter("adjustment")), request.getParameter("sku"), 0, 0, 0, Integer.parseInt(request.getParameter("itemStatus")), "en-us", Integer.parseInt(request.getParameter("itemTypeId")), Integer.parseInt(request.getParameter("itemBrandId")), 1, Integer.parseInt(request.getParameter("templateId")), Integer.parseInt(request.getParameter("vendorId"))));
+                        int id = itemDao.add(new Item(null, request.getParameter("itemName"), request.getParameter("description"), Double.parseDouble(request.getParameter("listPrice")), Double.parseDouble(request.getParameter("price")), request.getParameter("shortDescription"), Integer.parseInt(request.getParameter("adjustment")), request.getParameter("sku"), Integer.parseInt(request.getParameter("itemStatus")), "en-us", Integer.parseInt(request.getParameter("itemTypeId")), Integer.parseInt(request.getParameter("itemBrandId"))));
                         if (id != 0)
                         {
                             Database.RecordUserObjectCreationAction(user.getUserId().toString(), user.getUsername(), currentTime, "Item", id);
@@ -1290,7 +1291,7 @@ public class Operations extends HttpServlet
                         response.sendRedirect("admin/products.jsp?SuccessMsg=Added Item Successfully!");
                         break;
                     case 2: //update            
-                        itemDao.update(new Item(Integer.parseInt(request.getParameter("itemId")), request.getParameter("itemName"), request.getParameter("description"), Double.parseDouble(request.getParameter("listPrice")), Double.parseDouble(request.getParameter("price")), request.getParameter("shortDescription"), Integer.parseInt(request.getParameter("adjustment")), request.getParameter("sku"), Integer.parseInt(request.getParameter("ratingSum")), Integer.parseInt(request.getParameter("voteCount")), Integer.parseInt(request.getParameter("rank")), Integer.parseInt(request.getParameter("itemStatus")), request.getParameter("locale"), Integer.parseInt(request.getParameter("itemTypeId")), Integer.parseInt(request.getParameter("itemBrandId")), Integer.parseInt(request.getParameter("metaTagId")), Integer.parseInt(request.getParameter("templateId")), Integer.parseInt(request.getParameter("vendorId"))));
+                        itemDao.update(new Item(Integer.parseInt(request.getParameter("itemId")), request.getParameter("itemName"), request.getParameter("description"), Double.parseDouble(request.getParameter("listPrice")), Double.parseDouble(request.getParameter("price")), request.getParameter("shortDescription"), Integer.parseInt(request.getParameter("adjustment")), request.getParameter("sku"), Integer.parseInt(request.getParameter("ratingSum")), Integer.parseInt(request.getParameter("voteCount")), Integer.parseInt(request.getParameter("rank")), Integer.parseInt(request.getParameter("itemStatus")), request.getParameter("locale"), Integer.parseInt(request.getParameter("itemTypeId")), Integer.parseInt(request.getParameter("itemBrandId")), Integer.parseInt(request.getParameter("metaTagId")), Integer.parseInt(request.getParameter("templateId")), -1));
                         Database.RecordUserObjectUpdateAction(user.getUserId().toString(), user.getUsername(), currentTime, "Item", Integer.parseInt(request.getParameter("itemId")));
                         response.sendRedirect("admin/products.jsp?id=" + request.getParameter("itemId") + "&SuccessMsg=Updated Item Successfully!");
                         break;
@@ -1590,7 +1591,16 @@ public class Operations extends HttpServlet
 
                 switch (Integer.parseInt(request.getParameter("action")))
                 {
-                    case 1: //create                        
+                    case 1: //create     
+                        //check to see if  the association already exists
+                        Column categoryColumn = new Column(ItemCategory.PROP_CATEGORY_ID, request.getParameter("categoryId"));
+                        Column itemColumn = new Column(ItemCategory.PROP_ITEM_ID, request.getParameter("itemId"));
+                        ArrayList<ItemCategory> results = itemCategoryDao.findByColumns(categoryColumn, itemColumn);
+                        if(results.size() > 0) {
+                           response.sendRedirect("admin/" + request.getParameter("sourcePage") + "?ErrorMsg=Item Category Already Exists!");
+                           break;
+                        }
+                        
                         int id = itemCategoryDao.add(new ItemCategory(null, Integer.parseInt(request.getParameter("categoryId")), Integer.parseInt(request.getParameter("itemId"))));
                         if (id != 0)
                         {

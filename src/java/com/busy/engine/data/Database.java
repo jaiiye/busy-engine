@@ -1022,13 +1022,17 @@ public class Database extends BasicConnection
     {
         ArrayList<Item> items = new ItemDaoImpl().findByColumn(Item.PROP_ITEM_TYPE_ID, type + "", null, null);        
         
-        for(Item i : items) {
+        for(Item i : items) 
+        {
             i.setItemBrand(new ItemBrandDaoImpl().find(i.getItemBrandId()));
             new ItemDaoImpl().getRelatedItemFileList(i);
             new ItemDaoImpl().getRelatedItemCategoryList(i);
             new ItemDaoImpl().getRelatedOptionAvailabilityList(i);
             new ItemDaoImpl().getRelatedItemImageList(i);  
-            i.setMetaTag(new MetaTagDaoImpl().find(i.getMetaTagId()));
+            if(i.getMetaTagId() != 0) 
+            {
+                i.setMetaTag(new MetaTagDaoImpl().find(i.getMetaTagId()));
+            }       
         }                     
         return items;
     }

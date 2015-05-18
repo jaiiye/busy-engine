@@ -1,60 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     package com.busy.engine.dao;
 
     import com.busy.engine.data.BasicConnection;
@@ -435,26 +378,13 @@
             {                
                 
                 Item.checkColumnSize(obj.getItemName(), 255);
-                Item.checkColumnSize(obj.getDescription(), 65535);
-                
-                
-                Item.checkColumnSize(obj.getShortDescription(), 255);
-                
-                Item.checkColumnSize(obj.getSku(), 30);
-                
-                
-                
-                
+                Item.checkColumnSize(obj.getDescription(), 65535);                                
+                Item.checkColumnSize(obj.getShortDescription(), 255);                
+                Item.checkColumnSize(obj.getSku(), 30);                
                 Item.checkColumnSize(obj.getLocale(), 10);
                 
-                
-                
-                
-                
-                  
-
                 openConnection();
-                prepareStatement("INSERT INTO item(ItemName,Description,ListPrice,Price,ShortDescription,Adjustment,Sku,RatingSum,VoteCount,Rank,ItemStatus,Locale,ItemTypeId,ItemBrandId,MetaTagId,TemplateId,VendorId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
+                prepareStatement("INSERT INTO item(ItemName,Description,ListPrice,Price,ShortDescription,Adjustment,Sku,RatingSum,VoteCount,Rank,ItemStatus,Locale,ItemTypeId,ItemBrandId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");                    
                 preparedStatement.setString(1, obj.getItemName());
                 preparedStatement.setString(2, obj.getDescription());
                 preparedStatement.setDouble(3, obj.getListPrice());
@@ -462,16 +392,13 @@
                 preparedStatement.setString(5, obj.getShortDescription());
                 preparedStatement.setInt(6, obj.getAdjustment());
                 preparedStatement.setString(7, obj.getSku());
-                preparedStatement.setInt(8, obj.getRatingSum());
-                preparedStatement.setInt(9, obj.getVoteCount());
-                preparedStatement.setInt(10, obj.getRank());
+                preparedStatement.setInt(8, 0);
+                preparedStatement.setInt(9, 0);
+                preparedStatement.setInt(10, 0);
                 preparedStatement.setInt(11, obj.getItemStatus());
                 preparedStatement.setString(12, obj.getLocale());
                 preparedStatement.setInt(13, obj.getItemTypeId());
                 preparedStatement.setInt(14, obj.getItemBrandId());
-                preparedStatement.setInt(15, obj.getMetaTagId());
-                preparedStatement.setInt(16, obj.getTemplateId());
-                preparedStatement.setInt(17, obj.getVendorId());
                 
                 preparedStatement.executeUpdate();
 

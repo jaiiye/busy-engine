@@ -245,6 +245,36 @@ public class Item extends AbstractEntity implements EntityItem<Integer>
         siteItemList = null;
 
     }
+    
+    public Item(Integer ItemId, String ItemName, String Description, Double ListPrice, Double Price, String ShortDescription, Integer Adjustment, String Sku, Integer ItemStatus, String Locale, Integer ItemTypeId, Integer ItemBrandId)
+    {
+        this.itemId = ItemId;
+        this.itemName = ItemName;
+        this.description = Description;
+        this.listPrice = ListPrice;
+        this.price = Price;
+        this.shortDescription = ShortDescription;
+        this.adjustment = Adjustment;
+        this.sku = Sku;
+        this.itemStatus = ItemStatus;
+        this.locale = Locale;
+        this.itemTypeId = ItemTypeId;
+        this.itemBrandId = ItemBrandId;
+        this.metaTagId = null;
+        this.templateId = null;
+        this.vendorId = null;
+
+        itemAttributeList = null;
+        itemCategoryList = null;
+        itemDiscountList = null;
+        itemFileList = null;
+        itemImageList = null;
+        itemLocationList = null;
+        itemReviewList = null;
+        optionAvailabilityList = null;
+        orderItemList = null;
+        siteItemList = null;
+    }
 
     public Integer getItemId()
     {

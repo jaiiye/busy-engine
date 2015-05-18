@@ -560,6 +560,12 @@
                                                         <input name="adjust" type="text" value="<%= item.getAdjustment()%>" class="form-control input-sm" />
                                                     </div>
                                                 </div>
+                                                    <%
+                                                    if(item.getMetaTag() == null) {
+                                                        item.setMetaTag(new MetaTag(null,"","",""));
+                                                    }                                                    
+                                                    %>
+                                                    
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label" for="seotitle">SEO Title:</label>
                                                     <div  class="col-md-10">
@@ -691,6 +697,7 @@
                                             <% }%>   
 
                                             <form name="add" action="../Operations?form=item_category&action=1" onSubmit="return validate();" method="post">
+                                                <input type=hidden name="sourcePage" value="products.jsp"/>
                                                 <input type=hidden name="itemId" value="<%= item.getItemId()%>"/>
                                                 <tr>
                                                     <td align="center"><select name="categoryId" class="form-control input-sm" >
@@ -784,7 +791,7 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label class="control-label">Type</label>
                                                         <select name="itemTypeId"class="form-control">
@@ -792,24 +799,6 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label">Template</label>
-                                                        <select name="templateId"class="form-control">
-                                                            <%= Database.generateSelectOptionsFromTableAndColumn("template", "xx", 2)%>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label class="control-label">Vendor</label>
-                                                            <select name="vendorId"class="form-control">
-                                                                <%= Database.generateSelectOptionsFromTableAndColumn("vendor", "xx", 2)%>
-                                                            </select>
-                                                        </div>
-                                                    </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
@@ -889,37 +878,6 @@
                                                             <select name="itemStatus" class="form-control">
                                                                 <%= Database.generateSelectFromStatusForTable("Item", "1")%>
                                                             </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-12 ">
-                                                    <div class="form-group">
-                                                        <label class="control-label">SEO Title</label>
-                                                        <div class="input-icon right">
-                                                            <i class="fa"></i>
-                                                        	<input type="text" name="seotitle" class="form-control">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label">SEO Description</label>
-                                                        <div class="input-icon right">
-                                                            <i class="fa"></i>
-                                                        	<input type="text" name="seodesc" class="form-control">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label">SEO Keywords</label>
-                                                        <div class="input-icon right">
-                                                            <i class="fa"></i>
-                                                        	<input type="text" name="seokeywords" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
